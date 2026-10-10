@@ -1,10 +1,10 @@
+import { replacementSkillPoints } from './reworkChallenges'
 import { hasCompletedQuantum } from './quantumMilestone'
 import { resetDiscoveryProgress } from './discovery'
 import { permanentSkillRuntime, permanentFragmentCount } from './galvanization'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { resetCanonicalDreamProgress } from './canonicalDreamReset'
 import { createEmptySimulationTotals } from './canonicalStatistics'
-import { AVOCADO_MEDITATION_SKILL_POINT_REWARD } from './avocadoMeditation'
 import { addDiscrete, DISCRETE_MAXIMUM } from './numeric'
 import { hasReachedOverflow } from './overflowBoundary'
 
@@ -20,6 +20,18 @@ export function applyCanonicalOverflowReset(
   const points = state.avocado.overflowPoints ?? 0n
   if (typeof points !== 'bigint' || points < 0n || points >= DISCRETE_MAXIMUM) {
     return { ok: false, code: 'OVERFLOW_POINTS_MAXED' }
+  }
+  // Overflow is mandatory. End an unfinished attempt before the normal
+  // Transcendence reset so it cannot trap the player behind its own reset gate.
+  const attempt = state.challenges?.replacement
+  if (attempt?.active) state = {
+    ...state,
+    discovery: attempt.savedDiscovery,
+    skills: { ...state.skills, activeAutoAssignment: attempt.savedAutoAssignment },
+    challenges: { ...state.challenges!, active: null, replacement: {
+      ...attempt, active: null, earnedIp: 0n, infinities: 0,
+      paidPurchases: 0, paidFacilityIds: [],
+    } },
   }
   return {
     ok: true,
@@ -75,7 +87,7 @@ export function applyCanonicalOverflowReset(
       skills: {
         ...state.skills,
         swarmGrants: undefined,
-        points: state.secretProgress.completed ? AVOCADO_MEDITATION_SKILL_POINT_REWARD : 0n,
+        points: replacementSkillPoints(state.challenges),
         fragments: permanentFragmentCount(state),
         byId: permanentSkillRuntime(state),
       },

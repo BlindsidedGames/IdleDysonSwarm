@@ -122,13 +122,17 @@ test.each([1n, 2n, 3n, 4n])('Influence Max preserves the final single-purchase s
   expect(exhausted.state).toBe(max.state)
 })
 
- test('the developer override unlocks all progression routes without changing their resources', () => {
+test('the developer override unlocks retained routes and cannot expose retired routes', () => {
   const before = structuredClone(runtime.gameState)
   const visibility = selectGameplayVisibility(runtime.gameState, true)
   expect(visibility.allTabsUnlocked).toBe(true)
-  for (const route of ['research', 'skills', 'infinity', 'reality', 'simulations', 'quantum'] as const) {
+  for (const route of ['research', 'skills', 'infinity', 'simulations'] as const) {
     expect(visibility[route].routeUnlocked).toBe(true)
     if ('routeVisible' in visibility[route]) expect(visibility[route].routeVisible).toBe(true)
+  }
+  for (const route of ['reality', 'quantum'] as const) {
+    expect(visibility[route].routeUnlocked).toBe(false)
+    expect(visibility[route].routeVisible).toBe(false)
   }
   expect(runtime.gameState).toEqual(before)
   expect(selectGameplayVisibility(runtime.gameState).allTabsUnlocked).toBe(false)
@@ -141,15 +145,4 @@ test.each([[1n, 50], [3n, 250]] as const)('Built by Hand goal %s projects its Ti
   const snapshot = gameplaySnapshot(state)
   const dyson = snapshot.derived.dyson
   expect(dyson.status === 'ready' && dyson.value.presentation.currentGoal).toEqual({ kind: 'tinkers', target })
-})
-
-
-test('Reality previews explain suspended skill points only during Quantum challenges', () => {
-  const state = structuredClone(runtime.gameState)
-  state.challenges = { ...state.challenges!, active: 'no-science' }
-  const challenge = gameplaySnapshot(state).previews.reality.upgrades
-  expect(challenge.find(p => p.upgradeId === 'translation1')?.skillPointsInactive).toBe(true)
-  expect(challenge.find(p => p.upgradeId === 'doubleTimeOwned')?.skillPointsInactive).toBe(false)
-  state.challenges.active = null
-  expect(gameplaySnapshot(state).previews.reality.upgrades.some(p => p.skillPointsInactive)).toBe(false)
 })

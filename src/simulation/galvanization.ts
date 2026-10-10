@@ -1,20 +1,28 @@
+import { activeReworkChallenge } from './reworkChallenges'
 import { getGameAssetsByKind } from '../game-data/catalog'
 import { SKILL_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 import type { CanonicalGameStateV1, InfinityChallengeState, SkillRuntimeState } from '../game-state/types'
 
 type GalvanizationSource = { readonly challenges?: Readonly<InfinityChallengeState> }
 
+/** Owned receipts power companion simulations even when Dyson effects are restricted.
+ * Temporary challenge access is not an owned fracture. */
+export function permanentFractureCount(state: GalvanizationSource): number {
+  return state.challenges?.galvanizedSkillIds?.length ?? 0
+}
+
 export function galvanizedSkillIds(state: GalvanizationSource): readonly string[] {
-  return state.challenges?.galvanizedSkillIds ?? []
+  const active = activeReworkChallenge(state)
+  return active ? [] : state.challenges?.galvanizedSkillIds ?? []
 }
 
 export function isGalvanized(state: GalvanizationSource, id: string): boolean {
-  return galvanizedSkillIds(state).includes(id)
+  return (activeReworkChallenge(state) === 'built-by-hand' && id === 'manualLabour') || galvanizedSkillIds(state).includes(id)
 }
 
 /** Fresh run timers; SRS's secondary timer preserves Stellar Memory's bank. */
 export function permanentSkillRuntime(state: GalvanizationSource & { readonly skills?: Pick<CanonicalGameStateV1['skills'], 'byId'> }): Record<string, SkillRuntimeState> {
-  const permanent = new Set(galvanizedSkillIds(state))
+  const permanent = new Set(activeReworkChallenge(state) === 'built-by-hand' ? ['manualLabour'] : galvanizedSkillIds(state))
   if (permanent.size === 0) return {}
   // Permanent skills may evaluate sibling skills after their reveal gate resets.
   // Keep explicit unowned records so those dynamic effects can still resolve.

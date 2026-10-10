@@ -349,9 +349,6 @@ export async function openChromiumPage(
       '--disable-extensions',
       '--disable-sync',
       '--disable-renderer-backgrounding',
-      // This isolated local runner cannot start Chrome's subprocess sandbox.
-      // It loads only the loopback production preview.
-      '--no-sandbox',
       '--metrics-recording-only',
       'about:blank',
     ],

@@ -1,3 +1,4 @@
+import { hasCompletedQuantum } from '../simulation/quantumMilestone'
 import { createSpeedrunStatistics } from '../simulation/speedrunStatistics'
 import { CanonicalRuntimeSession } from '../application/canonicalRuntimeSession'
 import { gzipSync, strToU8 } from 'fflate'
@@ -102,6 +103,27 @@ describe('transitional production V2 checkpoint recovery', () => {
     expect(restored.quantum.buyMode).toBe(buyMode)
     expect(restored.skills.presets).toHaveLength(10)
     expect(restored.skills.presets.slice(5).map(preset => preset.skillIds)).toEqual([[], [], [], [], []])
+  })
+
+  test.each(['keep', 'fresh'] as const)('does not copy the receiver %s rework choice onto imported legacy rewards', choice => {
+    const source = recoveryBase.copyValidatedState()
+    source.idsReworkMigrationChoice = choice
+    source.firstQuantumComplete = choice === 'keep'
+    const receiver = recoveryBase.withValidatedState(source)
+    const state = encodeState(hydrateGameState(recoveryBase).state)
+    const quantum = state.quantum as SaveRecord
+    quantum.availableShards = '1'
+    quantum.lifetimeEarnedShards = '1'
+    const imported = recoverDecodedTransitionalV2PortableSave({
+      schemaVersion: 13, modelVersion: 2, savedAtUtc: '2026-08-30T00:00:00.000Z',
+      state: encodeAuthenticSchema13NumericLeaves(state, '$'),
+      runtime: encodeAuthenticSchema13NumericLeaves(defaultRuntime(), '$.runtime'),
+    }, receiver)
+    const restored = hydrateGameState(roundTrip(imported)).state
+    expect(restored.quantum.pointsEarned).toBe(1n)
+    expect(restored.meta.reworkMigrationChoice).toBeUndefined()
+    expect(restored.meta.firstQuantumComplete).toBeUndefined()
+    expect(hasCompletedQuantum(restored)).toBe(true)
   })
 
   test('does not certify schema-13 imports using a fresh recovery template speedrun record', () => {
@@ -3509,6 +3531,8 @@ function encodeState(value: unknown): SaveRecord {
   delete (state.avocado as SaveRecord).overflowPoints
   const meta = state.meta as SaveRecord
   delete meta.navigationRouteDiscovery
+  delete meta.reworkMigrationChoice
+  delete meta.firstQuantumComplete
   const navigation = (meta.navigationVisibility ?? {}) as SaveRecord
   meta.navigationVisibility = {
     story: navigation.story ?? false,

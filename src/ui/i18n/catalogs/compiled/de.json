@@ -639,6 +639,676 @@
       "value": "Herausforderung ansehen"
     }
   ],
+  "civilization.allocated": [
+    {
+      "type": 0,
+      "value": "Zugewiesene Arbeiter"
+    }
+  ],
+  "civilization.amount": [
+    {
+      "type": 1,
+      "value": "resource"
+    },
+    {
+      "type": 0,
+      "value": ": "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "civilization.automaticAward": [
+    {
+      "type": 0,
+      "value": "Automatische Vergabe, sobald alle Anforderungen erfüllt sind."
+    }
+  ],
+  "civilization.available": [
+    {
+      "type": 0,
+      "value": "Nicht zugewiesen / insgesamt"
+    }
+  ],
+  "civilization.awarded": [
+    {
+      "type": 0,
+      "value": "Vergebene Katalysatoren: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 3"
+    }
+  ],
+  "civilization.balanced": [
+    {
+      "type": 0,
+      "value": "Ausgewogen"
+    }
+  ],
+  "civilization.bootstrap": [
+    {
+      "type": 0,
+      "value": "Familiäres Sammeln benötigt keine Ressourcen oder zugewiesenen Arbeiter."
+    }
+  ],
+  "civilization.bootstrapV4": [
+    {
+      "type": 0,
+      "value": "Drei Gründer beginnen mit einem Unterkunftsbausatz. Sammeln benötigt eine echte Arbeitsgruppe und keine Zutaten."
+    }
+  ],
+  "civilization.campExpansion": [
+    {
+      "type": 0,
+      "value": "Lagererweiterung"
+    }
+  ],
+  "civilization.campProvisioning": [
+    {
+      "type": 0,
+      "value": "Lagerversorgung"
+    }
+  ],
+  "civilization.camps": [
+    {
+      "type": 0,
+      "value": "Lager"
+    }
+  ],
+  "civilization.cancel": [
+    {
+      "type": 0,
+      "value": "Abbrechen"
+    }
+  ],
+  "civilization.catalysts": [
+    {
+      "type": 0,
+      "value": "Katalysatoren"
+    }
+  ],
+  "civilization.clothing": [
+    {
+      "type": 0,
+      "value": "Kleidung"
+    }
+  ],
+  "civilization.completed": [
+    {
+      "type": 0,
+      "value": "Abgeschlossene Zyklen"
+    }
+  ],
+  "civilization.continuedDevelopment": [
+    {
+      "type": 0,
+      "value": "Lagerentwicklung "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "civilization.conversion": [
+    {
+      "type": 0,
+      "value": "Jede Unterkunft beherbergt 2 Arbeiter; jedes Lager 8. Drei Unterkünfte werden zu einem Lager."
+    }
+  ],
+  "civilization.conversionV4": [
+    {
+      "type": 0,
+      "value": "Eine Unterkunft schafft Platz für 2 Bewohner. Beim Umbau bleiben drei Unterkünfte samt ihren 6 Bewohnern reserviert. Das fertige Lager beherbergt 9 Bewohner und fügt 3 hinzu."
+    }
+  ],
+  "civilization.craft": [
+    {
+      "type": 0,
+      "value": "Handwerk"
+    }
+  ],
+  "civilization.craftSpecialization": [
+    {
+      "type": 0,
+      "value": "Handwerksspezialisierung"
+    }
+  ],
+  "civilization.duration": [
+    {
+      "type": 0,
+      "value": "Zyklusdauer"
+    }
+  ],
+  "civilization.equip": [
+    {
+      "type": 0,
+      "value": "Arbeiter ausrüsten: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "civilization.equipConfirm": [
+    {
+      "type": 0,
+      "value": "Ausgeben: "
+    },
+    {
+      "type": 1,
+      "value": "tools"
+    },
+    {
+      "type": 0,
+      "value": " Werkzeuge und "
+    },
+    {
+      "type": 1,
+      "value": "clothing"
+    },
+    {
+      "type": 0,
+      "value": " Kleidung, um "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Arbeiter auszurüsten?"
+    }
+  ],
+  "civilization.equipmentAutomatic": [
+    {
+      "type": 0,
+      "value": "Jede Simulationsminute rüsten verfügbare Werkzeuge und Kleidung bis zu ein Viertel der Bewohner aus. Jede bleibende Ausrüstung kostet 2 Werkzeuge und 1 Kleidung."
+    }
+  ],
+  "civilization.equipmentEffect": [
+    {
+      "type": 0,
+      "value": "Jeder ausgerüstete Feldarbeiter leistet die Arbeit eines zusätzlichen Arbeiters."
+    }
+  ],
+  "civilization.equipmentEffectV4": [
+    {
+      "type": 0,
+      "value": "Jeder sinnvoll eingesetzte ausgerüstete Feldarbeiter trägt die Arbeitsleistung eines halben zusätzlichen Arbeiters bei."
+    }
+  ],
+  "civilization.equipmentStock": [
+    {
+      "type": 0,
+      "value": "Werkzeuge und Kleidung werden beim Ausrüsten verbraucht. Die Ausrüstung bleibt im Lager."
+    }
+  ],
+  "civilization.equipped": [
+    {
+      "type": 0,
+      "value": "Ausgerüstete Arbeiter"
+    }
+  ],
+  "civilization.era": [
+    {
+      "type": 0,
+      "value": "Zeitalter der Jäger und Sammler"
+    }
+  ],
+  "civilization.eraSettings": [
+    {
+      "type": 0,
+      "value": "Details der Jäger und Sammler"
+    }
+  ],
+  "civilization.establishedCamp": [
+    {
+      "type": 0,
+      "value": "Gefestigtes Lager"
+    }
+  ],
+  "civilization.exchangeNetworks": [
+    {
+      "type": 0,
+      "value": "Austauschnetzwerke"
+    }
+  ],
+  "civilization.exchangeRoutes": [
+    {
+      "type": 0,
+      "value": "Handelsrouten"
+    }
+  ],
+  "civilization.expeditions": [
+    {
+      "type": 0,
+      "value": "Expeditionen & Handel"
+    }
+  ],
+  "civilization.failed": [
+    {
+      "type": 0,
+      "value": "Aktion fehlgeschlagen. Erneut versuchen."
+    }
+  ],
+  "civilization.firstHunt": [
+    {
+      "type": 0,
+      "value": "Erste Jagd"
+    }
+  ],
+  "civilization.fishing": [
+    {
+      "type": 0,
+      "value": "Fischen"
+    }
+  ],
+  "civilization.focus": [
+    {
+      "type": 0,
+      "value": "Arbeitsfokus"
+    }
+  ],
+  "civilization.focusBalancedHelp": [
+    {
+      "type": 0,
+      "value": "Ausgewogen verteilt Arbeitskräfte auf verfügbare Aufgaben mit ihrem normalen Arbeitstempo."
+    }
+  ],
+  "civilization.focusEffect": [
+    {
+      "type": 0,
+      "value": "Mit dem Wachstum arbeiten mehr Menschen in diesem Bereich. Andere Bereiche behalten kleinere Gruppen."
+    }
+  ],
+  "civilization.focusEffectV4": [
+    {
+      "type": 0,
+      "value": "Der Schwerpunkt bevorzugt diesen Bereich und seine unterstützenden Gruppen. Unfinanzierte Aufgaben geben Arbeiter frei; bezahlte Zyklen behalten ihre Zutaten."
+    }
+  ],
+  "civilization.focusSelectedHelp": [
+    {
+      "type": 1,
+      "value": "primary"
+    },
+    {
+      "type": 0,
+      "value": " arbeiten mit dem "
+    },
+    {
+      "type": 1,
+      "value": "selectedRate"
+    },
+    {
+      "type": 0,
+      "value": "-fachen Tempo von Ausgewogen. Andere Aufgaben behalten ihr normales Tempo."
+    }
+  ],
+  "civilization.focusSupportedHelp": [
+    {
+      "type": 1,
+      "value": "primary"
+    },
+    {
+      "type": 0,
+      "value": " arbeiten mit dem "
+    },
+    {
+      "type": 1,
+      "value": "selectedRate"
+    },
+    {
+      "type": 0,
+      "value": "-fachen Tempo von Ausgewogen; "
+    },
+    {
+      "type": 1,
+      "value": "support"
+    },
+    {
+      "type": 0,
+      "value": " mit dem "
+    },
+    {
+      "type": 1,
+      "value": "supportRate"
+    },
+    {
+      "type": 0,
+      "value": "-fachen. Andere Aufgaben behalten ihr normales Tempo."
+    }
+  ],
+  "civilization.food": [
+    {
+      "type": 0,
+      "value": "Nahrung"
+    }
+  ],
+  "civilization.foodPreservation": [
+    {
+      "type": 0,
+      "value": "Nahrungskonservierung"
+    }
+  ],
+  "civilization.foragerGenerator": [
+    {
+      "type": 0,
+      "value": "Lager der Sammler"
+    }
+  ],
+  "civilization.fractureRule": [
+    {
+      "type": 0,
+      "value": "+5 % Simulationstempo pro frakturierter Fertigkeit. Boni sind additiv."
+    }
+  ],
+  "civilization.fractures": [
+    {
+      "type": 0,
+      "value": "Frakturbonus +"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "civilization.gathering": [
+    {
+      "type": 0,
+      "value": "Sammeln"
+    }
+  ],
+  "civilization.growthFocus": [
+    {
+      "type": 0,
+      "value": "Wachstum"
+    }
+  ],
+  "civilization.hides": [
+    {
+      "type": 0,
+      "value": "Felle"
+    }
+  ],
+  "civilization.hideworking": [
+    {
+      "type": 0,
+      "value": "Fellverarbeitung"
+    }
+  ],
+  "civilization.housing": [
+    {
+      "type": 0,
+      "value": "Wohnkapazität"
+    }
+  ],
+  "civilization.hunting": [
+    {
+      "type": 0,
+      "value": "Jagen"
+    }
+  ],
+  "civilization.inputs": [
+    {
+      "type": 0,
+      "value": "Kosten pro Zyklus"
+    }
+  ],
+  "civilization.legacyWorkHelp": [
+    {
+      "type": 0,
+      "value": "Ältere bezahlte Arbeitszyklen behalten bis zum Abschluss ihr ursprüngliches Tempo."
+    }
+  ],
+  "civilization.locked": [
+    {
+      "type": 0,
+      "value": "Benötigt "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "civilization.materials": [
+    {
+      "type": 0,
+      "value": "Materialien"
+    }
+  ],
+  "civilization.milestoneStep": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "target"
+    }
+  ],
+  "civilization.next": [
+    {
+      "type": 0,
+      "value": "Als Nächstes: "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "civilization.nextCatalyst": [
+    {
+      "type": 0,
+      "value": "Nächster Katalysator"
+    }
+  ],
+  "civilization.nextEra": [
+    {
+      "type": 0,
+      "value": "Als Nächstes: Anbau und Viehhaltung"
+    }
+  ],
+  "civilization.nodeBonus": [
+    {
+      "type": 0,
+      "value": "Nach der Frakturierung: +5 % gesamtes Simulationstempo. Boni sind additiv."
+    }
+  ],
+  "civilization.nodeBonusActive": [
+    {
+      "type": 0,
+      "value": "Frakturiert: +5 % gesamtes Simulationstempo. Boni sind additiv."
+    }
+  ],
+  "civilization.outputs": [
+    {
+      "type": 0,
+      "value": "Ertrag pro Zyklus"
+    }
+  ],
+  "civilization.paid": [
+    {
+      "type": 0,
+      "value": "Einsatz für diesen Zyklus reserviert"
+    }
+  ],
+  "civilization.phaseComplete": [
+    {
+      "type": 0,
+      "value": "Auftakt der Jäger und Sammler abgeschlossen"
+    }
+  ],
+  "civilization.preview": [
+    {
+      "type": 0,
+      "value": "Landwirtschaft folgt in einer späteren Phase. Deine Aktivitäten laufen weiter."
+    }
+  ],
+  "civilization.provisioning": [
+    {
+      "type": 0,
+      "value": "Versorgung"
+    }
+  ],
+  "civilization.provisions": [
+    {
+      "type": 0,
+      "value": "Vorräte"
+    }
+  ],
+  "civilization.recruitment": [
+    {
+      "type": 0,
+      "value": "Arbeiter bleiben im Lager. Jeder benötigt einen Wohnplatz."
+    }
+  ],
+  "civilization.seasonalExpeditions": [
+    {
+      "type": 0,
+      "value": "Saisonale Expeditionen"
+    }
+  ],
+  "civilization.settlement": [
+    {
+      "type": 0,
+      "value": "Siedlung"
+    }
+  ],
+  "civilization.shelterBuilding": [
+    {
+      "type": 0,
+      "value": "Unterkünfte bauen"
+    }
+  ],
+  "civilization.shelters": [
+    {
+      "type": 0,
+      "value": "Unterkünfte"
+    }
+  ],
+  "civilization.speed": [
+    {
+      "type": 0,
+      "value": "Fortschrittstempo"
+    }
+  ],
+  "civilization.suppliesFocus": [
+    {
+      "type": 0,
+      "value": "Vorräte"
+    }
+  ],
+  "civilization.toolmaking": [
+    {
+      "type": 0,
+      "value": "Werkzeugherstellung"
+    }
+  ],
+  "civilization.tools": [
+    {
+      "type": 0,
+      "value": "Werkzeuge"
+    }
+  ],
+  "civilization.tradeFocus": [
+    {
+      "type": 0,
+      "value": "Reisen"
+    }
+  ],
+  "civilization.unlock": [
+    {
+      "type": 0,
+      "value": "Benötigte Zyklen: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " von "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "civilization.upcoming": [
+    {
+      "type": 0,
+      "value": "Nächste Aktivitäten"
+    }
+  ],
+  "civilization.waiting": [
+    {
+      "type": 0,
+      "value": "Wartet"
+    }
+  ],
+  "civilization.waitingDemand": [
+    {
+      "type": 0,
+      "value": "Bedarf gedeckt; Arbeiter unterstützen andere Aufgaben, bis wieder Nachschub benötigt wird."
+    }
+  ],
+  "civilization.waitingHousing": [
+    {
+      "type": 0,
+      "value": "Wartet auf Wohnraum"
+    }
+  ],
+  "civilization.waitingInputs": [
+    {
+      "type": 0,
+      "value": "Wartet auf: "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "civilization.waitingRange": [
+    {
+      "type": 0,
+      "value": "Bestand kann die Produktion nicht aufnehmen"
+    }
+  ],
+  "civilization.waitingWorkers": [
+    {
+      "type": 0,
+      "value": "Warten auf Arbeiter"
+    }
+  ],
+  "civilization.workers": [
+    {
+      "type": 0,
+      "value": "Arbeiter"
+    }
+  ],
   "debug.access-description": [
     {
       "type": 0,
@@ -1334,7 +2004,7 @@
   "discovery.resetRule": [
     {
       "type": 0,
-      "value": "Bleibt bei Infinity und Quantum erhalten. Wird bei Transzendenz zurückgesetzt."
+      "value": "Bleibt durch Unendlichkeit erhalten. Wird bei Transzendenz zurückgesetzt."
     }
   ],
   "discovery.route": [
@@ -4371,6 +5041,634 @@
     {
       "type": 0,
       "value": "Bastle in deiner Garage"
+    }
+  ],
+  "farming.amount": [
+    {
+      "type": 1,
+      "value": "resource"
+    },
+    {
+      "type": 0,
+      "value": ": "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.automatic": [
+    {
+      "type": 0,
+      "value": "Vom Dorfplan automatisch errichtet."
+    }
+  ],
+  "farming.averageLabor": [
+    {
+      "type": 0,
+      "value": "Die Arbeit wird über die Zeit verteilt. Näherungswerte können Bruchteile enthalten; die Arbeiterzahl zählt ganze Personen."
+    }
+  ],
+  "farming.balanced": [
+    {
+      "type": 0,
+      "value": "Ausgewogen"
+    }
+  ],
+  "farming.begin": [
+    {
+      "type": 0,
+      "value": "Bauerndorf beginnen"
+    }
+  ],
+  "farming.boost": [
+    {
+      "type": 0,
+      "value": "Tatsächliche Frakturen: +"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "%"
+    }
+  ],
+  "farming.build": [
+    {
+      "type": 0,
+      "value": "Kornspeicher bauen"
+    }
+  ],
+  "farming.buy": [
+    {
+      "type": 0,
+      "value": "Kaufen"
+    }
+  ],
+  "farming.cap": [
+    {
+      "type": 0,
+      "value": "Das Lager ist voll; Felder pausieren, bis Nahrung verbraucht oder ein Kornspeicher gebaut wird."
+    }
+  ],
+  "farming.capacity": [
+    {
+      "type": 0,
+      "value": "Nahrungslager"
+    }
+  ],
+  "farming.closed": [
+    {
+      "type": 0,
+      "value": "Geschlossen"
+    }
+  ],
+  "farming.compactStorage": [
+    {
+      "type": 0,
+      "value": "160 Lager"
+    }
+  ],
+  "farming.complete": [
+    {
+      "type": 0,
+      "value": "Dorf gegründet"
+    }
+  ],
+  "farming.connection": [
+    {
+      "type": 0,
+      "value": "Handelsverbindungen"
+    }
+  ],
+  "farming.constructed": [
+    {
+      "type": 0,
+      "value": "Errichtete Verbesserungen"
+    }
+  ],
+  "farming.crew": [
+    {
+      "type": 0,
+      "value": "Durchschnittlich zugewiesene Arbeit"
+    }
+  ],
+  "farming.done": [
+    {
+      "type": 0,
+      "value": "Errichtet"
+    }
+  ],
+  "farming.era": [
+    {
+      "type": 0,
+      "value": "Bauerndörfer"
+    }
+  ],
+  "farming.export": [
+    {
+      "type": 1,
+      "value": "workers"
+    },
+    {
+      "type": 0,
+      "value": " verbleibende Arbeiter liefern "
+    },
+    {
+      "type": 1,
+      "value": "food"
+    },
+    {
+      "type": 0,
+      "value": " Nahrung und "
+    },
+    {
+      "type": 1,
+      "value": "materials"
+    },
+    {
+      "type": 0,
+      "value": " Materialien je Simulationsminute vor tatsächlichen Frakturboni. Alte Vorräte bleiben im Lager."
+    }
+  ],
+  "farming.failed": [
+    {
+      "type": 0,
+      "value": "Aktion fehlgeschlagen. Erneut versuchen."
+    }
+  ],
+  "farming.fields": [
+    {
+      "type": 0,
+      "value": "Felder"
+    }
+  ],
+  "farming.finish": [
+    {
+      "type": 0,
+      "value": "Dorf gründen"
+    }
+  ],
+  "farming.finished": [
+    {
+      "type": 0,
+      "value": "Sechs unterstützte Häuser und sechs Handelsverbindungen sind aufgebaut. Das Dorf ist abgeschlossen; das nächste Zeitalter ist noch nicht verfügbar."
+    }
+  ],
+  "farming.finite": [
+    {
+      "type": 0,
+      "value": "Errichtet; kein wiederholter Bauzyklus."
+    }
+  ],
+  "farming.firstHarvest": [
+    {
+      "type": 0,
+      "value": "Erste Feldernte"
+    }
+  ],
+  "farming.focus": [
+    {
+      "type": 0,
+      "value": "Arbeitsfokus"
+    }
+  ],
+  "farming.focusEffect": [
+    {
+      "type": 0,
+      "value": "Vorräte bevorzugt Lagerbestände mit wenig Unterhalt, erhöht aber Verwitterung. Wachstum bevorzugt Bau und Erholung. Reisen bevorzugt Lieferungen nach der Dorfhalle; vorher gilt ausgewogene Arbeit."
+    }
+  ],
+  "farming.fullFood": [
+    {
+      "type": 0,
+      "value": "Nahrung: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "capacity"
+    }
+  ],
+  "farming.goods": [
+    {
+      "type": 0,
+      "value": "Waren"
+    }
+  ],
+  "farming.granaries": [
+    {
+      "type": 0,
+      "value": "Kornspeicher"
+    }
+  ],
+  "farming.granary": [
+    {
+      "type": 0,
+      "value": "Kornspeicher"
+    }
+  ],
+  "farming.granaryDetails": [
+    {
+      "type": 0,
+      "value": "Kornspeicher: Kosten und Details"
+    }
+  ],
+  "farming.granaryEffect": [
+    {
+      "type": 0,
+      "value": "Jeder Kornspeicher bietet 160 zusätzliche Nahrungskapazität. Der manuelle Kauf ist sofort; ausstehende Reparaturen behalten ihre Material- und Werkzeugreserve."
+    }
+  ],
+  "farming.granaryFirstHome": [
+    {
+      "type": 0,
+      "value": "Nach dem ersten errichteten Haus verfügbar."
+    }
+  ],
+  "farming.granaryInactive": [
+    {
+      "type": 0,
+      "value": "Käufe sind geschlossen, während das Dorf bezahlte Arbeiten abschließt."
+    }
+  ],
+  "farming.granaryInputs": [
+    {
+      "type": 0,
+      "value": "Mehr Materialien oder Werkzeuge benötigt. Der Kauf erfolgt sofort."
+    }
+  ],
+  "farming.granaryMaximum": [
+    {
+      "type": 0,
+      "value": "Maximale Anzahl an Kornspeichern erreicht."
+    }
+  ],
+  "farming.granaryRepairReserve": [
+    {
+      "type": 0,
+      "value": "Materialien und Werkzeuge sind für eine anstehende Hausreparatur reserviert."
+    }
+  ],
+  "farming.growth": [
+    {
+      "type": 0,
+      "value": "Wachstum"
+    }
+  ],
+  "farming.hall": [
+    {
+      "type": 0,
+      "value": "Dorfhalle"
+    }
+  ],
+  "farming.hallNeeded": [
+    {
+      "type": 0,
+      "value": "Vier Häuser, Weide und Wasserversorgung"
+    }
+  ],
+  "farming.handoff": [
+    {
+      "type": 0,
+      "value": "Drei Gründer ziehen in ein neues Dorf. Das verbleibende Lager behält seine Vorräte und liefert Nahrung und Materialien. Bezahlte Arbeit endet vor dem Übergang."
+    }
+  ],
+  "farming.home": [
+    {
+      "type": 0,
+      "value": "Haus "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.homeEffect": [
+    {
+      "type": 0,
+      "value": "Jedes versorgte Haus bringt zwei Bewohner. Bei 100 Verwitterung entfällt seine Versorgung; Reparatur benötigt die ursprüngliche Material-, Werkzeug- und Arbeitsmenge."
+    }
+  ],
+  "farming.homes": [
+    {
+      "type": 0,
+      "value": "Häuser"
+    }
+  ],
+  "farming.homesCount": [
+    {
+      "type": 0,
+      "value": "Unterstützte Häuser"
+    }
+  ],
+  "farming.housingWeathering": [
+    {
+      "type": 0,
+      "value": "Wohnraumverwitterung"
+    }
+  ],
+  "farming.inputs": [
+    {
+      "type": 0,
+      "value": "Kosten pro Zyklus"
+    }
+  ],
+  "farming.kiln": [
+    {
+      "type": 0,
+      "value": "Brennofen"
+    }
+  ],
+  "farming.kilnNeeded": [
+    {
+      "type": 0,
+      "value": "Brennofen errichtet"
+    }
+  ],
+  "farming.limit": [
+    {
+      "type": 0,
+      "value": "Limit"
+    }
+  ],
+  "farming.locked": [
+    {
+      "type": 0,
+      "value": "Gesperrt"
+    }
+  ],
+  "farming.lost": [
+    {
+      "type": 0,
+      "value": "Ein Haus hat seine Versorgung verloren. Reparatur bringt seine Bewohner zurück; die Gründer bleiben."
+    }
+  ],
+  "farming.manual": [
+    {
+      "type": 0,
+      "value": "Baue einen Kornspeicher, um fortzufahren. Gespeicherte Zeit hält hier an und bewahrt den Rest des Vorrats."
+    }
+  ],
+  "farming.missingInputs": [
+    {
+      "type": 0,
+      "value": "Fehlt: "
+    },
+    {
+      "type": 1,
+      "value": "inputs"
+    }
+  ],
+  "farming.need": [
+    {
+      "type": 0,
+      "value": "Fehlt"
+    }
+  ],
+  "farming.needsInputs": [
+    {
+      "type": 0,
+      "value": "Fehlt"
+    }
+  ],
+  "farming.next": [
+    {
+      "type": 0,
+      "value": "Aktueller Plan: "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "farming.nextPrice": [
+    {
+      "type": 0,
+      "value": "Nächster Preis"
+    }
+  ],
+  "farming.oneGranary": [
+    {
+      "type": 0,
+      "value": "Ein Kornspeicher"
+    }
+  ],
+  "farming.outputs": [
+    {
+      "type": 0,
+      "value": "Ertrag pro Zyklus"
+    }
+  ],
+  "farming.owned": [
+    {
+      "type": 0,
+      "value": "Besitz: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.paid": [
+    {
+      "type": 0,
+      "value": "Zutaten sind bereits reserviert. Ein Schwerpunktwechsel verteilt Arbeit ohne erneute Zahlung."
+    }
+  ],
+  "farming.paidStatus": [
+    {
+      "type": 0,
+      "value": "Bezahlter Zyklus"
+    }
+  ],
+  "farming.pasture": [
+    {
+      "type": 0,
+      "value": "Weide"
+    }
+  ],
+  "farming.pendingFinish": [
+    {
+      "type": 0,
+      "value": "Bezahlte Dorfzyklen werden abgeschlossen."
+    }
+  ],
+  "farming.pendingSkill": [
+    {
+      "type": 0,
+      "value": "Dieser Meilenstein wartet auf eine verfügbare Fertigkeitsbaumwahl oder Platz im Katalysatorvorrat."
+    }
+  ],
+  "farming.production": [
+    {
+      "type": 0,
+      "value": "Produktion"
+    }
+  ],
+  "farming.repair": [
+    {
+      "type": 0,
+      "value": "Reparatur von Haus "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.reserved": [
+    {
+      "type": 0,
+      "value": "Reserviert"
+    }
+  ],
+  "farming.risk": [
+    {
+      "type": 0,
+      "value": "Wohnraum gefährdet"
+    }
+  ],
+  "farming.settings": [
+    {
+      "type": 0,
+      "value": "Dorfeinstellungen"
+    }
+  ],
+  "farming.settling": [
+    {
+      "type": 0,
+      "value": "Bezahlte Arbeiten des Sammlerlagers werden vor dem Dorfstart abgeschlossen."
+    }
+  ],
+  "farming.ship": [
+    {
+      "type": 0,
+      "value": "Handelslieferung"
+    }
+  ],
+  "farming.shop": [
+    {
+      "type": 0,
+      "value": "Käufe"
+    }
+  ],
+  "farming.skillLimit": [
+    {
+      "type": 0,
+      "value": "Eigene Frakturen für Bauerndörfer sind noch nicht entworfen. Diese sechs Meilensteine nutzen den bestehenden Katalysatorvorrat und verfügbare Fertigkeiten. Unverbrauchte Katalysatoren erhöhen das Tempo nicht."
+    }
+  ],
+  "farming.source": [
+    {
+      "type": 0,
+      "value": "Verbliebenes Sammlerlager"
+    }
+  ],
+  "farming.stage": [
+    {
+      "type": 0,
+      "value": "Dorffortschritt"
+    }
+  ],
+  "farming.storageGain": [
+    {
+      "type": 0,
+      "value": "+160 Nahrungslager pro Kauf · Gesamt: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.supplies": [
+    {
+      "type": 0,
+      "value": "Vorräte"
+    }
+  ],
+  "farming.travel": [
+    {
+      "type": 0,
+      "value": "Reisen"
+    }
+  ],
+  "farming.upcoming": [
+    {
+      "type": 0,
+      "value": "Noch nicht verfügbar"
+    }
+  ],
+  "farming.village": [
+    {
+      "type": 0,
+      "value": "Dorf"
+    }
+  ],
+  "farming.waiting": [
+    {
+      "type": 0,
+      "value": "Wartet auf nützlichen Bedarf oder genügend Zutaten."
+    }
+  ],
+  "farming.waterworks": [
+    {
+      "type": 0,
+      "value": "Wasserversorgung"
+    }
+  ],
+  "farming.weatherHelp": [
+    {
+      "type": 0,
+      "value": "Ausgewogen senkt Verwitterung um 1/min; Vorräte erhöht sie um 2/min; Wachstum senkt sie um 4/min; Reisen erhöht sie um 4/min. Wasserversorgung senkt Zuwächse um 40%. Bei 75 ist Wohnraum gefährdet; bei 100 verliert ein Haus Versorgung und Verwitterung fällt auf 40."
+    }
+  ],
+  "farming.weathering": [
+    {
+      "type": 0,
+      "value": "Verwitterung"
+    }
+  ],
+  "farming.woodlot": [
+    {
+      "type": 0,
+      "value": "Waldstück"
+    }
+  ],
+  "farming.work": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Arbeitersekunden"
+    }
+  ],
+  "farming.workers": [
+    {
+      "type": 0,
+      "value": "Arbeiter"
+    }
+  ],
+  "farming.workshop": [
+    {
+      "type": 0,
+      "value": "Werkstatt"
+    }
+  ],
+  "farming.yield": [
+    {
+      "type": 0,
+      "value": "Eine Lieferung kostet 350 Nahrung und 35 Waren und liefert 80 Materialien sowie eine Verbindung. Sechs Verbindungen schließen dieses Zeitalter ab."
     }
   ],
   "gameplay.notifications.continue": [
@@ -7933,6 +9231,154 @@
       "value": "Voreinstellungs-Schnellaktionen immer anzeigen"
     }
   ],
+  "rework.action.failed": [
+    {
+      "type": 0,
+      "value": "Die Änderung konnte nicht gespeichert werden. Versuche es erneut."
+    }
+  ],
+  "rework.cancel": [
+    {
+      "type": 0,
+      "value": "Abbrechen"
+    }
+  ],
+  "rework.challenges.completed": [
+    {
+      "type": 0,
+      "value": "Bisherige Abschlüsse: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "rework.challenges.history": [
+    {
+      "type": 0,
+      "value": "Verdiente Belohnungen und Abschlussrekorde bleiben erhalten."
+    }
+  ],
+  "rework.challenges.pending": [
+    {
+      "type": 0,
+      "value": "Die Herausforderungen werden überarbeitet."
+    }
+  ],
+  "rework.civilization": [
+    {
+      "type": 0,
+      "value": "Zivilisation"
+    }
+  ],
+  "rework.infinity.advanced": [
+    {
+      "type": 0,
+      "value": "Fortgeschrittene Verbesserungen"
+    }
+  ],
+  "rework.infinity.double-time.description": [
+    {
+      "type": 0,
+      "value": "Verdoppelt die Spielgeschwindigkeit."
+    }
+  ],
+  "rework.infinity.double-time.title": [
+    {
+      "type": 0,
+      "value": "Doppelte Zeit"
+    }
+  ],
+  "rework.infinity.regular": [
+    {
+      "type": 0,
+      "value": "Unendlichkeitsverbesserungen"
+    }
+  ],
+  "rework.migration.description": [
+    {
+      "type": 0,
+      "value": "Behalte gleichwertige Verbesserungen und Brüche oder erspiele die fortgeschrittenen Verbesserungen erneut. Ein Neustart entfernt Brüche und ihre Erweiterungen; Grundspiel, IP, Transzendenz, Entdeckung und Käufe bleiben."
+    }
+  ],
+  "rework.migration.fresh": [
+    {
+      "type": 0,
+      "value": "Verbesserungen erneut verdienen"
+    }
+  ],
+  "rework.migration.intro": [
+    {
+      "type": 0,
+      "value": "Ich baue den Fortschritt neu auf. Quantum, Reality und die alten Sims sind weg. Nützliche Upgrades sind jetzt in Infinity, und die Zivilisations-Sims verdienen nun Ressourcen für Katalysatoren."
+    }
+  ],
+  "rework.migration.keep": [
+    {
+      "type": 0,
+      "value": "Gleichwertigen Fortschritt behalten"
+    }
+  ],
+  "rework.migration.title": [
+    {
+      "type": 0,
+      "value": "Hey Leute, der Entwickler hier"
+    }
+  ],
+  "rework.simulations.details": [
+    {
+      "type": 0,
+      "value": "Mit Epochenressourcen kannst du Katalysatoren kaufen. Dauerhafte Brüche beschleunigen jede Zivilisation."
+    }
+  ],
+  "rework.simulations.pending": [
+    {
+      "type": 0,
+      "value": "Die Zivilisationsentwicklung kommt als Nächstes."
+    }
+  ],
+  "rework.transcend": [
+    {
+      "type": 0,
+      "value": "Transzendieren"
+    }
+  ],
+  "rework.transcend.balance": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Transzendenzpunkte"
+    }
+  ],
+  "rework.transcend.confirm": [
+    {
+      "type": 0,
+      "value": "Transzendenz bestätigen"
+    }
+  ],
+  "rework.transcend.confirmation": [
+    {
+      "type": 0,
+      "value": "Basisproduktion und Infinity-Upgrades für 1 Transzendenzpunkt zurücksetzen? Frakturen, Zivilisationsfortschritt und Discovery-Upgrades bleiben erhalten."
+    }
+  ],
+  "rework.transcend.threshold": [
+    {
+      "type": 0,
+      "value": "Erreiche "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Bots, um zu transzendieren."
+    }
+  ],
   "settings.achievements.action": [
     {
       "type": 0,
@@ -10684,7 +12130,7 @@
   "skills.node.androids.technical": [
     {
       "type": 0,
-      "value": "Solange der Skill Androiden zugewiesen ist, steigt sein Bonus über einen Zeitraum von 10 Minuten von 0 auf 200 Sekunden Paneel-Lebensdauer.\nDies wird bei Unendlichkeit/Quantensprung zurückgesetzt."
+      "value": "Solange Androiden zugewiesen ist, steigt der Bonus über 10 Minuten von 0 auf 200 Sekunden Panel-Lebensdauer.\nWird bei Unendlichkeit zurückgesetzt."
     }
   ],
   "skills.node.artificiallyEnhancedPanels.description": [
@@ -12124,7 +13570,7 @@
   "skills.node.superRadiantScattering.technical": [
     {
       "type": 0,
-      "value": "Erhöht die Produktion von Geld, Wissenschaft, Bots und allen Anlagen um 1% pro Sekunde, solange dieser Skill zugewiesen ist. Die Boni sind additiv. Lädt sich auch bei der Simulation gespeicherter Zeit auf und wird bei Unendlichkeit oder Quantensprung zurückgesetzt."
+      "value": "Erhöht Cash-, Wissenschafts-, Bot- und alle Anlagenproduktion pro zugewiesener Sekunde um 1 %. Boni sind additiv. Lädt während gespeicherter Zeit und wird bei Unendlichkeit zurückgesetzt."
     }
   ],
   "skills.node.superSwarm.description": [
@@ -12502,7 +13948,7 @@
   "skills.non-refundable-confirmation-warning": [
     {
       "type": 0,
-      "value": "Nicht erstattbare Fähigkeiten und ihre Voraussetzungen können erst nach einem Unendlichkeits- oder Quantum-Reset zurückerstattet werden. Fortfahren?"
+      "value": "Nicht erstattbare Fähigkeiten und ihre Voraussetzungen können erst nach einem Unendlichkeitsreset erstattet werden. Fortfahren?"
     }
   ],
   "skills.none": [
@@ -13100,7 +14546,7 @@
   "skills.srs.afterglow.effect": [
     {
       "type": 0,
-      "value": "Behalte bei Unendlichkeit 10% der SRS-Ladung, multipliziert mit Stellares Gedächtnis bis zu maximal 50%. Addiert sich zum Heißstart. Ein Quantensprung löscht die beibehaltene Ladung."
+      "value": "Behält 10 % der SRS-Ladung durch Unendlichkeit. Stellares Gedächtnis multipliziert dies auf bis zu 50 %. Addiert sich zum Heißstart."
     }
   ],
   "skills.srs.afterglow.name": [
@@ -13118,7 +14564,7 @@
   "skills.srs.deepExposure.effect": [
     {
       "type": 0,
-      "value": "Erhöht die SRS-Ladegeschwindigkeit pro zugewiesener Minute um 10%, bis zu 200% nach 20 Minuten. Stellares Gedächtnis multipliziert diese Boni. Wird bei Unendlichkeit oder Quantensprung zurückgesetzt. Boni sind additiv."
+      "value": "Erhöht die SRS-Ladegeschwindigkeit um 10 % pro zugewiesener Minute, bis zu 200 % nach 20 Minuten. Stellares Gedächtnis multipliziert diese Boni. Wird bei Unendlichkeit zurückgesetzt. Boni sind additiv."
     }
   ],
   "skills.srs.deepExposure.name": [
@@ -13208,7 +14654,7 @@
   "skills.srs.stellarMemory.effect": [
     {
       "type": 0,
-      "value": "Speichert bei einem Unendlichkeits- oder Quanten-Reset neu erzeugte SRS-Ladung, ohne Heißstart und Nachglühen. Solange zugewiesen, verstärkt es die Vorteile der SRS-Augmente um den Faktor 1 + 0,25 × log10(max(1, gespeicherte Sekunden))."
+      "value": "Speichert bei einem Unendlichkeitsreset neu erzeugte SRS-Ladung ohne Heißstart und Nachglühen. Solange zugewiesen, verstärkt es SRS-Erweiterungen um 1 + 0,25 × log10(max(1, gespeicherte Sekunden))."
     }
   ],
   "skills.srs.stellarMemory.name": [
@@ -13602,7 +15048,7 @@
   "skills.swarm.steadySupply.technical": [
     {
       "type": 0,
-      "value": "Behält bezahlte Anlagenkäufe durch Unendlichkeit. Vor dem Zurücksetzen zuweisen; die Käufe kehren automatisch zurück. Kostenlose Starteinheiten sammeln sich nicht an. Quantum leert den Vorrat."
+      "value": "Behält bezahlte Anlagenkäufe durch Unendlichkeit. Vor dem Reset zuweisen; Käufe kehren automatisch zurück. Gratis-Starteinheiten sammeln sich nicht an. Transzendenz löscht den Vorrat."
     }
   ],
   "skills.swarm.stellarSwarm.description": [
@@ -14376,7 +15822,7 @@
   "statistics.scope.quantum-run": [
     {
       "type": 0,
-      "value": "Aktueller Quantendurchlauf"
+      "value": "Aktueller Durchlauf"
     }
   ],
   "statistics.speedruns.boostedBest": [
@@ -15867,7 +17313,7 @@
   "wiki.discovery.resets": [
     {
       "type": 0,
-      "value": "Entdeckung bleibt bei "
+      "value": "Entdeckung bleibt durch "
     },
     {
       "type": 8,
@@ -15875,27 +17321,13 @@
       "children": [
         {
           "type": 0,
-          "value": "Infinity"
+          "value": "Unendlichkeit"
         }
       ]
     },
     {
       "type": 0,
-      "value": ", "
-    },
-    {
-      "type": 8,
-      "value": "quantum",
-      "children": [
-        {
-          "type": 0,
-          "value": "Quantum"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": " und Herausforderungen erhalten. "
+      "value": " erhalten. "
     },
     {
       "type": 8,
@@ -15909,7 +17341,7 @@
     },
     {
       "type": 0,
-      "value": " setzt Stufe und Fortschritt zurück; Freischaltung und dauerhafte Upgrades bleiben. Gespeicherte Zeit treibt Entdeckung beim Ausgeben voran. Abwesenheit wird als Zeit gespeichert, nicht automatisch auf Entdeckung angewandt."
+      "value": " setzt Stufe und Fortschritt zurück; Freischaltung und dauerhafte Verbesserungen bleiben. Ausgegebene gespeicherte Zeit treibt Entdeckung voran. Abwesenheit wird gespeichert und nicht automatisch auf Entdeckung angewandt."
     }
   ],
   "wiki.discovery.resets-title": [
@@ -16373,15 +17805,15 @@
   "wiki.infinity.secrets": [
     {
       "type": 0,
-      "value": "Nach einem "
+      "value": "In "
     },
     {
       "type": 8,
-      "value": "quantum",
+      "value": "infinity",
       "children": [
         {
           "type": 0,
-          "value": "Quantensprung"
+          "value": "Unendlichkeit"
         }
       ]
     },
@@ -16401,7 +17833,7 @@
     },
     {
       "type": 0,
-      "value": "-Upgrades Buchstabe für Buchstabe den Sinn des Lebens und gewähren einen dauerhaften verborgenen Produktionsbonus."
+      "value": "-Verbesserungen den Sinn des Lebens Buchstabe für Buchstabe und geben einen dauerhaften verborgenen Produktionsbonus."
     }
   ],
   "wiki.infinity.secrets-title": [
@@ -16825,7 +18257,7 @@
   "wiki.other.offline-results": [
     {
       "type": 0,
-      "value": "Ein abgeschlossener Lauf zeigt simulierte Dauer, verbleibende Bank, endgültige Genauigkeit und tatsächliche Aktualisierungszahl. Außerdem werden relevante Unendlichkeits-, Simulations- und Realitätsgewinne angezeigt. Anlagen- und Bot-Gewinne erscheinen nur, wenn keine Unendlichkeit stattfand, da Zurücksetzen und Wiederaufbau einen einfachen Vorher-Nachher-Vergleich irreführend machen würden."
+      "value": "Ein abgeschlossener Lauf zeigt simulierte Dauer, verbleibende gespeicherte Zeit, endgültige Genauigkeit und tatsächliche Aktualisierungszahl sowie Unendlichkeitsgewinne. Anlagen- und Bot-Gewinne erscheinen nur ohne Unendlichkeit, da Zurücksetzen und Wiederaufbau einen direkten Vergleich irreführend machen würden."
     }
   ],
   "wiki.other.offline-results-title": [
@@ -18387,7 +19819,7 @@
   "wiki.skills.auto-assign": [
     {
       "type": 0,
-      "value": "Du kannst einzelne Skills manuell in die automatische Zuweisung einbeziehen oder davon ausschließen. Der Baum merkt sich die Zuweisungsreihenfolge, sodass er dein Layout nach einer "
+      "value": "Du kannst einzelne Fähigkeiten manuell von der automatischen Zuweisung ein- oder ausschließen. Der Baum merkt sich die Reihenfolge, um dein Layout nach "
     },
     {
       "type": 8,
@@ -18401,21 +19833,7 @@
     },
     {
       "type": 0,
-      "value": " oder einer "
-    },
-    {
-      "type": 8,
-      "value": "value",
-      "children": [
-        {
-          "type": 0,
-          "value": "Quanten"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": "zurücksetzung wiederherstellen kann. Das Zurücksetzen des Baums leert die aktive Warteschlange der automatischen Zuweisung. Voreinstellungen speichern vollständige Layouts."
+      "value": " wiederherzustellen. Ein Baumreset leert die aktive Zuweisungswarteschlange. Voreinstellungen speichern vollständige Layouts."
     }
   ],
   "wiki.skills.auto-assign-title": [
@@ -18793,7 +20211,7 @@
     },
     {
       "type": 0,
-      "value": " kannst du in Avocato transzendieren, um frühere Ebenen zurückzusetzen und "
+      "value": " kannst du in Avocato transzendieren, frühere Ebenen zurücksetzen und "
     },
     {
       "type": 8,
@@ -18807,7 +20225,7 @@
     },
     {
       "type": 0,
-      "value": " zu erhalten. Gib einen Punkt für "
+      "value": " erhalten. Gib dort einen Punkt für "
     },
     {
       "type": 8,

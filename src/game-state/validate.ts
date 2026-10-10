@@ -1,3 +1,6 @@
+import { getGameAssetsByKind } from '../game-data/catalog'
+import { SKILL_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
+import { validateCivilization } from '../simulation/civilization'
 import { SKILL_PRESET_COUNT } from './skillPresetSlots'
 import { validateDiscovery } from '../simulation/discovery'
 import { validateCompletedTinkers } from '../simulation/tinkerGoalProgress'
@@ -27,8 +30,11 @@ export function validateCanonicalGameState(
   state: CanonicalGameStateV1,
 ): CanonicalValidationResult {
   const errors: string[] = []
+  const civilizationError = validateCivilization(state.civilization)
+  if (civilizationError) errors.push(civilizationError)
   const tinkerError = validateCompletedTinkers(state.dyson.completedTinkers)
   if (tinkerError) errors.push(tinkerError)
+  if (state.meta.reworkMigrationChoice !== undefined && state.meta.reworkMigrationChoice !== 'keep' && state.meta.reworkMigrationChoice !== 'fresh') errors.push('Invalid rework migration choice.')
   if (state.meta.firstQuantumComplete !== undefined && typeof state.meta.firstQuantumComplete !== 'boolean') errors.push('Invalid first Quantum milestone.')
   const discoveryError = validateDiscovery(state.discovery)
   if (discoveryError) errors.push(discoveryError)
@@ -47,6 +53,11 @@ export function validateCanonicalGameState(
   const challengeError = validateInfinityChallenges(state.challenges)
   if (challengeError) errors.push(challengeError)
   errors.push(...validateGalvanizedSkills(state))
+  if (state.challenges?.replacement?.active === 'lean-build') {
+    const cost = getGameAssetsByKind(SKILL_DEFINITION_ASSET_KIND).reduce((sum, asset) =>
+      sum + (state.skills.byId[asset.id]?.owned ? Number(asset.data.cost) : 0), 0)
+    if (cost > 4) errors.push('Lean Build cannot assign more than 4 SP.')
+  }
   for (const [id, skill] of Object.entries(state.skills.byId)) {
     if (skill.owned && isSubskill(id) && !isSubskillUnlocked(state, id)) errors.push(`Subskill '${id}' requires its galvanized base.`)
   }

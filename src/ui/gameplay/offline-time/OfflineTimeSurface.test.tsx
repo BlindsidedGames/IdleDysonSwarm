@@ -19,6 +19,7 @@ afterEach(async () => { cleanup(); localStorage.clear(); await Promise.all(activ
 async function harness(bank: number, capacity = 86400) {
   const hydrated = hydrateGameState(prepareIdb1Save(fixtureText).prepared)
   const candidate = structuredClone(hydrated.state)
+  Object.assign(candidate.meta, { reworkMigrationChoice: 'keep' })
   Object.assign(candidate, { timeline: { ...candidate.timeline, lastSuspendedAtLegacyText: null, storedTimeAvailableSeconds: bank, storedTimeCapacitySeconds: capacity, offlineBoost: { multiplier: 42 }, doubleTime: { ...candidate.timeline.doubleTime, unlocked: false } }, infinity: { ...candidate.infinity, automaticResetEnabled: false } })
   const prepared = dehydrateGameState(hydrated, candidate)
   const source = prepared.copyValidatedState(); source.cheater = false; source.idsLastActiveAtUtc = new Date(Date.UTC(2026, 9, 4)).toISOString()

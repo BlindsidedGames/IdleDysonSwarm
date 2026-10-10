@@ -1,12 +1,12 @@
-import { AVOCADO_MEDITATION_SKILL_POINT_REWARD } from './avocadoMeditation'
+import { ordinaryInfinityBotThreshold } from './infinityCycle'
+import { activeReworkChallenge, replacementSkillPoints, settleChallengeInfinity } from './reworkChallenges'
 import { initializeSwarmGrants, swarmGrantsAfterInfinity } from './swarmAugments'
-import { challengeFacilities, effectiveDivisions, infinityChallenges, isInfinityChallengeActive, isBlankSlateActive, isQuantumChallengeActive } from './infinityChallenges'
+import { challengeFacilities, infinityChallenges, isBlankSlateActive } from './infinityChallenges'
 import { hasCompletedQuantum } from './quantumMilestone'
 import { resetSrsAugments } from './srsAugments'
 import { MANUAL_LABOUR_AUGMENTS, SUBSKILL_ASSETS, isSubskill, isSubskillUnlocked } from './skillSubskills'
 import { isGalvanized, permanentSkillRuntime, permanentFragmentCount } from './galvanization'
 import { planSkillAutoAssignment } from './skillAutoAssignment'
-import { ordinaryInfinityBotThreshold } from './infinityCycle'
 import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import { getGameAsset } from '../game-data/catalog'
 import {
@@ -54,6 +54,7 @@ export interface CanonicalInfinityResetRequest {
 }
 
 export type CanonicalInfinityResetIssueCode =
+  | 'CHALLENGE_INFINITY_REQUIRED'
   | 'INFINITY_RESET_REQUEST_INVALID'
   | 'INFINITY_RESET_STATE_INVALID'
   | 'INFINITY_RESET_AUTO_ASSIGNMENT_INVALID'
@@ -150,6 +151,13 @@ export function applyCanonicalInfinityReset(
   const issues = validateResetInputs(state, request)
   if (issues.length > 0) return failed(state, issues)
 
+  const startedInChallenge = activeReworkChallenge(state) !== null
+  const completedBreakTarget = state.infinity.breakTarget
+  const singleInfinityChallenge = ['blank-slate', 'built-by-hand'].includes(activeReworkChallenge(state) ?? '')
+  if (singleInfinityChallenge && !request.restartOnly && (request.breakInfinity || state.dyson.bots < ordinaryInfinityBotThreshold(0n))) {
+    return failed(state, [{ code: 'CHALLENGE_INFINITY_REQUIRED', path: 'dyson.bots', detail: 'Complete an ordinary Infinity before finishing this challenge.' }])
+  }
+  if (!request.restartOnly) state = settleChallengeInfinity(state, request.requestedReward)
   const rulesResult = captureAutoAssignmentRules(
     state.skills.activeAutoAssignment,
     lookup,
@@ -158,28 +166,7 @@ export function applyCanonicalInfinityReset(
   if (!rulesResult.ok) return failed(state, rulesResult.issues)
 
   const challenge = infinityChallenges(state)
-  const completionKey = challenge.active === 'trial-and-error' ? 'trialAndErrorCompleted' : 'blankSlateCompleted'
-  const challengeWon = !request.restartOnly && isInfinityChallengeActive(state) &&
-    !request.breakInfinity && state.dyson.bots >= ordinaryInfinityBotThreshold(effectiveDivisions(state))
-  if (!request.restartOnly && isInfinityChallengeActive(state) && !challengeWon) {
-    return failed(state, [{ code: 'INFINITY_RESET_REQUEST_INVALID', path: 'request', detail: 'The challenge requires the ordinary Infinity boundary.' }])
-  }
-  if (challengeWon && !challenge[completionKey] && challenge.galvanizers >= DISCRETE_MAXIMUM) {
-    return failed(state, [{ code: 'INFINITY_RESET_STATE_INVALID', path: 'challenges.galvanizers', detail: 'Galvanizer balance is full.' }])
-  }
-  const nextChallenges = request.restartOnly ? challenge : {
-    ...challenge, unlocked: true,
-    ...(challengeWon ? {
-      active: null,
-      [completionKey]: true,
-      completionSeconds: {
-        ...challenge.completionSeconds,
-        [challenge.active!]: Math.min(challenge.completionSeconds?.[challenge.active!] ?? Infinity, state.infinity.lastCycleDurationSeconds),
-      },
-      hasEarnedGalvanizer: true,
-      galvanizers: challenge[completionKey] ? challenge.galvanizers : addDiscrete(challenge.galvanizers, 1n),
-    } : {}),
-  }
+  const nextChallenges = request.restartOnly ? challenge : { ...challenge, unlocked: true }
   const previousPoints = state.infinity.points
   const nextPoints = addDiscrete(
     previousPoints,
@@ -189,26 +176,18 @@ export function applyCanonicalInfinityReset(
   const bankedSkillPoints = request.restartOnly ? 0n :
     owned(state.skills.byId, 'banking') +
     owned(state.skills.byId, 'investmentPortfolio')
-  // Reality ownership survives challenges, but only the separate Avotation
-  // reward contributes to their starting points. Keep the supplied total raw
-  // so abandoning/completing a challenge can restore the full contribution.
-  const artifactSkillPoints = isQuantumChallengeActive(state)
-    ? (state.secretProgress.completed
-      ? (request.artifactSkillPoints < AVOCADO_MEDITATION_SKILL_POINT_REWARD
-        ? request.artifactSkillPoints : AVOCADO_MEDITATION_SKILL_POINT_REWARD)
-      : 0n)
-    : request.artifactSkillPoints
-  const initialSkillPoints = addDiscrete(
-    addDiscrete(
-      state.infinity.permanentSkillPoints,
-      bankedSkillPoints,
-    ),
-    artifactSkillPoints,
-  )
+  // Challenge starts use a fixed budget. After exit, restore the persistent
+  // shop/reward contribution, including newly earned replacement receipts.
+  const artifactSkillPoints = request.artifactSkillPoints > replacementSkillPoints(state.challenges)
+    ? request.artifactSkillPoints : replacementSkillPoints(state.challenges)
+  const activeChallenge = activeReworkChallenge(state)
+  const initialSkillPoints = activeChallenge
+    ? (activeChallenge === 'blank-slate' || activeChallenge === 'built-by-hand' ? 0n : activeChallenge === 'lean-build' ? 4n : 10n)
+    : addDiscrete(addDiscrete(state.infinity.permanentSkillPoints, bankedSkillPoints), artifactSkillPoints)
   const assignment = applyAutoAssignment(
     initialSkillPoints,
     state.skills.autoAssignNonRefundable,
-    request.restartOnly && isBlankSlateActive(state) ? [] : rulesResult.rules,
+    isBlankSlateActive(state) ? [] : rulesResult.rules,
     state,
   )
   const resetSkillStates = materializeResetSkillStates(
@@ -223,11 +202,11 @@ export function applyCanonicalInfinityReset(
     state.infinity.lastCycleDurationSeconds,
     request.automatic ?? false,
     request.breakInfinity
-      ? state.infinity.breakTarget
+      ? completedBreakTarget
       : rewardGranted,
     request.processingSource,
     request.activeIntervalMilliseconds,
-    state.infinity.activeAutomaticThroughputCycleEligible === true,
+    !startedInChallenge && state.infinity.activeAutomaticThroughputCycleEligible === true,
   )
 
   return {
@@ -244,14 +223,12 @@ export function applyCanonicalInfinityReset(
         ...state.dyson,
         money: 0,
         science: 0,
-        bots: state.infinity.retainedFacilities.assembly_lines
-          ? 10
-          : 1,
+        bots: activeChallenge ? 1 : state.infinity.retainedFacilities.assembly_lines ? 10 : 1,
         workers: 0,
         researchers: 0,
         facilities,
         totalPanelsDecayed: 0,
-        goalStage: 0n,
+        goalStage: activeChallenge === 'commitment-issues' && !request.restartOnly ? state.dyson.goalStage : 0n,
         ...(state.dyson.completedTinkers === undefined ? {} : { completedTinkers: 0 }),
       },
       infinity: {
@@ -286,9 +263,9 @@ export function applyCanonicalInfinityReset(
       skills: resetSrsAugments(state, {
         ...state.skills,
         swarmGrants: swarmGrantsAfterInfinity(state, request.restartOnly === true),
-        points: assignment.points,
-        fragments: assignment.fragments,
-        byId: resetSkillStates,
+        points: activeChallenge === 'commitment-issues' && !request.restartOnly ? state.skills.points : assignment.points,
+        fragments: activeChallenge === 'commitment-issues' && !request.restartOnly ? state.skills.fragments : assignment.fragments,
+        byId: activeChallenge === 'commitment-issues' && !request.restartOnly ? Object.fromEntries(Object.entries(state.skills.byId).map(([id, runtime]) => [id, { ...runtime, level: runtime.owned ? 1 : 0, timerSeconds: 0, secondaryTimerSeconds: 0 }])) : resetSkillStates,
       }, request.restartOnly === true),
       research: {
         ...state.research,
@@ -385,7 +362,7 @@ function validateResetInputs(
 function retainedFacilities(
   state: Readonly<CanonicalGameStateV1>,
 ): CanonicalGameStateV1['dyson']['facilities'] {
-  if (state.challenges?.active === 'hands-off') return { ...EMPTY_FACILITIES, assembly_lines: [1, 0] }
+  if (activeReworkChallenge(state)) return { ...EMPTY_FACILITIES, assembly_lines: activeReworkChallenge(state) === 'hands-off' ? [1,0] : [0,0] }
   return {
     ...EMPTY_FACILITIES,
     assembly_lines: [

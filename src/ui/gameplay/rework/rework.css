@@ -1,0 +1,58 @@
+.rework-surface {
+  min-block-size: 0;
+  block-size: 100%;
+  overflow-y: auto;
+  scrollbar-width: none;
+  padding: var(--game-card-content-inset);
+  color: var(--color-text-primary);
+}
+.rework-surface::-webkit-scrollbar { display: none; }
+.rework-card {
+  background: var(--theme-panel);
+  border: 1px solid var(--theme-divider);
+  border-radius: 0.3rem;
+  padding: var(--game-card-content-inset);
+  margin-block-end: var(--ui-section-gap);
+}
+.rework-card h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--ui-control-gap);
+  font-size: var(--ui-text-section-title);
+  margin-block: 0 var(--ui-related-copy-gap);
+}
+.rework-card p, .rework-migration p { margin-block: var(--ui-related-copy-gap); }
+.rework-card summary { cursor: pointer; padding-block: var(--ui-related-copy-gap); }
+.rework-actions { display: flex; flex-wrap: wrap; gap: var(--ui-control-gap); margin-block-start: var(--ui-card-gap); }
+.rework-migration-backdrop {
+  --theme-page: #1c1427; --theme-panel: #30244f;
+  --theme-selected: #483563; --theme-divider: #5b4674; --theme-accent: #d3c2ff;
+  --color-control: var(--theme-accent);
+  --color-control-hover: color-mix(in srgb, var(--theme-accent) 82%, white);
+  --color-control-pressed: color-mix(in srgb, var(--theme-accent) 90%, var(--theme-page));
+  position: fixed; inset: 0; z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+  padding: var(--ui-panel-inset); background: rgb(8 7 12 / 78%);
+}
+.rework-migration {
+  inline-size: min(36rem, 100%); max-block-size: calc(100dvh - 2rem);
+  overflow-y: auto; padding: var(--ui-panel-inset);
+  border: 1px solid var(--theme-divider); border-radius: 0.3rem;
+  background: var(--theme-panel); color: var(--color-text-primary);
+  font-family: var(--font-family-body);
+  font-size: var(--ui-text-body); line-height: 1.5;
+}
+.rework-migration h2 { margin-block: 0 var(--ui-section-gap); font-size: var(--ui-text-page-title); }
+.rework-migration .rework-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.rework-migration .ui-button, .rework-actions .ui-button {
+  border-color: var(--color-border); background-color: var(--theme-accent);
+  color: var(--theme-page); font-size: var(--ui-text-control); font-weight: var(--font-weight-bold);
+}
+.rework-migration .ui-button:not(:disabled):hover, .rework-actions .ui-button:not(:disabled):hover { background-color: color-mix(in srgb, var(--theme-accent) 82%, white); }
+.rework-migration .ui-button:not(:disabled):active, .rework-actions .ui-button:not(:disabled):active { background-color: color-mix(in srgb, var(--theme-accent) 90%, var(--theme-page)); }
+.rework-actions .ui-button:disabled { background: var(--theme-selected); color: var(--color-text-secondary); opacity: 1; }
+@media (forced-colors: none) {
+  .rework-migration .ui-button:not(:disabled), .rework-actions .ui-button:not(:disabled) { background-image: var(--ui-action-gradient); }
+}
+@media (max-width: 480px) { .rework-migration .rework-actions { grid-template-columns: minmax(0, 1fr); } }
+.rework-surface .discovery-surface { block-size: auto; padding: 0; overflow: visible; margin-block-end: var(--ui-section-gap); }

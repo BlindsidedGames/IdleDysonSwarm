@@ -23,7 +23,7 @@ const base = hydrateGameState(prepareIdb1Save(readFileSync(new URL('../../test/f
 const runtime = { owned: true, level: 1, timerSeconds: 0, secondaryTimerSeconds: 0 }
 function state() {
   return { ...base.state,
-    meta: { ...base.state.meta, firstInfinityComplete: true },
+    meta: { ...base.state.meta, firstInfinityComplete: true, reworkMigrationChoice: 'keep' as const },
     challenges: { unlocked: true, active: null, blankSlateCompleted: true, galvanizers: 5n, hasEarnedGalvanizer: true, galvanizedSkillIds: [] as readonly string[] },
     skills: { ...base.state.skills, points: 10n, byId: {}, activeAutoAssignment: [] },
   }
@@ -56,9 +56,9 @@ describe('permanent galvanized ownership', () => {
     expect(next.skills.points).toBe(12n)
     expect(next.skills.byId.androids.timerSeconds).toBe(37)
   })
-  test('requires the first challenge win, balance, and the normal reveal gate', () => {
+  test('allows the first Catalyst without a challenge win, but requires balance and the normal reveal gate', () => {
     const source = state()
-    expect(galvanizeCanonicalSkill({ ...source, challenges: { ...source.challenges, blankSlateCompleted: false } }, 'startHereTree').accepted).toBe(false)
+    expect(galvanizeCanonicalSkill({ ...source, challenges: { ...source.challenges, blankSlateCompleted: false } }, 'startHereTree').accepted).toBe(true)
     expect(galvanizeCanonicalSkill({ ...source, challenges: { ...source.challenges, galvanizers: 0n } }, 'startHereTree').accepted).toBe(false)
     expect(galvanizeCanonicalSkill({ ...source, quantum: { ...source.quantum, unlocks: { ...source.quantum.unlocks, stellar: false } } }, 'supernova').accepted).toBe(false)
   })
@@ -69,8 +69,8 @@ describe('permanent galvanized ownership', () => {
     for (const result of results) {
       expect(result.ok).toBe(true)
       if (!result.ok) continue
-      expect(result.state.skills.byId.androids.owned).toBe(true)
-      expect(result.state.skills.byId.androids.timerSeconds).toBe(0)
+      expect(result.state.skills.byId.androids?.owned === true).toBe(result.state.challenges?.replacement?.active !== 'blank-slate')
+      expect(result.state.skills.byId.androids?.timerSeconds ?? 0).toBe(0)
       expect(validateCanonicalGameState(result.state)).toEqual({ valid: true, errors: [] })
     }
   })
@@ -229,7 +229,11 @@ test.each(getGameAssetsByKind(SKILL_DEFINITION_ASSET_KIND).map(asset => asset.id
     for (const result of resets) {
       expect(result.ok).toBe(true)
       if (!result.ok) continue
-      expect(result.state.skills.byId[skillId]).toMatchObject({ owned: true, timerSeconds: 0, secondaryTimerSeconds: 0 })
+      if (result.state.challenges?.replacement?.active) {
+        expect(result.state.skills.byId[skillId]?.owned === true).toBe(false)
+        const restored = restartInfinityChallenge(result.state, 'abandon', 0n)
+        expect(restored.ok && restored.state.skills.byId[skillId]?.owned).toBe(true)
+      } else expect(result.state.skills.byId[skillId]).toMatchObject({ owned: true, timerSeconds: 0, secondaryTimerSeconds: 0 })
       expect(result.state.challenges?.galvanizedSkillIds).toContain(skillId)
       expect(validateCanonicalGameState(result.state)).toEqual({ valid: true, errors: [] })
       const derived = deriveBasicDysonState(result.state, base.compatibilityTuning,

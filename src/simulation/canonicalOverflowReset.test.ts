@@ -83,7 +83,7 @@ describe('Overflow reset ownership', () => {
     expect(next.research.progressById).toEqual({})
     expect(next.skills.byId).toEqual({})
     expect(next.skills.fragments).toBe(0n)
-    expect(next.skills.points).toBe(4n)
+    expect(next.skills.points).toBe(0n)
     expect(next.skills.presets).toEqual(source.skills.presets)
     expect(next.skills.activeAutoAssignment).toEqual(source.skills.activeAutoAssignment)
     expect(next.dyson.automation).toEqual(source.dyson.automation)

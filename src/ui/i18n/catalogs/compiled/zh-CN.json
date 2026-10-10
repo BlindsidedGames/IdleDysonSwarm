@@ -639,6 +639,676 @@
       "value": "查看挑战"
     }
   ],
+  "civilization.allocated": [
+    {
+      "type": 0,
+      "value": "已分配工人"
+    }
+  ],
+  "civilization.amount": [
+    {
+      "type": 1,
+      "value": "resource"
+    },
+    {
+      "type": 0,
+      "value": "："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "civilization.automaticAward": [
+    {
+      "type": 0,
+      "value": "完成所有要求后自动发放。"
+    }
+  ],
+  "civilization.available": [
+    {
+      "type": 0,
+      "value": "未分配 / 总数"
+    }
+  ],
+  "civilization.awarded": [
+    {
+      "type": 0,
+      "value": "已发放催化剂："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 3"
+    }
+  ],
+  "civilization.balanced": [
+    {
+      "type": 0,
+      "value": "均衡"
+    }
+  ],
+  "civilization.bootstrap": [
+    {
+      "type": 0,
+      "value": "家庭采集不需要原料或分配的工人。"
+    }
+  ],
+  "civilization.bootstrapV4": [
+    {
+      "type": 0,
+      "value": "三名创建者带着一套住所材料开始。采集需要真实的工作队，但不消耗原料。"
+    }
+  ],
+  "civilization.campExpansion": [
+    {
+      "type": 0,
+      "value": "营地扩建"
+    }
+  ],
+  "civilization.campProvisioning": [
+    {
+      "type": 0,
+      "value": "营地补给"
+    }
+  ],
+  "civilization.camps": [
+    {
+      "type": 0,
+      "value": "营地"
+    }
+  ],
+  "civilization.cancel": [
+    {
+      "type": 0,
+      "value": "取消"
+    }
+  ],
+  "civilization.catalysts": [
+    {
+      "type": 0,
+      "value": "催化剂"
+    }
+  ],
+  "civilization.clothing": [
+    {
+      "type": 0,
+      "value": "衣物"
+    }
+  ],
+  "civilization.completed": [
+    {
+      "type": 0,
+      "value": "已完成周期"
+    }
+  ],
+  "civilization.continuedDevelopment": [
+    {
+      "type": 0,
+      "value": "营地发展 "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "civilization.conversion": [
+    {
+      "type": 0,
+      "value": "每座住所容纳2名工人，每座营地容纳8名。三座住所合成一座营地。"
+    }
+  ],
+  "civilization.conversionV4": [
+    {
+      "type": 0,
+      "value": "每个住所增加2名居民。改建期间，三个住所及其6名居民保持预留。完工的营地容纳9名居民，净增加3名。"
+    }
+  ],
+  "civilization.craft": [
+    {
+      "type": 0,
+      "value": "工艺"
+    }
+  ],
+  "civilization.craftSpecialization": [
+    {
+      "type": 0,
+      "value": "工艺专精"
+    }
+  ],
+  "civilization.duration": [
+    {
+      "type": 0,
+      "value": "周期时长"
+    }
+  ],
+  "civilization.equip": [
+    {
+      "type": 0,
+      "value": "装备"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "名工人"
+    }
+  ],
+  "civilization.equipConfirm": [
+    {
+      "type": 0,
+      "value": "消耗"
+    },
+    {
+      "type": 1,
+      "value": "tools"
+    },
+    {
+      "type": 0,
+      "value": "工具和"
+    },
+    {
+      "type": 1,
+      "value": "clothing"
+    },
+    {
+      "type": 0,
+      "value": "衣物来装备"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "名工人？"
+    }
+  ],
+  "civilization.equipmentAutomatic": [
+    {
+      "type": 0,
+      "value": "每个模拟分钟，使用现有工具和衣物装备最多四分之一的居民。每套保留的装备消耗2份工具和1份衣物。"
+    }
+  ],
+  "civilization.equipmentEffect": [
+    {
+      "type": 0,
+      "value": "每名装备齐全的野外工人提供相当于一名额外工人的劳动。"
+    }
+  ],
+  "civilization.equipmentEffectV4": [
+    {
+      "type": 0,
+      "value": "每名有效参与野外工作的已装备工人额外贡献半名工人的劳动。"
+    }
+  ],
+  "civilization.equipmentStock": [
+    {
+      "type": 0,
+      "value": "装备工人会消耗工具和衣物。已安装的装备会保留在营地。"
+    }
+  ],
+  "civilization.equipped": [
+    {
+      "type": 0,
+      "value": "已装备工人"
+    }
+  ],
+  "civilization.era": [
+    {
+      "type": 0,
+      "value": "狩猎采集时代"
+    }
+  ],
+  "civilization.eraSettings": [
+    {
+      "type": 0,
+      "value": "采集时代详情"
+    }
+  ],
+  "civilization.establishedCamp": [
+    {
+      "type": 0,
+      "value": "稳固营地"
+    }
+  ],
+  "civilization.exchangeNetworks": [
+    {
+      "type": 0,
+      "value": "交换网络"
+    }
+  ],
+  "civilization.exchangeRoutes": [
+    {
+      "type": 0,
+      "value": "贸易路线"
+    }
+  ],
+  "civilization.expeditions": [
+    {
+      "type": 0,
+      "value": "远征与贸易"
+    }
+  ],
+  "civilization.failed": [
+    {
+      "type": 0,
+      "value": "操作失败，请重试。"
+    }
+  ],
+  "civilization.firstHunt": [
+    {
+      "type": 0,
+      "value": "首次狩猎"
+    }
+  ],
+  "civilization.fishing": [
+    {
+      "type": 0,
+      "value": "捕鱼"
+    }
+  ],
+  "civilization.focus": [
+    {
+      "type": 0,
+      "value": "劳动力重点"
+    }
+  ],
+  "civilization.focusBalancedHelp": [
+    {
+      "type": 0,
+      "value": "均衡模式让工人在可用任务之间分配，并以正常速率工作。"
+    }
+  ],
+  "civilization.focusEffect": [
+    {
+      "type": 0,
+      "value": "营地壮大时，更多工人会加入此路径。其他路径保留较小的队伍。"
+    }
+  ],
+  "civilization.focusEffectV4": [
+    {
+      "type": 0,
+      "value": "重心优先分配到此路线及其支援队伍。尚未备齐原料的工作释放工人；已付款的周期保留原料。"
+    }
+  ],
+  "civilization.focusSelectedHelp": [
+    {
+      "type": 1,
+      "value": "primary"
+    },
+    {
+      "type": 0,
+      "value": "以均衡模式的"
+    },
+    {
+      "type": 1,
+      "value": "selectedRate"
+    },
+    {
+      "type": 0,
+      "value": "倍速率工作。其他任务保持正常速率。"
+    }
+  ],
+  "civilization.focusSupportedHelp": [
+    {
+      "type": 1,
+      "value": "primary"
+    },
+    {
+      "type": 0,
+      "value": "以均衡模式的"
+    },
+    {
+      "type": 1,
+      "value": "selectedRate"
+    },
+    {
+      "type": 0,
+      "value": "倍速率工作；"
+    },
+    {
+      "type": 1,
+      "value": "support"
+    },
+    {
+      "type": 0,
+      "value": "以"
+    },
+    {
+      "type": 1,
+      "value": "supportRate"
+    },
+    {
+      "type": 0,
+      "value": "倍速率工作。其他任务保持正常速率。"
+    }
+  ],
+  "civilization.food": [
+    {
+      "type": 0,
+      "value": "食物"
+    }
+  ],
+  "civilization.foodPreservation": [
+    {
+      "type": 0,
+      "value": "食物保存"
+    }
+  ],
+  "civilization.foragerGenerator": [
+    {
+      "type": 0,
+      "value": "采集者营地"
+    }
+  ],
+  "civilization.fractureRule": [
+    {
+      "type": 0,
+      "value": "每个已破裂技能提供+5%模拟速度。加成相加。"
+    }
+  ],
+  "civilization.fractures": [
+    {
+      "type": 0,
+      "value": "断裂加成 +"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "civilization.gathering": [
+    {
+      "type": 0,
+      "value": "采集"
+    }
+  ],
+  "civilization.growthFocus": [
+    {
+      "type": 0,
+      "value": "发展"
+    }
+  ],
+  "civilization.hides": [
+    {
+      "type": 0,
+      "value": "兽皮"
+    }
+  ],
+  "civilization.hideworking": [
+    {
+      "type": 0,
+      "value": "兽皮加工"
+    }
+  ],
+  "civilization.housing": [
+    {
+      "type": 0,
+      "value": "住房容量"
+    }
+  ],
+  "civilization.hunting": [
+    {
+      "type": 0,
+      "value": "狩猎"
+    }
+  ],
+  "civilization.inputs": [
+    {
+      "type": 0,
+      "value": "每轮消耗"
+    }
+  ],
+  "civilization.legacyWorkHelp": [
+    {
+      "type": 0,
+      "value": "旧版中已支付的周期会保持原工作速率，直至完成。"
+    }
+  ],
+  "civilization.locked": [
+    {
+      "type": 0,
+      "value": "需要"
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "civilization.materials": [
+    {
+      "type": 0,
+      "value": "材料"
+    }
+  ],
+  "civilization.milestoneStep": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "target"
+    }
+  ],
+  "civilization.next": [
+    {
+      "type": 0,
+      "value": "下一项："
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "civilization.nextCatalyst": [
+    {
+      "type": 0,
+      "value": "下一个催化剂"
+    }
+  ],
+  "civilization.nextEra": [
+    {
+      "type": 0,
+      "value": "下一项：种植与放牧"
+    }
+  ],
+  "civilization.nodeBonus": [
+    {
+      "type": 0,
+      "value": "破裂后：总体模拟速度+5%。加成相加。"
+    }
+  ],
+  "civilization.nodeBonusActive": [
+    {
+      "type": 0,
+      "value": "已破裂：总体模拟速度+5%。加成相加。"
+    }
+  ],
+  "civilization.outputs": [
+    {
+      "type": 0,
+      "value": "每轮产出"
+    }
+  ],
+  "civilization.paid": [
+    {
+      "type": 0,
+      "value": "本周期的原料已预留"
+    }
+  ],
+  "civilization.phaseComplete": [
+    {
+      "type": 0,
+      "value": "狩猎采集时代的初始阶段已完成"
+    }
+  ],
+  "civilization.preview": [
+    {
+      "type": 0,
+      "value": "农业将在后续阶段继续展开。现有活动会持续运行。"
+    }
+  ],
+  "civilization.provisioning": [
+    {
+      "type": 0,
+      "value": "补给"
+    }
+  ],
+  "civilization.provisions": [
+    {
+      "type": 0,
+      "value": "干粮"
+    }
+  ],
+  "civilization.recruitment": [
+    {
+      "type": 0,
+      "value": "工人会留在营地，每人需要一个住房位置。"
+    }
+  ],
+  "civilization.seasonalExpeditions": [
+    {
+      "type": 0,
+      "value": "季节性远征"
+    }
+  ],
+  "civilization.settlement": [
+    {
+      "type": 0,
+      "value": "定居"
+    }
+  ],
+  "civilization.shelterBuilding": [
+    {
+      "type": 0,
+      "value": "建造庇护所"
+    }
+  ],
+  "civilization.shelters": [
+    {
+      "type": 0,
+      "value": "住所"
+    }
+  ],
+  "civilization.speed": [
+    {
+      "type": 0,
+      "value": "进度速度"
+    }
+  ],
+  "civilization.suppliesFocus": [
+    {
+      "type": 0,
+      "value": "物资"
+    }
+  ],
+  "civilization.toolmaking": [
+    {
+      "type": 0,
+      "value": "工具制作"
+    }
+  ],
+  "civilization.tools": [
+    {
+      "type": 0,
+      "value": "工具"
+    }
+  ],
+  "civilization.tradeFocus": [
+    {
+      "type": 0,
+      "value": "远行"
+    }
+  ],
+  "civilization.unlock": [
+    {
+      "type": 0,
+      "value": "所需周期："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "，活动："
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "civilization.upcoming": [
+    {
+      "type": 0,
+      "value": "后续活动"
+    }
+  ],
+  "civilization.waiting": [
+    {
+      "type": 0,
+      "value": "等待中"
+    }
+  ],
+  "civilization.waitingDemand": [
+    {
+      "type": 0,
+      "value": "需求已满足；工人暂时支援其他工作，直到需要更多产出。"
+    }
+  ],
+  "civilization.waitingHousing": [
+    {
+      "type": 0,
+      "value": "等待住房"
+    }
+  ],
+  "civilization.waitingInputs": [
+    {
+      "type": 0,
+      "value": "等待："
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "civilization.waitingRange": [
+    {
+      "type": 0,
+      "value": "库存无法接收产出"
+    }
+  ],
+  "civilization.waitingWorkers": [
+    {
+      "type": 0,
+      "value": "等待工人"
+    }
+  ],
+  "civilization.workers": [
+    {
+      "type": 0,
+      "value": "工人"
+    }
+  ],
   "debug.access-description": [
     {
       "type": 0,
@@ -1334,7 +2004,7 @@
   "discovery.resetRule": [
     {
       "type": 0,
-      "value": "在无限和量子重置后保留。超越时重置。"
+      "value": "无限后保留。超越时重置。"
     }
   ],
   "discovery.route": [
@@ -4371,6 +5041,634 @@
     {
       "type": 0,
       "value": "在车库里手工组装"
+    }
+  ],
+  "farming.amount": [
+    {
+      "type": 1,
+      "value": "resource"
+    },
+    {
+      "type": 0,
+      "value": "："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.automatic": [
+    {
+      "type": 0,
+      "value": "由村庄计划自动建造。"
+    }
+  ],
+  "farming.averageLabor": [
+    {
+      "type": 0,
+      "value": "劳动按时间分配。近似平均值可能含有小数；工人总数统计完整的人数。"
+    }
+  ],
+  "farming.balanced": [
+    {
+      "type": 0,
+      "value": "均衡"
+    }
+  ],
+  "farming.begin": [
+    {
+      "type": 0,
+      "value": "建立农业村落"
+    }
+  ],
+  "farming.boost": [
+    {
+      "type": 0,
+      "value": "实际裂变：+"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "%"
+    }
+  ],
+  "farming.build": [
+    {
+      "type": 0,
+      "value": "建造粮仓"
+    }
+  ],
+  "farming.buy": [
+    {
+      "type": 0,
+      "value": "购买"
+    }
+  ],
+  "farming.cap": [
+    {
+      "type": 0,
+      "value": "储存已满；农田将暂停，直到消耗食物或建造粮仓。"
+    }
+  ],
+  "farming.capacity": [
+    {
+      "type": 0,
+      "value": "食物储存"
+    }
+  ],
+  "farming.closed": [
+    {
+      "type": 0,
+      "value": "关闭"
+    }
+  ],
+  "farming.compactStorage": [
+    {
+      "type": 0,
+      "value": "160储存"
+    }
+  ],
+  "farming.complete": [
+    {
+      "type": 0,
+      "value": "村落已建立"
+    }
+  ],
+  "farming.connection": [
+    {
+      "type": 0,
+      "value": "贸易联系"
+    }
+  ],
+  "farming.constructed": [
+    {
+      "type": 0,
+      "value": "已建成的升级"
+    }
+  ],
+  "farming.crew": [
+    {
+      "type": 0,
+      "value": "平均分配劳动力"
+    }
+  ],
+  "farming.done": [
+    {
+      "type": 0,
+      "value": "已建成"
+    }
+  ],
+  "farming.era": [
+    {
+      "type": 0,
+      "value": "农业村落"
+    }
+  ],
+  "farming.export": [
+    {
+      "type": 1,
+      "value": "workers"
+    },
+    {
+      "type": 0,
+      "value": "名留守工人每模拟分钟输出"
+    },
+    {
+      "type": 1,
+      "value": "food"
+    },
+    {
+      "type": 0,
+      "value": "食物和"
+    },
+    {
+      "type": 1,
+      "value": "materials"
+    },
+    {
+      "type": 0,
+      "value": "材料，尚未计算实际裂变加成。原有库存保留在营地。"
+    }
+  ],
+  "farming.failed": [
+    {
+      "type": 0,
+      "value": "操作失败，请重试。"
+    }
+  ],
+  "farming.fields": [
+    {
+      "type": 0,
+      "value": "农田"
+    }
+  ],
+  "farming.finish": [
+    {
+      "type": 0,
+      "value": "完成村落建设"
+    }
+  ],
+  "farming.finished": [
+    {
+      "type": 0,
+      "value": "六座有供养的房屋和六条贸易联系已建立。村落已完成；下一时代尚未开放。"
+    }
+  ],
+  "farming.finite": [
+    {
+      "type": 0,
+      "value": "已建成；不进行重复建设周期。"
+    }
+  ],
+  "farming.firstHarvest": [
+    {
+      "type": 0,
+      "value": "首次收获"
+    }
+  ],
+  "farming.focus": [
+    {
+      "type": 0,
+      "value": "劳动力重点"
+    }
+  ],
+  "farming.focusEffect": [
+    {
+      "type": 0,
+      "value": "补给以较低维护开销优先积累库存，但会增加风化。成长优先建设和修复。远行在村会堂完成后优先运输；此前使用均衡劳动力分配。"
+    }
+  ],
+  "farming.fullFood": [
+    {
+      "type": 0,
+      "value": "食物："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "capacity"
+    }
+  ],
+  "farming.goods": [
+    {
+      "type": 0,
+      "value": "货物"
+    }
+  ],
+  "farming.granaries": [
+    {
+      "type": 0,
+      "value": "粮仓"
+    }
+  ],
+  "farming.granary": [
+    {
+      "type": 0,
+      "value": "粮仓"
+    }
+  ],
+  "farming.granaryDetails": [
+    {
+      "type": 0,
+      "value": "粮仓成本与详情"
+    }
+  ],
+  "farming.granaryEffect": [
+    {
+      "type": 0,
+      "value": "每座粮仓增加160食物容量。这是即时手动购买；待修复房屋的材料和工具储备会被保留。"
+    }
+  ],
+  "farming.granaryFirstHome": [
+    {
+      "type": 0,
+      "value": "第一座房屋建成后可用。"
+    }
+  ],
+  "farming.granaryInactive": [
+    {
+      "type": 0,
+      "value": "村庄完成已支付的工作期间暂停购买。"
+    }
+  ],
+  "farming.granaryInputs": [
+    {
+      "type": 0,
+      "value": "需要更多材料或工具。购买立即生效。"
+    }
+  ],
+  "farming.granaryMaximum": [
+    {
+      "type": 0,
+      "value": "粮仓数量已达上限。"
+    }
+  ],
+  "farming.granaryRepairReserve": [
+    {
+      "type": 0,
+      "value": "材料和工具已为待修复的房屋预留。"
+    }
+  ],
+  "farming.growth": [
+    {
+      "type": 0,
+      "value": "发展"
+    }
+  ],
+  "farming.hall": [
+    {
+      "type": 0,
+      "value": "村会堂"
+    }
+  ],
+  "farming.hallNeeded": [
+    {
+      "type": 0,
+      "value": "四座房屋、牧场和水利设施"
+    }
+  ],
+  "farming.handoff": [
+    {
+      "type": 0,
+      "value": "三名奠基者进入新村落。留下的营地保留原有库存，并输出食物和材料。已支付的工作会在交接前完成。"
+    }
+  ],
+  "farming.home": [
+    {
+      "type": 0,
+      "value": "房屋 "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.homeEffect": [
+    {
+      "type": 0,
+      "value": "每座有供养的房屋增加两名居民。风化达到100时失去供养；修复需要原有的材料、工具和劳动量。"
+    }
+  ],
+  "farming.homes": [
+    {
+      "type": 0,
+      "value": "房屋"
+    }
+  ],
+  "farming.homesCount": [
+    {
+      "type": 0,
+      "value": "有供养的房屋"
+    }
+  ],
+  "farming.housingWeathering": [
+    {
+      "type": 0,
+      "value": "房屋损耗"
+    }
+  ],
+  "farming.inputs": [
+    {
+      "type": 0,
+      "value": "每轮消耗"
+    }
+  ],
+  "farming.kiln": [
+    {
+      "type": 0,
+      "value": "窑炉"
+    }
+  ],
+  "farming.kilnNeeded": [
+    {
+      "type": 0,
+      "value": "窑炉已建成"
+    }
+  ],
+  "farming.limit": [
+    {
+      "type": 0,
+      "value": "上限"
+    }
+  ],
+  "farming.locked": [
+    {
+      "type": 0,
+      "value": "锁定"
+    }
+  ],
+  "farming.lost": [
+    {
+      "type": 0,
+      "value": "一座房屋失去供养。修复后居民会返回；奠基者始终保留。"
+    }
+  ],
+  "farming.manual": [
+    {
+      "type": 0,
+      "value": "建造粮仓以继续。储存时间会在此停止，保留剩余余额。"
+    }
+  ],
+  "farming.missingInputs": [
+    {
+      "type": 0,
+      "value": "缺少："
+    },
+    {
+      "type": 1,
+      "value": "inputs"
+    }
+  ],
+  "farming.need": [
+    {
+      "type": 0,
+      "value": "还需"
+    }
+  ],
+  "farming.needsInputs": [
+    {
+      "type": 0,
+      "value": "缺少投入"
+    }
+  ],
+  "farming.next": [
+    {
+      "type": 0,
+      "value": "当前计划："
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "farming.nextPrice": [
+    {
+      "type": 0,
+      "value": "下次价格"
+    }
+  ],
+  "farming.oneGranary": [
+    {
+      "type": 0,
+      "value": "一座粮仓"
+    }
+  ],
+  "farming.outputs": [
+    {
+      "type": 0,
+      "value": "每轮产出"
+    }
+  ],
+  "farming.owned": [
+    {
+      "type": 0,
+      "value": "已拥有："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.paid": [
+    {
+      "type": 0,
+      "value": "投入已经预留。更改重点会重新分配劳动力，不会再次收费。"
+    }
+  ],
+  "farming.paidStatus": [
+    {
+      "type": 0,
+      "value": "已支付的周期"
+    }
+  ],
+  "farming.pasture": [
+    {
+      "type": 0,
+      "value": "牧场"
+    }
+  ],
+  "farming.pendingFinish": [
+    {
+      "type": 0,
+      "value": "正在完成村落已支付的生产周期。"
+    }
+  ],
+  "farming.pendingSkill": [
+    {
+      "type": 0,
+      "value": "此里程碑正在等待现有技能树中符合条件的选项，或催化剂余额腾出空间。"
+    }
+  ],
+  "farming.production": [
+    {
+      "type": 0,
+      "value": "生产"
+    }
+  ],
+  "farming.repair": [
+    {
+      "type": 0,
+      "value": "修复房屋 "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.reserved": [
+    {
+      "type": 0,
+      "value": "已预留"
+    }
+  ],
+  "farming.risk": [
+    {
+      "type": 0,
+      "value": "住房面临风险"
+    }
+  ],
+  "farming.settings": [
+    {
+      "type": 0,
+      "value": "村落设置"
+    }
+  ],
+  "farming.settling": [
+    {
+      "type": 0,
+      "value": "正在完成采集营地已支付的工作，随后开始村落建设。"
+    }
+  ],
+  "farming.ship": [
+    {
+      "type": 0,
+      "value": "贸易运输"
+    }
+  ],
+  "farming.shop": [
+    {
+      "type": 0,
+      "value": "购买"
+    }
+  ],
+  "farming.skillLimit": [
+    {
+      "type": 0,
+      "value": "农业村落专属裂变尚未设计。这六个里程碑使用现有催化剂余额和现有符合条件的技能树选项。未使用的催化剂不会加速。"
+    }
+  ],
+  "farming.source": [
+    {
+      "type": 0,
+      "value": "保留的采集营地"
+    }
+  ],
+  "farming.stage": [
+    {
+      "type": 0,
+      "value": "村落进度"
+    }
+  ],
+  "farming.storageGain": [
+    {
+      "type": 0,
+      "value": "每次购买增加160食物储存 · 总计："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.supplies": [
+    {
+      "type": 0,
+      "value": "物资"
+    }
+  ],
+  "farming.travel": [
+    {
+      "type": 0,
+      "value": "远行"
+    }
+  ],
+  "farming.upcoming": [
+    {
+      "type": 0,
+      "value": "尚未开放"
+    }
+  ],
+  "farming.village": [
+    {
+      "type": 0,
+      "value": "村落"
+    }
+  ],
+  "farming.waiting": [
+    {
+      "type": 0,
+      "value": "等待有效需求或足够投入。"
+    }
+  ],
+  "farming.waterworks": [
+    {
+      "type": 0,
+      "value": "水利设施"
+    }
+  ],
+  "farming.weatherHelp": [
+    {
+      "type": 0,
+      "value": "均衡每分钟减少1风化；补给增加2；成长减少4；远行增加4。水利设施降低40%的增长。达到75时住房面临风险；达到100时一座房屋失去供养，风化重置为40。"
+    }
+  ],
+  "farming.weathering": [
+    {
+      "type": 0,
+      "value": "风化"
+    }
+  ],
+  "farming.woodlot": [
+    {
+      "type": 0,
+      "value": "林地"
+    }
+  ],
+  "farming.work": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " 工人秒"
+    }
+  ],
+  "farming.workers": [
+    {
+      "type": 0,
+      "value": "工人"
+    }
+  ],
+  "farming.workshop": [
+    {
+      "type": 0,
+      "value": "工坊"
+    }
+  ],
+  "farming.yield": [
+    {
+      "type": 0,
+      "value": "每次运输消耗350食物和35货物，返回80材料并建立一条贸易联系。六条联系完成本时代。"
     }
   ],
   "gameplay.notifications.continue": [
@@ -7933,6 +9231,154 @@
       "value": "始终显示预设快捷操作"
     }
   ],
+  "rework.action.failed": [
+    {
+      "type": 0,
+      "value": "无法保存更改。请重试。"
+    }
+  ],
+  "rework.cancel": [
+    {
+      "type": 0,
+      "value": "取消"
+    }
+  ],
+  "rework.challenges.completed": [
+    {
+      "type": 0,
+      "value": "此前完成次数："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "rework.challenges.history": [
+    {
+      "type": 0,
+      "value": "已获得的奖励和完成记录将保留。"
+    }
+  ],
+  "rework.challenges.pending": [
+    {
+      "type": 0,
+      "value": "挑战正在重新设计。"
+    }
+  ],
+  "rework.civilization": [
+    {
+      "type": 0,
+      "value": "文明"
+    }
+  ],
+  "rework.infinity.advanced": [
+    {
+      "type": 0,
+      "value": "高级升级"
+    }
+  ],
+  "rework.infinity.double-time.description": [
+    {
+      "type": 0,
+      "value": "游戏速度翻倍。"
+    }
+  ],
+  "rework.infinity.double-time.title": [
+    {
+      "type": 0,
+      "value": "双倍时间"
+    }
+  ],
+  "rework.infinity.regular": [
+    {
+      "type": 0,
+      "value": "无限升级"
+    }
+  ],
+  "rework.migration.description": [
+    {
+      "type": 0,
+      "value": "选择保留等效升级和裂解，或重新获得高级升级。重新开始会移除裂解及其强化；基础游戏、IP、超越、探索和购买项目均保留。"
+    }
+  ],
+  "rework.migration.fresh": [
+    {
+      "type": 0,
+      "value": "重新获得升级"
+    }
+  ],
+  "rework.migration.intro": [
+    {
+      "type": 0,
+      "value": "我正在重建进度系统。Quantum、Reality 和旧 Sims 已移除。有用的升级现已移至 Infinity，文明 Sims 现在会产出用于购买催化剂的资源。"
+    }
+  ],
+  "rework.migration.keep": [
+    {
+      "type": 0,
+      "value": "保留等效进度"
+    }
+  ],
+  "rework.migration.title": [
+    {
+      "type": 0,
+      "value": "大家好，我是开发者"
+    }
+  ],
+  "rework.simulations.details": [
+    {
+      "type": 0,
+      "value": "时代资源将用于购买催化剂。永久裂变将加速每个文明的发展。"
+    }
+  ],
+  "rework.simulations.pending": [
+    {
+      "type": 0,
+      "value": "文明进程即将推出。"
+    }
+  ],
+  "rework.transcend": [
+    {
+      "type": 0,
+      "value": "超越"
+    }
+  ],
+  "rework.transcend.balance": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " 超越点数"
+    }
+  ],
+  "rework.transcend.confirm": [
+    {
+      "type": 0,
+      "value": "确认超越"
+    }
+  ],
+  "rework.transcend.confirmation": [
+    {
+      "type": 0,
+      "value": "重置基础生产和 Infinity 升级以获得 1 超越点？裂化、文明进度和 Discovery 升级保留。"
+    }
+  ],
+  "rework.transcend.threshold": [
+    {
+      "type": 0,
+      "value": "达到 "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " 机器人即可超越。"
+    }
+  ],
   "settings.achievements.action": [
     {
       "type": 0,
@@ -10684,7 +12130,7 @@
   "skills.node.androids.technical": [
     {
       "type": 0,
-      "value": "分配“仿生人”技能期间，其面板寿命加成会在 10 分钟内从 0 秒逐渐提高至 200 秒。\n无限/量子跃迁时重置。"
+      "value": "分配安卓技能期间，其加成在 10 分钟内从 0 增长至 200 秒的面板寿命。\n无限时重置。"
     }
   ],
   "skills.node.artificiallyEnhancedPanels.description": [
@@ -12124,7 +13570,7 @@
   "skills.node.superRadiantScattering.technical": [
     {
       "type": 0,
-      "value": "分配此技能期间，每秒使现金、科学、机器人和所有设施的产量提高1%。加成为加法叠加。在储存时间模拟期间也会累积，并在无限或量子跃迁时重置。"
+      "value": "分配期间每秒使现金、科学、机器人和所有设施产量提高 1%。加成为加法叠加。储存时间模拟期间充能，无限时重置。"
     }
   ],
   "skills.node.superSwarm.description": [
@@ -12502,7 +13948,7 @@
   "skills.non-refundable-confirmation-warning": [
     {
       "type": 0,
-      "value": "不可退还的技能及其前置技能必须等到无限或量子重置后才能退还。继续？"
+      "value": "不可退款技能及其前置路径必须等到无限重置后才能退款。继续？"
     }
   ],
   "skills.none": [
@@ -13100,7 +14546,7 @@
   "skills.srs.afterglow.effect": [
     {
       "type": 0,
-      "value": "无限时保留10%的SRS充能，经星辰记忆倍增后最多保留50%。与热启动叠加。量子跃迁会清除保留的充能。"
+      "value": "无限重置时保留 10% 的 SRS 充能，星际记忆可将保留比例提升至 50%。与热启动叠加。"
     }
   ],
   "skills.srs.afterglow.name": [
@@ -13118,7 +14564,7 @@
   "skills.srs.deepExposure.effect": [
     {
       "type": 0,
-      "value": "此增幅分配期间，每分钟提高10%的SRS充能速度，20分钟后达到200%。星辰记忆会倍增这些加成。无限或量子跃迁时重置。加成为加法叠加。"
+      "value": "每分配一分钟，SRS 充能速度提高 10%，20 分钟后最高为 200%。星际记忆会放大这些加成。无限时重置。加成为加法叠加。"
     }
   ],
   "skills.srs.deepExposure.name": [
@@ -13208,7 +14654,7 @@
   "skills.srs.stellarMemory.effect": [
     {
       "type": 0,
-      "value": "在无限或量子重置时，存入本轮新产生的 SRS 充能，不含热启动和余辉。分配后，SRS 强化效果乘以 1 + 0.25 × log10(max(1, 已存秒数))。"
+      "value": "无限重置时存储新产生的 SRS 充能，不包括热启动和余辉。分配期间，SRS 强化效果乘以 1 + 0.25 × log10(max(1, 已存储秒数))。"
     }
   ],
   "skills.srs.stellarMemory.name": [
@@ -13602,7 +15048,7 @@
   "skills.swarm.steadySupply.technical": [
     {
       "type": 0,
-      "value": "无限重置后保留花钱购买的设施。重置前分配即可自动恢复购买数量。免费初始设施不会累积。量子重置清空储备。"
+      "value": "无限后保留付费设施购买。重置前分配；购买项目自动恢复。免费初始单位不会累积。超越会清空供应。"
     }
   ],
   "skills.swarm.stellarSwarm.description": [
@@ -14376,7 +15822,7 @@
   "statistics.scope.quantum-run": [
     {
       "type": 0,
-      "value": "当前量子运行"
+      "value": "当前轮次"
     }
   ],
   "statistics.speedruns.boostedBest": [
@@ -15867,7 +17313,7 @@
   "wiki.discovery.resets": [
     {
       "type": 0,
-      "value": "发现会在"
+      "value": "探索在"
     },
     {
       "type": 8,
@@ -15881,21 +17327,7 @@
     },
     {
       "type": 0,
-      "value": "、"
-    },
-    {
-      "type": 8,
-      "value": "quantum",
-      "children": [
-        {
-          "type": 0,
-          "value": "量子"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": "和挑战后保留。"
+      "value": "后保留。"
     },
     {
       "type": 8,
@@ -15909,7 +17341,7 @@
     },
     {
       "type": 0,
-      "value": "会重置等级和进度，但保留解锁状态与永久升级。使用储存时间会推进发现。离线时间只会储存，不会自动推进发现。"
+      "value": "会重置其等级和进度；解锁和永久升级保留。花费储存时间会推进探索。离线时间会储存，不会自动推进探索。"
     }
   ],
   "wiki.discovery.resets-title": [
@@ -16373,21 +17805,21 @@
   "wiki.infinity.secrets": [
     {
       "type": 0,
-      "value": "进行"
+      "value": "在"
     },
     {
       "type": 8,
-      "value": "quantum",
+      "value": "infinity",
       "children": [
         {
           "type": 0,
-          "value": "量子跃迁"
+          "value": "无限"
         }
       ]
     },
     {
       "type": 0,
-      "value": "后，"
+      "value": "中，"
     },
     {
       "type": 8,
@@ -16401,7 +17833,7 @@
     },
     {
       "type": 0,
-      "value": "升级会逐字揭示生命的意义，并提供永久的隐藏生产增益。"
+      "value": "升级会逐字揭示生命的意义，并提供隐藏的永久生产加成。"
     }
   ],
   "wiki.infinity.secrets-title": [
@@ -16825,7 +18257,7 @@
   "wiki.other.offline-results": [
     {
       "type": 0,
-      "value": "完成后会显示模拟时长、剩余储备、最终精度和实际更新次数，同时显示相关的无限、模拟和现实收益。只有未发生无限时才显示设施和机器人收益，因为重置和重建会让简单的前后总数比较产生误导。"
+      "value": "完成的运行会显示模拟时长、剩余储存时间、最终精度和实际更新次数，以及无限收益。仅在没有发生无限时显示设施和机器人收益，因为重置和重建会使直接的前后比较产生误导。"
     }
   ],
   "wiki.other.offline-results-title": [
@@ -18387,7 +19819,7 @@
   "wiki.skills.auto-assign": [
     {
       "type": 0,
-      "value": "你可以手动将单个技能加入或排除在自动分配之外。技能树会记住分配顺序，以便在"
+      "value": "你可以手动将单个技能加入或排除自动分配。技能树会记住分配顺序，以在"
     },
     {
       "type": 8,
@@ -18401,21 +19833,7 @@
     },
     {
       "type": 0,
-      "value": "或"
-    },
-    {
-      "type": 8,
-      "value": "value",
-      "children": [
-        {
-          "type": 0,
-          "value": "量子"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": "重置后重建布局。重置技能树会清除当前自动分配队列。预设可保存完整布局。"
+      "value": "后重建配置。重置技能树会清空当前自动分配队列。预设保存完整配置。"
     }
   ],
   "wiki.skills.auto-assign-title": [
@@ -18779,7 +20197,7 @@
   "wiki.transcendence.overview": [
     {
       "type": 0,
-      "value": "达到"
+      "value": "达到 "
     },
     {
       "type": 8,
@@ -18787,13 +20205,13 @@
       "children": [
         {
           "type": 0,
-          "value": "4e242个机器人"
+          "value": "4e242 机器人"
         }
       ]
     },
     {
       "type": 0,
-      "value": "后，在牛油果猫中超越可重置此前的层级，并获得"
+      "value": "时，在 Avocato 标签页进行超越，重置此前层级并获得"
     },
     {
       "type": 8,
@@ -18801,13 +20219,13 @@
       "children": [
         {
           "type": 0,
-          "value": "1超越点数"
+          "value": "一个超越点数"
         }
       ]
     },
     {
       "type": 0,
-      "value": "。花费1点"
+      "value": "。在该标签页花费一点"
     },
     {
       "type": 8,
@@ -18815,13 +20233,13 @@
       "children": [
         {
           "type": 0,
-          "value": "解锁发现"
+          "value": "解锁探索"
         }
       ]
     },
     {
       "type": 0,
-      "value": "，即可永久取代科学与研究。已有科学和研究等级不会转移。"
+      "value": "，永久替代科学和研究。现有科学和研究等级不会保留。"
     }
   ],
   "wiki.transcendence.overview-title": [

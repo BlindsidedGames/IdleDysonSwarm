@@ -25,7 +25,7 @@ async function fixture() {
       manualLabour: { owned: true, level: 0, timerSeconds: 0, secondaryTimerSeconds: 0 },
     } },
     timeline: { ...game.timeline, storedTimeAvailableSeconds: 1000 },
-    infinity: { ...game.infinity, automaticResetEnabled: false },
+    infinity: { ...game.infinity, points: 100n, automaticResetEnabled: false },
     quantum: { ...game.quantum, unlocks: { ...game.quantum.unlocks, breakTheLoop: true } },
     reality: { ...game.reality, influence: 100000 },
     avocado: { ...game.avocado, overflowPoints: 100n },
@@ -79,7 +79,7 @@ test.each([
 ])('a tap recharges Patient Hands with its unused update time: %j', async p => {
   const h = await fixture()
   await h.command({ kind: 'settings.set-processing-interval', milliseconds: p.tick })
-  if (p.double) await h.command({ kind: 'reality.purchase-upgrade', upgradeId: 'doubleTimeOwned' })
+  if (p.double) await h.command({ kind: 'infinity.purchase-shop-item', itemId: 'rework-DoubleTime' })
   const before = h.state().gameState.dyson.bots
   const button = screen.getByRole('button')
   await act(async () => { fireEvent.keyDown(button, { key: ' ' }); fireEvent.keyUp(button, { key: ' ' }) })
@@ -112,7 +112,7 @@ test.each([
 test('holding consumes boosted time; stopping repeat restores idle charge and its cap', async () => {
   vi.useFakeTimers()
   const h = await fixture()
-  await h.command({ kind: 'reality.purchase-upgrade', upgradeId: 'doubleTimeOwned' })
+  await h.command({ kind: 'infinity.purchase-shop-item', itemId: 'rework-DoubleTime' })
   await h.command({ kind: 'time.set-offline-boost-multiplier', multiplier: 42 })
   const button = screen.getByRole('button')
   await act(async () => { fireEvent.keyDown(button, { key: ' ' }); await vi.advanceTimersByTimeAsync(600) })

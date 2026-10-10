@@ -1,0 +1,37 @@
+/* Shared from Infinity shop actions; route variables retain its exact palette. */
+.ui-button.ui-button--purchase {
+  display: flex;
+  min-inline-size: 0;
+  min-block-size: var(--target-minimum);
+  flex-direction: column;
+  gap: 0.05rem;
+  align-self: stretch;
+  padding: 0.28rem;
+  border-color: var(--theme-divider);
+  border-radius: 0.25rem;
+  background: var(--purchase-action-accent, var(--theme-accent));
+  color: var(--purchase-action-ink, var(--theme-page));
+  font-family: var(--font-family-numeric);
+  font-size: var(--purchase-action-font-size, calc(0.72rem * var(--game-text-scale)));
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-bold);
+}
+
+.ui-button.ui-button--purchase:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--theme-accent) 82%, white);
+}
+
+.ui-button.ui-button--purchase:not(:disabled):active {
+  background-color: var(--purchase-action-pressed, color-mix(in srgb, var(--theme-accent) 90%, var(--theme-page)));
+}
+
+.ui-button.ui-button--purchase:disabled {
+  border-color: var(--purchase-action-disabled-border, var(--color-border));
+  background: var(--purchase-action-disabled, color-mix(in srgb, var(--theme-panel) 72%, var(--theme-page)));
+  color: var(--purchase-action-disabled-ink, var(--color-text-secondary));
+  opacity: 1;
+}
+
+@media (forced-colors: none) {
+  .ui-button.ui-button--purchase:not(:disabled) { background-image: var(--ui-action-gradient); }
+}

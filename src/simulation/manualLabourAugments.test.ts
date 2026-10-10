@@ -20,7 +20,7 @@ import { deserializeWebSave, serializeSharedWebSave } from '../save/serializatio
 const session = () => hydrateGameState(createUnityFirstRunPreparedSave({ startedAtUtc: '2026-09-26T00:00:00Z' }))
 function fixture(ids: readonly string[] = Object.values(A)) {
   const state = session().state
-  return { ...state, meta: { ...state.meta, firstInfinityComplete: true }, challenges: { ...EMPTY_INFINITY_CHALLENGES, unlocked: true, blankSlateCompleted: true, galvanizedSkillIds: ['manualLabour'] }, dyson: { ...state.dyson, bots: 100, manualCreationIntervalSeconds: 0.2 }, skills: { ...state.skills, byId: { ...state.skills.byId, ...Object.fromEntries(['manualLabour', ...ids].map(id => [id, { owned: true, level: 0, timerSeconds: 0, secondaryTimerSeconds: 0 }])) } } }
+  return { ...state, meta: { ...state.meta, firstInfinityComplete: true, reworkMigrationChoice: 'keep' as const }, challenges: { ...EMPTY_INFINITY_CHALLENGES, unlocked: true, blankSlateCompleted: true, galvanizedSkillIds: ['manualLabour'] }, dyson: { ...state.dyson, bots: 100, manualCreationIntervalSeconds: 0.2 }, skills: { ...state.skills, byId: { ...state.skills.byId, ...Object.fromEntries(['manualLabour', ...ids].map(id => [id, { owned: true, level: 0, timerSeconds: 0, secondaryTimerSeconds: 0 }])) } } }
 }
 function click(state: ReturnType<typeof fixture>, repeat = false, seconds = .2, multiplier: 1 | 2 = 1) {
   const stats = deriveCanonicalTinkerStats(state, 500)
@@ -242,7 +242,7 @@ test('Patient Hands goal work is bounded, survives refunds/reload and resets on 
     applyCanonicalInfinityReset(loaded, { requestedReward: 1n, breakInfinity: false, artifactSkillPoints: 0n }),
     applyCanonicalQuantumReset(loaded, 0n),
     restartInfinityChallenge(loaded, 'enter', 0n, 'built-by-hand'),
-    restartInfinityChallenge({ ...loaded, challenges: { ...loaded.challenges!, active: 'built-by-hand' } }, 'abandon', 0n),
+    (() => { const entered = restartInfinityChallenge(loaded, 'enter', 0n, 'built-by-hand'); return entered.ok ? restartInfinityChallenge(entered.state, 'abandon', 0n) : entered })(),
     applyCanonicalOverflowReset({ ...loaded, dyson: { ...loaded.dyson, bots: 4e242 } }),
   ]
   for (const reset of transitions) {

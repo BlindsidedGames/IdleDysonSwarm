@@ -12,9 +12,10 @@ import { useSharedNonRefundableSkillConfirmation } from './nonRefundableSkillCon
 import { discoveryFracturedEffects } from '../discovery/skillMessages'
 import { galvanizedEffectMessages } from './galvanizedEffectMessages'
 import { discoveryMessages } from '../discovery/messages'
+import { civilizationMessages } from '../simulations/civilizationMessages'
 import type { SkillProductionPreview } from '../../../simulation/skillProductionPreview'
 import { basicFacilityMessages as facilityMessages } from '../facilities/messages'
-import { skillAugments } from '../../../simulation/skillSubskills'
+import { skillAugments, isSubskill } from '../../../simulation/skillSubskills'
 import galvanizerIcon from '../../assets/currency-galvanizer.png'
 import { InlineImageSymbol, InlineResourceAmount } from '../../components'
 import { challengeMessages } from '../infinity/challengeMessages'
@@ -1971,6 +1972,7 @@ function SkillDetails({
           <strong>{intl.formatMessage(messages.effect)}</strong>{' '}
           {technical}
         </p>
+        {!isSubskill(node.skillId) && <p className="skill-details__permanent">{intl.formatMessage(preview.galvanized ? civilizationMessages.nodeBonusActive : civilizationMessages.nodeBonus)}</p>}
         {preview.galvanizationUnlocked && galvanizers > 0n && !preview.galvanized && (
           <div className="skill-details__galvanization">
             <Button disabled={!preview.canGalvanize || pendingKind !== null}

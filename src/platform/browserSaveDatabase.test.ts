@@ -827,11 +827,10 @@ describe('IndexedDbBrowserSaveDatabase', () => {
           ...hydrated.state.dyson,
           goalStage: 10n,
         },
-        quantum: {
-          ...hydrated.state.quantum,
-          pointsEarned: 2_000_000n,
-          pointsSpent: 0n,
-          divisionsPurchased: 0n,
+        infinity: {
+          ...hydrated.state.infinity,
+          points: 10_000_000n,
+          spentPoints: 0n,
         },
       }),
     )
@@ -882,8 +881,8 @@ describe('IndexedDbBrowserSaveDatabase', () => {
       const observationsBeforePurchase = observedDivisions.length
       await expect(
         first.runtime.dispatchPlayer({
-          kind: 'quantum.purchase-upgrade',
-          upgradeId: 'Division',
+          kind: 'infinity.purchase-shop-item',
+          itemId: 'rework-Division',
         }),
       ).resolves.toMatchObject({
         status: 'accepted',
@@ -901,12 +900,12 @@ describe('IndexedDbBrowserSaveDatabase', () => {
       : -1
     await expect(
       first.runtime.dispatchPlayer({
-        kind: 'quantum.purchase-upgrade',
-        upgradeId: 'Division',
+        kind: 'infinity.purchase-shop-item',
+        itemId: 'rework-Division',
       }),
     ).resolves.toMatchObject({
       status: 'rejected',
-      code: 'quantum-upgrade:already-maxed',
+      code: 'infinity-shop:maximum-reached',
       stateRevision: maximumRevision,
     })
     expectDivisionGoal(first.runtime.snapshot(), 19n)

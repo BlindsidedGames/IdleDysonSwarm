@@ -1,3 +1,7 @@
+import { activeReworkChallenge } from '../simulation/reworkChallenges'
+import { startFarming, buyFarmingGranary, setFarmingFocus, completeFarmingAge } from '../simulation/farming'
+import { setCivilizationFocus, equipCivilizationWorkers } from '../simulation/civilization'
+import { chooseGameplayReworkMigration, hasRetiredGameplayProgress, type ReworkMigrationChoice } from '../simulation/gameplayRework'
 import { purchaseDiscovery, type DiscoveryPurchase } from '../simulation/discovery'
 import { isOfflineBoostMultiplier, offlineBoost, withOfflineBoost } from '../simulation/offlineBoost'
 import { clearSpeedrunBest, SPEEDRUN_MILESTONES, type SpeedrunMilestoneId } from '../simulation/speedrunStatistics'
@@ -32,16 +36,8 @@ import {
   type SkillPresetColorId,
 } from '../game-state/skillPresetColors'
 import {
-  feedAllToAvocado,
   type AvocadoFeedSource,
 } from '../simulation/avocadoDomain'
-import {
-  completeCanonicalAvocadoMeditationStep,
-} from '../simulation/avocadoMeditation'
-import {
-  applyCanonicalBlackHoleReset,
-  applyCanonicalDreamReset,
-} from '../simulation/canonicalDreamReset'
 import {
   runCanonicalDysonAutomation,
   tryPurchaseCanonicalFacility,
@@ -67,19 +63,12 @@ import {
   type CanonicalSkillPresetApplicationResult,
 } from '../simulation/canonicalSkillTransactions'
 import {
-  purchaseSimulationUpgrade,
-  startDreamEducation,
-} from '../simulation/dreamEducationUpgrades'
-import {
-  purchaseDreamFoundationalInformation,
   type DreamPurchaseCommand,
 } from '../simulation/dreamFoundationalInformation'
 import {
-  purchaseDreamSpaceAge,
   type DreamSpaceAgePurchase,
 } from '../simulation/dreamSpaceAge'
 import {
-  purchaseQuantumUpgradeBulk,
   type QuantumUpgradeBulkQuantity,
 } from '../simulation/quantumUpgrades'
 import { withCanonicalBotAllocation } from '../simulation/canonicalBotAllocation'
@@ -88,9 +77,7 @@ import {
 } from '../simulation/infinityCycle'
 import type { QuantumUpgradeId } from '../simulation/quantumUpgrades'
 import { normalizeCanonicalBotDistribution } from '../simulation/botDistribution'
-import { purchaseRealityUpgrade } from '../simulation/realityUpgrades'
 import type { RealityUpgradeId } from '../simulation/realityUpgrades'
-import { gatherRealityInfluence } from '../simulation/realityWorkers'
 import {
   purchaseCanonicalResearch,
   runResearchAutomationTick,
@@ -98,7 +85,6 @@ import {
 import { upgradeStoredTimeCapacity } from '../simulation/timeResources'
 import {
   type BuyMode,
-  isBuyMode,
 } from '../simulation/transactions'
 import type { SimulationAutomationPolicy } from '../simulation/types'
 
@@ -128,6 +114,13 @@ export interface CanonicalSkillPresetApplicationOutcome {
  * command contract explicit.
  */
 export type CanonicalGameCommand =
+  | { readonly kind: 'civilization.enter-farming' }
+  | { readonly kind: 'civilization.build-granary' }
+  | { readonly kind: 'civilization.complete-farming' }
+  | { readonly kind: 'civilization.farming-focus'; readonly focus: string }
+  | { readonly kind: 'civilization.set-focus'; readonly focus: string }
+  | { readonly kind: 'civilization.equip-worker'; readonly count?: bigint }
+  | { readonly kind: 'rework.choose-migration'; readonly choice: ReworkMigrationChoice }
   | {
       readonly kind: 'dyson.purchase-facility'
       readonly facilityId: CanonicalFacilityId
@@ -355,6 +348,8 @@ export type {
 } from '../game-state/types'
 
 export type CanonicalGameCommandCode =
+  | `rework:${string}`
+  | `civilization:${string}`
   | 'OFFLINE-BOOST-INVALID-MULTIPLIER'
   | 'OFFLINE-BOOST-INVALID-ENABLED'
   | 'OFFLINE-BOOST-UNAVAILABLE'
@@ -558,6 +553,13 @@ export interface CanonicalGameCommandSupport {
 }
 
 export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
+  'civilization.enter-farming': { supported: true, authority: 'startFarming', requires: ['runtime-evaluation-port'] },
+  'civilization.build-granary': { supported: true, authority: 'buyFarmingGranary', requires: ['runtime-evaluation-port'] },
+  'civilization.complete-farming': { supported: true, authority: 'completeFarmingAge', requires: ['runtime-evaluation-port'] },
+  'civilization.farming-focus': { supported: true, authority: 'setFarmingFocus', requires: ['runtime-evaluation-port'] },
+  'civilization.set-focus': { supported: true, authority: 'setCivilizationFocus', requires: ['runtime-evaluation-port'] },
+  'civilization.equip-worker': { supported: true, authority: 'equipCivilizationWorkers', requires: ['runtime-evaluation-port'] },
+  'rework.choose-migration': { supported: true, authority: 'chooseGameplayReworkMigration', requires: ['runtime-evaluation-port'] },
   'dyson.purchase-facility': {
     supported: true,
     authority: 'tryPurchaseCanonicalFacility',
@@ -712,60 +714,60 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
     requires: ['runtime-evaluation-port'],
   },
   'dream.set-buy-mode': {
-    supported: true,
+    supported: false,
     authority: 'canonical Simulation buy-mode setting transaction',
   },
   'dream.purchase-foundational': {
-    supported: true,
+    supported: false,
     authority: 'purchaseDreamFoundationalInformation',
     requires: ['runtime-evaluation-port'],
   },
   'dream.purchase-space-age': {
-    supported: true,
+    supported: false,
     authority: 'purchaseDreamSpaceAge',
     requires: ['runtime-evaluation-port'],
   },
   'dream.purchase-upgrade': {
-    supported: true,
+    supported: false,
     authority: 'purchaseSimulationUpgrade',
     requires: ['runtime-evaluation-port'],
   },
   'dream.start-education': {
-    supported: true,
+    supported: false,
     authority: 'startDreamEducation',
     requires: ['runtime-evaluation-port'],
   },
   'dream.request-reset': {
-    supported: true,
+    supported: false,
     authority: 'applyCanonicalDreamReset',
     requires: ['runtime-evaluation-port'],
   },
   'dream.request-black-hole-reset': {
-    supported: true,
+    supported: false,
     authority: 'applyCanonicalBlackHoleReset',
     requires: ['runtime-evaluation-port'],
   },
   'reality.purchase-upgrade': {
-    supported: true,
+    supported: false,
     authority: 'purchaseRealityUpgrade',
     requires: ['runtime-evaluation-port'],
   },
   'reality.gather-influence': {
-    supported: true,
+    supported: false,
     authority: 'gatherRealityInfluence',
     requires: ['runtime-evaluation-port'],
   },
   'quantum.set-buy-mode': {
-    supported: true,
+    supported: false,
     authority: 'canonical Quantum buy-mode setting transaction',
   },
   'quantum.purchase-upgrade': {
-    supported: true,
+    supported: false,
     authority: 'purchaseQuantumUpgradeBulk',
     requires: ['runtime-evaluation-port'],
   },
   'quantum.request-leap': {
-    supported: true,
+    supported: false,
     authority: 'injected canonical Quantum Leap event-model boundary',
     requires: ['quantum-leap-port', 'runtime-evaluation-port'],
   },
@@ -789,12 +791,12 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
   },
   'discovery.purchase': { supported: true, authority: 'purchaseDiscovery', requires: ['runtime-evaluation-port'] },
   'avocado.feed': {
-    supported: true,
+    supported: false,
     authority: 'feedAllToAvocado',
     requires: ['runtime-evaluation-port'],
   },
   'avocado.complete-meditation-step': {
-    supported: true,
+    supported: false,
     authority: 'completeCanonicalAvocadoMeditationStep',
     requires: ['runtime-evaluation-port'],
   },
@@ -872,6 +874,8 @@ export function routeCanonicalGameCommand(
   const carriers =
     options.runtimeCarriers ?? EMPTY_RUNTIME_CARRIERS
 
+
+  if (activeReworkChallenge(state) && (command.kind === 'skill.galvanize' || command.kind === 'discovery.purchase')) return rejectDomain(state, carriers, 'skill:challenge-active', command.kind, 'Leave the challenge before changing permanent progression.')
   if (isBlankSlateActive(state) && command.kind.startsWith('skill.') && command.kind !== 'skill.galvanize') {
     return rejectDomain(state, carriers, 'skill:challenge-active', 'skills', 'Skills are disabled during Blank Slate.')
   }
@@ -880,6 +884,36 @@ export function routeCanonicalGameCommand(
     return rejectDomain(state, carriers, 'research-setting:retired', command.kind, 'Research and allocation have been replaced by Discovery.')
   }
   switch (command.kind) {
+    case 'dream.set-buy-mode':
+    case 'dream.purchase-foundational':
+    case 'dream.purchase-space-age':
+    case 'dream.purchase-upgrade':
+    case 'dream.start-education':
+    case 'dream.request-reset':
+    case 'dream.request-black-hole-reset':
+    case 'reality.purchase-upgrade':
+    case 'reality.gather-influence':
+    case 'quantum.set-buy-mode':
+    case 'quantum.purchase-upgrade':
+    case 'quantum.request-leap':
+    case 'avocado.feed':
+    case 'avocado.complete-meditation-step':
+      return rejectDomain(state, carriers, 'rework:retired-system', command.kind, 'This gameplay system has been removed in the rework.')
+    case 'rework.choose-migration': {
+      if (command.choice !== 'keep' && command.choice !== 'fresh') return rejectDomain(state, carriers, 'rework:invalid-choice', command.kind, 'Choose keep or fresh.')
+      if (state.meta.reworkMigrationChoice !== undefined) return rejectDomain(state, carriers, 'rework:already-chosen', command.kind, 'The migration choice has already been applied.')
+      return finalizeAccepted(state, chooseGameplayReworkMigration(state, command.choice), true, 'rework:migrated', carriers, options.runtimeEvaluation)
+    }
+    case 'civilization.enter-farming':
+    case 'civilization.build-granary':
+    case 'civilization.complete-farming':
+    case 'civilization.farming-focus':
+    case 'civilization.set-focus':
+    case 'civilization.equip-worker': {
+      const next = command.kind === 'civilization.enter-farming' ? startFarming(state) : command.kind === 'civilization.build-granary' ? buyFarmingGranary(state) : command.kind === 'civilization.complete-farming' ? completeFarmingAge(state) : command.kind === 'civilization.farming-focus' ? setFarmingFocus(state, command.focus) : command.kind === 'civilization.set-focus' ? setCivilizationFocus(state, command.focus) : equipCivilizationWorkers(state, command.count)
+      if (!next) return rejectDomain(state, carriers, 'civilization:action-unavailable', command.kind, 'Civilization action unavailable.')
+      return finalizeAccepted(state, next, true, 'civilization:updated', carriers, options.runtimeEvaluation)
+    }
     case 'discovery.purchase': {
       const next = purchaseDiscovery(state, command.purchase)
       if (!next) return rejectDomain(state, carriers, 'avocado:discovery-unavailable', command.kind, 'Discovery purchase unavailable.')
@@ -1936,359 +1970,6 @@ export function routeCanonicalGameCommand(
       )
     }
 
-    case 'dream.set-buy-mode': {
-      if (!isBuyMode(command.buyMode)) {
-        return rejectDomain(
-          state, carriers, 'dream-setting:invalid-buy-mode', command.kind,
-          'Unsupported Simulation purchase mode.',
-        )
-      }
-      const changed = (state.dream.buyMode ?? 'buy-1') !== command.buyMode
-      return finalizeAccepted(
-        state,
-        changed
-          ? { ...state, dream: { ...state.dream, buyMode: command.buyMode } }
-          : state,
-        changed,
-        `dream-setting:${changed ? 'buy-mode-set' : 'unchanged'}`,
-        carriers,
-        options.runtimeEvaluation,
-      )
-    }
-
-    case 'dream.purchase-foundational': {
-      const result = purchaseDreamFoundationalInformation(
-        state,
-        command.purchase,
-        command.quantity,
-      )
-      if (!result.purchased) {
-        return rejectDomain(
-          state,
-          carriers,
-          `dream-foundational:${result.status}`,
-          command.kind,
-          result.status,
-        )
-      }
-      return finalizeAccepted(
-        state,
-        result.state,
-        true,
-        `dream-foundational:${result.status}`,
-        carriers,
-        options.runtimeEvaluation,
-      )
-    }
-
-    case 'dream.purchase-space-age': {
-      const result = purchaseDreamSpaceAge(
-        state,
-        command.purchase,
-        command.quantity,
-      )
-      if (!result.purchased) {
-        return rejectDomain(
-          state,
-          carriers,
-          `dream-space-age:${result.status}`,
-          command.kind,
-          result.status,
-        )
-      }
-      return finalizeAccepted(
-        state,
-        result.state,
-        true,
-        `dream-space-age:${result.status}`,
-        carriers,
-        options.runtimeEvaluation,
-      )
-    }
-
-    case 'dream.purchase-upgrade': {
-      const result = purchaseSimulationUpgrade(
-        state,
-        command.upgradeId,
-      )
-      if (!result.accepted) {
-        const issues = result.unsupportedEffect === null
-          ? undefined
-          : [
-              issue(
-                'DREAM_UPGRADE_EFFECT_UNSUPPORTED',
-                `gameData.simulationUpgrades.${command.upgradeId}`,
-                result.unsupportedEffect,
-              ),
-            ]
-        return rejectDomain(
-          state,
-          carriers,
-          `dream-upgrade:${result.code}`,
-          command.kind,
-          result.code,
-          issues,
-        )
-      }
-      return finalizeAccepted(
-        state,
-        result.candidate,
-        result.changed,
-        `dream-upgrade:${result.code}`,
-        carriers,
-        options.runtimeEvaluation,
-      )
-    }
-
-    case 'dream.start-education': {
-      const result = startDreamEducation(
-        state,
-        command.educationId,
-      )
-      if (!result.accepted) {
-        return rejectDomain(
-          state,
-          carriers,
-          `dream-education:${result.code}`,
-          command.kind,
-          result.code,
-        )
-      }
-      return finalizeAccepted(
-        state,
-        result.candidate,
-        result.changed,
-        `dream-education:${result.code}`,
-        carriers,
-        options.runtimeEvaluation,
-      )
-    }
-
-    case 'dream.request-reset': {
-      const result = applyCanonicalDreamReset(state, {
-        kind: 'automatic',
-      })
-      if (!result.ok) {
-        return reject(
-          state,
-          carriers,
-          'dream-reset:invalid',
-          ...result.issues,
-        )
-      }
-      if (!result.applied) {
-        return rejectDomain(
-          state,
-          carriers,
-          `dream-reset:${result.reason}`,
-          command.kind,
-          result.reason,
-        )
-      }
-      return finalizeAccepted(
-        state,
-        result.state,
-        true,
-        'dream-reset:applied',
-        carriers,
-        options.runtimeEvaluation,
-      )
-    }
-
-    case 'dream.request-black-hole-reset': {
-      const result = applyCanonicalBlackHoleReset(state)
-      if (!result.ok) {
-        return reject(
-          state,
-          carriers,
-          'dream-reset:invalid',
-          ...result.issues,
-        )
-      }
-      if (!result.applied) {
-        return rejectDomain(
-          state,
-          carriers,
-          `dream-reset:${result.reason}`,
-          command.kind,
-          result.reason,
-        )
-      }
-      return finalizeAccepted(
-        state,
-        result.state,
-        true,
-        'dream-reset:black-hole-applied',
-        carriers,
-        options.runtimeEvaluation,
-      )
-    }
-
-    case 'reality.purchase-upgrade': {
-      const result = purchaseRealityUpgrade(
-        state,
-        command.upgradeId,
-      )
-      if (!result.accepted) {
-        const issues = result.definitionGap === null
-          ? undefined
-          : [
-              issue(
-                'REALITY_UPGRADE_DEFINITION_GAP',
-                `gameData.simulationUpgrades.${command.upgradeId}`,
-                result.definitionGap,
-              ),
-            ]
-        return rejectDomain(
-          state,
-          carriers,
-          `reality-upgrade:${result.code}`,
-          command.kind,
-          result.code,
-          issues,
-        )
-      }
-      const candidate =
-        command.upgradeId === 'doubleTimeOwned' && result.changed
-          ? {
-              ...result.candidate,
-              infinity: {
-                ...result.candidate.infinity,
-                currentCyclePeakIpPerMinute: 0,
-                currentCyclePeakReward: 0n,
-                manualPeakIpPerMinute: 0,
-                manualPeakReward: 0n,
-                manualCalibrationObservedActiveSeconds: 0,
-                activeAutomaticThroughputCycleEligible: false,
-              },
-              statistics: {
-                ...result.candidate.statistics,
-                recentActiveAutomaticInfinityCycles: [],
-              },
-            }
-          : result.candidate
-      return finalizeAccepted(
-        state,
-        candidate,
-        result.changed,
-        `reality-upgrade:${result.code}`,
-        carriers,
-        options.runtimeEvaluation,
-      )
-    }
-
-    case 'reality.gather-influence': {
-      const result = gatherRealityInfluence(state)
-      if (!result.gathered) {
-        return rejectDomain(
-          state,
-          carriers,
-          `reality-gather:${result.status}`,
-          command.kind,
-          result.status,
-        )
-      }
-      return finalizeAccepted(
-        state,
-        result.state,
-        true,
-        `reality-gather:${result.status}`,
-        carriers,
-        options.runtimeEvaluation,
-      )
-    }
-
-    case 'quantum.set-buy-mode':
-      return finalizeAccepted(
-        state,
-        { ...state, quantum: { ...state.quantum, buyMode: command.buyMode } },
-        (state.quantum.buyMode ?? 'buy-1') !== command.buyMode,
-        'quantum-setting:buy-mode-set',
-        carriers,
-        options.runtimeEvaluation,
-        EMPTY_ISSUES,
-        false,
-      )
-    case 'quantum.purchase-upgrade': {
-      const result = purchaseQuantumUpgradeBulk(
-        state,
-        command.upgradeId,
-        command.quantity ?? 1n,
-      )
-      if (!result.accepted) {
-        return rejectDomain(
-          state,
-          carriers,
-          `quantum-upgrade:${result.code}`,
-          command.kind,
-          result.code,
-        )
-      }
-      return finalizeAccepted(
-        state,
-        result.changed
-          ? withCanonicalBotAllocation(result.state)
-          : result.state,
-        result.changed,
-        `quantum-upgrade:${result.code}`,
-        carriers,
-        options.runtimeEvaluation,
-      )
-    }
-
-    case 'quantum.request-leap': {
-      if (options.quantumLeap === undefined) {
-        return reject(
-          state,
-          carriers,
-          'quantum-leap-boundary-unavailable',
-          issue(
-            'QUANTUM_LEAP_BOUNDARY_UNAVAILABLE',
-            'ports.quantumLeap',
-            'Quantum Leap requires the event-model boundary that owns the total-42 gate, branch choice, and artifact-point derivation.',
-          ),
-        )
-      }
-      let result: CanonicalQuantumLeapPortResult
-      try {
-        result = options.quantumLeap.requestLeap(state)
-      } catch (error) {
-        return reject(
-          state,
-          carriers,
-          'quantum-leap:port-failed',
-          issue(
-            'QUANTUM_LEAP_PORT_FAILED',
-            'ports.quantumLeap',
-            errorDetail(error),
-          ),
-        )
-      }
-      if (!result.accepted) {
-        return reject(
-          state,
-          carriers,
-          `quantum-leap:${result.code}`,
-          ...(result.issues ?? [
-            issue(
-              'QUANTUM_LEAP_REJECTED',
-              command.kind,
-              result.code,
-            ),
-          ]),
-        )
-      }
-      return finalizeAccepted(
-        state,
-        result.state,
-        result.changed,
-        `quantum-leap:${result.code}`,
-        carriers,
-        options.runtimeEvaluation,
-        result.issues,
-      )
-    }
-
     case 'infinity.request-reset': {
       if (options.infinityReset === undefined) {
         return reject(
@@ -2435,6 +2116,9 @@ export function routeCanonicalGameCommand(
     }
 
     case 'infinity.purchase-shop-item': {
+      if (command.itemId.startsWith('rework-') && state.meta.reworkMigrationChoice === undefined && hasRetiredGameplayProgress(state)) {
+        return rejectDomain(state, carriers, 'rework:choice-required', command.kind, 'Choose how to migrate the retired rewards before buying relocated upgrades.')
+      }
       const result = purchaseCanonicalInfinityShopItem(
         state,
         command.itemId,
@@ -2463,51 +2147,6 @@ export function routeCanonicalGameCommand(
         result.state,
         result.changed,
         `infinity-shop:${result.code}`,
-        carriers,
-        options.runtimeEvaluation,
-      )
-    }
-
-    case 'avocado.feed': {
-      const result = feedAllToAvocado(state, command.source)
-      if (!result.accepted) {
-        return rejectDomain(
-          state,
-          carriers,
-          `avocado:${result.code}`,
-          command.kind,
-          result.code,
-        )
-      }
-      return finalizeAccepted(
-        state,
-        result.state,
-        result.changed,
-        `avocado:${result.code}`,
-        carriers,
-        options.runtimeEvaluation,
-      )
-    }
-
-    case 'avocado.complete-meditation-step': {
-      const result = completeCanonicalAvocadoMeditationStep(
-        state,
-        command.requiredStepIndex,
-      )
-      if (!result.accepted) {
-        return rejectDomain(
-          state,
-          carriers,
-          `avocado-meditation:${result.code}`,
-          command.kind,
-          result.code,
-        )
-      }
-      return finalizeAccepted(
-        state,
-        result.state,
-        result.changed,
-        `avocado-meditation:${result.code}`,
         carriers,
         options.runtimeEvaluation,
       )

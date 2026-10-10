@@ -1,3 +1,4 @@
+import { activeReworkChallenge } from './reworkChallenges'
 import { challengeAllowsFacilityPurchase } from './infinityChallenges'
 import type {
   CanonicalFacilityId,
@@ -11,7 +12,36 @@ import {
   DISCRETE_MAXIMUM,
 } from './numeric'
 import { settleContinuousCredit } from './conservativeSettlement'
-import { QUANTUM_CONSTANTS } from './quantumUpgrades'
+import { QUANTUM_CONSTANTS, QUANTUM_UPGRADE_DEFINITIONS, applyProgressionUpgradeEffect, quantumUpgradePurchaseCount, quantumUpgradePrerequisitesMet, type QuantumUpgradeId } from './quantumUpgrades'
+import { hasRetiredGameplayProgress } from './gameplayRework'
+import { initializeSwarmGrants } from './swarmAugments'
+
+/** Provisional IP prices for the playable stripping pass; balancing is deferred. */
+export const REWORK_INFINITY_UPGRADES = [
+  { id: 'rework-DoubleIP', title: 'Double Infinity Points', cost: 3n, upgradeId: 'DoubleIP' },
+  { id: 'rework-BotMultitasking', title: 'Bot Multitasking', cost: 3n, upgradeId: 'BotMultitasking' },
+  { id: 'rework-BreakTheLoop', title: 'Break the Loop', cost: 10n, upgradeId: 'BreakTheLoop' },
+  { id: 'rework-Division', title: 'Division', cost: 5n, upgradeId: 'Division' },
+  { id: 'rework-Fragments', title: 'Fragments', cost: 3n, upgradeId: 'Fragments' },
+  { id: 'rework-Purity', title: 'Purity', cost: 5n, upgradeId: 'Purity' },
+  { id: 'rework-Terra', title: 'Terra', cost: 8n, upgradeId: 'Terra' },
+  { id: 'rework-Power', title: 'Power', cost: 12n, upgradeId: 'Power' },
+  { id: 'rework-Paragade', title: 'Paragade', cost: 16n, upgradeId: 'Paragade' },
+  { id: 'rework-Stellar', title: 'Stellar', cost: 20n, upgradeId: 'Stellar' },
+  { id: 'rework-CashBonus', title: 'Cash Booster', cost: 3n, upgradeId: 'CashBonus' },
+  { id: 'rework-ScienceBonus', title: 'Science Booster', cost: 3n, upgradeId: 'ScienceBonus' },
+  { id: 'rework-MatrioshkaBrains', title: 'Matrioshka Brains', cost: 15n, upgradeId: 'MatrioshkaBrains' },
+  { id: 'rework-BirchPlanets', title: 'Birch Planets', cost: 25n, upgradeId: 'BirchPlanets' },
+  { id: 'rework-GalacticBrains', title: 'Galactic Brains', cost: 40n, upgradeId: 'GalacticBrains' },
+  { id: 'rework-DoubleTime', title: 'Double Time', cost: 20n, upgradeId: null },
+] as const satisfies readonly { id: string; title: string; cost: bigint; upgradeId: QuantumUpgradeId | null }[]
+
+export function reworkInfinityUpgradeCost(state: Readonly<CanonicalGameStateV1>, itemId: string): bigint {
+  const item = REWORK_INFINITY_UPGRADES.find(item => item.id === itemId)
+  if (!item) return 0n
+  const count = item.upgradeId === null ? 0n : quantumUpgradePurchaseCount(state, item.upgradeId)
+  return item.upgradeId === 'Division' ? item.cost << (count > 19n ? 19n : count) : item.cost
+}
 
 export const CANONICAL_INFINITY_SHOP_ITEM_IDS = [
   'secret',
@@ -23,6 +53,7 @@ export const CANONICAL_INFINITY_SHOP_ITEM_IDS = [
   'retain-servers',
   'retain-data-centers',
   'retain-planets',
+  ...REWORK_INFINITY_UPGRADES.map(item => item.id),
 ] as const
 
 export type CanonicalInfinityShopItemId =
@@ -50,6 +81,7 @@ export type CanonicalInfinityShopPurchaseCode =
   | 'definition-gap'
   | 'auto-assignment-rejected'
   | 'challenge-disabled'
+  | 'migration-choice-required'
 
 export interface CanonicalInfinityShopPurchaseResult {
   readonly accepted: boolean
@@ -137,6 +169,7 @@ export function purchaseCanonicalInfinityShopItem(
   state: CanonicalGameStateV1,
   itemId: string,
 ): CanonicalInfinityShopPurchaseResult {
+  if (activeReworkChallenge(state)) return rejected(state, 'challenge-disabled', 0n)
   if (!isInfinityShopItemId(itemId)) {
     return rejected(state, 'unknown-item', 0n)
   }
@@ -144,6 +177,31 @@ export function purchaseCanonicalInfinityShopItem(
     return rejected(state, 'invalid-state', itemCost(itemId))
   }
 
+  const moved = REWORK_INFINITY_UPGRADES.find(item => item.id === itemId)
+  if (moved) {
+    const cost = reworkInfinityUpgradeCost(state, itemId)
+    if (state.meta.reworkMigrationChoice === undefined && hasRetiredGameplayProgress(state)) return rejected(state, 'migration-choice-required', cost)
+    if (moved.upgradeId === null) {
+      if (state.timeline.doubleTime.unlocked) return rejected(state, 'already-purchased', cost)
+    } else {
+      const definition = QUANTUM_UPGRADE_DEFINITIONS.get(moved.upgradeId)!
+      if ((!definition.repeatable && quantumUpgradePurchaseCount(state, moved.upgradeId) >= 1n) || (definition.maximumPurchases !== null && quantumUpgradePurchaseCount(state, moved.upgradeId) >= definition.maximumPurchases)) return rejected(state, 'maximum-reached', cost)
+      if (state.discovery?.unlocked && moved.upgradeId === 'BotMultitasking') return rejected(state, 'prerequisite-not-met', cost)
+      if (!quantumUpgradePrerequisitesMet(state, moved.upgradeId)) return rejected(state, 'prerequisite-not-met', cost)
+    }
+    const nextSpent = trySpend(state, cost)
+    if (nextSpent === null) return rejected(state, 'insufficient-infinity-points', cost)
+    const effect = moved.upgradeId === null
+      ? { ...state,
+          infinity: { ...state.infinity, currentCyclePeakIpPerMinute: 0, currentCyclePeakReward: 0n,
+            manualPeakIpPerMinute: 0, manualPeakReward: 0n, manualCalibrationObservedActiveSeconds: 0,
+            activeAutomaticThroughputCycleEligible: false },
+          statistics: { ...state.statistics, recentActiveAutomaticInfinityCycles: [] },
+          timeline: { ...state.timeline, doubleTime: { ...state.timeline.doubleTime, unlocked: true } } }
+      : applyProgressionUpgradeEffect(state, moved.upgradeId)
+    if (effect === null) return rejected(state, 'output-maxed', cost)
+    return purchased(initializeSwarmGrants({ ...effect, infinity: { ...effect.infinity, spentPoints: nextSpent } }), cost)
+  }
   const retained = RETAINED_FACILITIES[itemId]
   if (retained !== undefined) {
     return purchaseRetainedFacility(state, retained)

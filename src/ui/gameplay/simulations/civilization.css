@@ -1,0 +1,274 @@
+.civilization-scroll { min-block-size: 0; overflow-y: auto; scrollbar-width: none; padding: var(--game-card-content-inset); }
+.civilization-scroll::-webkit-scrollbar { display: none; }
+.civilization-heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--ui-card-gap); }
+.civilization-heading h2 { margin: 0; font-size: var(--ui-text-section-title); overflow-wrap: anywhere; }
+.civilization-workforce[open] { grid-column: 1 / -1; }
+.civilization-stock { margin-block-end: var(--ui-card-gap); }
+.civilization-stock > summary, .civilization-workforce > summary { display: flex; align-items: center; gap: var(--ui-card-gap); min-block-size: var(--target-minimum); cursor: pointer; list-style: none; font-size: var(--ui-text-body); }
+.civilization-stock > summary::-webkit-details-marker, .civilization-workforce > summary::-webkit-details-marker, .civilization-job > summary::-webkit-details-marker { display: none; }
+.civilization-balances { display: flex; flex-wrap: wrap; gap: var(--ui-card-gap) var(--ui-section-gap); margin: 0; flex: 1; font-size: var(--ui-text-body); }
+.civilization-balances > div { display: flex; align-items: baseline; gap: var(--ui-related-copy-gap); }
+.civilization-balances dt { color: var(--color-text-secondary); }
+.civilization-balances dd { margin: 0; color: var(--theme-accent); font-weight: var(--font-weight-bold); font-variant-numeric: tabular-nums; }
+.civilization-balances--remaining { padding-block: var(--ui-card-gap); border-block-start: 1px solid var(--theme-divider); margin-block-end: var(--ui-card-gap); }
+.civilization-workforce strong { color: var(--theme-accent); font-variant-numeric: tabular-nums; }
+.civilization-activities { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; list-style: none; padding: 0; margin: 0; column-gap: var(--ui-panel-inset); background: var(--theme-panel); border: 1px solid var(--theme-divider); border-radius: var(--ui-control-radius); }
+.civilization-activities > li { min-inline-size: 0; }
+.civilization-activity { border-block-end: 1px solid var(--theme-divider); }
+.civilization-job > summary { position: relative; display: block; min-block-size: var(--target-minimum); padding: var(--game-card-content-inset); cursor: pointer; list-style: none; }
+.civilization-job .ui-progress { gap: var(--ui-related-copy-gap); --color-accent-value: var(--theme-accent); }
+.civilization-job .ui-progress__header { align-items: baseline; gap: var(--ui-card-gap); padding-inline-end: calc(var(--ui-card-gap) + 0.75em); line-height: var(--line-height-compact); }
+.civilization-job .ui-progress__header > :first-child { min-inline-size: 0; overflow-wrap: anywhere; font-size: var(--ui-text-card-title); }
+.civilization-job .ui-progress__value { flex-shrink: 0; max-inline-size: 50%; text-align: end; white-space: normal; font-size: var(--ui-text-meta); color: var(--color-text-primary); }
+.civilization-job > summary > .civilization-chevron { position: absolute; inset-inline-end: var(--game-card-content-inset); inset-block-start: var(--game-card-content-inset); }
+.civilization-chevron { flex-shrink: 0; transform: rotate(90deg); color: var(--theme-accent); font-weight: var(--font-weight-bold); }
+:is(.civilization-stock, .civilization-workforce, .civilization-job)[open] > summary > .civilization-chevron { transform: rotate(270deg); }
+.civilization-job progress { display: block; appearance: none; border: 1px solid var(--color-border); border-radius: var(--ui-control-radius); overflow: hidden; background: var(--theme-page); }
+.civilization-job progress::-webkit-progress-bar { background: var(--theme-page); }
+.civilization-job progress::-webkit-progress-value { background-color: var(--theme-accent); background-image: var(--ui-action-gradient); }
+.civilization-job progress::-moz-progress-bar { background-color: var(--theme-accent); background-image: var(--ui-action-gradient); }
+.civilization-activity-details, .civilization-camp-details { padding: var(--game-card-content-inset); border-block-start: 1px solid var(--theme-divider); }
+.civilization-facts { display: grid; gap: var(--ui-related-copy-gap); margin: 0; font-size: var(--ui-text-body); }
+.civilization-facts > div { display: flex; align-items: baseline; justify-content: space-between; gap: var(--ui-card-gap); }
+.civilization-facts dt { min-inline-size: 0; }
+.civilization-facts:not(.civilization-recipe) dd { flex-shrink: 0; white-space: nowrap; }
+.civilization-facts dd { min-inline-size: 0; max-inline-size: 65%; margin: 0; text-align: end; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.civilization-recipe dd { color: var(--theme-accent); }
+.civilization-activity-details p, .civilization-equipment p, .civilization-confirmation p, .civilization-preview p { margin-block: var(--ui-card-gap) 0; font-size: var(--ui-text-body); }
+.civilization-confirmation { margin-block-start: var(--ui-card-gap); border-block-start: 1px solid var(--theme-divider); }
+.civilization-preview { margin-block-start: var(--ui-section-gap); padding: var(--game-card-content-inset); }
+.civilization-preview h3 { margin: 0; font-size: var(--ui-text-card-title); }
+:is(.civilization-stock, .civilization-workforce, .civilization-job) > summary:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+@media (max-width: 720px) { .civilization-activities { grid-template-columns: minmax(0, 1fr); } }
+.civilization-heading { margin-block-end: var(--ui-card-gap); }
+.civilization-fracture { margin-inline-start: auto; font-size: var(--ui-text-meta); color: var(--theme-accent); text-align: end; }
+.civilization-management { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--ui-card-gap); }
+.civilization-workforce[open] { flex: 1 1 100%; }
+.civilization-camp-details p { margin-block: var(--ui-card-gap) 0; font-size: var(--ui-text-body); }
+.civilization-goal-heading { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--ui-card-gap); margin-block-end: var(--ui-card-gap); font-size: var(--ui-text-body); }
+.civilization-goal-heading h3 { margin: 0; font-size: var(--ui-text-card-title); }
+.civilization-paths { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--ui-section-gap); align-items: start; }
+.civilization-path h3 { margin: 0 0 var(--ui-card-gap); font-size: var(--ui-text-card-title); }
+.civilization-path .civilization-activities { grid-template-columns: minmax(0,1fr); }
+@media (max-width:720px) { .civilization-paths { grid-template-columns:minmax(0,1fr); } }
+/* Reuse the shared upward settings body and route dock used by Infinity. */
+.civilization-scroll { padding-block-end: max(var(--ui-section-gap), var(--safe-area-bottom)); }
+.civilization-focus { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ui-card-gap); margin-block-end: var(--ui-card-gap); }
+/* Research quantity surfaces, with Infinity's outward settings-control shadow. */
+.civilization-focus-options { display: flex; flex-wrap: wrap; gap: var(--ui-control-gap); margin-inline-start: auto; }
+.civilization-focus-options button { min-block-size: 2rem; flex: 0 0 auto; min-inline-size: 44px; padding: var(--ui-control-gap); border: 1px solid var(--theme-divider); border-radius: .2rem; background: var(--theme-selected); color: var(--color-text-primary); font: inherit; font-size: calc(.78rem * var(--game-text-scale)); font-weight: var(--font-weight-semibold); line-height: var(--line-height-compact); overflow-wrap: normal; box-shadow: 0 .12rem .24rem rgb(0 0 0 / 42%); cursor: pointer; touch-action: manipulation; user-select: none; }
+.civilization-focus-options button[aria-checked="true"] { border-color: var(--theme-accent); background: var(--theme-accent); color: var(--theme-page); font-weight: var(--font-weight-bold); }
+.civilization-focus-options button:focus-visible { box-shadow: 0 .12rem .24rem rgb(0 0 0 / 42%), inset 0 0 .7rem rgb(255 255 255 / 24%) !important; }
+.civilization-focus-options button:disabled { cursor: wait; opacity: .7; }
+@media (forced-colors: active) { .civilization-focus-options button, .civilization-focus-options button:focus-visible { box-shadow: none !important; } .civilization-focus-options button[aria-checked="true"] { border-color: Highlight; background: Highlight; color: HighlightText; } }
+.civilization-distribution { display: grid; gap: var(--ui-related-copy-gap); margin-block-end: var(--ui-section-gap); font-size: var(--ui-text-body); }
+.civilization-distribution .civilization-balances { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: var(--ui-card-gap); }
+.civilization-distribution .civilization-balances > div { min-inline-size: 0; justify-content: flex-start; gap: var(--ui-related-copy-gap); padding-inline-end: var(--ui-card-gap); }
+.civilization-distribution dt { overflow-wrap: break-word; }
+.civilization-dock { padding-inline-end: var(--safe-area-right); padding-block-end: var(--safe-area-bottom); }
+.civilization-catalyst-summary { display: grid; gap: var(--ui-related-copy-gap); }
+.civilization-catalyst-summary .civilization-goal-heading { margin: 0; font-size: var(--ui-text-meta); }
+.civilization-catalyst-summary .ui-progress { gap: var(--ui-related-copy-gap); --color-accent-value: var(--theme-accent); }
+.civilization-catalyst-summary .ui-progress__header { font-size: var(--ui-text-meta); }
+.civilization-catalyst-summary progress { block-size: .48rem; border: 1px solid var(--theme-divider); border-radius: .2rem; }
+.civilization-control-panel .ui-progress-controls-panel__body { display: grid; gap: var(--ui-section-gap); }
+.civilization-goal-details h3, .civilization-upcoming h3 { margin: 0; font-size: var(--ui-text-card-title); }
+.civilization-goal-details p { margin-block: var(--ui-related-copy-gap) 0; font-size: var(--ui-text-body); }
+.civilization-upcoming dl { margin: 0; font-size: var(--ui-text-body); }
+.civilization-upcoming dl > div { padding-block: var(--ui-card-gap); border-block-end: 1px solid var(--theme-divider); }
+.civilization-upcoming dd { margin: var(--ui-related-copy-gap) 0 0; color: var(--color-text-secondary); }
+@media (max-width:720px) {
+  .civilization-dock .civilization-focus { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--ui-control-gap); margin-block: var(--ui-control-gap); }
+  .civilization-focus-options { margin-inline-start: 0; }
+  .civilization-focus-options button { flex: 1 0 max(44px, calc((100% - 3 * var(--ui-control-gap)) / 4)); min-inline-size: max-content; padding-inline: 0; }
+  .civilization-distribution .civilization-balances { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+.civilization-surface { grid-template-rows: auto minmax(0,1fr) auto; --simulation-era-glow: color-mix(in srgb, var(--theme-accent) 14%, transparent); }
+.civilization-era-header { padding: var(--game-card-content-inset); border-block-end: 1px solid var(--theme-divider); background: var(--theme-page); }
+.civilization-era-header .civilization-distribution { margin-block-end: 0; }
+.civilization-control-panel .ui-progress-controls-panel__body { max-block-size: min(24vh, 14rem); }
+
+@media (forced-colors: active) { .civilization-activities { background: Canvas; color: CanvasText; border-color: CanvasText; } .civilization-job progress { background: Canvas; border-color: CanvasText; } .civilization-job progress::-webkit-progress-value { background: Highlight; } .civilization-job progress::-moz-progress-bar { background: Highlight; } }
+.civilization-catalyst-summary progress { display: block; appearance: none; overflow: hidden; background: var(--theme-page); }
+.civilization-catalyst-summary progress::-webkit-progress-bar { background: var(--theme-page); }
+.civilization-catalyst-summary progress::-webkit-progress-value { background-color: var(--theme-accent); }
+.civilization-catalyst-summary progress::-moz-progress-bar { background-color: var(--theme-accent); }
+@media (forced-colors: active) { .civilization-catalyst-summary progress { background: Canvas; border-color: CanvasText; } .civilization-catalyst-summary progress::-webkit-progress-value { background: Highlight; } .civilization-catalyst-summary progress::-moz-progress-bar { background: Highlight; } }
+
+.civilization-distribution > summary { display: grid; gap: var(--ui-related-copy-gap); }
+.civilization-allocation-heading { display: flex; align-items: baseline; gap: var(--ui-card-gap); }
+.civilization-allocation-total { margin-inline-start: auto; color: var(--theme-accent); font-weight: var(--font-weight-bold); }
+.civilization-distribution .civilization-balances { column-gap: var(--ui-section-gap); }
+.civilization-distribution .civilization-balances > div:not(:last-child) { border-inline-end: 1px solid var(--theme-divider); }
+.civilization-distribution .civilization-balances dd { flex-shrink: 0; }
+.civilization-distribution .civilization-camp-details { max-block-size: min(24vh, 14rem); overflow-y: auto; scrollbar-width: none; }
+.civilization-distribution .civilization-camp-details::-webkit-scrollbar { display: none; }
+@media (max-width:720px) { .civilization-distribution .civilization-balances > div:nth-child(2) { border-inline-end: 0; } }
+.civilization-scroll { padding-block-start: 0; }
+.civilization-stock { margin-block-end: 0; }
+.civilization-focus-heading { display: flex; flex: 0 0 auto; justify-content: space-between; gap: var(--ui-card-gap); align-items: center; }
+.civilization-dock .civilization-focus { margin-block: var(--ui-card-gap); }
+.civilization-dock .civilization-distribution { margin-block-end: var(--ui-card-gap); }
+/* Ordinary inline geometry comes from the shared symbol/amount contract. */
+.civilization-symbol { display: inline-block; inline-size: .92em; block-size: .92em; flex: none; vertical-align: -.08em; }
+.civilization-icon-amount { display: inline-flex; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.civilization-start-cost [data-affordable="true"] { color: var(--color-positive); }
+.civilization-start-cost [data-affordable="false"] { color: var(--color-accent-value); }
+.civilization-job-header { display: flex; flex-wrap: wrap; gap: var(--ui-related-copy-gap) var(--ui-card-gap); align-items: center; padding-inline-end: 1em; margin-block-end: var(--ui-related-copy-gap); }
+.civilization-job-title { display: flex; flex-wrap: wrap; flex-grow: 1; min-inline-size: 0; max-inline-size: 100%; gap: var(--ui-card-gap); align-items: center; font-size: var(--ui-text-card-title); line-height: 1.12; }
+.civilization-job-title > strong { min-inline-size: 0; overflow-wrap: break-word; }
+.civilization-job-title .civilization-icon-amount { font-size: calc(.8rem * var(--game-text-scale)); font-weight: var(--font-weight-semibold); }
+.civilization-job-recipe { display: flex; flex-wrap: wrap; max-inline-size: 100%; margin-inline-start: 0; justify-content: flex-start; gap: var(--ui-control-gap); align-items: center; font-size: var(--ui-text-body); font-weight: var(--font-weight-medium); line-height: 1.14; }
+.civilization-start-cost, .civilization-output { display: inline-flex; flex-wrap: wrap; gap: var(--ui-section-gap); align-items: center; }
+.civilization-job-header .ui-resource-value__content { align-items: center; }
+.civilization-job-recipe .ui-resource-value__content { gap: .12em; }
+.civilization-recipe-arrow { color: var(--color-text-primary); }
+/* Authorized recipe/bar-right-timer composition; Bots track, natural timer width. */
+.civilization-cycle { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: var(--ui-control-gap); }
+.civilization-cycle-progress { position: relative; min-inline-size: 0; }
+.civilization-cycle-progress .ui-progress__header { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); }
+.civilization-job .civilization-cycle-progress { gap: 0; }
+.civilization-job .civilization-cycle-progress progress { block-size: .72rem; border-radius: .2rem; }
+.civilization-job-timer { font-size: var(--ui-text-meta); line-height: 1.25; color: var(--color-text-primary); white-space: nowrap; font-family: var(--font-family-numeric); font-variant-numeric: tabular-nums; }
+.civilization-job > summary, .civilization-stock > summary, .civilization-workforce > summary { min-block-size: max(44px,var(--target-minimum)); }
+.civilization-control-panel .ui-progress-controls-panel__settings { inline-size: max(44px,var(--target-minimum)); block-size: max(44px,var(--target-minimum)); }
+.civilization-goal-heading > strong { display: inline-flex; align-items: center; gap: var(--ui-related-copy-gap); }
+.civilization-goal-label { display: inline-flex; align-items: center; gap: var(--ui-related-copy-gap); }
+/* Resource-display icon role only; compact dock labels and values keep their roles. */
+.civilization-dock .civilization-symbol { font-size: calc(var(--font-size-lg) * var(--game-text-scale)); color: var(--color-text-primary); }
+.civilization-dock .civilization-symbol[data-symbol="catalyst"] { mask-size: 150%; -webkit-mask-size: 150%; mask-position: 58.7% 50%; -webkit-mask-position: 58.7% 50%; }
+.civilization-goal-heading > .civilization-icon-amount { margin-inline-start: auto; }
+.civilization-retained-generator { padding: var(--game-card-content-inset); background: var(--theme-panel); border: 1px solid var(--theme-divider); border-radius: var(--ui-control-radius); }
+.civilization-retained-generator header { display: flex; justify-content: space-between; margin-block-end: var(--ui-card-gap); }
+/* A zero-height activity track must not retain padding under an expanded dock. */
+.civilization-scroll { padding-block-end: 0; }
+.civilization-scroll > :last-child { margin-block-end: max(var(--ui-section-gap), var(--safe-area-bottom)); }
+
+.civilization-control-panel .ui-progress-controls-panel__collapsed { grid-template-columns: minmax(0,1fr) max(44px,2.8rem); }
+
+/* Scoped Forager readability role; approved artwork and app text scale stay intact. */
+.civilization-symbol[data-symbol="food"], .civilization-symbol[data-symbol="materials"] { --civilization-icon-optical-scale: 1.12; }
+.civilization-job-header .civilization-symbol {
+  inline-size: calc(var(--civilization-recipe-icon-size, calc(1.1rem * var(--game-text-scale))) * var(--civilization-icon-optical-scale, 1));
+  block-size: calc(var(--civilization-recipe-icon-size, calc(1.1rem * var(--game-text-scale))) * var(--civilization-icon-optical-scale, 1));
+}
+.civilization-resource-legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12em), 1fr));
+  gap: var(--ui-card-gap) var(--ui-panel-inset);
+  margin: 0;
+  padding-block: var(--ui-card-gap);
+  border-block-start: 1px solid var(--theme-divider);
+  font-size: var(--ui-text-body);
+}
+.civilization-resource-legend > div { display: flex; align-items: center; justify-content: space-between; gap: var(--ui-card-gap); min-inline-size: 0; }
+.civilization-resource-legend dt { display: inline-flex; align-items: center; gap: var(--ui-control-gap); min-inline-size: 0; }
+.civilization-resource-legend dt > span:last-child { overflow-wrap: anywhere; }
+.civilization-resource-legend dd { margin: 0; color: var(--theme-accent); font-weight: var(--font-weight-semibold); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.civilization-resource-legend .civilization-symbol {
+  inline-size: calc(1.3rem * var(--game-text-scale) * var(--civilization-icon-optical-scale, 1));
+  block-size: calc(1.3rem * var(--game-text-scale) * var(--civilization-icon-optical-scale, 1));
+}
+
+/* User-requested Bots preset height and tighter desktop dock; Settings semantics unchanged. */
+@media (min-width: 721px) {
+  .civilization-dock .civilization-focus { margin-block: 0; }
+  .civilization-control-panel .ui-progress-controls-panel__above-summary { padding-block: 0; }
+  .civilization-control-panel .ui-progress-controls-panel__collapsed--with-above-summary { min-block-size: 0; grid-template-rows: auto auto; }
+  .civilization-control-panel .ui-progress-controls-panel__summary {
+    align-content: center;
+    padding-block: 0;
+    padding-inline: .7rem .35rem;
+  }
+  .civilization-control-panel .ui-progress-controls-panel__collapsed { padding-inline-end: 0; }
+  .civilization-control-panel .ui-progress-controls-panel__above-summary { padding-inline-start: .7rem; }
+}
+
+/* User-approved heading removal and dock spacing. Match the visible Settings
+ * surface, including its inset inside the retained full interaction target. */
+.civilization-control-panel {
+  --civilization-settings-cell: max(44px, 2.8rem);
+  --civilization-settings-target: max(44px, var(--target-minimum));
+  --civilization-settings-surface-inset: .22rem;
+}
+.civilization-control-panel .ui-progress-controls-panel__collapsed {
+  grid-template-columns: minmax(0, 1fr) var(--civilization-settings-cell);
+}
+.civilization-control-panel .ui-progress-controls-panel__settings {
+  inline-size: var(--civilization-settings-target);
+  block-size: var(--civilization-settings-target);
+}
+.civilization-control-panel .ui-progress-controls-panel__settings::before {
+  inset: var(--civilization-settings-surface-inset);
+}
+.civilization-control-panel .ui-progress-controls-panel__above-summary {
+  padding-block: var(--ui-card-gap) var(--ui-control-gap);
+  padding-inline-end: calc((var(--civilization-settings-cell) - var(--civilization-settings-target)) / 2 + var(--civilization-settings-surface-inset));
+}
+.civilization-dock .civilization-focus { margin-block: 0; }
+/* Bots' shared production-dock variant owns the mobile collapsed gutter and
+ * right safe-area reservation. Expanded content uses the same dense inset. */
+@media (max-width: 720px) {
+  .civilization-dock { padding-inline-end: 0; }
+  .civilization-control-panel .ui-progress-controls-panel__body {
+    padding-inline:
+      max(var(--game-card-content-inset), var(--safe-area-left))
+      max(var(--game-card-content-inset), var(--safe-area-right));
+  }
+  .civilization-focus-heading { justify-content: flex-start; }
+}
+
+/* Farming composes the same Bots rows and Infinity dock, with explicit finite facilities. */
+.farming-housing-status { display:flex; flex-wrap:wrap; gap:var(--ui-card-gap) var(--ui-section-gap); font-size:var(--ui-text-body); }
+.farming-warning { color:var(--color-accent-value); font-size:var(--ui-text-body); margin-block:var(--ui-card-gap) 0; }
+.farming-row-complete { font-size:var(--ui-text-meta); color:var(--color-positive); }
+
+.farming-granary .ui-button { min-block-size: max(44px, var(--target-minimum)); }
+.farming-settings-copy, .farming-source p { font-size:var(--ui-text-body); margin:0; overflow-wrap:anywhere; }
+.farming-source { margin-block-start:var(--ui-section-gap); }
+
+/* Research purchase roles, separate from Bots production cycles. */
+.farming-shop, .farming-constructed { margin-block:var(--ui-section-gap); }
+.farming-shop > h3, .farming-constructed > h3 { margin:0 0 var(--ui-card-gap); font-size:var(--ui-text-section-title); }
+.farming-shop .farming-granary { display:flex; flex-wrap:wrap; align-items:start; gap:var(--ui-control-gap); padding:0; border:1px solid var(--theme-divider); border-radius:var(--ui-control-radius); background:var(--theme-panel); }
+
+.farming-granary > details { flex:1 1 calc(9rem * var(--game-text-scale)); min-inline-size:0; }
+.farming-granary summary { min-block-size:44px; padding:var(--game-card-content-inset); list-style:none; cursor:pointer; display:grid; gap:var(--ui-control-gap); }
+.farming-granary summary::-webkit-details-marker { display:none; }
+.farming-purchase-title { display:flex; flex-wrap:wrap; align-items:baseline; gap:var(--ui-control-gap); font-size:var(--ui-text-card-title); line-height:1.12; }
+.farming-purchase-title strong { min-inline-size:0; overflow-wrap:anywhere; }
+.farming-purchase-values { display:flex; flex-wrap:wrap; align-items:baseline; gap:var(--ui-card-gap); font-size:var(--ui-text-body); line-height:1.14; font-weight:var(--font-weight-semibold); }
+.farming-storage-benefit { display:inline-flex; align-items:baseline; gap:.16em; white-space:nowrap; }
+.farming-granary-cost { display:inline-flex; gap:var(--ui-control-gap); }
+.farming-granary > .ui-button { --purchase-action-font-size:var(--ui-text-control); margin:var(--game-card-content-inset); margin-inline-start:auto; flex:none; min-inline-size:44px; }
+.farming-purchase-details { padding:0 var(--game-card-content-inset) var(--game-card-content-inset); font-size:var(--ui-text-body); }
+.farming-purchase-details p { margin:0 0 var(--ui-related-copy-gap); }
+.farming-weather { margin-block-start:var(--ui-card-gap); --farming-weather-fill:var(--theme-accent); }
+.farming-weather .ui-progress { flex:1; gap:var(--ui-related-copy-gap); --color-accent-value:var(--theme-accent); }
+.farming-weather .ui-progress__header { padding-inline-end:0; }
+.farming-weather .ui-progress__header > :first-child { font-size:var(--ui-text-meta); color:var(--color-text-secondary); }
+.farming-weather[data-risk=true] .ui-progress__header > :first-child { color:var(--farming-weather-fill); }
+.farming-weather .ui-progress progress { block-size:.48rem; border-radius:.2rem; }
+.farming-weather .ui-progress progress::-webkit-progress-value { background-color:var(--farming-weather-fill); }
+.farming-weather .ui-progress progress::-moz-progress-bar { background-color:var(--farming-weather-fill); }
+.farming-weather[data-risk=true] { --farming-weather-fill:var(--color-accent-value); }
+
+.farming-constructed p { margin:0 0 var(--ui-card-gap); font-size:var(--ui-text-body); color:var(--color-text-secondary); }
+.farming-constructed ul { margin:0; padding:0; list-style:none; display:grid; gap:var(--ui-control-gap); }
+.farming-constructed li { display:flex; gap:var(--ui-card-gap); align-items:baseline; font-size:var(--ui-text-body); }
+.farming-constructed li > span:last-child { margin-inline-start:auto; color:var(--color-positive); }
+
+@media (min-width:721px) { .farming-shop .farming-granary { max-inline-size:calc((100% - var(--ui-section-gap)) / 2); } }
+@media (forced-colors:active) { .farming-weather .ui-progress progress { background:Canvas; border-color:CanvasText; } .farming-weather .ui-progress progress::-webkit-progress-value { background:Highlight; } .farming-weather .ui-progress progress::-moz-progress-bar { background:Highlight; } }
+
+.farming-granary summary:focus-visible { outline:2px solid var(--color-focus); outline-offset:2px; }
+
+.farming-granary > .ui-button.ui-button--purchase { align-self:flex-start; }
+
+/* Let Forager allocation names follow enlarged text without overlapping counts. */
+.civilization-surface:not(.farming-surface) .civilization-distribution dt { min-inline-size: 0; overflow-wrap: anywhere; }
+@media (max-width: 720px) {
+  .civilization-surface:not(.farming-surface) .civilization-distribution .civilization-balances {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 9em), 1fr));
+  }
+}

@@ -4,27 +4,26 @@ import { prepareImportedSaveText } from '../save/import'
 import { serializeSharedWebSave } from '../save/serialization'
 import { applyCanonicalOverflowReset } from '../simulation/canonicalOverflowReset'
 import { OVERFLOW_BOT_CAP } from '../simulation/overflowBoundary'
-import { createProductionEventContext } from '../simulation/productionEventContext'
 import { markSpeedrunUsage } from '../simulation/speedrunStatistics'
-import { createCanonicalGameEngineDefinition } from './canonicalGameApplication'
 import { CanonicalRuntimeSession } from './canonicalRuntimeSession'
 import { createUnityFirstRunResetRequest } from './firstRun/productionFirstRun'
 import { createUnityFirstRunPreparedSave } from './firstRun/unityFirstRunSave'
 
 const startedAtUtc = '2026-09-13T00:00:00.000Z'
 
-test('both purchase preferences and Debug evidence survive Overflow and portable reload together', () => {
-  const session = new CanonicalRuntimeSession(
+test('legacy purchase preferences and Debug evidence survive Transcendence and portable reload together', () => {
+  const initial = new CanonicalRuntimeSession(
     createUnityFirstRunPreparedSave({ startedAtUtc }), { entitlements: {} },
   )
+  // The retired purchase controls no longer accept commands. Their compatibility
+  // payload must still round-trip alongside retained Debug and TP progression.
+  const legacy = initial.prepare({ ...initial.initialState, gameState: {
+    ...initial.initialState.gameState,
+    dream: { ...initial.initialState.gameState.dream, buyMode: 'buy-50' },
+    quantum: { ...initial.initialState.gameState.quantum, buyMode: 'buy-100' },
+  } })
+  const session = new CanonicalRuntimeSession(legacy, { entitlements: {} })
   const runtime = structuredClone(session.initialState)
-  const engine = createCanonicalGameEngineDefinition({ eventContext: createProductionEventContext() })
-  const simulation = engine.applyCommand(runtime,
-    { kind: 'dream.set-buy-mode', buyMode: 'buy-50' })
-  expect(simulation.accepted).toBe(true)
-  const quantum = engine.applyCommand(runtime,
-    { kind: 'quantum.set-buy-mode', buyMode: 'buy-100' })
-  expect(quantum.accepted).toBe(true)
   const state = markSpeedrunUsage(runtime.gameState, 'debug')
   const reset = applyCanonicalOverflowReset({
     ...state, dyson: { ...state.dyson, bots: OVERFLOW_BOT_CAP },

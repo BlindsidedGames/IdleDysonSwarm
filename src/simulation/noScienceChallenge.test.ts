@@ -14,7 +14,7 @@ import { DISCRETE_MAXIMUM } from './numeric'
 
 function entered() {
   const source = hydrateGameState(createUnityFirstRunPreparedSave({ startedAtUtc: '2026-09-24T00:00:00Z' })).state
-  const state = { ...source, challenges: { ...EMPTY_INFINITY_CHALLENGES, unlocked: true }, infinity: { ...source.infinity, points: 99n } }
+  const state = { ...source, meta: { ...source.meta, firstInfinityComplete: true, reworkMigrationChoice: 'keep' as const }, challenges: { ...EMPTY_INFINITY_CHALLENGES, unlocked: true }, infinity: { ...source.infinity, points: 99n } }
   const reset = restartInfinityChallenge(state, 'enter', 0n, 'no-science')
   if (!reset.ok) throw new Error(reset.code)
   return reset.state

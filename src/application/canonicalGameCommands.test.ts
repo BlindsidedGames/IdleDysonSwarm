@@ -98,8 +98,15 @@ function options(
 }
 
 const COMMAND_EXAMPLES = [
+  { kind: 'rework.choose-migration', choice: 'keep' },
   { kind: 'time.set-offline-boost-multiplier', multiplier: 42 },
   { kind: 'discovery.purchase', purchase: 'unlock' },
+  { kind: 'civilization.enter-farming' },
+  { kind: 'civilization.build-granary' },
+  { kind: 'civilization.complete-farming' },
+  { kind: 'civilization.farming-focus', focus: 'settlement' },
+  { kind: 'civilization.set-focus', focus: 'settlement' },
+  { kind: 'civilization.equip-worker' },
   { kind: 'dream.set-buy-mode', buyMode: 'buy-50' },
   {
     kind: 'dyson.purchase-facility',
@@ -1496,12 +1503,11 @@ describe('canonical game command router', () => {
     }]
     const calibrated = {
       ...source,
-      dream: {
-        ...source.dream,
-        strangeMatter: 100,
-      },
+      meta: { ...source.meta, reworkMigrationChoice: 'keep' as const },
       infinity: {
         ...source.infinity,
+        points: 100n,
+        spentPoints: 0n,
         currentCyclePeakIpPerMinute: 74_208.1448,
         currentCyclePeakReward: 82n,
         manualPeakIpPerMinute: 74_208.1448,
@@ -1525,8 +1531,8 @@ describe('canonical game command router', () => {
     const result = routeCanonicalGameCommand(
       calibrated,
       {
-        kind: 'reality.purchase-upgrade',
-        upgradeId: 'doubleTimeOwned',
+        kind: 'infinity.purchase-shop-item',
+        itemId: 'rework-DoubleTime',
       },
       options(),
     )
@@ -1534,7 +1540,7 @@ describe('canonical game command router', () => {
     expect(result).toMatchObject({
       accepted: true,
       changed: true,
-      code: 'reality-upgrade:purchased',
+      code: 'infinity-shop:purchased',
       state: {
         infinity: {
           currentCyclePeakIpPerMinute: 0,

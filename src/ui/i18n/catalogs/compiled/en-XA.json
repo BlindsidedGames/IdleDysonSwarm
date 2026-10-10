@@ -1391,6 +1391,1388 @@
       "value": "]"
     }
   ],
+  "civilization.allocated": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧŀŀǿǿƈȧȧŧḗḗḓ ẇǿǿřķḗḗřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.amount": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "resource"
+    },
+    {
+      "type": 0,
+      "value": ": "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.automaticAward": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧẇȧȧřḓḗḗḓ ȧȧŭŭŧǿǿḿȧȧŧīƈȧȧŀŀẏ ẇħḗḗƞ ḗḗṽḗḗřẏ řḗḗɋŭŭīřḗḗḿḗḗƞŧ īş ƈǿǿḿƥŀḗḗŧḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.available": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŭƞȧȧşşīɠƞḗḗḓ / ŧǿǿŧȧȧŀ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.awarded": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧẇȧȧřḓḗḗḓ Ƈȧȧŧȧȧŀẏşŧş: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 3"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.balanced": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓȧȧŀȧȧƞƈḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.bootstrap": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒȧȧḿīŀẏ ɠȧȧŧħḗḗřīƞɠ ƞḗḗḗḗḓş ƞǿǿ īƞƥŭŭŧş ǿǿř ȧȧşşīɠƞḗḗḓ ẇǿǿřķḗḗř."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.bootstrapV4": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħřḗḗḗḗ ƒǿǿŭŭƞḓḗḗřş ƀḗḗɠīƞ ẇīŧħ ǿǿƞḗḗ şħḗḗŀŧḗḗř ķīŧ. Ɠȧȧŧħḗḗřīƞɠ ƞḗḗḗḗḓş ȧȧ řḗḗȧȧŀ ƈřḗḗẇ ȧȧƞḓ ƞǿǿ īƞƥŭŭŧş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.campExpansion": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈȧȧḿƥ Ḗẋƥȧȧƞşīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.campProvisioning": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈȧȧḿƥ Ƥřǿǿṽīşīǿǿƞīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.camps": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈȧȧḿƥş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.cancel": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈȧȧƞƈḗḗŀ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.catalysts": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈȧȧŧȧȧŀẏşŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.clothing": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈŀǿǿŧħīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.completed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿḿƥŀḗḗŧḗḗḓ ƈẏƈŀḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.continuedDevelopment": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈȧȧḿƥ ḓḗḗṽḗḗŀǿǿƥḿḗḗƞŧ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.conversion": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗȧȧƈħ şħḗḗŀŧḗḗř ħǿǿŭŭşḗḗş 2 ẇǿǿřķḗḗřş; ḗḗȧȧƈħ ƈȧȧḿƥ ħǿǿŭŭşḗḗş 8. Ŧħřḗḗḗḗ şħḗḗŀŧḗḗřş ƀḗḗƈǿǿḿḗḗ ǿǿƞḗḗ ƈȧȧḿƥ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.conversionV4": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧ şħḗḗŀŧḗḗř ȧȧḓḓş 2 řḗḗşīḓḗḗƞŧş. Ŧħřḗḗḗḗ şħḗḗŀŧḗḗřş ȧȧƞḓ ŧħḗḗīř 6 řḗḗşīḓḗḗƞŧş řḗḗḿȧȧīƞ řḗḗşḗḗřṽḗḗḓ ḓŭŭřīƞɠ ƈǿǿƞṽḗḗřşīǿǿƞ. Ŧħḗḗ ƒīƞīşħḗḗḓ ƈȧȧḿƥ ħǿǿŭŭşḗḗş 9 řḗḗşīḓḗḗƞŧş, ȧȧḓḓīƞɠ 3."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.craft": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈřȧȧƒŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.craftSpecialization": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈřȧȧƒŧ Şƥḗḗƈīȧȧŀīẑȧȧŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.duration": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈẏƈŀḗḗ ḓŭŭřȧȧŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.equip": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗɋŭŭīƥ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " ẇǿǿřķḗḗřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.equipConfirm": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şƥḗḗƞḓ "
+    },
+    {
+      "type": 1,
+      "value": "tools"
+    },
+    {
+      "type": 0,
+      "value": " Ŧǿǿǿǿŀş ȧȧƞḓ "
+    },
+    {
+      "type": 1,
+      "value": "clothing"
+    },
+    {
+      "type": 0,
+      "value": " Ƈŀǿǿŧħīƞɠ ŧǿǿ ḗḗɋŭŭīƥ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " ẇǿǿřķḗḗřş?"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.equipmentAutomatic": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗṽḗḗřẏ şīḿŭŭŀȧȧŧīǿǿƞ ḿīƞŭŭŧḗḗ, ȧȧṽȧȧīŀȧȧƀŀḗḗ Ŧǿǿǿǿŀş ȧȧƞḓ Ƈŀǿǿŧħīƞɠ ḗḗɋŭŭīƥ ŭŭƥ ŧǿǿ ǿǿƞḗḗ ɋŭŭȧȧřŧḗḗř ǿǿƒ řḗḗşīḓḗḗƞŧş. Ḗȧȧƈħ řḗḗŧȧȧīƞḗḗḓ ķīŧ ƈǿǿşŧş 2 Ŧǿǿǿǿŀş ȧȧƞḓ 1 Ƈŀǿǿŧħīƞɠ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.equipmentEffect": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗȧȧƈħ ḗḗɋŭŭīƥƥḗḗḓ ƒīḗḗŀḓ ẇǿǿřķḗḗř ƈǿǿƞŧřīƀŭŭŧḗḗş ǿǿƞḗḗ ḗḗẋŧřȧȧ ẇǿǿřķḗḗř ǿǿƒ ƥřǿǿḓŭŭƈŧīṽḗḗ ŀȧȧƀǿǿř."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.equipmentEffectV4": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗȧȧƈħ ŭŭşḗḗƒŭŭŀ ḗḗɋŭŭīƥƥḗḗḓ ƒīḗḗŀḓ ẇǿǿřķḗḗř ȧȧḓḓş ħȧȧŀƒ ȧȧ ẇǿǿřķḗḗř ǿǿƒ ƥřǿǿḓŭŭƈŧīṽḗḗ ŀȧȧƀǿǿř."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.equipmentStock": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧǿǿǿǿŀş ȧȧƞḓ Ƈŀǿǿŧħīƞɠ ȧȧřḗḗ ƈǿǿƞşŭŭḿḗḗḓ ẇħḗḗƞ ḗḗɋŭŭīƥƥīƞɠ ẇǿǿřķḗḗřş. Īƞşŧȧȧŀŀḗḗḓ ḗḗɋŭŭīƥḿḗḗƞŧ şŧȧȧẏş ẇīŧħ ŧħḗḗ ƈȧȧḿƥ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.equipped": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗɋŭŭīƥƥḗḗḓ ẇǿǿřķḗḗřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.era": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒǿǿřȧȧɠḗḗř ḗḗřȧȧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.eraSettings": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒǿǿřȧȧɠḗḗř ḓḗḗŧȧȧīŀş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.establishedCamp": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗşŧȧȧƀŀīşħḗḗḓ ƈȧȧḿƥ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.exchangeNetworks": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗẋƈħȧȧƞɠḗḗ Ƞḗḗŧẇǿǿřķş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.exchangeRoutes": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗẋƈħȧȧƞɠḗḗ řǿǿŭŭŧḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.expeditions": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗẋƥḗḗḓīŧīǿǿƞş & Ŧřȧȧḓḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.failed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧƈŧīǿǿƞ ƒȧȧīŀḗḗḓ. Ŧřẏ ȧȧɠȧȧīƞ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.firstHunt": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒīřşŧ ħŭŭƞŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.fishing": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒīşħīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.focus": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿřķƒǿǿřƈḗḗ ƒǿǿƈŭŭş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.focusBalancedHelp": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓȧȧŀȧȧƞƈḗḗḓ şħȧȧřḗḗş ẇǿǿřķḗḗřş ȧȧƈřǿǿşş ȧȧṽȧȧīŀȧȧƀŀḗḗ ĵǿǿƀş ȧȧŧ ŧħḗḗīř ƞǿǿřḿȧȧŀ ẇǿǿřķ řȧȧŧḗḗş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.focusEffect": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿǿǿřḗḗ ẇǿǿřķḗḗřş ĵǿǿīƞ ŧħīş ƥȧȧŧħ ȧȧş ŧħḗḗ ƈȧȧḿƥ ɠřǿǿẇş. Ǿŧħḗḗř ƥȧȧŧħş ķḗḗḗḗƥ şḿȧȧŀŀḗḗř ƈřḗḗẇş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.focusEffectV4": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒǿǿƈŭŭş ƒȧȧṽǿǿŭŭřş ŧħīş ƥȧȧŧħ ȧȧƞḓ īŧş şŭŭƥƥǿǿřŧīƞɠ ƈřḗḗẇş. Ŭƞƒŭŭƞḓḗḗḓ ĵǿǿƀş řḗḗŀḗḗȧȧşḗḗ ẇǿǿřķḗḗřş; ƥȧȧīḓ ƈẏƈŀḗḗş ķḗḗḗḗƥ ŧħḗḗīř īƞƥŭŭŧş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.focusSelectedHelp": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "primary"
+    },
+    {
+      "type": 0,
+      "value": " ẇǿǿřķ ȧȧŧ "
+    },
+    {
+      "type": 1,
+      "value": "selectedRate"
+    },
+    {
+      "type": 0,
+      "value": "× ŧħḗḗīř Ɓȧȧŀȧȧƞƈḗḗḓ řȧȧŧḗḗ. Ǿŧħḗḗř ĵǿǿƀş ķḗḗḗḗƥ ŧħḗḗīř ƞǿǿřḿȧȧŀ řȧȧŧḗḗş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.focusSupportedHelp": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "primary"
+    },
+    {
+      "type": 0,
+      "value": " ẇǿǿřķ ȧȧŧ "
+    },
+    {
+      "type": 1,
+      "value": "selectedRate"
+    },
+    {
+      "type": 0,
+      "value": "× ŧħḗḗīř Ɓȧȧŀȧȧƞƈḗḗḓ řȧȧŧḗḗ; "
+    },
+    {
+      "type": 1,
+      "value": "support"
+    },
+    {
+      "type": 0,
+      "value": " ȧȧŧ "
+    },
+    {
+      "type": 1,
+      "value": "supportRate"
+    },
+    {
+      "type": 0,
+      "value": "×. Ǿŧħḗḗř ĵǿǿƀş ķḗḗḗḗƥ ŧħḗḗīř ƞǿǿřḿȧȧŀ řȧȧŧḗḗş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.food": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒǿǿǿǿḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.foodPreservation": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒǿǿǿǿḓ Ƥřḗḗşḗḗřṽȧȧŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.foragerGenerator": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒǿǿřȧȧɠḗḗř ƈȧȧḿƥ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.fractureRule": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "+5% şīḿŭŭŀȧȧŧīǿǿƞ şƥḗḗḗḗḓ ƥḗḗř ƒřȧȧƈŧŭŭřḗḗḓ şķīŀŀ. Ɓǿǿƞŭŭşḗḗş ȧȧřḗḗ ȧȧḓḓīŧīṽḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.fractures": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒřȧȧƈŧŭŭřḗḗ ƀǿǿǿǿşŧ +"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.gathering": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠȧȧŧħḗḗřīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.growthFocus": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠřǿǿẇŧħ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.hides": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ħīḓḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.hideworking": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ħīḓḗḗẇǿǿřķīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.housing": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ħǿǿŭŭşīƞɠ ƈȧȧƥȧȧƈīŧẏ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.hunting": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ħŭŭƞŧīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.inputs": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈẏƈŀḗḗ ƈǿǿşŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.legacyWorkHelp": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ǿŀḓḗḗř ƥȧȧīḓ ƈẏƈŀḗḗş ķḗḗḗḗƥ ŧħḗḗīř ǿǿřīɠīƞȧȧŀ ẇǿǿřķ řȧȧŧḗḗş ŭŭƞŧīŀ ŧħḗḗẏ ƒīƞīşħ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.locked": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗɋŭŭīřḗḗş "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.materials": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿȧȧŧḗḗřīȧȧŀş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.milestoneStep": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "target"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.next": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞḗḗẋŧ: "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.nextCatalyst": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞḗḗẋŧ Ƈȧȧŧȧȧŀẏşŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.nextEra": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞḗḗẋŧ: Ƈŭŭŀŧīṽȧȧŧīǿǿƞ & Ħḗḗřḓīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.nodeBonus": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇħḗḗƞ ƒřȧȧƈŧŭŭřḗḗḓ: +5% ǿǿṽḗḗřȧȧŀŀ şīḿŭŭŀȧȧŧīǿǿƞ şƥḗḗḗḗḓ. Ɓǿǿƞŭŭşḗḗş ȧȧřḗḗ ȧȧḓḓīŧīṽḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.nodeBonusActive": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒřȧȧƈŧŭŭřḗḗḓ: +5% ǿǿṽḗḗřȧȧŀŀ şīḿŭŭŀȧȧŧīǿǿƞ şƥḗḗḗḗḓ. Ɓǿǿƞŭŭşḗḗş ȧȧřḗḗ ȧȧḓḓīŧīṽḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.outputs": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈẏƈŀḗḗ ǿǿŭŭŧƥŭŭŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.paid": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īƞƥŭŭŧş řḗḗşḗḗřṽḗḗḓ ƒǿǿř ŧħīş ƈẏƈŀḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.phaseComplete": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒǿǿřȧȧɠḗḗř ǿǿƥḗḗƞīƞɠ ƈǿǿḿƥŀḗḗŧḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.preview": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧɠřīƈŭŭŀŧŭŭřḗḗ ƈǿǿƞŧīƞŭŭḗḗş īƞ ȧȧ ŀȧȧŧḗḗř ƥħȧȧşḗḗ. Ẏǿǿŭŭř ȧȧƈŧīṽīŧīḗḗş ķḗḗḗḗƥ řŭŭƞƞīƞɠ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.provisioning": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥřǿǿṽīşīǿǿƞīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.provisions": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥřǿǿṽīşīǿǿƞş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.recruitment": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿřķḗḗřş řḗḗḿȧȧīƞ īƞ ŧħḗḗ ƈȧȧḿƥ. Ḗȧȧƈħ ƞḗḗḗḗḓş ȧȧ ħǿǿŭŭşīƞɠ ƥŀȧȧƈḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.seasonalExpeditions": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şḗḗȧȧşǿǿƞȧȧŀ Ḗẋƥḗḗḓīŧīǿǿƞş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.settlement": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şḗḗŧŧŀḗḗḿḗḗƞŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.shelterBuilding": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şħḗḗŀŧḗḗř Ɓŭŭīŀḓīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.shelters": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şħḗḗŀŧḗḗřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.speed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥřǿǿɠřḗḗşş şƥḗḗḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.suppliesFocus": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŭŭƥƥŀīḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.toolmaking": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧǿǿǿǿŀḿȧȧķīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.tools": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧǿǿǿǿŀş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.tradeFocus": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧřȧȧṽḗḗŀ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.unlock": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗɋŭŭīřḗḗḓ ƈẏƈŀḗḗş: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " ǿǿƒ "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.upcoming": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞḗḗẋŧ ȧȧƈŧīṽīŧīḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.waiting": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇȧȧīŧīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.waitingDemand": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓḗḗḿȧȧƞḓ ḿḗḗŧ; ẇǿǿřķḗḗřş şŭŭƥƥǿǿřŧ ǿǿŧħḗḗř ĵǿǿƀş ŭŭƞŧīŀ ḿǿǿřḗḗ īş ƞḗḗḗḗḓḗḗḓ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.waitingHousing": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇȧȧīŧīƞɠ ƒǿǿř ħǿǿŭŭşīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.waitingInputs": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇȧȧīŧīƞɠ: "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.waitingRange": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓȧȧŀȧȧƞƈḗḗ ƈȧȧƞƞǿǿŧ ȧȧƈƈḗḗƥŧ ǿǿŭŭŧƥŭŭŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.waitingWorkers": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇȧȧīŧīƞɠ ƒǿǿř ẇǿǿřķḗḗřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.workers": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿřķḗḗřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "debug.access-description": [
     {
       "type": 0,
@@ -2890,7 +4272,7 @@
     },
     {
       "type": 0,
-      "value": "Ƥḗḗřşīşŧş ŧħřǿǿŭŭɠħ Īƞƒīƞīŧẏ ȧȧƞḓ Ɋŭŭȧȧƞŧŭŭḿ. Řḗḗşḗḗŧş ǿǿƞ Ŧřȧȧƞşƈḗḗƞḓḗḗƞƈḗḗ."
+      "value": "Ƥḗḗřşīşŧş ŧħřǿǿŭŭɠħ Īƞƒīƞīŧẏ. Řḗḗşḗḗŧş ǿǿƞ Ŧřȧȧƞşƈḗḗƞḓḗḗƞƈḗḗ."
     },
     {
       "type": 0,
@@ -8381,6 +9763,1370 @@
       "value": "]"
     }
   ],
+  "farming.amount": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "resource"
+    },
+    {
+      "type": 0,
+      "value": ": "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.automatic": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓŭŭīŀŧ ȧȧŭŭŧǿǿḿȧȧŧīƈȧȧŀŀẏ ƀẏ ŧħḗḗ ṽīŀŀȧȧɠḗḗ ƥŀȧȧƞ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.averageLabor": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŀȧȧƀǿǿř īş şħȧȧřḗḗḓ ǿǿṽḗḗř ŧīḿḗḗ. Ȧƥƥřǿǿẋīḿȧȧŧḗḗ ȧȧṽḗḗřȧȧɠḗḗş ƈȧȧƞ īƞƈŀŭŭḓḗḗ ƒřȧȧƈŧīǿǿƞş; ŧħḗḗ ẇǿǿřķḗḗř ŧǿǿŧȧȧŀ ƈǿǿŭŭƞŧş ẇħǿǿŀḗḗ ƥḗḗǿǿƥŀḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.balanced": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓȧȧŀȧȧƞƈḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.begin": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓḗḗɠīƞ Ƒȧȧřḿīƞɠ Ṽīŀŀȧȧɠḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.boost": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧƈŧŭŭȧȧŀ ƒřȧȧƈŧŭŭřḗḗş: +"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "%"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.build": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓŭŭīŀḓ Ɠřȧȧƞȧȧřẏ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.buy": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓŭŭẏ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.cap": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧǿǿřȧȧɠḗḗ ƒŭŭŀŀ; Ƒīḗḗŀḓş ƥȧȧŭŭşḗḗ ŭŭƞŧīŀ Ƒǿǿǿǿḓ īş şƥḗḗƞŧ ǿǿř ȧȧ Ɠřȧȧƞȧȧřẏ īş ƀŭŭīŀŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.capacity": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒǿǿǿǿḓ şŧǿǿřȧȧɠḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.closed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈŀǿǿşḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.compactStorage": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "160 şŧǿǿřȧȧɠḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.complete": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ṽīŀŀȧȧɠḗḗ ḗḗşŧȧȧƀŀīşħḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.connection": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧřȧȧḓḗḗ ƈǿǿƞƞḗḗƈŧīǿǿƞş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.constructed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿƞşŧřŭŭƈŧḗḗḓ ŭŭƥɠřȧȧḓḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.crew": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧṽḗḗřȧȧɠḗḗ ȧȧşşīɠƞḗḗḓ ŀȧȧƀǿǿř"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.done": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗşŧȧȧƀŀīşħḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.era": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒȧȧřḿīƞɠ Ṽīŀŀȧȧɠḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.export": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "workers"
+    },
+    {
+      "type": 0,
+      "value": " řḗḗŧȧȧīƞḗḗḓ ẇǿǿřķḗḗřş ḗḗẋƥǿǿřŧ "
+    },
+    {
+      "type": 1,
+      "value": "food"
+    },
+    {
+      "type": 0,
+      "value": " Ƒǿǿǿǿḓ ȧȧƞḓ "
+    },
+    {
+      "type": 1,
+      "value": "materials"
+    },
+    {
+      "type": 0,
+      "value": " Ḿȧȧŧḗḗřīȧȧŀş ƥḗḗř şīḿŭŭŀȧȧŧīǿǿƞ ḿīƞŭŭŧḗḗ, ƀḗḗƒǿǿřḗḗ ȧȧƈŧŭŭȧȧŀ ƒřȧȧƈŧŭŭřḗḗ ƀǿǿǿǿşŧş. Ŧħḗḗīř ǿǿŀḓ şŧǿǿƈķş řḗḗḿȧȧīƞ ẇīŧħ ŧħḗḗ ƈȧȧḿƥ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.failed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħḗḗ ȧȧƈŧīǿǿƞ ƈǿǿŭŭŀḓ ƞǿǿŧ ƀḗḗ şȧȧṽḗḗḓ. Ŧřẏ ȧȧɠȧȧīƞ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.fields": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒīḗḗŀḓş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.finish": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗşŧȧȧƀŀīşħ ŧħḗḗ ṽīŀŀȧȧɠḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.finished": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şīẋ şŭŭƥƥǿǿřŧḗḗḓ Ħǿǿḿḗḗş ȧȧƞḓ şīẋ ŧřȧȧḓḗḗ ƈǿǿƞƞḗḗƈŧīǿǿƞş ȧȧřḗḗ ḗḗşŧȧȧƀŀīşħḗḗḓ. Ŧħīş ṽīŀŀȧȧɠḗḗ īş ƈǿǿḿƥŀḗḗŧḗḗ; ŧħḗḗ ƞḗḗẋŧ ȧȧɠḗḗ īş ƞǿǿŧ ȧȧṽȧȧīŀȧȧƀŀḗḗ ẏḗḗŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.finite": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗşŧȧȧƀŀīşħḗḗḓ; ƞǿǿ řḗḗƥḗḗȧȧŧīƞɠ ƈǿǿƞşŧřŭŭƈŧīǿǿƞ ƈẏƈŀḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.firstHarvest": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒīřşŧ Ƒīḗḗŀḓş ħȧȧřṽḗḗşŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.focus": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿřķƒǿǿřƈḗḗ ƒǿǿƈŭŭş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.focusEffect": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŭŭƥƥŀīḗḗş ƒȧȧṽǿǿŭŭřş şŧǿǿƈķ ẇīŧħ ŀǿǿẇ ŭŭƥķḗḗḗḗƥ ƀŭŭŧ ȧȧḓḓş Ẇḗḗȧȧŧħḗḗřīƞɠ. Ɠřǿǿẇŧħ ƒȧȧṽǿǿŭŭřş ƀŭŭīŀḓīƞɠ ȧȧƞḓ řḗḗƈǿǿṽḗḗřẏ. Ŧřȧȧṽḗḗŀ ƒȧȧṽǿǿŭŭřş şħīƥḿḗḗƞŧş ȧȧƒŧḗḗř Ħȧȧŀŀ; ƀḗḗƒǿǿřḗḗ Ħȧȧŀŀ īŧ ŭŭşḗḗş Ɓȧȧŀȧȧƞƈḗḗḓ ŀȧȧƀǿǿř."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.fullFood": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒǿǿǿǿḓ: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "capacity"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.goods": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠǿǿǿǿḓş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.granaries": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠřȧȧƞȧȧřīḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.granary": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠřȧȧƞȧȧřẏ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.granaryDetails": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠřȧȧƞȧȧřẏ ƈǿǿşŧş ȧȧƞḓ ḓḗḗŧȧȧīŀş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.granaryEffect": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗȧȧƈħ Ɠřȧȧƞȧȧřẏ ȧȧḓḓş 160 Ƒǿǿǿǿḓ şŧǿǿřȧȧɠḗḗ. Īŧ īş ȧȧƞ īƞşŧȧȧƞŧ ḿȧȧƞŭŭȧȧŀ ƥŭŭřƈħȧȧşḗḗ; ƥḗḗƞḓīƞɠ řḗḗƥȧȧīřş ķḗḗḗḗƥ ŧħḗḗīř Ḿȧȧŧḗḗřīȧȧŀş ȧȧƞḓ Ŧǿǿǿǿŀş řḗḗşḗḗřṽḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.granaryFirstHome": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧṽȧȧīŀȧȧƀŀḗḗ ȧȧƒŧḗḗř ŧħḗḗ ƒīřşŧ Ħǿǿḿḗḗ īş ḗḗşŧȧȧƀŀīşħḗḗḓ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.granaryInactive": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥŭŭřƈħȧȧşḗḗş ȧȧřḗḗ ƈŀǿǿşḗḗḓ ẇħīŀḗḗ ŧħḗḗ ṽīŀŀȧȧɠḗḗ ƒīƞīşħḗḗş ƥȧȧīḓ ẇǿǿřķ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.granaryInputs": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿǿǿřḗḗ Ḿȧȧŧḗḗřīȧȧŀş ǿǿř Ŧǿǿǿǿŀş ƞḗḗḗḗḓḗḗḓ. Ŧħīş ƥŭŭřƈħȧȧşḗḗ īş īƞşŧȧȧƞŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.granaryMaximum": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿȧȧẋīḿŭŭḿ Ɠřȧȧƞȧȧřīḗḗş ǿǿẇƞḗḗḓ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.granaryRepairReserve": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿȧȧŧḗḗřīȧȧŀş ȧȧƞḓ Ŧǿǿǿǿŀş ȧȧřḗḗ řḗḗşḗḗřṽḗḗḓ ƒǿǿř ȧȧ ƥḗḗƞḓīƞɠ Ħǿǿḿḗḗ řḗḗƥȧȧīř."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.growth": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠřǿǿẇŧħ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.hall": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ħȧȧŀŀ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.hallNeeded": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒǿǿŭŭř Ħǿǿḿḗḗş, Ƥȧȧşŧŭŭřḗḗ ȧȧƞḓ Ẇȧȧŧḗḗřẇǿǿřķş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.handoff": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħřḗḗḗḗ ƒǿǿŭŭƞḓḗḗřş ḿǿǿṽḗḗ īƞŧǿǿ ȧȧ ƞḗḗẇ ṽīŀŀȧȧɠḗḗ. Ŧħḗḗ řḗḗḿȧȧīƞīƞɠ ƈȧȧḿƥ ķḗḗḗḗƥş īŧş şŧǿǿƈķş ȧȧƞḓ ḗḗẋƥǿǿřŧş Ƒǿǿǿǿḓ ȧȧƞḓ Ḿȧȧŧḗḗřīȧȧŀş. Ƥȧȧīḓ ẇǿǿřķ ƒīƞīşħḗḗş ƀḗḗƒǿǿřḗḗ ŧħḗḗ ħȧȧƞḓǿǿƒƒ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.home": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ħǿǿḿḗḗ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.homeEffect": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗȧȧƈħ şŭŭƥƥǿǿřŧḗḗḓ Ħǿǿḿḗḗ ȧȧḓḓş ŧẇǿǿ řḗḗşīḓḗḗƞŧş. Ẇḗḗȧȧŧħḗḗřīƞɠ ȧȧŧ 100 řḗḗḿǿǿṽḗḗş īŧş şŭŭƥƥǿǿřŧ; řḗḗƥȧȧīř ŭŭşḗḗş īŧş ǿǿřīɠīƞȧȧŀ Ḿȧȧŧḗḗřīȧȧŀş, Ŧǿǿǿǿŀş ȧȧƞḓ ŀȧȧƀǿǿř ƀīŀŀ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.homes": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ħǿǿḿḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.homesCount": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŭŭƥƥǿǿřŧḗḗḓ Ħǿǿḿḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.housingWeathering": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ħǿǿŭŭşīƞɠ ẇḗḗȧȧŧħḗḗřīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.inputs": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈẏƈŀḗḗ ƈǿǿşŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.kiln": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ķīŀƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.kilnNeeded": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ķīŀƞ ḗḗşŧȧȧƀŀīşħḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.limit": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŀīḿīŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.locked": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŀǿǿƈķḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.lost": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧ Ħǿǿḿḗḗ ŀǿǿşŧ şŭŭƥƥǿǿřŧ. Řḗḗƥȧȧīř řḗḗşŧǿǿřḗḗş īŧş řḗḗşīḓḗḗƞŧş; ŧħḗḗ ƒǿǿŭŭƞḓḗḗřş řḗḗḿȧȧīƞ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.manual": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓŭŭīŀḓ ȧȧ Ɠřȧȧƞȧȧřẏ ŧǿǿ ƈǿǿƞŧīƞŭŭḗḗ. Şŧǿǿřḗḗḓ Ŧīḿḗḗ şŧǿǿƥş ħḗḗřḗḗ ȧȧƞḓ ķḗḗḗḗƥş ŧħḗḗ řḗḗḿȧȧīƞīƞɠ ƀȧȧƞķ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.missingInputs": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿīşşīƞɠ: "
+    },
+    {
+      "type": 1,
+      "value": "inputs"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.need": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞḗḗḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.needsInputs": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞḗḗḗḗḓş īƞƥŭŭŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.next": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈŭŭřřḗḗƞŧ ƥŀȧȧƞ: "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.nextPrice": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞḗḗẋŧ ƥřīƈḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.oneGranary": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ǿƞḗḗ Ɠřȧȧƞȧȧřẏ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.outputs": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈẏƈŀḗḗ ǿǿŭŭŧƥŭŭŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.owned": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ǿẇƞḗḗḓ: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.paid": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īƞƥŭŭŧş ȧȧřḗḗ ȧȧŀřḗḗȧȧḓẏ řḗḗşḗḗřṽḗḗḓ. Ƈħȧȧƞɠīƞɠ ƒǿǿƈŭŭş ḿǿǿṽḗḗş ŀȧȧƀǿǿř ẇīŧħǿǿŭŭŧ ƈħȧȧřɠīƞɠ ŧħḗḗḿ ȧȧɠȧȧīƞ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.paidStatus": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥȧȧīḓ ƈẏƈŀḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.pasture": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥȧȧşŧŭŭřḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.pendingFinish": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒīƞīşħīƞɠ ŧħḗḗ ṽīŀŀȧȧɠḗḗ’ş ƥȧȧīḓ ƈẏƈŀḗḗş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.pendingSkill": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħīş ḿīŀḗḗşŧǿǿƞḗḗ īş ẇȧȧīŧīƞɠ ƒǿǿř ȧȧƞ ḗḗŀīɠīƀŀḗḗ ḗḗẋīşŧīƞɠ Şķīŀŀ ŧřḗḗḗḗ ƈħǿǿīƈḗḗ ǿǿř řǿǿǿǿḿ īƞ ŧħḗḗ Ƈȧȧŧȧȧŀẏşŧ ẇȧȧŀŀḗḗŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.production": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥřǿǿḓŭŭƈŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.repair": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗƥȧȧīř Ħǿǿḿḗḗ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.reserved": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗşḗḗřṽḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.risk": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ħǿǿŭŭşīƞɠ ȧȧŧ řīşķ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.settings": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ṽīŀŀȧȧɠḗḗ şḗḗŧŧīƞɠş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.settling": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒīƞīşħīƞɠ ƥȧȧīḓ Ƒǿǿřȧȧɠḗḗř ẇǿǿřķ ƀḗḗƒǿǿřḗḗ ŧħḗḗ ṽīŀŀȧȧɠḗḗ ƀḗḗɠīƞş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.ship": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧřȧȧḓḗḗ şħīƥḿḗḗƞŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.shop": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥŭŭřƈħȧȧşḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.skillLimit": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒȧȧřḿīƞɠ-şƥḗḗƈīƒīƈ ƒřȧȧƈŧŭŭřḗḗş ȧȧřḗḗ ƞǿǿŧ ȧȧŭŭŧħǿǿřḗḗḓ ẏḗḗŧ. Ŧħḗḗşḗḗ şīẋ ḿīŀḗḗşŧǿǿƞḗḗş ŭŭşḗḗ ŧħḗḗ ḗḗẋīşŧīƞɠ Ƈȧȧŧȧȧŀẏşŧ ẇȧȧŀŀḗḗŧ ȧȧƞḓ ḗḗẋīşŧīƞɠ ḗḗŀīɠīƀŀḗḗ Şķīŀŀ ŧřḗḗḗḗ ƈħǿǿīƈḗḗş. Ŭƞşƥḗḗƞŧ Ƈȧȧŧȧȧŀẏşŧş ȧȧḓḓ ƞǿǿ şƥḗḗḗḗḓ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.source": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗŧȧȧīƞḗḗḓ Ƒǿǿřȧȧɠḗḗř ƈȧȧḿƥ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.stage": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ṽīŀŀȧȧɠḗḗ ƥřǿǿɠřḗḗşş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.storageGain": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "+160 Ƒǿǿǿǿḓ şŧǿǿřȧȧɠḗḗ ƥḗḗř ƥŭŭřƈħȧȧşḗḗ · Ŧǿǿŧȧȧŀ: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.supplies": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŭŭƥƥŀīḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.travel": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧřȧȧṽḗḗŀ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.upcoming": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞǿǿŧ ȧȧṽȧȧīŀȧȧƀŀḗḗ ẏḗḗŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ṽīŀŀȧȧɠḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.waiting": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇȧȧīŧīƞɠ ƒǿǿř ŭŭşḗḗƒŭŭŀ ḓḗḗḿȧȧƞḓ ǿǿř ḗḗƞǿǿŭŭɠħ īƞƥŭŭŧş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.waterworks": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇȧȧŧḗḗřẇǿǿřķş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.weatherHelp": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓȧȧŀȧȧƞƈḗḗḓ řḗḗḓŭŭƈḗḗş Ẇḗḗȧȧŧħḗḗřīƞɠ ƀẏ 1/ḿīƞ; Şŭŭƥƥŀīḗḗş ȧȧḓḓş 2/ḿīƞ; Ɠřǿǿẇŧħ řḗḗḓŭŭƈḗḗş 4/ḿīƞ; Ŧřȧȧṽḗḗŀ ȧȧḓḓş 4/ḿīƞ. Ẇȧȧŧḗḗřẇǿǿřķş ƈŭŭŧş īƞƈřḗḗȧȧşḗḗş ƀẏ 40%. Ȧŧ 75, ħǿǿŭŭşīƞɠ īş ȧȧŧ řīşķ; ȧȧŧ 100, ǿǿƞḗḗ Ħǿǿḿḗḗ ŀǿǿşḗḗş şŭŭƥƥǿǿřŧ ȧȧƞḓ Ẇḗḗȧȧŧħḗḗřīƞɠ řḗḗşḗḗŧş ŧǿǿ 40."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.weathering": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇḗḗȧȧŧħḗḗřīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.woodlot": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿǿǿḓŀǿǿŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.work": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " ẇǿǿřķḗḗř-şḗḗƈǿǿƞḓş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.workers": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿřķḗḗřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.workshop": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿřķşħǿǿƥ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.yield": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧ şħīƥḿḗḗƞŧ ƈǿǿşŧş 350 Ƒǿǿǿǿḓ ȧȧƞḓ 35 Ɠǿǿǿǿḓş, ŧħḗḗƞ řḗḗŧŭŭřƞş 80 Ḿȧȧŧḗḗřīȧȧŀş ȧȧƞḓ ǿǿƞḗḗ ƈǿǿƞƞḗḗƈŧīǿǿƞ. Şīẋ ƈǿǿƞƞḗḗƈŧīǿǿƞş ƈǿǿḿƥŀḗḗŧḗḗ ŧħīş ȧȧɠḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "gameplay.notifications.continue": [
     {
       "type": 0,
@@ -11027,6 +13773,638 @@
     {
       "type": 0,
       "value": "Ŧīḿḗḗ şīḿŭŭŀȧȧŧḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.abandon": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧƀȧȧƞḓǿǿƞ ƈħȧȧŀŀḗḗƞɠḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.blank-slate.name": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓŀȧȧƞķ Şŀȧȧŧḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.blank-slate.rule": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿḿƥŀḗḗŧḗḗ ǿǿƞḗḗ Īƞƒīƞīŧẏ ẇīŧħ şķīŀŀş, ȧȧŭŭɠḿḗḗƞŧş ȧȧƞḓ ƒřȧȧƈŧŭŭřḗḗḓ ḗḗƒƒḗḗƈŧş īƞȧȧƈŧīṽḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.break": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗɋŭŭīřḗḗş Ɓřḗḗȧȧķ ŧħḗḗ Ŀǿǿǿǿƥ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.budget": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈħȧȧŀŀḗḗƞɠḗḗ řḗḗẇȧȧřḓş: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 20 ŞƤ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.built-by-hand.name": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿȧȧƞŭŭȧȧŀ Ŀȧȧƀǿǿŭŭř"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.built-by-hand.rule": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿḿƥŀḗḗŧḗḗ ǿǿƞḗḗ Īƞƒīƞīŧẏ ẇīŧħ ƞǿǿ ƒȧȧƈīŀīŧīḗḗş ǿǿř ȧȧŭŭŧǿǿḿȧȧŧīƈ Ɓǿǿŧ ƥřǿǿḓŭŭƈŧīǿǿƞ. Ŧḗḗḿƥǿǿřȧȧřẏ Ḿȧȧƞŭŭȧȧŀ Ŀȧȧƀǿǿŭŭř ȧȧƈƈḗḗşş īş ƥřǿǿṽīḓḗḗḓ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.cancel": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈȧȧƞƈḗḗŀ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.commitment-issues.name": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿḿḿīŧḿḗḗƞŧ Īşşŭŭḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.commitment-issues.rule": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗȧȧřƞ 32 ĪƤ ẇīŧħǿǿŭŭŧ řḗḗƒŭŭƞḓīƞɠ ǿǿř řḗḗƥŀȧȧƈīƞɠ ẏǿǿŭŭř ƀŭŭīŀḓ ŧħřǿǿŭŭɠħǿǿŭŭŧ ŧħḗḗ ȧȧŧŧḗḗḿƥŧ, īƞƈŀŭŭḓīƞɠ Īƞƒīƞīŧẏ řḗḗşḗḗŧş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.confirm": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿƞƒīřḿ řḗḗşŧȧȧřŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.earned": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗȧȧřƞḗḗḓ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " ƥḗḗřḿȧȧƞḗḗƞŧ ŞƤ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.failure": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħḗḗ ƈħȧȧŀŀḗḗƞɠḗḗ ƈǿǿŭŭŀḓ ƞǿǿŧ ƀḗḗ şŧȧȧřŧḗḗḓ ǿǿř şȧȧṽḗḗḓ. Ẏǿǿŭŭř ƈŭŭřřḗḗƞŧ řŭŭƞ ħȧȧş ƀḗḗḗḗƞ ķḗḗƥŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.first": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿḿƥŀḗḗŧḗḗ ẏǿǿŭŭř ƒīřşŧ Īƞƒīƞīŧẏ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.grounded.name": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠřǿǿŭŭƞḓḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.grounded.rule": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗȧȧřƞ 32 ĪƤ ẇīŧħǿǿŭŭŧ Ƥŀȧȧƞḗḗŧş ǿǿř ḿḗḗɠȧȧşŧřŭŭƈŧŭŭřḗḗş. Ŧħḗḗ Ƥŀȧȧƞḗḗŧ ɠǿǿȧȧŀ ƀḗḗƈǿǿḿḗḗş 100 ƥŭŭřƈħȧȧşḗḗḓ Ḓȧȧŧȧȧ Ƈḗḗƞŧḗḗřş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.hands-off.name": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ħȧȧƞḓş Ǿƒƒ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.hands-off.rule": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗȧȧřƞ 32 ĪƤ ẇīŧħǿǿŭŭŧ ƒȧȧƈīŀīŧẏ ƥŭŭřƈħȧȧşḗḗş ǿǿř Ŧīƞķḗḗřīƞɠ. Şŧȧȧřŧ ẇīŧħ ǿǿƞḗḗ Ȧşşḗḗḿƀŀẏ Ŀīƞḗḗ ȧȧƞḓ ȧȧ Ƥŀȧȧƞḗḗŧ-ɠḗḗƞḗḗřȧȧŧīǿǿƞ ƀŭŭīŀḓ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.history": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥřḗḗṽīǿǿŭŭş ƈħȧȧŀŀḗḗƞɠḗḗ ƈǿǿḿƥŀḗḗŧīǿǿƞş: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": ". Ħīşŧǿǿřīƈȧȧŀ řḗḗẇȧȧřḓş ȧȧřḗḗ ƥřḗḗşḗḗřṽḗḗḓ; ƈǿǿḿƥḗḗƞşȧȧŧīǿǿƞ īş ƞǿǿŧ ȧȧƥƥŀīḗḗḓ īƞ ŧħīş ƥīŀǿǿŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.intro": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗȧȧƈħ ȧȧŧŧḗḗḿƥŧ şŧȧȧřŧş ȧȧ ƒřḗḗşħ Īƞƒīƞīŧẏ. Ǿƞŀẏ ĪƤ ḗḗȧȧřƞḗḗḓ ḓŭŭřīƞɠ ŧħḗḗ ȧȧŧŧḗḗḿƥŧ ƈǿǿŭŭƞŧş. Ƒīřşŧ ƈǿǿḿƥŀḗḗŧīǿǿƞş ȧȧẇȧȧřḓ ƥḗḗřḿȧȧƞḗḗƞŧ ŞƤ ǿǿƞƈḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.lean-build.name": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŀḗḗȧȧƞ Ɓŭŭīŀḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.lean-build.rule": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗȧȧřƞ 16 ĪƤ ẇīŧħ ƞǿǿ ḿǿǿřḗḗ ŧħȧȧƞ 4 ŞƤ ǿǿƒ ȧȧşşīɠƞḗḗḓ şķīŀŀş. Řḗḗƒŭŭƞḓş ȧȧřḗḗ ȧȧŀŀǿǿẇḗḗḓ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.no-science.name": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞǿǿ Şƈīḗḗƞƈḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.no-science.rule": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗȧȧřƞ 32 ĪƤ ẇīŧħǿǿŭŭŧ Şƈīḗḗƞƈḗḗ, Řḗḗşḗḗȧȧřƈħ ǿǿř Ḓīşƈǿǿṽḗḗřẏ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.other": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒīƞīşħ ǿǿř ȧȧƀȧȧƞḓǿǿƞ ŧħḗḗ ȧȧƈŧīṽḗḗ ƈħȧȧŀŀḗḗƞɠḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.overflow": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗşǿǿŀṽḗḗ Ŧřȧȧƞşƈḗḗƞḓḗḗƞƈḗḗ ƒīřşŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.progress": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧƈŧīṽḗḗ · "
+    },
+    {
+      "type": 1,
+      "value": "ip"
+    },
+    {
+      "type": 0,
+      "value": " ĪƤ ḗḗȧȧřƞḗḗḓ · "
+    },
+    {
+      "type": 1,
+      "value": "infinities"
+    },
+    {
+      "type": 0,
+      "value": " Īƞƒīƞīŧīḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.purchases": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥȧȧīḓ ƒȧȧƈīŀīŧīḗḗş: "
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " / 10 · ŧẏƥḗḗş: "
+    },
+    {
+      "type": 1,
+      "value": "types"
+    },
+    {
+      "type": 0,
+      "value": " / 3"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.replay": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗƥŀȧȧẏ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.restart": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧřŧ ȧȧ ƒřḗḗşħ Īƞƒīƞīŧẏ ẇīŧħǿǿŭŭŧ ȧȧẇȧȧřḓīƞɠ ĪƤ. Ƥḗḗřşīşŧḗḗƞŧ ƈīṽīŀīẑȧȧŧīǿǿƞ ƥřǿǿɠřḗḗşş, ŭŭƥɠřȧȧḓḗḗş, řḗḗẇȧȧřḓ ħīşŧǿǿřẏ ȧȧƞḓ ƒřȧȧƈŧŭŭřḗḗ ǿǿẇƞḗḗřşħīƥ ȧȧřḗḗ ķḗḗƥŧ. Ȧƀȧȧƞḓǿǿƞīƞɠ ḓīşƈȧȧřḓş ȧȧŧŧḗḗḿƥŧ ƥřǿǿɠřḗḗşş ȧȧƞḓ řḗḗşŧǿǿřḗḗş ƞǿǿřḿȧȧŀ ḗḗƒƒḗḗƈŧş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.reward": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗẇȧȧřḓ: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " ƥḗḗřḿȧȧƞḗḗƞŧ ŞƤ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.rules": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥřḗḗṽīǿǿŭŭş ĪƤ ḓǿǿḗḗş ƞǿǿŧ ƈǿǿŭŭƞŧ ŧǿǿẇȧȧřḓ ŧħḗḗ ƥřǿǿḓŭŭƈŧīǿǿƞ ḿŭŭŀŧīƥŀīḗḗř. Ḓīṽīşīǿǿƞ, ɠȧȧḿḗḗƥŀȧȧẏ Ḓǿǿŭŭƀŀḗḗ ĪƤ, Ḓīşƈǿǿṽḗḗřẏ ȧȧƞḓ ƥḗḗřḿȧȧƞḗḗƞŧ ƒřȧȧƈŧŭŭřḗḗş ȧȧřḗḗ īƞȧȧƈŧīṽḗḗ; ƥŭŭřƈħȧȧşḗḗḓ ƀǿǿǿǿşŧş řḗḗḿȧȧīƞ ȧȧƈŧīṽḗḗ. Īƞƒīƞīŧẏ şħǿǿƥ ƥŭŭřƈħȧȧşḗḗş ƥȧȧŭŭşḗḗ ḓŭŭřīƞɠ ȧȧŧŧḗḗḿƥŧş. Ḿǿǿşŧ ȧȧŧŧḗḗḿƥŧş şŧȧȧřŧ ẇīŧħ 10 ŞƤ ƥŀŭŭş ɠǿǿȧȧŀ řḗḗẇȧȧřḓş; Ɓŀȧȧƞķ Şŀȧȧŧḗḗ ȧȧƞḓ Ḿȧȧƞŭŭȧȧŀ Ŀȧȧƀǿǿŭŭř şŧȧȧřŧ ẇīŧħ ẑḗḗřǿǿ, ȧȧƞḓ Ŀḗḗȧȧƞ Ɓŭŭīŀḓ şŧȧȧřŧş ẇīŧħ 4. Ȧŧŧḗḗḿƥŧş ƈǿǿƞŧīƞŭŭḗḗ ȧȧƈřǿǿşş Īƞƒīƞīŧīḗḗş. Ŧřȧȧƞşƈḗḗƞḓḗḗƞƈḗḗ ḓīşƈȧȧřḓş ȧȧƞ ŭŭƞƒīƞīşħḗḗḓ ȧȧŧŧḗḗḿƥŧ ẇīŧħǿǿŭŭŧ ȧȧẇȧȧřḓīƞɠ īŧş ŞƤ. Řḗḗƥŀȧȧẏş ȧȧẇȧȧřḓ ƞǿǿ ȧȧḓḓīŧīǿǿƞȧȧŀ ŞƤ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.rulesTitle": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧŧŧḗḗḿƥŧ řŭŭŀḗḗş ȧȧƞḓ řḗḗẇȧȧřḓş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.short-circuit.name": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şħǿǿřŧ Ƈīřƈŭŭīŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.short-circuit.rule": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗȧȧřƞ 64 ĪƤ ẇīŧħ ƥȧȧƞḗḗŀ ŀīƒḗḗŧīḿḗḗ ƒīẋḗḗḓ ȧȧŧ 2 şḗḗƈǿǿƞḓş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.start": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧřŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.supply-shortage.name": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŭŭƥƥŀẏ Şħǿǿřŧȧȧɠḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.supply-shortage.rule": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗȧȧřƞ 64 ĪƤ ẇīŧħ ƥŭŭřƈħȧȧşḗḗ ƥřīƈḗḗş ḓǿǿŭŭƀŀīƞɠ, ȧȧƞḓ ƥȧȧẏ ƒǿǿř 10 ƒȧȧƈīŀīŧīḗḗş ȧȧƈřǿǿşş 3 ŧẏƥḗḗş. Ɠḗḗƞḗḗřȧȧŧḗḗḓ ȧȧƞḓ ƒřḗḗḗḗ ƒȧȧƈīŀīŧīḗḗş ḓǿǿ ƞǿǿŧ ƈǿǿŭŭƞŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īƞƒīƞīŧẏ Ƈħȧȧŀŀḗḗƞɠḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pilotChallenges.unlock": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗɋŭŭīřḗḗş "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " ŧǿǿŧȧȧŀ ḗḗȧȧřƞḗḗḓ ĪƤ."
     },
     {
       "type": 0,
@@ -15607,6 +18985,330 @@
     {
       "type": 0,
       "value": "Ȧŀẇȧȧẏş şħǿǿẇ ƥřḗḗşḗḗŧ ɋŭŭīƈķ ȧȧƈŧīǿǿƞş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "rework.action.failed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħḗḗ ƈħȧȧƞɠḗḗ ƈǿǿŭŭŀḓ ƞǿǿŧ ƀḗḗ şȧȧṽḗḗḓ. Ŧřẏ ȧȧɠȧȧīƞ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "rework.cancel": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈȧȧƞƈḗḗŀ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "rework.challenges.completed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥřḗḗṽīǿǿŭŭş ƈǿǿḿƥŀḗḗŧīǿǿƞş: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "rework.challenges.history": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗȧȧřƞḗḗḓ řḗḗẇȧȧřḓş ȧȧƞḓ ƈǿǿḿƥŀḗḗŧīǿǿƞ řḗḗƈǿǿřḓş ȧȧřḗḗ ƥřḗḗşḗḗřṽḗḗḓ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "rework.challenges.pending": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈħȧȧŀŀḗḗƞɠḗḗş ȧȧřḗḗ ƀḗḗīƞɠ řḗḗḓḗḗşīɠƞḗḗḓ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "rework.civilization": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈīṽīŀīẑȧȧŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "rework.infinity.advanced": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧḓṽȧȧƞƈḗḗḓ ŭŭƥɠřȧȧḓḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "rework.infinity.double-time.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓǿǿŭŭƀŀḗḗ ɠȧȧḿḗḗ şƥḗḗḗḗḓ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "rework.infinity.double-time.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓǿǿŭŭƀŀḗḗ Ŧīḿḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "rework.infinity.regular": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īƞƒīƞīŧẏ ŭŭƥɠřȧȧḓḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "rework.migration.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈħǿǿǿǿşḗḗ ŧǿǿ ķḗḗḗḗƥ ḗḗɋŭŭīṽȧȧŀḗḗƞŧ ŭŭƥɠřȧȧḓḗḗş ȧȧƞḓ ƒřȧȧƈŧŭŭřḗḗş, ǿǿř ḗḗȧȧřƞ ŧħḗḗ ȧȧḓṽȧȧƞƈḗḗḓ ŭŭƥɠřȧȧḓḗḗş ȧȧɠȧȧīƞ. Şŧȧȧřŧīƞɠ ƒřḗḗşħ řḗḗḿǿǿṽḗḗş ƒřȧȧƈŧŭŭřḗḗş ȧȧƞḓ ŧħḗḗīř ȧȧŭŭɠḿḗḗƞŧş; ẏǿǿŭŭř ƀȧȧşḗḗ ɠȧȧḿḗḗ, ĪƤ, Ŧřȧȧƞşƈḗḗƞḓḗḗƞƈḗḗ, Ḓīşƈǿǿṽḗḗřẏ ȧȧƞḓ ƥŭŭřƈħȧȧşḗḗş şŧȧȧẏ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "rework.migration.fresh": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗȧȧřƞ ŭŭƥɠřȧȧḓḗḗş ȧȧɠȧȧīƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "rework.migration.intro": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ī'ḿ řḗḗƀŭŭīŀḓīƞɠ ƥřǿǿɠřḗḗşşīǿǿƞ. Ɋŭŭȧȧƞŧŭŭḿ, Řḗḗȧȧŀīŧẏ ȧȧƞḓ ŧħḗḗ ǿǿŀḓ Şīḿş ȧȧřḗḗ ɠǿǿƞḗḗ. Ŭşḗḗƒŭŭŀ ŭŭƥɠřȧȧḓḗḗş ƞǿǿẇ ŀīṽḗḗ īƞ Īƞƒīƞīŧẏ, ȧȧƞḓ ƈīṽīŀīẑȧȧŧīǿǿƞ Şīḿş ƞǿǿẇ ḗḗȧȧřƞ řḗḗşǿǿŭŭřƈḗḗş ƒǿǿř Ƈȧȧŧȧȧŀẏşŧş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "rework.migration.keep": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ķḗḗḗḗƥ ḗḗɋŭŭīṽȧȧŀḗḗƞŧ ƥřǿǿɠřḗḗşş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "rework.migration.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ħḗḗẏ ɠŭŭẏş, Ḓḗḗṽ ħḗḗřḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "rework.simulations.details": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗřȧȧ řḗḗşǿǿŭŭřƈḗḗş ẇīŀŀ ƀŭŭẏ Ƈȧȧŧȧȧŀẏşŧş. Ƥḗḗřḿȧȧƞḗḗƞŧ ƒřȧȧƈŧŭŭřḗḗş ẇīŀŀ ȧȧƈƈḗḗŀḗḗřȧȧŧḗḗ ḗḗȧȧƈħ ƈīṽīŀīẑȧȧŧīǿǿƞ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "rework.simulations.pending": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈīṽīŀīẑȧȧŧīǿǿƞ ƥřǿǿɠřḗḗşşīǿǿƞ īş ƈǿǿḿīƞɠ ƞḗḗẋŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "rework.transcend": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧřȧȧƞşƈḗḗƞḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "rework.transcend.balance": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Ŧřȧȧƞşƈḗḗƞḓḗḗƞƈḗḗ Ƥǿǿīƞŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "rework.transcend.confirm": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿƞƒīřḿ Ŧřȧȧƞşƈḗḗƞḓḗḗƞƈḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "rework.transcend.confirmation": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗşḗḗŧ ƀȧȧşḗḗ ƥřǿǿḓŭŭƈŧīǿǿƞ ȧȧƞḓ Īƞƒīƞīŧẏ ŭŭƥɠřȧȧḓḗḗş ƒǿǿř 1 Ŧřȧȧƞşƈḗḗƞḓḗḗƞƈḗḗ Ƥǿǿīƞŧ? Ƒřȧȧƈŧŭŭřḗḗş, ƈīṽīŀīẑȧȧŧīǿǿƞ ƥřǿǿɠřḗḗşş ȧȧƞḓ Ḓīşƈǿǿṽḗḗřẏ ŭŭƥɠřȧȧḓḗḗş řḗḗḿȧȧīƞ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "rework.transcend.threshold": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗȧȧƈħ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " ƀǿǿŧş ŧǿǿ Ŧřȧȧƞşƈḗḗƞḓ."
     },
     {
       "type": 0,
@@ -21280,7 +24982,7 @@
     },
     {
       "type": 0,
-      "value": "Ẇħīŀḗḗ ŧħḗḗ Ȧƞḓřǿǿīḓş Şķīŀŀ īş ȧȧşşīɠƞḗḗḓ, īŧş ƀǿǿƞŭŭş şƈȧȧŀḗḗş ƒřǿǿḿ 0 ŧǿǿ 200 şḗḗƈǿǿƞḓş ǿǿƒ Ƥȧȧƞḗḗŀ Ŀīƒḗḗŧīḿḗḗ ǿǿṽḗḗř ȧȧ 10 ḿīƞŭŭŧḗḗ şƥȧȧƞ.\nŦħīş řḗḗşḗḗŧş ǿǿƞ Īƞƒīƞīŧẏ/Ɋŭŭȧȧƞŧŭŭḿ Ŀḗḗȧȧƥ."
+      "value": "Ẇħīŀḗḗ ŧħḗḗ Ȧƞḓřǿǿīḓş Şķīŀŀ īş ȧȧşşīɠƞḗḗḓ, īŧş ƀǿǿƞŭŭş şƈȧȧŀḗḗş ƒřǿǿḿ 0 ŧǿǿ 200 şḗḗƈǿǿƞḓş ǿǿƒ Ƥȧȧƞḗḗŀ Ŀīƒḗḗŧīḿḗḗ ǿǿṽḗḗř ȧȧ 10 ḿīƞŭŭŧḗḗ şƥȧȧƞ.\nŦħīş řḗḗşḗḗŧş ǿǿƞ Īƞƒīƞīŧẏ."
     },
     {
       "type": 0,
@@ -24640,7 +28342,7 @@
     },
     {
       "type": 0,
-      "value": "Īƞƈřḗḗȧȧşḗḗ Ƈȧȧşħ, Şƈīḗḗƞƈḗḗ, Ɓǿǿŧ, ȧȧƞḓ ȧȧŀŀ ƒȧȧƈīŀīŧẏ ƥřǿǿḓŭŭƈŧīǿǿƞ ƀẏ 1% ƥḗḗř şḗḗƈǿǿƞḓ ẇħīŀḗḗ ȧȧşşīɠƞḗḗḓ. Ɓǿǿƞŭŭşḗḗş ȧȧřḗḗ ȧȧḓḓīŧīṽḗḗ. Ƈħȧȧřɠḗḗş ḓŭŭřīƞɠ Şŧǿǿřḗḗḓ Ŧīḿḗḗ şīḿŭŭŀȧȧŧīǿǿƞ ȧȧƞḓ řḗḗşḗḗŧş ǿǿƞ Īƞƒīƞīŧẏ ǿǿř Ɋŭŭȧȧƞŧŭŭḿ Ŀḗḗȧȧƥ."
+      "value": "Īƞƈřḗḗȧȧşḗḗ Ƈȧȧşħ, Şƈīḗḗƞƈḗḗ, Ɓǿǿŧ, ȧȧƞḓ ȧȧŀŀ ƒȧȧƈīŀīŧẏ ƥřǿǿḓŭŭƈŧīǿǿƞ ƀẏ 1% ƥḗḗř şḗḗƈǿǿƞḓ ẇħīŀḗḗ ȧȧşşīɠƞḗḗḓ. Ɓǿǿƞŭŭşḗḗş ȧȧřḗḗ ȧȧḓḓīŧīṽḗḗ. Ƈħȧȧřɠḗḗş ḓŭŭřīƞɠ Şŧǿǿřḗḗḓ Ŧīḿḗḗ şīḿŭŭŀȧȧŧīǿǿƞ ȧȧƞḓ řḗḗşḗḗŧş ǿǿƞ Īƞƒīƞīŧẏ."
     },
     {
       "type": 0,
@@ -25522,7 +29224,7 @@
     },
     {
       "type": 0,
-      "value": "Ƞǿǿƞ-řḗḗƒŭŭƞḓȧȧƀŀḗḗ şķīŀŀş ȧȧƞḓ ŧħḗḗīř ƥřḗḗřḗḗɋŭŭīşīŧḗḗ ƥȧȧŧħş ƈȧȧƞƞǿǿŧ ƀḗḗ řḗḗƒŭŭƞḓḗḗḓ ŭŭƞŧīŀ ȧȧƞ Īƞƒīƞīŧẏ ǿǿř Ɋŭŭȧȧƞŧŭŭḿ řḗḗşḗḗŧ. Ƈǿǿƞŧīƞŭŭḗḗ?"
+      "value": "Ƞǿǿƞ-řḗḗƒŭŭƞḓȧȧƀŀḗḗ şķīŀŀş ȧȧƞḓ ŧħḗḗīř ƥřḗḗřḗḗɋŭŭīşīŧḗḗ ƥȧȧŧħş ƈȧȧƞƞǿǿŧ ƀḗḗ řḗḗƒŭŭƞḓḗḗḓ ŭŭƞŧīŀ ȧȧƞ Īƞƒīƞīŧẏ řḗḗşḗḗŧ. Ƈǿǿƞŧīƞŭŭḗḗ?"
     },
     {
       "type": 0,
@@ -26728,7 +30430,7 @@
     },
     {
       "type": 0,
-      "value": "Řḗḗŧȧȧīƞ 10% ǿǿƒ ŞŘŞ ƈħȧȧřɠḗḗ ŧħřǿǿŭŭɠħ Īƞƒīƞīŧẏ, ḿŭŭŀŧīƥŀīḗḗḓ ƀẏ Şŧḗḗŀŀȧȧř Ḿḗḗḿǿǿřẏ ŭŭƥ ŧǿǿ 50% řḗḗŧḗḗƞŧīǿǿƞ. Ȧḓḓş ŧǿǿ Ħǿǿŧ Şŧȧȧřŧ. Ɋŭŭȧȧƞŧŭŭḿ Ŀḗḗȧȧƥ ƈŀḗḗȧȧřş řḗḗŧȧȧīƞḗḗḓ ƈħȧȧřɠḗḗ."
+      "value": "Řḗḗŧȧȧīƞ 10% ǿǿƒ ŞŘŞ ƈħȧȧřɠḗḗ ŧħřǿǿŭŭɠħ Īƞƒīƞīŧẏ, ḿŭŭŀŧīƥŀīḗḗḓ ƀẏ Şŧḗḗŀŀȧȧř Ḿḗḗḿǿǿřẏ ŭŭƥ ŧǿǿ 50% řḗḗŧḗḗƞŧīǿǿƞ. Ȧḓḓş ŧǿǿ Ħǿǿŧ Şŧȧȧřŧ."
     },
     {
       "type": 0,
@@ -26770,7 +30472,7 @@
     },
     {
       "type": 0,
-      "value": "Īƞƈřḗḗȧȧşḗḗ ŞŘŞ ƈħȧȧřɠīƞɠ şƥḗḗḗḗḓ ƀẏ 10% ƥḗḗř ḿīƞŭŭŧḗḗ ŧħīş ȧȧŭŭɠḿḗḗƞŧ īş ȧȧşşīɠƞḗḗḓ, ŭŭƥ ŧǿǿ 200% ȧȧƒŧḗḗř 20 ḿīƞŭŭŧḗḗş. Şŧḗḗŀŀȧȧř Ḿḗḗḿǿǿřẏ ḿŭŭŀŧīƥŀīḗḗş ŧħḗḗşḗḗ ƀǿǿƞŭŭşḗḗş. Řḗḗşḗḗŧş ǿǿƞ Īƞƒīƞīŧẏ ǿǿř Ɋŭŭȧȧƞŧŭŭḿ Ŀḗḗȧȧƥ. Ɓǿǿƞŭŭşḗḗş ȧȧřḗḗ ȧȧḓḓīŧīṽḗḗ."
+      "value": "Īƞƈřḗḗȧȧşḗḗ ŞŘŞ ƈħȧȧřɠīƞɠ şƥḗḗḗḗḓ ƀẏ 10% ƥḗḗř ḿīƞŭŭŧḗḗ ŧħīş ȧȧŭŭɠḿḗḗƞŧ īş ȧȧşşīɠƞḗḗḓ, ŭŭƥ ŧǿǿ 200% ȧȧƒŧḗḗř 20 ḿīƞŭŭŧḗḗş. Şŧḗḗŀŀȧȧř Ḿḗḗḿǿǿřẏ ḿŭŭŀŧīƥŀīḗḗş ŧħḗḗşḗḗ ƀǿǿƞŭŭşḗḗş. Řḗḗşḗḗŧş ǿǿƞ Īƞƒīƞīŧẏ. Ɓǿǿƞŭŭşḗḗş ȧȧřḗḗ ȧȧḓḓīŧīṽḗḗ."
     },
     {
       "type": 0,
@@ -26980,7 +30682,7 @@
     },
     {
       "type": 0,
-      "value": "Ǿƞ Īƞƒīƞīŧẏ ǿǿř Ɋŭŭȧȧƞŧŭŭḿ řḗḗşḗḗŧ, ƀȧȧƞķ ƞḗḗẇŀẏ ɠḗḗƞḗḗřȧȧŧḗḗḓ ŞŘŞ ƈħȧȧřɠḗḗ, ḗḗẋƈŀŭŭḓīƞɠ Ħǿǿŧ Şŧȧȧřŧ ȧȧƞḓ Ȧƒŧḗḗřɠŀǿǿẇ. Ẇħīŀḗḗ ȧȧşşīɠƞḗḗḓ, ƀǿǿǿǿşŧş ŞŘŞ ȧȧŭŭɠḿḗḗƞŧ ƀḗḗƞḗḗƒīŧş ƀẏ 1 + 0.25 × ŀǿǿɠ10(ḿȧȧẋ(1, ƀȧȧƞķḗḗḓ şḗḗƈǿǿƞḓş))."
+      "value": "Ǿƞ Īƞƒīƞīŧẏ řḗḗşḗḗŧ, ƀȧȧƞķ ƞḗḗẇŀẏ ɠḗḗƞḗḗřȧȧŧḗḗḓ ŞŘŞ ƈħȧȧřɠḗḗ, ḗḗẋƈŀŭŭḓīƞɠ Ħǿǿŧ Şŧȧȧřŧ ȧȧƞḓ Ȧƒŧḗḗřɠŀǿǿẇ. Ẇħīŀḗḗ ȧȧşşīɠƞḗḗḓ, ƀǿǿǿǿşŧş ŞŘŞ ȧȧŭŭɠḿḗḗƞŧ ƀḗḗƞḗḗƒīŧş ƀẏ 1 + 0.25 × ŀǿǿɠ10(ḿȧȧẋ(1, ƀȧȧƞķḗḗḓ şḗḗƈǿǿƞḓş))."
     },
     {
       "type": 0,
@@ -27862,7 +31564,7 @@
     },
     {
       "type": 0,
-      "value": "Ķḗḗḗḗƥ ƥȧȧīḓ ƒȧȧƈīŀīŧẏ ƥŭŭřƈħȧȧşḗḗş ŧħřǿǿŭŭɠħ Īƞƒīƞīŧẏ. Ȧşşīɠƞ ƀḗḗƒǿǿřḗḗ řḗḗşḗḗŧŧīƞɠ; ƥŭŭřƈħȧȧşḗḗş řḗḗŧŭŭřƞ ȧȧŭŭŧǿǿḿȧȧŧīƈȧȧŀŀẏ. Ƒřḗḗḗḗ şŧȧȧřŧḗḗř ŭŭƞīŧş ḓǿǿ ƞǿǿŧ ȧȧƈƈŭŭḿŭŭŀȧȧŧḗḗ. Ɋŭŭȧȧƞŧŭŭḿ ƈŀḗḗȧȧřş ŧħḗḗ şŭŭƥƥŀẏ."
+      "value": "Ķḗḗḗḗƥ ƥȧȧīḓ ƒȧȧƈīŀīŧẏ ƥŭŭřƈħȧȧşḗḗş ŧħřǿǿŭŭɠħ Īƞƒīƞīŧẏ. Ȧşşīɠƞ ƀḗḗƒǿǿřḗḗ řḗḗşḗḗŧŧīƞɠ; ƥŭŭřƈħȧȧşḗḗş řḗḗŧŭŭřƞ ȧȧŭŭŧǿǿḿȧȧŧīƈȧȧŀŀẏ. Ƒřḗḗḗḗ şŧȧȧřŧḗḗř ŭŭƞīŧş ḓǿǿ ƞǿǿŧ ȧȧƈƈŭŭḿŭŭŀȧȧŧḗḗ. Ŧřȧȧƞşƈḗḗƞḓḗḗƞƈḗḗ ƈŀḗḗȧȧřş ŧħḗḗ şŭŭƥƥŀẏ."
     },
     {
       "type": 0,
@@ -29620,7 +33322,7 @@
     },
     {
       "type": 0,
-      "value": "Ƈŭŭřřḗḗƞŧ Ɋŭŭȧȧƞŧŭŭḿ řŭŭƞ"
+      "value": "Ƈŭŭřřḗḗƞŧ řŭŭƞ"
     },
     {
       "type": 0,
@@ -32509,21 +36211,7 @@
     },
     {
       "type": 0,
-      "value": ", "
-    },
-    {
-      "type": 8,
-      "value": "quantum",
-      "children": [
-        {
-          "type": 0,
-          "value": "Ɋŭŭȧȧƞŧŭŭḿ"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": " ȧȧƞḓ ƈħȧȧŀŀḗḗƞɠḗḗş. "
+      "value": ". "
     },
     {
       "type": 8,
@@ -33097,15 +36785,15 @@
     },
     {
       "type": 0,
-      "value": "Ȧƒŧḗḗř ȧȧ "
+      "value": "Īƞ "
     },
     {
       "type": 8,
-      "value": "quantum",
+      "value": "infinity",
       "children": [
         {
           "type": 0,
-          "value": "Ɋŭŭȧȧƞŧŭŭḿ Ŀḗḗȧȧƥ"
+          "value": "Īƞƒīƞīŧẏ"
         }
       ]
     },
@@ -33965,7 +37653,7 @@
     },
     {
       "type": 0,
-      "value": "Ȧ ƈǿǿḿƥŀḗḗŧḗḗḓ řŭŭƞ řḗḗƥǿǿřŧş ŧħḗḗ şīḿŭŭŀȧȧŧḗḗḓ ḓŭŭřȧȧŧīǿǿƞ, řḗḗḿȧȧīƞīƞɠ ƀȧȧƞķ, ƒīƞȧȧŀ ȧȧƈƈŭŭřȧȧƈẏ ȧȧƞḓ ȧȧƈŧŭŭȧȧŀ ŭŭƥḓȧȧŧḗḗ ƈǿǿŭŭƞŧ. Īŧ ȧȧŀşǿǿ şħǿǿẇş řḗḗŀḗḗṽȧȧƞŧ Īƞƒīƞīŧẏ, Şīḿŭŭŀȧȧŧīǿǿƞ ȧȧƞḓ Řḗḗȧȧŀīŧẏ ɠȧȧīƞş. Ƒȧȧƈīŀīŧẏ ȧȧƞḓ Ɓǿǿŧ ɠȧȧīƞş ȧȧƥƥḗḗȧȧř ǿǿƞŀẏ ẇħḗḗƞ ƞǿǿ Īƞƒīƞīŧẏ ǿǿƈƈŭŭřřḗḗḓ, ƀḗḗƈȧȧŭŭşḗḗ ȧȧ řḗḗşḗḗŧ ȧȧƞḓ řḗḗƀŭŭīŀḓ ẇǿǿŭŭŀḓ ḿȧȧķḗḗ ȧȧ şīḿƥŀḗḗ ƀḗḗƒǿǿřḗḗ-ȧȧƞḓ-ȧȧƒŧḗḗř ŧǿǿŧȧȧŀ ḿīşŀḗḗȧȧḓīƞɠ."
+      "value": "Ȧ ƈǿǿḿƥŀḗḗŧḗḗḓ řŭŭƞ řḗḗƥǿǿřŧş ŧħḗḗ şīḿŭŭŀȧȧŧḗḗḓ ḓŭŭřȧȧŧīǿǿƞ, řḗḗḿȧȧīƞīƞɠ ƀȧȧƞķ, ƒīƞȧȧŀ ȧȧƈƈŭŭřȧȧƈẏ ȧȧƞḓ ȧȧƈŧŭŭȧȧŀ ŭŭƥḓȧȧŧḗḗ ƈǿǿŭŭƞŧ. Īŧ ȧȧŀşǿǿ şħǿǿẇş Īƞƒīƞīŧẏ ɠȧȧīƞş. Ƒȧȧƈīŀīŧẏ ȧȧƞḓ Ɓǿǿŧ ɠȧȧīƞş ȧȧƥƥḗḗȧȧř ǿǿƞŀẏ ẇħḗḗƞ ƞǿǿ Īƞƒīƞīŧẏ ǿǿƈƈŭŭřřḗḗḓ, ƀḗḗƈȧȧŭŭşḗḗ ȧȧ řḗḗşḗḗŧ ȧȧƞḓ řḗḗƀŭŭīŀḓ ẇǿǿŭŭŀḓ ḿȧȧķḗḗ ȧȧ şīḿƥŀḗḗ ƀḗḗƒǿǿřḗḗ-ȧȧƞḓ-ȧȧƒŧḗḗř ŧǿǿŧȧȧŀ ḿīşŀḗḗȧȧḓīƞɠ."
     },
     {
       "type": 0,
@@ -37197,21 +40885,7 @@
     },
     {
       "type": 0,
-      "value": " ǿǿř ȧȧ "
-    },
-    {
-      "type": 8,
-      "value": "value",
-      "children": [
-        {
-          "type": 0,
-          "value": "Ɋŭŭȧȧƞŧŭŭḿ"
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "value": " řḗḗşḗḗŧ. Řḗḗşḗḗŧŧīƞɠ ŧħḗḗ ŧřḗḗḗḗ ƈŀḗḗȧȧřş ŧħḗḗ ŀīṽḗḗ ȧȧŭŭŧǿǿ-ȧȧşşīɠƞḿḗḗƞŧ ɋŭŭḗḗŭŭḗḗ. Ƥřḗḗşḗḗŧş şȧȧṽḗḗ ƈǿǿḿƥŀḗḗŧḗḗ ŀȧȧẏǿǿŭŭŧş."
+      "value": ". Řḗḗşḗḗŧŧīƞɠ ŧħḗḗ ŧřḗḗḗḗ ƈŀḗḗȧȧřş ŧħḗḗ ŀīṽḗḗ ȧȧŭŭŧǿǿ-ȧȧşşīɠƞḿḗḗƞŧ ɋŭŭḗḗŭŭḗḗ. Ƥřḗḗşḗḗŧş şȧȧṽḗḗ ƈǿǿḿƥŀḗḗŧḗḗ ŀȧȧẏǿǿŭŭŧş."
     },
     {
       "type": 0,
@@ -37809,7 +41483,7 @@
     },
     {
       "type": 0,
-      "value": " ŧǿǿ ƥḗḗřḿȧȧƞḗḗƞŧŀẏ řḗḗƥŀȧȧƈḗḗ Şƈīḗḗƞƈḗḗ ȧȧƞḓ Řḗḗşḗḗȧȧřƈħ. Ḗẋīşŧīƞɠ Şƈīḗḗƞƈḗḗ ȧȧƞḓ řḗḗşḗḗȧȧřƈħ ŀḗḗṽḗḗŀş ḓǿǿ ƞǿǿŧ ƈȧȧřřẏ ǿǿṽḗḗř."
+      "value": " īƞ ŧħȧȧŧ ŧȧȧƀ ŧǿǿ ƥḗḗřḿȧȧƞḗḗƞŧŀẏ řḗḗƥŀȧȧƈḗḗ Şƈīḗḗƞƈḗḗ ȧȧƞḓ Řḗḗşḗḗȧȧřƈħ. Ḗẋīşŧīƞɠ Şƈīḗḗƞƈḗḗ ȧȧƞḓ řḗḗşḗḗȧȧřƈħ ŀḗḗṽḗḗŀş ḓǿǿ ƞǿǿŧ ƈȧȧřřẏ ǿǿṽḗḗř."
     },
     {
       "type": 0,

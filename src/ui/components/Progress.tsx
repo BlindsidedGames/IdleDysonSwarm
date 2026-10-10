@@ -4,6 +4,7 @@ import './components.css'
 export interface ProgressProps {
   readonly label: ReactNode
   readonly valueText: string
+  readonly valueContent?: ReactNode
   readonly value?: number
   readonly maximum?: number
   readonly className?: string
@@ -12,6 +13,7 @@ export interface ProgressProps {
 export function Progress({
   label,
   valueText,
+  valueContent,
   value,
   maximum = 1,
   className,
@@ -29,7 +31,7 @@ export function Progress({
       <div className="ui-progress__header">
         <span id={labelId}>{label}</span>
         <span id={valueId} className="ui-progress__value">
-          {valueText}
+          {valueContent ?? valueText}
         </span>
       </div>
       <progress

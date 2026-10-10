@@ -161,7 +161,7 @@ function openPresets() {
 test('manual assignment warns before spending and cancellation preserves points and prerequisite refunds', async () => {
   const view = setup()
   openLockedSkill()
-  expect(warning().textContent).toContain('prerequisite paths cannot be refunded until an Infinity or Quantum reset')
+  expect(warning().textContent).toContain('prerequisite paths cannot be refunded until an Infinity reset')
   expect(view.dispatch).not.toHaveBeenCalled()
   expect(view.state().skills.points).toBe(100n)
   fireEvent.keyDown(document, { key: 'Escape' })

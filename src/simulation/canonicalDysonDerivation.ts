@@ -1,3 +1,4 @@
+import { activeReworkChallenge } from './reworkChallenges'
 import { withCanonicalBotAllocation } from './canonicalBotAllocation'
 import { stellarOrdinaryOutputMultiplier } from './stellarBenefits'
 import { deriveAdditionalTinkerYields, resolveTinkerFacilityYields, type TinkerFacilityYields } from './manualFacilityAugments'
@@ -40,7 +41,6 @@ import {
   type MegaStructureRates,
 } from './megaStructureRates'
 import {
-  avocadoDysonMultiplier,
   infinityFacilityMultiplier,
   INFINITY_FACILITY_THRESHOLDS,
   quantumCashMultiplier,
@@ -604,7 +604,7 @@ function calculateDysonState(
       ? [...effects, { id: statId === 'Global.MoneyPerSecond' ? 'discovery.cash-bots' : 'discovery.production', operation: 'multiply' as const, value: statId === 'Global.MoneyPerSecond' ? discovery.cashBotsMultiplier : discovery.multiplier, order: 1000 }, ...(statId === 'Facility.AssemblyLine.Production' ? [{ id: 'discovery.cash-bots', operation: 'multiply' as const, value: discovery.cashBotsMultiplier, order: 1001 }] : [])]
       : effects,
   ])) : ordinarySkillEffectsByStat
-  const avocadoMultiplier = avocadoDysonMultiplier(state.avocado)
+  const avocadoMultiplier = 1
   const moneyMultiplier = calculateStat(1, [
     multiplierEffect(SWARM_AUGMENTS.economyOfScale, economyOfScaleMultiplier(state), 96),
     ...(discovery && ownedSkillSet.has('shouldersOfTheEnlightened') && ownedSkillSet.has('scientificPlanets') ? [multiplierEffect('effect.shouldersOfTheEnlightened.money_multiplier', 1 + 0.1 * Number(state.discovery!.completions), 80)] : []),
@@ -1551,7 +1551,7 @@ function deriveFacilityModifiers(
         ...effectsAt(skillEffectsByStat, target),
       ]
       const infinity = infinityFacilityMultiplier(
-        state.infinity.points,
+        activeReworkChallenge(state) ? state.challenges!.replacement!.earnedIp : state.infinity.points,
         INFINITY_FACILITY_THRESHOLDS[id],
       )
       const later = [

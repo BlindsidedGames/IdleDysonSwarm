@@ -120,7 +120,6 @@ import {
   advanceUniverseDesignation,
   advanceRealityWorkers,
   gatherRealityInfluence,
-  realityInfluenceGenerationStarted,
   type RealityWorkerAdvanceStatus,
   type RealityWorkerTuning,
 } from '../simulation/realityWorkers'
@@ -158,6 +157,8 @@ import type {
 export const FRONTEND_GAMEPLAY_SNAPSHOT_VERSION = 2 as const
 
 export const FRONTEND_COMMAND_FAMILIES = Object.freeze([
+  'rework',
+  'civilization',
   'discovery',
   'boost',
   'dyson',
@@ -462,6 +463,7 @@ export interface FrontendCanonicalProgression {
     Omit<CanonicalGameStateV1['skills'], 'points' | 'fragments'>
   >
   readonly discovery?: DeepReadonly<CanonicalGameStateV1['discovery']>
+  readonly civilization?: DeepReadonly<CanonicalGameStateV1['civilization']>
   readonly research: DeepReadonly<CanonicalGameStateV1['research']>
   readonly reality: DeepReadonly<
     Pick<CanonicalGameStateV1['reality'], 'autoGather'>
@@ -666,6 +668,7 @@ export interface FrontendDysonPresentationFacts {
         readonly kind:
           | 'create-bots'
           | 'build-assembly-lines'
+          | 'build-data-centers'
           | 'tinkers'
           | 'have-active-panels'
           | 'own-planets'
@@ -1242,9 +1245,6 @@ export function selectGameplayVisibility(
     state.dyson.bots >= infinityRequiredBots
   const quantumRequiredInfinityPoints =
     QUANTUM_CONSTANTS.infinityPointsPerQuantumPoint
-  const quantumUnlocked = unlockAllTabs ||
-    state.infinity.points >= quantumRequiredInfinityPoints ||
-    state.quantum.pointsEarned > 0n
   const realitySecretsFraction = Math.min(
     1,
     divideContinuous(
@@ -1257,9 +1257,6 @@ export function selectGameplayVisibility(
     requiredSecrets: QUANTUM_CONSTANTS.maximumSecrets,
     fraction: realitySecretsFraction,
   }
-  const realityRouteVisible =
-    realityUnlocked ||
-    state.infinity.secretsOfTheUniverse >= 1n
   const hasExistingSimulationProgress =
     state.dream.resetCount > 0n ||
     state.dream.strangeMatter > 0 ||
@@ -1279,7 +1276,6 @@ export function selectGameplayVisibility(
   const simulationsUnlocked = unlockAllTabs ||
     (realityUnlocked && state.statistics.lifetime.manualInfluence >= simulationsRequiredInfluence) ||
     hasExistingSimulationProgress
-  const realityVisited = realityInfluenceGenerationStarted(state)
   const simulationsPendingWorkers = Number(
     state.reality.workersReady < BigInt(simulationsRequiredInfluence)
       ? state.reality.workersReady
@@ -1339,13 +1335,13 @@ export function selectGameplayVisibility(
       },
     },
     reality: {
-      routeVisible: realityRouteVisible,
-      routeUnlocked: realityUnlocked,
+      routeVisible: false,
+      routeUnlocked: false,
       unlockProgress: realityUnlockProgress,
     },
     simulations: {
-      routeVisible: (realityUnlocked && realityVisited) || simulationsUnlocked,
-      routeUnlocked: simulationsUnlocked,
+      routeVisible: true,
+      routeUnlocked: true,
       unlockProgress: {
         currentInfluence: simulationsCurrentInfluence,
         requiredInfluence: simulationsRequiredInfluence,
@@ -1353,12 +1349,8 @@ export function selectGameplayVisibility(
       },
     },
     quantum: {
-      routeVisible: unlockAllTabs ||
-        state.meta.firstInfinityComplete ||
-        state.infinity.points > 0n ||
-        state.infinity.spentPoints > 0n ||
-        state.quantum.pointsEarned > 0n,
-      routeUnlocked: quantumUnlocked,
+      routeVisible: false,
+      routeUnlocked: false,
       unlockProgress: {
         currentInfinityPoints: state.infinity.points,
         requiredInfinityPoints: quantumRequiredInfinityPoints,
@@ -1539,6 +1531,7 @@ function selectProgression(
       tabPresetAutomation:
         state.skills.tabPresetAutomation,
     }),
+    civilization: state.civilization === undefined ? undefined : reuseShallowDomain(previous?.civilization, state.civilization),
     discovery: reuseShallowDomain(previous?.discovery, state.discovery ?? EMPTY_DISCOVERY),
     research: reuseShallowDomain(previous?.research, state.research),
     reality: reuseShallowDomain(previous?.reality, {
@@ -1656,6 +1649,7 @@ function selectDerivedFacts(
             state.dyson.goalStage,
             effectiveDivisions(state),
             builtByHandTinkerGoal(state),
+            state.challenges?.replacement?.active === 'grounded',
           ),
         }
         : {
@@ -1920,6 +1914,7 @@ function projectDysonDerivedFacts(
   goalStage: bigint,
   divisionsPurchased: bigint,
   tinkerGoalTarget: number | null,
+  grounded = false,
 ): Omit<
   DerivedBasicDysonState,
   'nextEvaluationSnapshot' | 'megaRates'
@@ -1970,6 +1965,7 @@ function projectDysonDerivedFacts(
         goalStage,
         divisionsPurchased,
         tinkerGoalTarget,
+        grounded,
       ),
       facilities: source.facilityFacts,
     },
@@ -2315,6 +2311,7 @@ function projectDysonGoal(
   goalStage: bigint,
   divisionsPurchased: bigint,
   tinkerGoalTarget: number | null,
+  grounded = false,
 ): FrontendDysonPresentationFacts['currentGoal'] {
   if (tinkerGoalTarget !== null) return { kind: 'tinkers', target: tinkerGoalTarget }
   switch (goalStage) {
@@ -2325,7 +2322,7 @@ function projectDysonGoal(
     case 2n:
       return { kind: 'have-active-panels', target: 20_000 }
     case 3n:
-      return { kind: 'own-planets', target: 20 }
+      return grounded ? { kind: 'build-data-centers', target: 100 } : { kind: 'own-planets', target: 20 }
     case 4n:
       return { kind: 'decay-panels', target: 1_000_000_000_000 }
     case 5n:
@@ -2973,6 +2970,7 @@ function selectSkillPreviewDependencies(
       .join('\u0000'),
     challengeSignature: [
       state.challenges?.active ?? '',
+      ...(state.challenges?.replacement?.completedIds ?? []),
       state.challenges?.galvanizers ?? 0n,
       state.challenges?.blankSlateCompleted,
       state.challenges?.trialAndErrorCompleted,

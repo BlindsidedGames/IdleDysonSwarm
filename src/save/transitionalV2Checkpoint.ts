@@ -144,6 +144,8 @@ const CURRENT_ONLY_STATE_PATHS = new Set([
   '$.avocado.overflowPoints',
   '$.modelVersion',
   '$.meta.navigationRouteDiscovery',
+  '$.meta.reworkMigrationChoice',
+  '$.meta.firstQuantumComplete',
   '$.infinity.automaticResetEnabled',
   '$.infinity.currentCyclePeakIpPerMinute',
   '$.infinity.currentCyclePeakReward',
@@ -1082,6 +1084,8 @@ function convertLike(source: unknown, base: unknown, path: string): unknown {
   if (path === '$.challenges') return { ...EMPTY_INFINITY_CHALLENGES }
   if (path === '$.discovery') return { ...EMPTY_DISCOVERY }
   if (path === '$.avocado.overflowPoints') return 0n
+  // A recovery template's migration choice never belongs to imported progress.
+  if (path === '$.meta.reworkMigrationChoice' || path === '$.meta.firstQuantumComplete') return undefined
   if (CURRENT_ONLY_STATE_PATHS.has(path)) return base
   if (V2_NULLABLE_TEXT_PATHS.has(path)) {
     if (source !== null && typeof source !== 'string') {
@@ -1145,7 +1149,7 @@ function convertLike(source: unknown, base: unknown, path: string): unknown {
         if (CURRENT_ONLY_STATE_PATHS.has(propertyPath)) {
           // Historical V2 never owned Overflow Points; importing it must not
           // inherit the receiver's currency from the compatibility base.
-          return [key, propertyPath === '$.discovery' ? { ...EMPTY_DISCOVERY } : propertyPath === '$.challenges' ? { ...EMPTY_INFINITY_CHALLENGES } : propertyPath === '$.avocado.overflowPoints' ? 0n : baseValue]
+          return [key, propertyPath === '$.meta.reworkMigrationChoice' || propertyPath === '$.meta.firstQuantumComplete' ? undefined : propertyPath === '$.discovery' ? { ...EMPTY_DISCOVERY } : propertyPath === '$.challenges' ? { ...EMPTY_INFINITY_CHALLENGES } : propertyPath === '$.avocado.overflowPoints' ? 0n : baseValue]
         }
         if (!Object.prototype.hasOwnProperty.call(sourceRecord, key)) {
           throw new TypeError(

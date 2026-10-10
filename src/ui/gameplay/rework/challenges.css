@@ -1,0 +1,6 @@
+/* Keep real touch targets at the minimum desktop Interface scale. */
+.challenges-surface .ui-button,
+.challenges-surface .ui-collapsible-section__trigger {
+  min-block-size: 44px;
+  min-inline-size: 44px;
+}

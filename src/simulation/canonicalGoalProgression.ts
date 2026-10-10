@@ -114,6 +114,7 @@ function isGoalComplete(
     case 2n:
       return panelArea(state, deriveDysonFacts) >= 20_000
     case 3n: {
+      if (state.challenges?.replacement?.active === 'grounded') return state.dyson.facilities.data_centers[1] >= 100
       const manualPlanetMultiplier =
         state.skills.byId.terraIrradiant?.owned === true ? 12 : 1
       const planets =
