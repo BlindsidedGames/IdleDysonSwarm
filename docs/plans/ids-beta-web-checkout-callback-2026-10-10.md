@@ -1,6 +1,6 @@
 # Beta web checkout callback implementation plan
 
-Read-only source inspection, 10 October 2026. This is a proposed follow-up, not callback implementation or deployment authorization. Sharing new purchase receipts or consumed-tip Gallery unlocks with public remains pending Matthew's answer. Progress saves remain separate regardless of that answer.
+**Stopped and superseded:** Matthew clarified at 09:33 that there is no shipping web version, then at 09:34 that the immediate goal is extended internal testing on Steam/iOS/Android. The callback candidates are preserved in isolated branches and are not integrated into either primary repository. This historical plan is not an active task or a native internal-build blocker. See the [current native internal-readiness audit](../audits/ids-native-internal-readiness-2026-10-10.md). The source inspection and earlier proposal below are retained only as history.
 
 ## Owners and current contract
 

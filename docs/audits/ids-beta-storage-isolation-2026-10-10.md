@@ -1,6 +1,6 @@
 # Beta storage isolation — 10 October 2026
 
-Matthew's latest direction is to start beta with the cloud save manager off and keep purchases visible and enabled. This supersedes the earlier blanket publication hold and proposals to disable purchasing or change store identities. The approved local-main integration keeps the existing package/bundle IDs, Steam App ID, product IDs and provider accounts. No deployment, store configuration change, real purchase, real-save migration or native game launch is authorized by this integration. Distribution remains held for the concrete pending callback/sharing/reward and packaged-host checks below.
+Current shipping scope is Steam, iOS and Android only, with internal builds and extended internal testing first. Browser infrastructure is local QA only. The [native internal-readiness audit](ids-native-internal-readiness-2026-10-10.md) supersedes this document's earlier web callback/deployment and public-rollout gates; those are not internal-build blockers. Approved local-main migration/isolation/Restore code retains existing package/bundle IDs, Steam App ID, product IDs and accounts, with cloud saves off and purchases enabled. No distribution, transaction, real-save migration or native game launch is authorized by this checkpoint.
 
 ## Implemented boundaries
 
@@ -17,14 +17,14 @@ No Steam Cloud object or publication/achievement object is constructed by beta s
 
 Web artifacts use `/rework-beta/` for base, manifest identity, start URL and scope, icons, headers and registration. Generated caches use `idle-dyson-swarm-rework-beta-app-`; activation only deletes older caches with that prefix. Startup rejects a controlling worker other than `/rework-beta/service-worker.js` before opening beta IndexedDB. This source guard cannot certify deployed origin routing or prevent a previously deployed root worker from serving old code. Deployment must verify the actual public worker scope and beta route. The existing public website promotion script still requires `/play/` and must not be used to promote this beta artifact.
 
-## Concrete purchase handoff still pending
+## Historical web purchase investigation — stopped, outside shipping scope
 
 The website backend was inspected read-only at `927392a7c32abe363e7987f279a6e2df991ab857` in `BlindsidedGames Website`:
 
 - `functions/api/ids/stripe/verify.ts:37–70` resolves supplied receipt tokens, optionally issuing a receipt from a supplied completed checkout session. A device key alone is not a server-side purchase ledger or a missing-receipt recovery mechanism.
 - `functions/_utils/ids-stripe.ts:130–131` always returns checkout success/cancellation to `/play/`. `checkout.ts:20–38` has no beta return-path input.
 
-With a beta-specific callback, a new verified beta receipt would otherwise remain only in beta and the deployed public app could not Restore it from the device key alone. A question is pending about appending only verified completed-purchase receipts to the shared public record while keeping ordinary beta refresh/revocation caches separate. This sharing is **not implemented**. The callback also needs an allowlisted same-origin `/rework-beta/` return path in client and backend before hosted beta checkout can be certified. The [source-derived callback plan](../plans/ids-beta-web-checkout-callback-2026-10-10.md) identifies owners, exact origin/path rules, hosting changes and synthetic validation. No backend/provider calls or website edits were performed.
+The retired web investigation found device-bound supplied-token Restore and public checkout callbacks. Callback candidates were completed only in isolated branches before the scope correction and are preserved as stopped work. No new receipt sharing was implemented or integrated. The [historical callback plan](../plans/ids-beta-web-checkout-callback-2026-10-10.md) is no longer active; no website, Stripe or web hosting work is required for Steam/iOS/Android internal builds. Native consumed-tip Gallery handling remains a separate pending ownership-policy decision.
 
 Existing public purchases seed beta and durable native purchases remain provider-restorable. A new consumed mobile tip's Gallery unlock is stored in beta's cache; public cannot restore that consumed tip through the provider. Whether that positive Gallery receipt should also be shared is unresolved. Steam tips are retained inventory items and remain provider-restorable. Do not describe cross-channel restoration of all newly purchased benefits as complete.
 
