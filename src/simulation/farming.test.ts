@@ -1,15 +1,17 @@
 import { expect, test } from 'vitest'
+import { execFileSync } from 'node:child_process'
 import { createUnityFirstRunPreparedSave } from '../application/firstRun/unityFirstRunSave'
 import { hydrateGameState, dehydrateGameState } from '../game-state/mapping'
 import { validateCanonicalGameState } from '../game-state/validate'
 import { PreparedSave } from '../save/prepare'
 import { deserializeWebSave, serializeWebSave } from '../save/serialization'
-import type { CanonicalGameStateV1, CivilizationFocus } from '../game-state/types'
+import type { CanonicalGameStateV1, CivilizationFocus, FarmingState } from '../game-state/types'
 import { advanceCivilization, validateCivilization } from './civilization'
-import { startFarming, farmingGoal, farmingCanBuyGranary, buyFarmingGranary, farmingComplete, setFarmingFocus, completeFarmingAge, farmingWorkers, farmingCapacity, farmingGranaryCost, farmingGranaryPurchaseStatus } from './farming'
+import { advanceFarming, validateFarming, startFarming, farmingGoal, farmingCanBuyGranary, buyFarmingGranary, farmingComplete, setFarmingFocus, completeFarmingAge, farmingWorkers, farmingCapacity, farmingGranaryCost, farmingGranaryPurchaseStatus, farmingStoredTimeBudget, farmingMilestoneFlags, farmingManualGate } from './farming'
 import { eligibleCanonicalFractureIds, galvanizeCanonicalSkill } from './canonicalSkillTransactions'
 import { restartInfinityChallenge } from './canonicalInfinityChallengeRestart'
 import { REWORK_CHALLENGES } from './reworkChallenges'
+import { DISCRETE_MAXIMUM } from './numeric'
 const session=hydrateGameState(createUnityFirstRunPreparedSave({startedAtUtc:'2026-10-09T00:00:00Z'}))
 const fresh=():CanonicalGameStateV1=>({...session.state,meta:{...session.state.meta,reworkMigrationChoice:'keep'}})
 const opening=()=>advanceCivilization(fresh(),7043)
@@ -80,7 +82,7 @@ test.each(['balanced','provisioning','settlement','expeditions'] as const)('%s r
   expect(validateCivilization(s.civilization)).toBeNull()
  }
  const f=s.civilization!.farming!
- expect(farmingComplete(f)).toBe(true);expect(f.elapsedSeconds/60).toBeGreaterThan(140);expect(f.elapsedSeconds/60).toBeLessThan(165)
+ expect(farmingComplete(f)).toBe(true)
  expect(funded).toEqual(new Set(Object.keys(bills)));expect(f.completedBuildings).toEqual(expect.arrayContaining(Object.keys(bills)))
  if(focus==='settlement')expect(retainedGoods).toBe(true)
  expect(benefited).toEqual(new Set(['fields','goods','ship']))
@@ -147,4 +149,251 @@ test('optional Granary cannot take the Materials and Tools reserve of a lost Hom
  expect(validateCivilization(stocked.civilization)).toBeNull()
  expect(buyFarmingGranary(stocked)).toBeNull()
  expect(farmingGranaryPurchaseStatus(stocked.civilization!.farming!)).toBe('repairReserve')
+})
+
+// Independent work/output contracts at the real engine boundary. These fixtures
+// supply funded receipts, never completion ordering or results from a fake clock.
+function carryoverVillage(fractures=0,changes:Partial<FarmingState>={}):CanonicalGameStateV1 {
+ let state=farm()
+ const farming:FarmingState={...state.civilization!.farming!,elapsedSeconds:0,tickRemainder:0,
+  focus:'balanced',homes:[0,1,2,3,4,5],lostHomes:[],homesBuilt:6,granaries:3,shipments:3,
+  firstHarvest:true,weathering:0,inheritedFoodPerMinute:0,inheritedMaterialsPerMinute:0,
+  completedBuildings:['pasture','kiln','waterworks','hall','intensiveCultivation','guildWorkshop','townMarket'],
+  resources:{food:0,materials:80,tools:8,goods:35},targets:{food:350,materials:0,tools:0,goods:35},
+  jobs:{food:{kind:'food',work:42,remainingWork:42,inputs:{},output:27}},
+  awardedCatalystIds:['farming-catalyst-1','farming-catalyst-2','farming-catalyst-3','farming-catalyst-4','farming-catalyst-5'],
+  ...changes}
+ state={...state,meta:{...state.meta,firstInfinityComplete:true},civilization:{...state.civilization!,farming},
+  challenges:{...state.challenges!,galvanizers:state.challenges!.galvanizers+BigInt(fractures)}}
+ expect(validateFarming(farming)).toBeNull()
+ for(let n=0;n<fractures;n++){
+  const result=galvanizeCanonicalSkill(state,eligibleCanonicalFractureIds(state)[0])
+  if(!result.accepted)throw Error(result.reason)
+  state=result.state
+ }
+ expect(validateCanonicalGameState(state)).toEqual({valid:true,errors:[]})
+ return state
+}
+
+test.each([
+ {fractures:0,food:81,remainingWork:40.5},
+ {fractures:10,food:108,remainingWork:18.75},
+ {fractures:40,food:243,remainingWork:37.5},
+ {fractures:60,food:324,remainingWork:36},
+])('eligible repeated Farming cycles keep elapsed work at $fractures fractures',scenario=>{
+ const state=carryoverVillage(scenario.fractures),next=advanceCivilization(state,10).civilization!.farming!
+ // 15 residents * .85 useful labor * (1 + fractures * .05) * 10 seconds.
+ // Every 42 work completes a paid 27-Food cycle; leftover work starts the next.
+ expect(next.resources.food).toBe(scenario.food)
+ expect(next.jobs.food.remainingWork).toBeCloseTo(scenario.remainingWork,9)
+ expect(next.elapsedSeconds).toBe(10)
+ expect(next.resources.materials).toBe(80)
+ expect(next.resources.goods).toBe(35)
+})
+
+test('fractional Farming time advances authoritative work immediately, including a saved unused old tick residue',()=>{
+ const state=carryoverVillage(),partial=advanceCivilization(state,.5).civilization!.farming!
+ expect(partial.jobs.food.remainingWork).toBeCloseTo(35.625,9)
+ expect(partial.elapsedSeconds).toBe(.5)
+ const legacy={...state,civilization:{...state.civilization!,farming:{...state.civilization!.farming!,tickRemainder:.5}}}
+ const resumed=advanceCivilization(reload(legacy),.5).civilization!.farming!
+ expect(resumed.jobs.food.remainingWork).toBeCloseTo(29.25,9)
+ expect(resumed.elapsedSeconds).toBe(1)
+ expect(resumed.tickRemainder).toBe(0)
+ const due=carryoverVillage(0,{jobs:{food:{kind:'food',work:42,remainingWork:0,inputs:{},output:27}}})
+ const continued=advanceFarming(reload(due),.5).civilization!.farming!
+ expect(continued.resources.food).toBe(27)
+ expect(continued.jobs.food.remainingWork).toBeCloseTo(35.625,9)
+})
+
+test('a repair completion redistributes the shared labor pool before unused time advances subsequent food work',()=>{
+ const state=carryoverVillage(40,{focus:'expeditions',homes:[0,1,2,3,4],lostHomes:[5],
+  jobs:{food:{kind:'food',work:42,remainingWork:42,inputs:{},output:27},
+   build:{kind:'repair',index:5,work:1092,remainingWork:1,inputs:{materials:400,tools:14},output:0}}})
+ const next=advanceCivilization(state,1).civilization!.farming!
+ expect(next.homes).toEqual([0,1,2,3,4,5])
+ // Repair uses 1 work at 21.233333.../s; Fields receives .8 work concurrently.
+ // Restored residents then give Fields 44.1 work/s for the remaining interval.
+ expect(next.resources.food).toBe(27)
+ expect(next.jobs.food.remainingWork).toBeCloseTo(41.176923076923075,9)
+ expect(next.resources.materials).toBe(80)
+})
+
+test('unused Farming time cannot fund a blocked next Tools cycle before actual Materials arrive',()=>{
+ const state=carryoverVillage(0,{homes:[0,1,2,3,4],homesBuilt:5,
+  resources:{food:0,materials:0,tools:0,goods:35},
+  jobs:{tools:{kind:'tools',work:42,remainingWork:.1,inputs:{materials:6},output:2}}})
+ const next=advanceCivilization(state,1).civilization!.farming!
+ expect(next.resources.tools).toBe(2)
+ expect(next.resources.materials).toBe(0)
+ expect(next.jobs.tools).toBeUndefined()
+ expect(next.jobs.materials.remainingWork).toBeGreaterThan(0)
+ expect(next.resources.food).toBe(0)
+ expect(validateFarming(next)).toBeNull()
+})
+
+
+test('partial paid Food and inherited inflow respect the same reserved capacity during subsecond completion',()=>{
+ const state=carryoverVillage(0,{inheritedFoodPerMinute:2.7,
+  resources:{food:558,materials:80,tools:8,goods:0},
+  jobs:{food:{kind:'food',work:42,remainingWork:.1,inputs:{},output:2}}})
+ const next=advanceCivilization(state,.5).civilization!.farming!
+ expect(next.resources.food).toBe(560)
+ expect(next.jobs.food).toBeUndefined()
+ expect(next.resources.food).toBeLessThanOrEqual(farmingCapacity(next))
+ expect(validateFarming(next)).toBeNull()
+})
+
+
+test('a huge blocked interval advances time without per-second or per-cycle replay',()=>{
+ const state=carryoverVillage(0,{homes:[0],homesBuilt:1,granaries:0,shipments:0,completedBuildings:[],
+  resources:{food:0,materials:35,tools:4,goods:0},jobs:{},awardedCatalystIds:['farming-catalyst-1']})
+ // A subprocess timeout safely catches reintroduced synchronous trillion-step
+ // loops; it is a bounded-completion contract, not a latency benchmark.
+ const owner=new URL('./farming.ts',import.meta.url).href
+ const script=`import {readFileSync} from 'node:fs';import {advanceFarming} from ${JSON.stringify(owner)};const s=JSON.parse(readFileSync(0,'utf8'),(_k,v)=>v&&typeof v==='object'&&'__bigint' in v?BigInt(v.__bigint):v);const f=advanceFarming(s,1e12).civilization.farming;process.stdout.write(JSON.stringify({elapsed:f.elapsedSeconds,resources:f.resources,jobs:f.jobs}));`
+ const result=JSON.parse(execFileSync(process.execPath,['--import','tsx','--input-type=module','-e',script],
+  {input:JSON.stringify(state,(_k,v)=>typeof v==='bigint'?{__bigint:v.toString()}:v),timeout:3000,encoding:'utf8'}))
+ expect(result).toEqual({elapsed:1e12,resources:{food:0,materials:35,tools:4,goods:0},jobs:{}})
+})
+
+test.each([{remainder:0,doubleTime:false},{remainder:.5,doubleTime:false},{remainder:.5,doubleTime:true}])('continuous Granary funding consumes legacy remainder once and budgets new time: %j',({remainder,doubleTime})=>{
+ const state=carryoverVillage(0,{homes:[0],homesBuilt:1,granaries:0,shipments:0,completedBuildings:[],
+  inheritedMaterialsPerMinute:2.7,resources:{food:0,materials:34.9,tools:4,goods:0},jobs:{},
+  awardedCatalystIds:['farming-catalyst-1']})
+ const legacy={...state,timeline:{...state.timeline,doubleTime:{...state.timeline.doubleTime,unlocked:doubleTime}},civilization:{...state.civilization!,farming:{...state.civilization!.farming!,tickRemainder:remainder}}}
+ const admitted=farmingStoredTimeBudget(reload(legacy),10)
+ expect(admitted).toBeCloseTo((20/9-remainder)/(doubleTime?2:1),9) // .1 Materials / (.045 per second).
+ const next=advanceFarming(reload(legacy),admitted*(doubleTime?2:1),true).civilization!.farming!
+ expect(next.elapsedSeconds).toBeCloseTo(20/9,9)
+ expect(next.resources.materials).toBeCloseTo(35,9)
+ expect(next.resources.tools).toBe(4)
+ expect(next.granaries).toBe(0)
+ expect(next.jobs.materials.remainingWork).toBeCloseTo(42-(20/9)*4.25,9)
+ expect(next.tickRemainder).toBe(0)
+ const saved=reload({...legacy,civilization:{...legacy.civilization!,farming:next}})
+ expect(farmingStoredTimeBudget(saved,10)).toBe(0)
+ expect(saved.civilization!.farming).toEqual(next)
+})
+
+test('Farming housing loss settles before a simultaneous paid repair, then admits from the resulting ownership',()=>{
+ const duration=1/(13*.98/1.8),state=carryoverVillage(0,{focus:'expeditions',homes:[0,1,2,3,4],lostHomes:[5],
+  weathering:100-duration*(4/60)*.6*.8,
+  jobs:{food:{kind:'food',work:42,remainingWork:42,inputs:{},output:27},
+   build:{kind:'repair',index:5,work:1092,remainingWork:1,inputs:{materials:400,tools:14},output:0}}})
+ const next=advanceCivilization(state,duration).civilization!.farming!
+ expect(next.homes).toEqual([0,1,2,3,5])
+ expect(next.lostHomes).toEqual([4])
+ expect(next.weathering).toBeCloseTo(40,9)
+ expect(next.jobs.food.remainingWork).toBeCloseTo(41.2,9)
+ expect(validateFarming(next)).toBeNull()
+})
+
+test.each([0,10,40,60])('irregular serialized partitions conserve repeated receipts at %i fractures',fractures=>{
+ const initial=carryoverVillage(fractures,{inheritedFoodPerMinute:2.7,inheritedMaterialsPerMinute:2.7})
+ const whole=advanceFarming(initial,10).civilization!.farming!
+ let small=initial,remaining=10,index=0
+ while(remaining>0){const dt=Math.min(remaining,[.017,.333,.7,.05][index++%4]);small=advanceFarming(small,dt);remaining=Math.max(0,remaining-dt);if(index%3===0)small=reload(small)}
+ const split=small.civilization!.farming!
+ expect(split.homes).toEqual(whole.homes);expect(split.completedBuildings).toEqual(whole.completedBuildings)
+ expect(split.jobSequence).toBe(whole.jobSequence);expect(Object.keys(split.jobs)).toEqual(Object.keys(whole.jobs))
+ for(const id of ['food','materials','tools','goods'] as const)expect(split.resources[id]).toBeCloseTo(whole.resources[id],8)
+ for(const id of Object.keys(whole.jobs)){expect(split.jobs[id].inputs).toEqual(whole.jobs[id].inputs);expect(split.jobs[id].cycle).toBe(whole.jobs[id].cycle);expect(split.jobs[id].remainingWork).toBeCloseTo(whole.jobs[id].remainingWork,8)}
+ expect(split.weathering).toBeCloseTo(whole.weathering,8)
+ expect(validateFarming(split)).toBeNull()
+})
+
+
+test('a paid Goods admission opens Materials demand immediately in every time partition',()=>{
+ const initial=carryoverVillage(60,{focus:'settlement',homes:[0,1,2,3],homesBuilt:4,shipments:0,
+  completedBuildings:['kiln','pasture','waterworks','intensiveCultivation','hall'],
+  inheritedMaterialsPerMinute:2.7,resources:{food:114,materials:99.6,tools:8,goods:9},
+  jobs:{ship:{kind:'ship',work:1890,remainingWork:1470,inputs:{food:350,goods:35},output:80},
+   goods:{kind:'goods',work:63,remainingWork:0,inputs:{materials:4},output:2}}})
+ const whole=advanceFarming(initial,1).civilization!.farming!
+ const split=advanceFarming(reload(advanceFarming(initial,.5)),.5).civilization!.farming!
+ expect(whole.jobs.materials).toMatchObject({kind:'materials',work:42,inputs:{},output:8})
+ expect(whole.jobSequence).toBe(split.jobSequence)
+ expect(Object.keys(whole.jobs).sort()).toEqual(Object.keys(split.jobs).sort())
+ for(const id of ['food','materials','tools','goods'] as const)expect(whole.resources[id]).toBeCloseTo(split.resources[id],8)
+ for(const id of Object.keys(whole.jobs)){
+  expect(whole.jobs[id].cycle).toBe(split.jobs[id].cycle)
+  expect(whole.jobs[id].remainingWork).toBeCloseTo(split.jobs[id].remainingWork,8)
+ }
+ expect(validateFarming(whole)).toBeNull();expect(validateFarming(split)).toBeNull()
+})
+
+test('exact repeated weather periods batch without losing paid cycles, readiness or partition ownership',()=>{
+ const initial=carryoverVillage(0,{focus:'expeditions',shipments:6,resources:{food:560,materials:480,tools:28,goods:40},jobs:{},inheritedFoodPerMinute:2.7,inheritedMaterialsPerMinute:2.7})
+ const whole=advanceFarming(initial,2592000).civilization!.farming!
+ let split=initial
+ for(let n=0;n<30;n++)split=reload(advanceFarming(split,86400))
+ const small=split.civilization!.farming!
+ expect(whole.homes).toEqual(small.homes);expect(whole.lostHomes).toEqual(small.lostHomes)
+ expect(whole.jobSequence).toBe(small.jobSequence)
+ expect(whole.awardedCatalystIds).toEqual(small.awardedCatalystIds)
+ expect(whole.cityReadinessReached).toBe(true)
+ for(const id of ['food','materials','tools','goods'] as const)expect(whole.resources[id]).toBeCloseTo(small.resources[id],6)
+ expect(whole.weathering).toBeCloseTo(small.weathering,6)
+ expect(validateFarming(whole)).toBeNull()
+ const owner=new URL('./farming.ts',import.meta.url).href
+ const script=`import {readFileSync} from 'node:fs';import {advanceFarming,validateFarming} from ${JSON.stringify(owner)};const s=JSON.parse(readFileSync(0,'utf8'),(_k,v)=>v&&typeof v==='object'&&'__bigint' in v?BigInt(v.__bigint):v);const f=advanceFarming(s,1e12).civilization.farming;process.stdout.write(JSON.stringify({elapsed:f.elapsedSeconds,cycles:f.jobSequence,earned:f.awardedCatalystIds.includes('farming-catalyst-6'),validation:validateFarming(f)}));`
+ const result=JSON.parse(execFileSync(process.execPath,['--import','tsx','--input-type=module','-e',script],{input:JSON.stringify(initial,(_k,v)=>typeof v==='bigint'?{__bigint:v.toString()}:v),timeout:3000,encoding:'utf8'}))
+ expect(result.elapsed).toBe(1e12);expect(result.cycles).toBeGreaterThan(1e10);expect(result.earned).toBe(true);expect(result.validation).toBeNull()
+})
+
+
+test('earned Catalyst readiness survives housing loss while dock readiness and Finish require current Homes',()=>{
+ const initial=carryoverVillage(0,{focus:'expeditions',shipments:6,weathering:99.99,jobs:{},
+  resources:{food:560,materials:0,tools:0,goods:35}})
+ const full={...initial,challenges:{...initial.challenges!,galvanizers:DISCRETE_MAXIMUM}}
+ const ready=advanceFarming(full,.1),r=ready.civilization!.farming!
+ expect(farmingMilestoneFlags(r).filter(Boolean)).toHaveLength(6)
+ expect(completeFarmingAge(ready)).not.toBeNull()
+ expect(r.skillRewardPending).toBe(true)
+ expect(r.awardedCatalystIds).not.toContain('farming-catalyst-6')
+ const damaged=reload(advanceFarming(reload(ready),1)),f=damaged.civilization!.farming!
+ expect(f.homes).toHaveLength(5)
+ expect(farmingMilestoneFlags(f).filter(Boolean)).toHaveLength(5)
+ expect(farmingComplete(f)).toBe(false)
+ expect(farmingManualGate(f)).toBe(false)
+ expect(completeFarmingAge(damaged)).toBeNull()
+ expect(f.cityReadinessReached).toBe(true)
+ expect(f.skillRewardPending).toBe(true)
+ const room={...damaged,challenges:{...damaged.challenges!,galvanizers:DISCRETE_MAXIMUM-1n}}
+ const credited=reload(advanceFarming(room,.1)),c=credited.civilization!.farming!
+ expect(credited.challenges!.galvanizers).toBe(DISCRETE_MAXIMUM)
+ expect(c.awardedCatalystIds).toContain('farming-catalyst-6')
+ expect(c.skillRewardPending).toBe(false)
+ expect(farmingMilestoneFlags(c).filter(Boolean)).toHaveLength(5)
+ expect(completeFarmingAge(credited)).toBeNull()
+ expect(advanceFarming(credited,.1).challenges!.galvanizers).toBe(DISCRETE_MAXIMUM)
+})
+
+
+test('Farming advances within clock precision and rejects unrepresentable time without changing owned work',()=>{
+ const supported=carryoverVillage(0,{elapsedSeconds:1e12}),next=advanceFarming(reload(supported),.5).civilization!.farming!
+ expect(next.elapsedSeconds).toBe(1e12+.5)
+ expect(next.jobs.food.remainingWork).toBeCloseTo(35.625,9)
+ expect(validateFarming(next)).toBeNull()
+ for(const [elapsedSeconds,seconds,remainingWork,tickRemainder] of [
+  [2**53,.25,42,0], [2**53,.25,42,.5], [Number.MAX_VALUE,Number.MAX_VALUE,42,0],
+  [2**53,2,.001,0],
+ ]){
+  const state=carryoverVillage(0,{elapsedSeconds,tickRemainder,jobs:{food:{kind:'food',work:42,remainingWork,inputs:{},output:27}}}),before=structuredClone(state)
+  expect(()=>advanceFarming(state,seconds)).toThrow('Farming clock precision exhausted.')
+  expect(state).toEqual(before)
+ }
+})
+
+test('paid Farming cycle identities stop at safe integer exhaustion without publishing charges or repeated identities',()=>{
+ const initial=carryoverVillage(0,{jobSequence:Number.MAX_SAFE_INTEGER-1,
+  jobs:{food:{cycle:Number.MAX_SAFE_INTEGER-1,kind:'food',work:42,remainingWork:1,inputs:{},output:27}}})
+ const last=reload(advanceFarming(initial,.1)),f=last.civilization!.farming!
+ expect(f.jobSequence).toBe(Number.MAX_SAFE_INTEGER)
+ expect(f.jobs.food.cycle).toBe(Number.MAX_SAFE_INTEGER)
+ expect(validateFarming(f)).toBeNull()
+ const before=structuredClone(last)
+ expect(()=>advanceFarming(last,4)).toThrow('Farming cycle identity exhausted.')
+ expect(last).toEqual(before)
 })

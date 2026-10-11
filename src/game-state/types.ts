@@ -48,6 +48,8 @@ export type FarmingResource = 'food' | 'materials' | 'tools' | 'goods'
 export type FarmingBuilding = 'pasture' | 'kiln' | 'waterworks' | 'hall' | 'intensiveCultivation' | 'guildWorkshop' | 'townMarket'
 export type FarmingRecipe = Readonly<Partial<Record<FarmingResource, number>>>
 export interface FarmingJob {
+  /** Monotonic paid-cycle identity, including cycles completed between publications. */
+  readonly cycle?: number
   readonly kind: FarmingResource | FarmingBuilding | 'home' | 'repair' | 'ship'
   readonly index?: number
   readonly work: number
@@ -57,11 +59,21 @@ export interface FarmingJob {
   readonly output: number
 }
 export interface FarmingState {
-  readonly version: 1
+  readonly version: 2
   readonly phase: 'settling-forager' | 'farming' | 'settling-village' | 'complete'
   readonly focus: CivilizationFocus
   readonly elapsedSeconds: number
+  /** Legacy unapplied time; consumed once by the continuous clock. */
   readonly tickRemainder: number
+  readonly jobSequence?: number
+  /** Saved linear segment anchors avoid accumulating partition/reload roundoff. */
+  readonly continuous?: {
+    readonly since: number
+    readonly resources: Readonly<Record<FarmingResource, number>>
+    readonly weathering: number
+    readonly jobs: Readonly<Record<string, number>>
+    readonly signature: string
+  }
   readonly resources: Readonly<Record<FarmingResource, number>>
   readonly targets: Readonly<Record<FarmingResource, number>>
   readonly jobs: Readonly<Record<string, FarmingJob>>
@@ -79,6 +91,8 @@ export interface FarmingState {
   readonly transferredWorkers: bigint
   readonly transferredEquippedWorkers: bigint
   readonly skillRewardPending: boolean
+  /** Earned readiness remains owned if later weather removes a Home. */
+  readonly cityReadinessReached?: boolean
 }
 
 export interface CivilizationState {

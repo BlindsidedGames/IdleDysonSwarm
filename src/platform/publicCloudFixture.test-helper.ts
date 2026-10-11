@@ -7,7 +7,7 @@ export function publicCloudFixture(save: Parameters<typeof serializeSharedWebSav
   const envelope = JSON.parse(strFromU8(gunzipSync(compressed)))
   envelope.format = 'IDSWEB1'
   // Explicit future inputs must still test future-schema refusal.
-  if (envelope.schema <= 21) envelope.schema = envelope.state.saveVersion = 20
+  if (envelope.schema <= 22) envelope.schema = envelope.state.saveVersion = 20
   const encoded = gzipSync(strToU8(JSON.stringify(envelope)), { mtime: 0 })
   return `IDSWEB1:${btoa(Array.from(encoded, byte => String.fromCharCode(byte)).join(''))}`
 }

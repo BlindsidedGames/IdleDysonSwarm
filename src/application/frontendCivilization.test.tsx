@@ -293,6 +293,20 @@ test.each(['forager', 'farming'] as const)('%s bars animate published work while
     const calls = animate.mock.calls.length
     mounted.rerender(view())
     expect(animate).toHaveBeenCalledTimes(calls)
+    if(era==='farming'){
+      const cycle=c.farming!.jobs.food.cycle
+      const fieldCalls=()=>animate.mock.contexts.filter(element=>element instanceof HTMLElement&&element.closest('[data-activity-id]')?.getAttribute('data-activity-id')==='fields').length
+      const before=fieldCalls()
+      expect(app.advanceActive(40000).accepted).toBe(true)
+      const next=ready(app).state.gameState.civilization!.farming!.jobs.food
+      expect(next.cycle).toBeGreaterThan(cycle!)
+      expect(next.work-next.remainingWork).toBeGreaterThan(actual)
+      mounted.rerender(view())
+      // A newer paid cycle can have MORE progress than the previous publication.
+      // Its identity, rather than backward movement, must reset interpolation.
+      expect(fieldCalls()).toBe(before)
+      expect(progress.value).toBeCloseTo(next.work-next.remainingWork)
+    }
     mounted.rerender(view(1, true))
     const row = mounted.container.querySelector(`[data-activity-id="${era === 'farming' ? 'fields' : 'gathering'}"]`)!
     // A nearly finished slow job is still slow: frequency uses the entire
@@ -300,7 +314,8 @@ test.each(['forager', 'farming'] as const)('%s bars animate published work while
     expect(row.querySelector('.civilization-cycle')?.getAttribute('data-presentation')).toBe('cycle')
     mounted.rerender(view(1000))
     expect(row.querySelector('.civilization-cycle')?.getAttribute('data-presentation')).toBe('solid')
-    expect(progress.value).toBeCloseTo(actual)
+    const current=ready(app).state.gameState.civilization!
+    expect(progress.value).toBeCloseTo(era==='farming'?current.farming!.jobs.food.work-current.farming!.jobs.food.remainingWork:actual)
   } finally {
     HTMLElement.prototype.animate = original
   }

@@ -28,7 +28,7 @@ class Repository implements SaveRepository {
 
 function setup(extra: Record<string, unknown> = {}) {
   const source = fixture.copyValidatedState()
-  Object.assign(source, { processingRewriteMigrated: true, offlineTime: 0, maxOfflineTime: 172800, dateQuitString: null, idsLastActiveAtUtc: null }, extra)
+  Object.assign(source, { idsReworkMigrationChoice: 'keep', processingRewriteMigrated: true, offlineTime: 0, maxOfflineTime: 172800, dateQuitString: null, idsLastActiveAtUtc: null }, extra)
   const repository = new Repository(PreparedSave.fromDecoded(source))
   let now = start
   const open = () => {

@@ -68,7 +68,7 @@ export function startFarming(state:CanonicalGameStateV1):CanonicalGameStateV1|nu
   const c=state.civilization
   if(!c||c.farming||!civilizationOpeningComplete(c)||state.meta.reworkMigrationChoice===undefined||c.workers<3n)return null
   const baseline=c.populationBaseline<3n?c.populationBaseline:3n,workers=c.workers-3n,kits=c.equippedWorkers>workers?c.equippedWorkers-workers:0n
-  const f:FarmingState={version:1,phase:'settling-forager',focus:'balanced',elapsedSeconds:0,tickRemainder:0,resources:{food:0,materials:0,tools:0,goods:0},targets:{food:0,materials:80,tools:0,goods:0},jobs:{},homes:[],lostHomes:[],homesBuilt:0,granaries:0,shipments:0,weathering:0,firstHarvest:false,completedBuildings:[],awardedCatalystIds:[],inheritedFoodPerMinute:0,inheritedMaterialsPerMinute:0,transferredWorkers:3n,transferredEquippedWorkers:kits,skillRewardPending:false}
+  const f:FarmingState={version:2,phase:'settling-forager',focus:'balanced',elapsedSeconds:0,tickRemainder:0,resources:{food:0,materials:0,tools:0,goods:0},targets:{food:0,materials:80,tools:0,goods:0},jobs:{},homes:[],lostHomes:[],homesBuilt:0,granaries:0,shipments:0,weathering:0,firstHarvest:false,completedBuildings:[],awardedCatalystIds:[],inheritedFoodPerMinute:0,inheritedMaterialsPerMinute:0,transferredWorkers:3n,transferredEquippedWorkers:kits,skillRewardPending:false}
   return settleForagerHandoff({...state,civilization:{...c,version:5,workers,populationBaseline:c.populationBaseline-baseline,populationGranted:c.populationGranted-(3n-baseline),equippedWorkers:c.equippedWorkers-kits,farming:f}})
 }
 /** The retained workforce becomes one no-input Gathering generator. Old stocks
@@ -116,23 +116,34 @@ export function farmingLaborShares(f:Readonly<FarmingState>):Record<string,numbe
   const focus=farmingEffectiveFocus(f),weights=T.weights[focus],total=Object.keys(f.jobs).reduce((sum,id)=>sum+weights[id as keyof typeof weights],0)
   return Object.fromEntries(Object.keys(f.jobs).map(id=>[id,total?farmingWorkers(f)*(1-T.upkeep[focus])*weights[id as keyof typeof weights]/total:0]))
 }
+function paidCycle(f:MutableFarming):number {
+  const next=(f.jobSequence??Math.max(0,...Object.values(f.jobs).map(j=>j.cycle??0)))+1
+  if(!Number.isSafeInteger(next))throw Error('Farming cycle identity exhausted.')
+  f.jobSequence=next;return next
+}
 function admit(f:MutableFarming) {
   const goal=farmingGoal(f),recipe=farmingGoalRecipe(f,goal)
   if(goal.kind!=='granary'&&!f.jobs.build&&!f.jobs.ship&&(goal.kind!=='home'||f.firstHarvest)&&pay(f,recipe.inputs)){
     const key=goal.kind==='ship'?'ship':'build'
-    f.jobs[key]={kind:goal.kind,...(goal.index===undefined?{}:{index:goal.index}),work:recipe.work,remainingWork:recipe.work,inputs:{...recipe.inputs},output:goal.kind==='ship'?(has(f,'townMarket')?100:80):0}
+    f.jobs[key]={cycle:paidCycle(f),kind:goal.kind,...(goal.index===undefined?{}:{index:goal.index}),work:recipe.work,remainingWork:recipe.work,inputs:{...recipe.inputs},output:goal.kind==='ship'?(has(f,'townMarket')?100:80):0}
   }
   const target:Record<FarmingResource,number>={food:recipe.inputs.food??0,materials:recipe.inputs.materials??0,tools:recipe.inputs.tools??0,goods:recipe.inputs.goods??0}
   if(f.jobs.build||f.jobs.ship){target.food=Math.min(farmingCapacity(f),100);target.materials=80;target.tools=8;target.goods=has(f,'kiln')?20:0}
   target.materials+=3*Math.max(0,target.tools-f.resources.tools)+2*Math.max(0,target.goods-f.resources.goods)
   f.targets=target
-  for(const id of FARMING_RESOURCES){if(f.jobs[id]||f.resources[id]>=target[id]-1e-8||id==='tools'&&!f.firstHarvest||id==='goods'&&!has(f,'kiln'))continue
-    const inputs:FarmingRecipe=id==='tools'?{materials:6}:id==='goods'?{materials:has(f,'guildWorkshop')?6:4}:{}
-    const work=id==='goods'?63:42
-    const output=id==='food'?Math.min(12*(has(f,'pasture')?1.5:1)*(has(f,'waterworks')?1.25:1)*(has(f,'intensiveCultivation')?1.2:1),Math.max(0,farmingCapacity(f)-f.resources.food)):id==='materials'?8:id==='goods'&&has(f,'guildWorkshop')?3:2
-    if(output<=1e-8||!pay(f,inputs))continue
-    f.jobs[id]={kind:id,work,remainingWork:work,inputs,output}
-  }
+  // Later rows can spend Materials after its row was checked. Settle those
+  // newly eligible receipts now, before elapsed time receives one labor pool.
+  let admitted:boolean
+  do {
+    admitted=false
+    for(const id of FARMING_RESOURCES){if(f.jobs[id]||f.resources[id]>=target[id]-1e-8||id==='tools'&&!f.firstHarvest||id==='goods'&&!has(f,'kiln'))continue
+      const inputs:FarmingRecipe=id==='tools'?{materials:6}:id==='goods'?{materials:has(f,'guildWorkshop')?6:4}:{}
+      const work=id==='goods'?63:42
+      const output=id==='food'?Math.min(12*(has(f,'pasture')?1.5:1)*(has(f,'waterworks')?1.25:1)*(has(f,'intensiveCultivation')?1.2:1),Math.max(0,farmingCapacity(f)-f.resources.food)):id==='materials'?8:id==='goods'&&has(f,'guildWorkshop')?3:2
+      if(output<=1e-8||!pay(f,inputs))continue
+      f.jobs[id]={cycle:paidCycle(f),kind:id,work,remainingWork:work,inputs,output};admitted=true
+    }
+  }while(admitted)
 }
 function finishJob(f:MutableFarming,key:string) {
   const j=f.jobs[key];delete f.jobs[key]
@@ -142,36 +153,145 @@ function finishJob(f:MutableFarming,key:string) {
   else if(j.kind==='ship'){f.shipments++;f.resources.materials+=j.output}
   else f.completedBuildings.push(j.kind as FarmingBuilding)
 }
-function tick(f:MutableFarming,speed:number) {
-  const dt=1/60,focus=farmingEffectiveFocus(f)
+/** A segment ends only when work, funding, storage or weather changes ownership.
+ * Every job uses the same interval; admissions then recalculate one labor pool.
+ * Absolute saved anchors give large updates and serialized partitions the same
+ * deadlines, rather than repeatedly rounding or discarding paid work. */
+function segmentSignature(f:Readonly<FarmingState>,speed:number):string {
+  return JSON.stringify([speed,f.phase,f.focus,f.homes,f.lostHomes,f.homesBuilt,f.granaries,f.shipments,f.firstHarvest,f.completedBuildings,f.targets,f.inheritedFoodPerMinute,f.inheritedMaterialsPerMinute,
+    Object.entries(f.jobs).map(([id,j])=>[id,j.kind,j.index,j.work,j.inputs,j.output,j.cycle])])
+}
+function flowRates(f:Readonly<FarmingState>,speed:number) {
+  const focus=farmingEffectiveFocus(f),weather=T.weatherPerMinute[focus]
+  return {food:f.phase==='farming'?f.inheritedFoodPerMinute*speed/60:0,
+    materials:f.phase==='farming'?f.inheritedMaterialsPerMinute*speed/60:0,
+    weather:f.phase==='farming'?weather/60*(weather>0&&has(f,'waterworks')?.6*(has(f,'intensiveCultivation')?.8:1):1):0,
+    labor:Object.fromEntries(Object.entries(farmingLaborShares(f)).map(([id,n])=>[id,n*speed]))}
+}
+function anchor(f:MutableFarming,speed:number) {
+  const signature=segmentSignature(f,speed)
+  const previous=f.continuous
+  if(previous?.signature===signature){
+    const expected=projectSegment(f,previous,f.elapsedSeconds,speed)
+    // Commands/imports can legitimately change stocks without advancing time.
+    if(expected.food===f.resources.food&&expected.materials===f.resources.materials&&expected.weather===f.weathering&&
+      Object.entries(f.jobs).every(([id,j])=>j.remainingWork===expected.work[id]))return previous
+  }
+  return f.continuous={since:f.elapsedSeconds,resources:{...f.resources},weathering:f.weathering,
+    jobs:Object.fromEntries(Object.entries(f.jobs).map(([id,j])=>[id,j.remainingWork])),signature}
+}
+function projectSegment(f:Readonly<FarmingState>,a:NonNullable<FarmingState['continuous']>,at:number,speed:number) {
+  const dt=Math.max(0,at-a.since),r=flowRates(f,speed)
+  const due=(amount:number,initial:number,rate:number)=>rate>0?a.since+Math.max(0,amount-initial)/rate:Infinity
+  const flow=(id:'food'|'materials',limit:number)=>{
+    const initial=a.resources[id],cap=Math.max(initial,limit),rate=r[id]
+    let value=due(cap,initial,rate)<=at?cap:initial+Math.max(0,Math.min(cap-initial,rate*dt))
+    // A funding boundary is also authoritative. Absolute deadlines avoid a
+    // subtraction error leaving an already-earned input just below its bill.
+    const thresholds=[farmingGoalRecipe(f).inputs[id]??0,...(id==='materials'?[4,6]:[])]
+    for(const amount of thresholds)if(amount<=cap&&due(amount,initial,rate)<=at)value=Math.max(value,amount)
+    return value
+  }
+  let weather=Math.max(0,a.weathering+r.weather*dt)
+  if(r.weather<0&&a.since-a.weathering/r.weather<=at)weather=0
+  if(r.weather>0&&f.homes.length&&due(100,a.weathering,r.weather)<=at)weather=100
+  if(!f.homes.length&&weather>=100)weather=40+(weather-100)%60
+  const work=Object.fromEntries(Object.entries(f.jobs).map(([id])=>[id,r.labor[id]>0&&a.since+a.jobs[id]/r.labor[id]<=at?0:Math.max(0,a.jobs[id]-(r.labor[id]??0)*dt)]))
+  return {food:flow('food',farmingCapacity(f)-(f.jobs.food?.output??0)),materials:flow('materials',f.targets.materials),weather,work}
+}
+function advanceSegment(f:MutableFarming,at:number,speed:number) {
+  const p=projectSegment(f,anchor(f,speed),at,speed)
+  f.resources.food=p.food;f.resources.materials=p.materials;f.weathering=p.weather
+  for(const [id,j] of Object.entries(f.jobs))f.jobs[id]={...j,remainingWork:p.work[id]}
+  f.elapsedSeconds=at
+}
+function nextBoundary(f:MutableFarming,speed:number):number {
+  const a=anchor(f,speed),r=flowRates(f,speed),due:number[]=[]
+  const time=(amount:number,initial:number,rate:number)=>rate>0?a.since+Math.max(0,amount-initial)/rate:Infinity
+  const boundary=(at:number)=>{
+    if(!Number.isFinite(at)||at<=f.elapsedSeconds)throw Error('Farming clock precision exhausted.')
+    due.push(at)
+  }
+  for(const id of Object.keys(f.jobs))if(r.labor[id]>0)boundary(a.since+a.jobs[id]/r.labor[id])
   if(f.phase==='farming'){
-    const reserved=f.jobs.food?.output??0
-    f.resources.food+=Math.max(0,Math.min(farmingCapacity(f)-f.resources.food-reserved,f.inheritedFoodPerMinute*dt*speed))
-    f.resources.materials+=Math.max(0,Math.min(f.targets.materials-f.resources.materials,f.inheritedMaterialsPerMinute*dt*speed))
-    const slope=T.weatherPerMinute[focus]
-    f.weathering=Math.max(0,f.weathering+slope*dt*(slope>0&&has(f,'waterworks') ? .6*(has(f,'intensiveCultivation')?.8:1) : 1))
-    if(f.weathering>=100){const home=f.homes.pop();if(home!==undefined)f.lostHomes.push(home);f.weathering=40}
-    if(!farmingComplete(f))admit(f)
+    if(r.weather>0&&f.homes.length)boundary(time(100,a.weathering,r.weather))
+    if(r.weather<0&&f.weathering>0)boundary(a.since-a.weathering/r.weather)
+    const foodLimit=farmingCapacity(f)-(f.jobs.food?.output??0)
+    if(f.resources.food<foodLimit&&r.food>0)boundary(time(foodLimit,a.resources.food,r.food))
+    if(f.resources.materials<f.targets.materials&&r.materials>0)boundary(time(f.targets.materials,a.resources.materials,r.materials))
+    // A continuous inflow can fund construction, manual storage, Tools or Goods
+    // before a currently running production receipt completes.
+    const costs:FarmingRecipe[]=[farmingGoalRecipe(f).inputs]
+    if(!f.jobs.tools&&f.firstHarvest&&f.resources.tools<f.targets.tools-1e-8)costs.push({materials:6})
+    if(!f.jobs.goods&&has(f,'kiln')&&f.resources.goods<f.targets.goods-1e-8)costs.push({materials:has(f,'guildWorkshop')?6:4})
+    for(const cost of costs){
+      let at=a.since,possible=true
+      for(const [id,n] of Object.entries(cost)){
+        const key=id as FarmingResource;if(f.resources[key]+1e-8>=n!)continue
+        if(key==='food'&&n!<=foodLimit&&r.food>0)at=Math.max(at,time(n!,a.resources.food,r.food))
+        else if(key==='materials'&&n!<=f.targets.materials&&r.materials>0)at=Math.max(at,time(n!,a.resources.materials,r.materials))
+        else possible=false
+      }
+      if(possible&&Object.entries(cost).some(([id,n])=>f.resources[id as FarmingResource]+1e-8<n!))boundary(at)
+    }
   }
-  const shares=farmingLaborShares(f)
-  for(const key of Object.keys(f.jobs)){
-    const j=f.jobs[key],remaining=j.remainingWork-(shares[key]??0)*speed
-    f.jobs[key]={...j,remainingWork:Math.max(0,remaining)}
-    if(remaining<=1e-9)finishJob(f,key)
-  }
+  return Math.min(...due.filter(at=>at>f.elapsedSeconds))
+}
+function settleBoundary(f:MutableFarming,speed:number) {
+  // Preserve the established weather-before-paid-completion ordering.
+  if(f.weathering>=100-1e-9){const home=f.homes.pop();if(home!==undefined)f.lostHomes.push(home);f.weathering=40}
+  for(const key of Object.keys(f.jobs))if(f.jobs[key].remainingWork<=1e-9)finishJob(f,key)
   if(f.phase==='settling-village'&&!Object.keys(f.jobs).length)f.phase='complete'
+  delete f.continuous
+  if(f.phase==='farming'&&!farmingComplete(f))admit(f)
+  anchor(f,speed)
 }
 export function farmingMilestoneFlags(f:Readonly<FarmingState>):readonly boolean[]{return [f.homesBuilt>=1,has(f,'pasture')||has(f,'kiln'),has(f,'waterworks'),has(f,'hall'),f.shipments>=3,farmingComplete(f)]}
+/** Earned pending awards survive weather; current readiness and Finish do not. */
+function farmingAwardFlags(f:Readonly<FarmingState>):readonly boolean[]{return farmingMilestoneFlags(f).map((yes,i)=>yes||i===5&&f.cityReadinessReached===true)}
 export function advanceFarming(state:CanonicalGameStateV1,seconds:number,stopAtManualGate=false):CanonicalGameStateV1 {
   const source=state.civilization?.farming;if(!source||source.phase==='settling-forager'||!Number.isFinite(seconds)||seconds<=0)return state
   const f=clone(source),speed=1+permanentFractureCount(state)*CIVILIZATION_TUNING.speedPerFracture
-  const total=f.tickRemainder+(f.phase==='complete'?0:seconds),steps=Math.floor(total+1e-9)
-  let advanced=0
-  for(let n=0;n<steps;n++){if(stopAtManualGate&&farmingManualGate(f))break;if(f.phase==='complete')break;tick(f,speed);advanced++;f.elapsedSeconds++}
-  f.tickRemainder=advanced===steps?Math.max(0,total-steps):0
-  if(f.tickRemainder>=1)f.tickRemainder=0
+  if(farmingComplete(f))f.cityReadinessReached=true
+  if(f.phase!=='complete'&&!(stopAtManualGate&&farmingManualGate(f))){
+    const end=f.elapsedSeconds+seconds+f.tickRemainder
+    if(!Number.isFinite(end)||end<=f.elapsedSeconds)throw Error('Farming clock precision exhausted.')
+    f.tickRemainder=0
+    // Old saves contain paid remaining work and unused fractional time, both owned
+    // by this village. No receipt is repaid and the old remainder is applied once.
+    if(Object.values(f.jobs).some(j=>j.remainingWork<=1e-9))settleBoundary(f,speed)
+    else if(f.phase==='farming'&&!farmingComplete(f))admit(f)
+    if(farmingComplete(f))f.cityReadinessReached=true
+    anchor(f,speed)
+    const idleWeatherPeriods=new Map<string,{at:number;cycles:number}>()
+    while(f.elapsedSeconds<end){
+      if(stopAtManualGate&&farmingManualGate(f)||!['farming','settling-village'].includes(f.phase))break
+      const due=nextBoundary(f,speed),at=Math.min(end,due)
+      advanceSegment(f,at,speed)
+      // Exact repeated idle weather states are a real periodic economy, not a
+      // per-job work bank. Partial periods still use the normal scheduler.
+      if(f.homes.length&&f.weathering>=100-1e-9&&!Object.keys(f.jobs).length){
+        const key=JSON.stringify([f.phase,f.focus,f.resources,f.targets,f.homes,f.lostHomes,f.homesBuilt,f.granaries,f.shipments,f.firstHarvest,f.completedBuildings])
+        const previous=idleWeatherPeriods.get(key),cycles=f.jobSequence??0
+        if(previous){
+          const period=f.elapsedSeconds-previous.at,count=Math.floor((end-f.elapsedSeconds)/period)
+          const skippedCycles=count*(cycles-previous.cycles)
+          if(count>0){
+            if(!Number.isSafeInteger(cycles+skippedCycles))throw Error('Farming cycle identity exhausted.')
+            f.elapsedSeconds+=count*period;f.jobSequence=cycles+skippedCycles;delete f.continuous
+          }
+        }else{
+          // Memoization capacity affects performance only, never simulation.
+          if(idleWeatherPeriods.size>=4096)idleWeatherPeriods.clear()
+          idleWeatherPeriods.set(key,{at:f.elapsedSeconds,cycles})
+        }
+      }
+      if(due<=at||Object.values(f.jobs).some(j=>j.remainingWork<=1e-9)||f.weathering>=100-1e-9)settleBoundary(f,speed)
+      if(farmingComplete(f))f.cityReadinessReached=true
+    }
+  }
   let challenges=state.challenges??EMPTY_INFINITY_CHALLENGES
-  const flags=farmingMilestoneFlags(f),owed=flags.some((yes,i)=>yes&&!f.awardedCatalystIds.includes(`farming-catalyst-${i+1}`))
+  const flags=farmingAwardFlags(f),owed=flags.some((yes,i)=>yes&&!f.awardedCatalystIds.includes(`farming-catalyst-${i+1}`))
   const eligible=owed?eligibleCanonicalFractureIds(state).length:1
   f.skillRewardPending=owed&&(eligible===0||challenges.galvanizers===DISCRETE_MAXIMUM)
   if(eligible>0)for(const [i,yes]of flags.entries()){const id=`farming-catalyst-${i+1}`;if(yes&&!f.awardedCatalystIds.includes(id)&&challenges.galvanizers<DISCRETE_MAXIMUM){f.awardedCatalystIds.push(id);challenges={...challenges,galvanizers:challenges.galvanizers+1n,hasEarnedGalvanizer:true,unlocked:true}}}
@@ -183,6 +303,7 @@ export function farmingStoredTimeBudget(state:CanonicalGameStateV1,baseSeconds:n
   if(!state.civilization?.farming||!Number.isFinite(baseSeconds)||baseSeconds<=0)return baseSeconds
   const gameSpeed=state.timeline.doubleTime.unlocked?2:1
   let candidate=state,used=0,limit=baseSeconds*gameSpeed
+  if(!Number.isFinite(limit))throw new RangeError('Game-step elapsed game time must be finite.')
   while(candidate.civilization!.farming!.phase==='settling-forager'&&used<limit){const dt=Math.min(1,limit-used);candidate=advanceCivilization(candidate,dt);used+=dt}
   const f=candidate.civilization!.farming!
   if(f.phase==='complete'||farmingManualGate(f))return used/gameSpeed
@@ -190,14 +311,18 @@ export function farmingStoredTimeBudget(state:CanonicalGameStateV1,baseSeconds:n
   if(farmingManualGate(after)||after.phase==='complete')return Math.min(baseSeconds,(used+Math.max(0,after.elapsedSeconds-before-f.tickRemainder))/gameSpeed)
   return baseSeconds
 }
-export function validateFarming(value:unknown):string|null {
+export function validateFarming(value:unknown,version:1|2=2):string|null {
   if(!value||typeof value!=='object'||Array.isArray(value))return 'Invalid Farming state.'
   const f=value as FarmingState,n=(x:unknown)=>typeof x==='number'&&Number.isFinite(x)&&x>=0,integer=(x:unknown,max=Number.MAX_SAFE_INTEGER)=>n(x)&&Number.isInteger(x)&&Number(x)<=max
-  if(f.version!==1||!['settling-forager','farming','settling-village','complete'].includes(f.phase)||!['balanced','provisioning','settlement','expeditions'].includes(f.focus)||!integer(f.elapsedSeconds)||!n(f.tickRemainder)||f.tickRemainder>=1||!n(f.weathering)||f.weathering>=100||!integer(f.homesBuilt,6)||!integer(f.granaries,40)||!integer(f.shipments,6)||typeof f.firstHarvest!=='boolean'||typeof f.skillRewardPending!=='boolean'||f.transferredWorkers!==3n||typeof f.transferredEquippedWorkers!=='bigint'||f.transferredEquippedWorkers<0n||f.transferredEquippedWorkers>3n||!n(f.inheritedFoodPerMinute)||f.inheritedFoodPerMinute>T.maximumExportPerMinute||!n(f.inheritedMaterialsPerMinute)||f.inheritedMaterialsPerMinute>T.maximumExportPerMinute)return 'Invalid Farming clock, population, focus or transfer.'
+  const clockValid=version===1?integer(f.elapsedSeconds):n(f.elapsedSeconds)
+  if(f.version!==version||!['settling-forager','farming','settling-village','complete'].includes(f.phase)||!['balanced','provisioning','settlement','expeditions'].includes(f.focus)||!clockValid||!n(f.tickRemainder)||f.tickRemainder>=1||!n(f.weathering)||f.weathering>=100||!integer(f.homesBuilt,6)||!integer(f.granaries,40)||!integer(f.shipments,6)||typeof f.firstHarvest!=='boolean'||typeof f.skillRewardPending!=='boolean'||f.transferredWorkers!==3n||typeof f.transferredEquippedWorkers!=='bigint'||f.transferredEquippedWorkers<0n||f.transferredEquippedWorkers>3n||!n(f.inheritedFoodPerMinute)||f.inheritedFoodPerMinute>T.maximumExportPerMinute||!n(f.inheritedMaterialsPerMinute)||f.inheritedMaterialsPerMinute>T.maximumExportPerMinute)return 'Invalid Farming clock, population, focus or transfer.'
+  if(f.cityReadinessReached!==undefined&&typeof f.cityReadinessReached!=='boolean')return 'Invalid Farming readiness history.'
+  if(f.jobSequence!==undefined&&!integer(f.jobSequence))return 'Invalid Farming cycle identity.'
+  if(f.continuous&&(!n(f.continuous.since)||f.continuous.since>f.elapsedSeconds||!n(f.continuous.weathering)||typeof f.continuous.signature!=='string'||!f.continuous.resources||!FARMING_RESOURCES.every(id=>n(f.continuous!.resources[id]))||!f.continuous.jobs||Object.values(f.continuous.jobs).some(x=>!n(x))))return 'Invalid Farming continuous clock.'
   for(const values of [f.resources,f.targets])if(!values||Object.keys(values).length!==4||!FARMING_RESOURCES.every(id=>n(values[id])))return 'Invalid Farming stock or demand.'
   if(f.resources.food+(f.jobs?.food?.output??0)>farmingCapacity(f)+1e-6)return 'Food exceeds unreserved storage.'
   if(!Array.isArray(f.homes)||!Array.isArray(f.lostHomes)||f.homes.length+f.lostHomes.length!==f.homesBuilt||new Set([...f.homes,...f.lostHomes]).size!==f.homesBuilt||[...f.homes,...f.lostHomes].some(x=>!integer(x,5)||x>=f.homesBuilt)||!Array.isArray(f.completedBuildings)||new Set(f.completedBuildings).size!==f.completedBuildings.length||f.completedBuildings.some(id=>!FARMING_BUILDINGS.includes(id))||!Array.isArray(f.awardedCatalystIds)||new Set(f.awardedCatalystIds).size!==f.awardedCatalystIds.length||f.awardedCatalystIds.some(id=>!/^farming-catalyst-[1-6]$/.test(id)))return 'Invalid Farming housing, facilities or rewards.'
-  if(!f.jobs||Object.keys(f.jobs).some(id=>!['food','materials','tools','goods','build','ship'].includes(id))||Object.values(f.jobs).some(j=>!j||!['food','materials','tools','goods','home','repair',...FARMING_BUILDINGS,'ship'].includes(j.kind)||!n(j.work)||j.work<=0||!n(j.remainingWork)||j.remainingWork>j.work||!n(j.output)||!j.inputs||Object.entries(j.inputs).some(([id,x])=>!FARMING_RESOURCES.includes(id as FarmingResource)||!n(x))||(['home','repair'].includes(j.kind)&&!integer(j.index,5))))return 'Invalid funded Farming work.'
+  if(!f.jobs||Object.keys(f.jobs).some(id=>!['food','materials','tools','goods','build','ship'].includes(id))||Object.values(f.jobs).some(j=>!j||!['food','materials','tools','goods','home','repair',...FARMING_BUILDINGS,'ship'].includes(j.kind)||j.cycle!==undefined&&!integer(j.cycle)||!n(j.work)||j.work<=0||!n(j.remainingWork)||j.remainingWork>j.work||!n(j.output)||!j.inputs||Object.entries(j.inputs).some(([id,x])=>!FARMING_RESOURCES.includes(id as FarmingResource)||!n(x))||(['home','repair'].includes(j.kind)&&!integer(j.index,5))))return 'Invalid funded Farming work.'
   const sameRecipe=(a:FarmingRecipe,b:FarmingRecipe)=>Object.keys(a).length===Object.keys(b).length&&Object.entries(a).every(([id,n])=>b[id as FarmingResource]===n)
   for(const [key,j] of Object.entries(f.jobs)){
     let expected:{inputs:FarmingRecipe;work:number}

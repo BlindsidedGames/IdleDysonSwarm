@@ -16,6 +16,7 @@ import {
 } from './decodeIdb1'
 import { assertGzipTrailerIntegrity } from './gzipIntegrity'
 import { packSettingsFlags } from './settingsFlags'
+import { CURRENT_SAVE_SCHEMA, UnsupportedFutureSaveSchemaError } from './saveSchema'
 import {
   TRANSITIONAL_V2_CHECKPOINT_REVISION_FIELD,
   TRANSITIONAL_V2_STORED_TIME_JOB_SHA256_FIELD,
@@ -151,6 +152,25 @@ export function decodeWebSaveTextBounded(
     : trimmed
   const parsed = parseBoundedJsonText(json)
   const envelope = requireRecord(parsed, 'web save envelope')
+  // A recognized newer claim is authoritative even when its transport or
+  // value codec is invalid. Treating it as generic corruption would allow
+  // automatic recovery to overwrite paid progress with an older backup.
+  const stateSchema = isRecord(envelope.state) ? envelope.state.saveVersion : undefined
+  const newestClaim = Math.max(...[envelope.schema, stateSchema].filter(isNonNegativeInteger))
+  if (newestClaim > CURRENT_SAVE_SCHEMA && newestClaim !== 22) {
+    throw new UnsupportedFutureSaveSchemaError(newestClaim, CURRENT_SAVE_SCHEMA)
+  }
+  const development22 = envelope.schema === 22 || stateSchema === 22
+  if (development22) {
+    const reason = envelope.format !== WEB_SAVE_FORMAT
+      ? 'Development schema 22 requires the IDLEDS envelope.'
+      : prefix !== undefined && prefix !== WEB_SAVE_PREFIX
+        ? 'Web save transport prefix does not match its envelope format.'
+        : envelope.schema !== 22 || stateSchema !== 22
+          ? `Web save envelope schema ${String(envelope.schema)} does not match state schema ${String(stateSchema)}.`
+          : undefined
+    if (reason !== undefined) throw new UnsupportedFutureSaveSchemaError(22, CURRENT_SAVE_SCHEMA, reason)
+  }
   if (
     envelope.format !== WEB_SAVE_FORMAT &&
     envelope.format !== LEGACY_WEB_SAVE_FORMAT
@@ -169,19 +189,28 @@ export function decodeWebSaveTextBounded(
   if (!isNonNegativeInteger(envelope.schema)) {
     throw new Error('Canonical web save envelope has an invalid schema.')
   }
-  const state = requireRecord(
-    decodeValue(
-      envelope.state,
-      {
-        decodedBytes: 0,
-        containers: 0,
-        entries: 0,
-        decodedByteLimit: limits.decodedPayloadBytes,
-      },
-      0,
-    ),
-    'web save state',
-  )
+  let state: SaveRecord
+  try {
+    state = requireRecord(
+      decodeValue(
+        envelope.state,
+        {
+          decodedBytes: 0,
+          containers: 0,
+          entries: 0,
+          decodedByteLimit: limits.decodedPayloadBytes,
+        },
+        0,
+      ),
+      'web save state',
+    )
+  } catch (error) {
+    if (development22) {
+      throw new UnsupportedFutureSaveSchemaError(22, CURRENT_SAVE_SCHEMA,
+        `Development schema 22 could not be decoded: ${error instanceof Error ? error.message : String(error)}`)
+    }
+    throw error
+  }
   if (state.saveVersion !== envelope.schema) {
     throw new Error(
       `Web save envelope schema ${envelope.schema} does not match state schema ${String(state.saveVersion)}.`,

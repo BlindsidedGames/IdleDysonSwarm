@@ -1,6 +1,7 @@
 import { CloudStartupResolver, type PortableCloud } from '../platform/portableCloud'
 import { serializeCloudWebSave } from '../save/serialization'
 import { PreparedSave } from '../save/prepare'
+import { hydrateGameState } from '../game-state/mapping'
 import { evaluateAchievements, mergeAchievementFacts } from '../achievements/evaluate'
 import type { AchievementPublication } from '../achievements/contracts'
 import type { SaveRepository } from '../save/repository'
@@ -70,6 +71,7 @@ export function createProductionCanonicalApplicationFactory(
       repository,
       options.createFirstRunSave,
       'development',
+      save => hydrateGameState(save).state.meta.reworkMigrationChoice === undefined,
     )
     const startupResolver = options.cloud === undefined
       ? localResolver
@@ -115,7 +117,7 @@ function subscribeAchievementPublication(
   readDeveloperOptions: () => boolean,
 ): void {
   application.subscribe((snapshot) => {
-    if (snapshot.phase !== 'ready') return
+    if (snapshot.phase !== 'ready' || snapshot.operation === 'rework-choice-pending' || snapshot.operation === 'rework-migration') return
     try {
       const facts = mergeAchievementFacts(
         snapshot.state.achievementEvidence,

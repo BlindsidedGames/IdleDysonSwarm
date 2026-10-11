@@ -67,6 +67,7 @@ export type ExclusiveOperation =
   | 'import'
   | CommitFirstPurpose
   | 'reload-after-commit'
+  | 'rework-choice-pending'
 
 export type ApplicationSnapshot<TState> =
   | {
@@ -94,6 +95,8 @@ export type { StartupSaveResolver }
 
 export interface GameStateSession<TState> {
   readonly initialState: TState
+  /** A staged legacy session needs consent before any progress publication. */
+  readonly requiresMigrationChoice?: boolean
   prepare(state: TState | DeepReadonly<TState>): PreparedSave
   /** Captures persistence-only metadata without changing read-only exports. */
   prepareForPersistence?(state: TState | DeepReadonly<TState>): PreparedSave

@@ -944,3 +944,146 @@ This is a conservative product policy, not an industry-mandated progress-bar cut
 The justified local countdown-geometry correction reserves 7ch, then retains the widest measured timer/rate text in font-relative units via resize observation. Losing decimals, changing to infinity or scaling text cannot repeatedly contract the adjacent track; longer/localized text can grow the reservation rather than clip. This correction is authorized by the requested bar fix and introduces no shared sizing convention.
 
 Verification: the real Forager renderer regression failed on the original native-bar implementation for missing animation, then passed after correction. The final full Vitest suite passes: 2,345 tests across 216 files, including formatter/notation, Forager/Farming engine, frontend/era and presentation regressions. Coverage includes coarse samples, worker/rate changes, clock-only publications with bounded catch-up, ordinary rerenders, speed modifiers, cycle/recipe/reset boundaries, invalid/missing/zero inputs, blockers, threshold/hysteresis transitions, live Reduced Motion changes, accurate semantic values in solid mode, nearly finished jobs using full-cycle frequency, mounted Forager-to-Farming cleanup, scaled timer observation and compositor failure/cleanup. An earlier full-suite run alongside the production build hit the existing Stored Time test's five-second timeout (2,344 passes); the full rerun without concurrent build passed without code or timeout changes. Application/node TypeScript, full lint, production build, bundled-promotion validation, production Store boundary and whitespace checks pass. The build's temporary tsx IPC pipe initially encountered sandbox EPERM; the standard permission-reviewed build retry succeeded. No browser localhost retry, native launch, deployment, push, install or real-save access occurred. Reference pixels, 80/100/130/150% app scales, mobile/enlarged/long-locale/RTL, forced-colour pixels, touch/keyboard and native acceptance remain unverified because supported browser access is blocked. The existing development server remains running and received HMR updates; these are compile evidence, not proof of current browser pixels.
+
+
+## Continuous Farming carry-over correction — isolated candidate, 11 October 2026
+
+Matthew explicitly selected continuous inherited income and housing weathering.
+The candidate keeps the approved per-minute rates, bills, outputs, upkeep and
+focus weights. Farming now advances one shared elapsed-time interval to paid
+completion, funding, storage or weather boundaries, then settles ownership and
+recomputes admissions/labor before consuming the remaining time. Paid receipts
+retain their original bill/output; blocked inputs never accrue free work.
+
+The candidate retains paid work and applies the old `tickRemainder` once.
+Optional saved linear anchors/deadlines preserve partition/reload arithmetic;
+manual-gate previews subtract already-owned old time from newly chargeable time.
+Earned Catalyst entitlement survives later housing loss through a private award
+predicate. Public dock readiness and Finish still require current supported
+Homes and the original current-state criteria. Exact
+repeated idle weather states can batch whole periods; they require identical
+stocks, targets and ownership, with partial periods handled by the same engine.
+
+A differential audit exposed an admission-order defect: a paid Tools/Goods
+batch could spend Materials after that row had been checked. A later externally
+partitioned update admitted Materials earlier than the large update, changing
+shared labor allocation. Admission now repeats the same established row priority
+until no additional receipt can be funded at that instant; no elapsed time passes
+between those admissions. The minimal paid-Goods regression fails on the prior
+candidate and passes after correction. The supplied 957.875-second replay equals
+all 156 irregular partitions exactly for the reported stocks/work/clock/cycles.
+The broader differential audit passes 96 cases, 864 comparisons, 1,728 reloads and
+576 commands, including 166 successful Granary purchases, at its unchanged
+absolute 1e-8 plus relative 1e-12 tolerance (maximum difference about 3.3e-12).
+The existing full-age pacing probe retains all four values reported below.
+
+Bars retain Bots' ordinary cycle composition and Infinity's existing dock. Their
+new paid-cycle identities reset observed-work interpolation even when several
+cycles finish between publications. Existing solid/high-frequency presentation,
+hysteresis, reduced-motion handling and native progress semantics remain in use.
+Current manual gates show ordinary/Double-Time speed because bank-funded boost
+is paused there. No geometry, controls, artwork or new visual exception is added.
+
+The earlier display-only tick-rounded rate/countdown candidate is superseded.
+Pacing is measured evidence, not a correctness target; recipes are not retuned.
+Final local proof: 2,381 tests across 216 files passed, including earned-Catalyst
+versus current-readiness housing loss, representable/unrepresentable clock
+requests, safe cycle-counter exhaustion and real Stored Time workers with both
+Double-Time states. Six canonical Stored Time cases cover preview/worker rejection
+through synchronous and worker-backed execution, including scaled-time overflow;
+they consume zero time and preserve the checkpoint. Temporarily restoring the
+prior silent-return guard makes both preview cases commit and debit .25 seconds;
+the verified source was then restored byte-for-byte and all six cases passed. Lint, generated data, localization extraction/check/
+compilation, TypeScript, web/native-relative builds, production Store boundary,
+12 bundled promotions and Electron syntax checks pass. Generation/builds leave
+the reviewed tracked diff unchanged. Proof used available Node 22.20.0; the CI
+pin is 24.11.1. The isolated test config deduplicates React and inlines react-intl
+because the copied dependency tree otherwise loads two React instances.
+
+With required Granaries bought at one-second polling, unchanged 1.89/min exports
+and no Fractures, full-age pacing (old → continuous, simulated minutes) is:
+Balanced 149.62 → 146.38; Supplies 145.72 → 140.18; Growth 153.53 → 149.54;
+Travel 147.12 → 142.24. All retain three purchases and their expected housing
+loss/repair behavior. A 30-day Travel replay matches daily serialized partitions;
+an exact-period trillion-second Travel probe completes in about 20ms with valid
+state and 32,977,777,632 job admissions accounted for. It uses a synthetic mature
+Farming village held at the unclicked Finish gate, not a full-game campaign.
+A half-second paid-work update at elapsed `1e12` remains representable. Positive
+intervals or required boundaries that cannot increase the finite number clock
+throw a precision-exhaustion error; both ordinary admissions and period batches
+reject unsafe cycle identities. These errors leave caller-owned state unchanged.
+A batch-exhaustion probe near `Number.MAX_SAFE_INTEGER` rejects within the same
+three-second subprocess limit. These local timing samples do not establish
+arbitrary clock precision, exact extreme decimal partitions or hardware-independent
+latency guarantees.
+
+Matthew subsequently requested one migration for the 4.1.x → 4.2.x release.
+The source-bound mobile internal release is 4.1.11 (Android 2026100501 / iOS
+2610.5.1), writing IDSWEB1/root 20. The later Steam beta 25764326 / 2026100601
+also writes root 20. Available release records show no schema-21 distribution;
+21 was introduced on 10 October under a distribution hold. The earlier local
+continuous-clock candidate used 22. The consolidated release now writes only
+**IDLEDS/root 21, Farming version 2**. Root 22 is a reserved development-input
+alias, not an intermediate write or the next published contract.
+
+The migration validates a version-1 integer-clock carrier before numeric repair,
+then copies it with only `version: 2`: paid receipts, stocks, targets, housing,
+rewards, founders, elapsed time and owned remainder stay unchanged. Subsystem
+version, rather than root inequality, identifies this conversion. It never
+advances or rewards at load. Later advances consume the old remainder once.
+Development root-22 graphs are fully validated before normalization to 21;
+malformed graphs, v1 Farming under 22, mismatched transports and unknown future
+Civilization/Farming versions fail. Unknown root 23 remains an authoritative
+future error before backup selection. Historical released readers/refund guards
+stay intact. No older-development-binary compatibility or public downgrade is
+claimed.
+
+When retired progress requires Keep/Fresh, startup, supported recovery and
+manual import stage a validated session in `rework-choice-pending`. The existing
+modal owns the decision; ordinary commands, Stored Time, exports, checkpoints,
+active sampling, departure writes and lifecycle replay cannot publish this
+candidate while pending. Startup away-time credit/acknowledgement is staged from
+the admitted startup clock and joins the chosen outcome in the same atomic
+publication. A manual shared import preserves its transferred bank and suppresses
+sender-clock replay. The Settings import flow hands off to the decision without
+claiming a completed import. No new dialog composition, copy, controls or sizing
+convention is introduced.
+
+The final candidate includes the one-time choice marker and paid-work/time state.
+Exact source/receipt verification precedes temporary write/readback and atomic
+replacement. Failure keeps the original checkpoint and staged choice retryable;
+reopen after replacement observes the marker and cannot refund or choose again.
+Inputs with no decision use the normal direct publication. A dirty receiving game
+still receives its own protective checkpoint before an incoming import is staged;
+that protects a separate game rather than creating an intermediate incoming
+migration. Closing a staged manual import reopens that protected receiving game;
+the runtime has retained the exact supplied input for intentional reimport.
+
+The two fixed schema-21/v1 transports remain unchanged (opening and damaged paid
+repair/production). Development 21/v1 and 22/v2 inputs receive exact-source archives;
+verified historical destination-21/22 receipts remain immutable. New receipts and
+current rework fixtures use final 21. Profiling gameplay fingerprints are unchanged;
+public/legacy fixtures remain historical inputs. Beta isolation, disabled cloud and
+disabled automatic public discovery are preserved.
+
+Node owner tests exercise actual repository/application/runtime routing with
+synthetic inputs and filesystem primitives, including archive/receipt/write/read/
+backup/replace interruptions, repeated choices, receipt cleanup, manual import,
+positive one-time compensation, paid Farming carryover and unsupported future
+carriers. These are not packaged native filesystem or visual acceptance. The
+full required verification and final patch are reported in the review handoff.
+Integration remains held; no commit, distribution, native game launch or real-save
+access is part of this candidate preparation.
+
+The review correction treats recognized newer transport/provenance and value-codec
+failures as authoritative: a schema-22 input cannot silently fall back to an older
+checkpoint even when it uses a forbidden envelope. Pending imports retain their
+requested publication target through the final permission check. Deferred recovery
+purchase/preference effects belong to the exact staged save; failed installation
+or replacement cancels that ownership, while the same owner's failed commit stays
+retryable. Optional preference failures cannot reject an already committed choice.
+
+Rendered browser/mobile/locale/scale,
+keyboard/touch target comparisons and native host acceptance remain unverified:
+localhost browser access is blocked and was not retried; native playtesting is
+outside this task. DOM/animation tests do not establish visual acceptance.

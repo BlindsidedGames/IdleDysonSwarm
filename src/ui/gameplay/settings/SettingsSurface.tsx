@@ -405,7 +405,7 @@ export function SettingsSurface({
     try {
       const result = await resetSave()
       if (result.imported) {
-        setStatus('succeeded')
+        setStatus(result.migrationPending ? 'idle' : 'succeeded')
         setDialog(null)
       } else {
         setStatus(
@@ -433,7 +433,7 @@ export function SettingsSurface({
           ? await importSaveText(suppliedText)
           : await importSaveFile(selectedImport)
       if (result.imported) {
-        setImportStatus('succeeded')
+        setImportStatus(result.migrationPending ? 'idle' : 'succeeded')
         setDialog(null)
         setSelectedImport(null)
         setImportText('')

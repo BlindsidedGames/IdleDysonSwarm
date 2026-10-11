@@ -802,7 +802,7 @@ describe('IndexedDbBrowserSaveDatabase', () => {
         kind: 'write',
         path: REWORK_BETA_SAVE_PATHS.current,
         contents: serializeWebSave(
-          createPurityDevelopmentSave().copyValidatedState(),
+          { ...createPurityDevelopmentSave().copyValidatedState(), idsReworkMigrationChoice: 'keep' },
         ),
       },
       seedLease.fence,

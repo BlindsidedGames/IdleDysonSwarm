@@ -55,7 +55,9 @@ async function fixture(name: string, sheep: boolean, capacityHours: number, bank
     : prepareIdb1Save(readFileSync(new URL('../../test/fixtures/schema-08-canonical-idb1-main-save.txt', import.meta.url), 'utf8')).prepared).copyValidatedState()
   const dyson = source.dysonVerseSaveData as Record<string, unknown>
   dyson.selectedPreset = selectedSlot
-  Object.assign(source, { offlineTime: bankHours*3600, maxOfflineTime: capacityHours*3600, processingRewriteMigrated: true, dateQuitString: null, idsLastActiveAtUtc: null })
+  // This suite owns post-migration lifecycle receipt delivery. Choice gating
+  // is covered at the real migration transaction boundary.
+  Object.assign(source, { idsReworkMigrationChoice: 'keep', offlineTime: bankHours*3600, maxOfflineTime: capacityHours*3600, processingRewriteMigrated: true, dateQuitString: null, idsLastActiveAtUtc: null })
   source.sdPrestige.doubleTime = 0
   const session = new CanonicalRuntimeSession(PreparedSave.fromDecoded(source), { entitlements: { permanentDoubleIp: false } })
   const state = structuredClone(session.initialState)

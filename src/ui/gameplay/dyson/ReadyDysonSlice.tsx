@@ -604,7 +604,7 @@ function ReadyDysonSliceContent({
   const storeVisible =
     releasePlatformServices !== undefined
   const gameplay = snapshot.gameplay
-  const gameSpeed = activeGameSpeed(gameplay.resources.time, gameplay.progression.timeline)
+  const gameSpeed = activeGameSpeed(gameplay.resources.time, gameplay.progression.timeline, gameplay.progression.civilization?.farming)
   const dispatchPlayer = useConfirmedTabPresetDispatch({
     dispatchPlayer: unconfirmedDispatchPlayer,
     autoAssignNonRefundable: gameplay.progression.skills.autoAssignNonRefundable,

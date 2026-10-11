@@ -139,6 +139,10 @@ export class CanonicalRuntimeSession
     })
   }
 
+  get requiresMigrationChoice(): boolean {
+    return this.initialState.gameState.meta.reworkMigrationChoice === undefined
+  }
+
   prepare(
     state:
       | CanonicalRuntimeState
