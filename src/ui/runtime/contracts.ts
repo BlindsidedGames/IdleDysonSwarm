@@ -76,6 +76,8 @@ export type UiRuntimeImportRequest =
 export type UiRuntimeImportResult =
   | {
       readonly imported: true
+      /** Source accepted; replacement awaits the explicit rework decision. */
+      readonly migrationPending?: true
       readonly sessionRevision: number
       readonly recoveryAvailable: true
       readonly lifecycleReset: boolean

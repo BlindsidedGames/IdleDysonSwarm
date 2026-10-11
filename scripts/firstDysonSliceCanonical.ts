@@ -223,6 +223,8 @@ function createSeededPreparedSave(): PreparedSave {
   Object.assign(runtime, {
     gameState: {
       ...runtime.gameState,
+      // This artifact owns post-migration Dyson behavior, not the choice flow.
+      meta: { ...runtime.gameState.meta, reworkMigrationChoice: 'keep' },
       dyson: {
         ...runtime.gameState.dyson,
         money: 1_000_000,

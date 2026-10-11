@@ -2,6 +2,11 @@ import { readFileSync } from 'node:fs'
 import { describe, expect, test } from 'vitest'
 import { decodeIdb1Save, getSavePath } from './decodeIdb1'
 import { migrateDecodedSave } from './migrate'
+import { PreparedSave } from './prepare'
+import { deserializeWebSave, serializeWebSave } from './serialization'
+import { hydrateGameState, dehydrateGameState } from '../game-state/mapping'
+import { advanceFarming } from '../simulation/farming'
+import type { CivilizationState } from '../game-state/types'
 import { validatePreparedSave } from './validate'
 import parityCases from '../../test/parity/save-migration-cases.json'
 import { compareGraphs } from '../parity/compare'
@@ -315,7 +320,7 @@ describe('Unity save migration pipeline', () => {
   })
 
   test('validator rejects future schema and non-finite prepared state', () => {
-    expect(() => migrateDecodedSave({ saveVersion: 22 })).toThrow(
+    expect(() => migrateDecodedSave({ saveVersion: 23 })).toThrow(
       'newer than supported',
     )
     const migrated = migrateDecodedSave({ saveVersion: 12 })
@@ -404,4 +409,70 @@ test('schema 19 gains empty extra presets without rewriting its existing queues'
   result.skillAutoAssignmentList10 = [1, 2] // Stale legacy mirror must not revive a cleared current preset.
   expect(requireRecord(migrateDecodedSave(migrated.save).save.dysonVerseSaveData))
     .toMatchObject({selectedPreset: 10, skillAutoAssignmentIds10: []})
+})
+
+
+// Fixed schema-21/Farming-v1 transport inputs captured with the bff37d9a whole-
+// second owner. Never regenerate them through the continuous runtime.
+test.each(['opening','damaged-paid-repair'])('Farming v1 %s migrates losslessly and consumes owned remainder only on later advancement',name=>{
+ const decoded=deserializeWebSave(loadFixture(`farming-v1-${name}.idleds.txt`)),before=structuredClone(decoded)
+ const old=(decoded.civilization as CivilizationState).farming!
+ expect(decoded.saveVersion).toBe(21);expect(old.version).toBe(1)
+ const {prepared:current,migration}=PreparedSave.prepareDecoded(decoded)
+ expect(current.targetSchema).toBe(21)
+ expect(migration.appliedSteps).toContain('continuous-farming-clock')
+ const migrated=current.copyValidatedState(),f=(migrated.civilization as CivilizationState).farming!
+ expect(f).toEqual({...old,version:2})
+ expect(migrated.civilization).toEqual({...decoded.civilization as CivilizationState,farming:{...old,version:2}})
+ expect(migrated.infinityChallengeData).toEqual(decoded.infinityChallengeData)
+ expect(decoded).toEqual(before)
+ const roundtrip=PreparedSave.fromDecoded(deserializeWebSave(serializeWebSave(migrated)))
+ expect(roundtrip.appliedSteps).not.toContain('continuous-farming-clock')
+ expect((roundtrip.copyValidatedState().civilization as CivilizationState).farming).toEqual(f)
+ const session=hydrateGameState(roundtrip),first=advanceFarming(session.state,.125)
+ expect(first.civilization!.farming!.elapsedSeconds).toBe(old.elapsedSeconds+old.tickRemainder+.125)
+ expect(first.civilization!.farming!.tickRemainder).toBe(0)
+ const reopened=hydrateGameState(PreparedSave.fromDecoded(deserializeWebSave(serializeWebSave(dehydrateGameState(session,first).copyValidatedState()))))
+ expect(advanceFarming(reopened.state,.125).civilization!.farming!.elapsedSeconds).toBe(old.elapsedSeconds+old.tickRemainder+.25)
+})
+
+test.each([
+ ['fractional v1 clock',(f:Record<string,unknown>)=>{f.elapsedSeconds=.5}],
+ ['invalid old remainder',(f:Record<string,unknown>)=>{f.tickRemainder=1}],
+ ['duplicated Home',(f:Record<string,unknown>)=>{f.homes=[0,0,2,3,4]}],
+ ['changed paid bill',(f:Record<string,unknown>)=>{(f.jobs as Record<string,{inputs:unknown}>).tools.inputs={materials:7}}],
+ ['newer Farming version',(f:Record<string,unknown>)=>{f.version=3}],
+] as const)('Farming migration rejects %s without changing the source',(_name,mutate)=>{
+ const decoded=deserializeWebSave(loadFixture('farming-v1-damaged-paid-repair.idleds.txt'))
+ mutate((decoded.civilization as Record<string,unknown>).farming as Record<string,unknown>)
+ const before=structuredClone(decoded)
+ expect(()=>PreparedSave.fromDecoded(decoded)).toThrow()
+ expect(decoded).toEqual(before)
+})
+
+test('schema 22 cannot silently reinterpret a Farming v1 carrier as continuous',()=>{
+ const decoded=deserializeWebSave(loadFixture('farming-v1-opening.idleds.txt'))
+ decoded.saveVersion=22
+ expect(()=>PreparedSave.fromDecoded(decoded)).toThrow('Save schema 22 is newer than supported schema 21.')
+})
+
+test.each(['fresh', 'late-quantum'] as const)('validated development root22 %s input normalizes once to the release contract', name => {
+ const source=PreparedSave.fromDecoded(deserializeWebSave(loadFixture(`progression-rework-idleds/${name}.idleds.txt`))).copyValidatedState()
+ source.saveVersion=22
+ const original=structuredClone(source)
+ const text=serializeWebSave(source)
+ const current=PreparedSave.fromDecoded(deserializeWebSave(text))
+ expect(current.sourceSchema).toBe(22)
+ expect(current.targetSchema).toBe(21)
+ expect(current.copyValidatedState()).toEqual({...original,saveVersion:21,lastMigratedFromVersion:22})
+ expect(source).toEqual(original)
+ const reopened=PreparedSave.fromDecoded(deserializeWebSave(serializeWebSave(current.copyValidatedState())))
+ expect(reopened.appliedSteps).not.toContain('development-22-compatibility')
+ expect(reopened.copyValidatedState()).toEqual(current.copyValidatedState())
+})
+
+test.each([23,99])('root %s stays an authoritative future error rather than a development fallback', saveVersion => {
+ const source=PreparedSave.fromDecoded(deserializeWebSave(loadFixture('progression/fresh.idsweb1.txt'))).copyValidatedState()
+ source.saveVersion=saveVersion
+ expect(()=>PreparedSave.fromDecoded(source)).toThrow(`Save schema ${saveVersion} is newer than supported schema 21.`)
 })

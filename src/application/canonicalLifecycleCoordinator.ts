@@ -56,6 +56,7 @@ export interface CanonicalLifecycleApplicationPort {
   dispatchPlayer(
     envelope: ApplicationCommandEnvelope<CanonicalPlayerCommand>,
     cancelRequested?: () => boolean,
+    migrationAwayState?: CanonicalRuntimeState,
   ): Promise<CanonicalPlayerDispatchResult>
   commitAwayReplacement(
     envelope: Pick<
@@ -146,6 +147,7 @@ export type CanonicalAwayReplayResult =
       readonly committed: false
       readonly code:
         | 'not-ready'
+        | 'migration-choice-pending'
         | 'no-quit-timestamp'
         | 'import-baseline-suppressed'
         | 'commit-failed'
@@ -229,7 +231,7 @@ export type CanonicalCoordinatedStoredTimeResult =
 export type CanonicalCoordinatedImportResult =
   | {
       readonly imported: true
-      readonly committed: true
+      readonly committed: boolean
       readonly sessionRevision: number
       readonly lifecycleReset: boolean
       readonly code?: 'not-ready'
@@ -277,6 +279,8 @@ export class CanonicalLifecycleCoordinator {
   private shutdownPromise: Promise<void> | undefined
   private suppressImportedAwayReplay = false
   private pendingColdStartTimestamp: ParsedUtcTimestamp | undefined
+  private migrationStartupClock: LifecycleClockSample | undefined
+  private migrationDepartureTimestamp: ParsedUtcTimestamp | undefined
   // Lifecycle receipts are queued in order, but several can capture the same
   // marker before its first credit commits and clears the live marker.
   private consumedPendingDepartureUtcMilliseconds: number | undefined
@@ -329,6 +333,11 @@ export class CanonicalLifecycleCoordinator {
         true,
       )
       this.pendingColdStartTimestamp = undefined
+      if (snapshot.operation === 'rework-choice-pending') {
+        this.migrationStartupClock = admittedClockSample
+        this.migrationDepartureTimestamp = pendingDepartureTimestamp ?? this.readPendingDepartureTimestamp?.()
+        return { replayed: false, committed: false, code: 'migration-choice-pending' }
+      }
       return this.replayAwayTime(
         admittedClockSample,
         pendingDepartureTimestamp ??
@@ -760,7 +769,7 @@ export class CanonicalLifecycleCoordinator {
           : beginColdStartReplay(importedBaseline, true)
         return {
           imported: true,
-          committed: true,
+          committed: snapshot.operation !== 'rework-choice-pending',
           sessionRevision: imported.sessionRevision,
           lifecycleReset: true,
         }
@@ -782,10 +791,51 @@ export class CanonicalLifecycleCoordinator {
     envelope: ApplicationCommandEnvelope<CanonicalPlayerCommand>,
     cancelRequested?: () => boolean,
   ): Promise<CanonicalCoordinatedPlayerResult> {
-    const dispatched = await this.application.dispatchPlayer(
-      envelope,
-      cancelRequested,
-    )
+    const before = this.application.snapshot()
+    const pendingChoice = envelope.command.kind === 'rework.choose-migration' &&
+      before.phase === 'ready' && before.operation === 'rework-choice-pending'
+    let migrationAwayState: CanonicalRuntimeState | undefined
+    let replay: ReturnType<typeof applyAwayTimeReplay> | undefined
+    let pendingDeparture: ParsedUtcTimestamp | undefined
+    if (pendingChoice && before.phase === 'ready' && !this.suppressImportedAwayReplay) {
+      const runtime = cloneCanonicalRuntimeState(before.state as CanonicalRuntimeState)
+      const current = this.lifecycleState === undefined
+        ? beginColdStartReplay(createLifecycleState(before, false), true)
+        : { ...this.lifecycleState, canonical: runtime.gameState }
+      pendingDeparture = this.migrationDepartureTimestamp ?? this.readPendingDepartureTimestamp?.()
+      if (pendingDeparture?.status === 'valid' &&
+          (pendingDeparture.utcMilliseconds === this.consumedPendingDepartureUtcMilliseconds ||
+           pendingDeparture.utcMilliseconds === Date.parse(runtime.consumedDepartureAtUtc ?? ''))) pendingDeparture = undefined
+      const departure = earliestValidDepartureTimestamp(
+        parseUnityInvariantUtcTimestamp(runtime.gameState.timeline.lastSuspendedAtLegacyText), pendingDeparture)
+      replay = applyAwayTimeReplay({
+        state: current,
+        clock: this.migrationStartupClock ?? this.clock.sample(),
+        parsedQuitTimestamp: departure.status === 'missing'
+          ? parseUnityInvariantUtcTimestamp(runtime.coldStartCheckpointAtUtc ?? null) : departure,
+        parsedStartedTimestamp: parseUnityInvariantUtcTimestamp(runtime.gameState.meta.createdAtLegacyText),
+      })
+      migrationAwayState = cloneCanonicalRuntimeState(runtime)
+      Object.assign(migrationAwayState, {
+        gameState: replay.state.canonical,
+        ...(replay.resolution.hasQuitTimestampInput && runtime.coldStartCheckpointAtUtc !== undefined
+          ? { coldStartCheckpointAtUtc: null } : {}),
+        ...(replay.resolution.hasQuitTimestampInput && pendingDeparture?.status === 'valid'
+          ? { consumedDepartureAtUtc: new Date(pendingDeparture.utcMilliseconds).toISOString() } : {}),
+        storedTimeCheater: runtime.storedTimeCheater || replay.markComparisonIntegrityCompromised,
+      })
+    }
+    const dispatched = await this.application.dispatchPlayer(envelope, cancelRequested, migrationAwayState)
+    if (pendingChoice && dispatched.kind === 'transition' && dispatched.transition.accepted) {
+      const after = this.application.snapshot()
+      if (after.phase === 'ready') this.lifecycleState = createLifecycleState(after, true)
+      this.migrationStartupClock = undefined
+      this.migrationDepartureTimestamp = undefined
+      if (replay?.resolution.hasQuitTimestampInput && pendingDeparture?.status === 'valid') {
+        this.consumedPendingDepartureUtcMilliseconds = pendingDeparture.utcMilliseconds
+        this.clearPendingDepartureTimestamp?.(pendingDeparture.utcMilliseconds)
+      }
+    }
     if (dispatched.kind === 'transition') return dispatched
 
     const result = dispatched.result
@@ -839,11 +889,11 @@ export class CanonicalLifecycleCoordinator {
     pendingQuitTimestamp?: ParsedUtcTimestamp,
   ): Promise<CanonicalAwayReplayResult> {
     const snapshot = this.application.snapshot()
-    if (snapshot.phase !== 'ready') {
+    if (snapshot.phase !== 'ready' || snapshot.operation === 'rework-choice-pending' || snapshot.operation === 'rework-migration') {
       return {
         replayed: false,
         committed: false,
-        code: 'not-ready',
+        code: snapshot.phase === 'ready' ? 'migration-choice-pending' : 'not-ready',
       }
     }
     const runtime = cloneCanonicalRuntimeState(
@@ -994,7 +1044,7 @@ export class CanonicalLifecycleCoordinator {
     clockSample: LifecycleClockSample,
   ): Promise<CanonicalLifecycleSaveResult> {
     const snapshot = this.application.snapshot()
-    if (snapshot.phase !== 'ready') {
+    if (snapshot.phase !== 'ready' || snapshot.operation === 'rework-choice-pending' || snapshot.operation === 'rework-migration') {
       return {
         requested: false,
         committed: false,

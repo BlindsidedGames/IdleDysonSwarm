@@ -119,6 +119,7 @@ export {
 
 type CanonicalInternalCommand =
   | { readonly kind: 'internal.accept-presentation-events'; readonly throughSequence: number }
+  | { readonly kind: 'internal.choose-rework-with-away-state'; readonly state: CanonicalRuntimeState; readonly choice: 'keep' | 'fresh' }
   | {
       readonly kind: 'internal.advance-active-continuous'
       readonly milliseconds: number
@@ -535,12 +536,16 @@ export class CanonicalGameApplicationFacade {
   async dispatchPlayer(
     envelope: ApplicationCommandEnvelope<CanonicalPlayerCommand>,
     cancelRequested?: () => boolean,
+    migrationAwayState?: CanonicalRuntimeState,
   ): Promise<CanonicalPlayerDispatchResult> {
     const presetPriorityChange = envelope.command.kind === 'skill.set-auto-assignment' ||
       envelope.command.kind === 'skill.set-preset-assignment'
     if (presetPriorityChange || envelope.command.kind.startsWith('civilization.') || envelope.command.kind === 'rework.choose-migration' || envelope.command.kind === 'discovery.purchase' || envelope.command.kind === 'skill.galvanize' || envelope.command.kind === 'avocado.request-overflow-reset' ||
         envelope.command.kind === 'challenge.enter' || envelope.command.kind === 'challenge.enter-no-science' || envelope.command.kind === 'challenge.enter-trial-and-error' || envelope.command.kind === 'challenge.enter-blank-slate' || envelope.command.kind === 'challenge.abandon') {
-      const result = await this.application.dispatchCommitFirst(envelope,
+      const result = await this.application.dispatchCommitFirst(
+        envelope.command.kind === 'rework.choose-migration' && migrationAwayState !== undefined
+          ? { ...envelope, command: { kind: 'internal.choose-rework-with-away-state', state: migrationAwayState, choice: envelope.command.choice } }
+          : envelope,
         presetPriorityChange ? 'skill-preset' : envelope.command.kind.startsWith('civilization.') ? 'civilization-purchase' : envelope.command.kind === 'rework.choose-migration' ? 'rework-migration' : envelope.command.kind === 'discovery.purchase' ? 'discovery-purchase' : envelope.command.kind === 'skill.galvanize' ? 'galvanization' : 'bot-cap')
       return {
         kind: 'transition',
@@ -601,8 +606,15 @@ export class CanonicalGameApplicationFacade {
   ): Promise<CanonicalStoredTimeCommitResult> {
     const before = this.snapshot()
     const ready = before.phase === 'ready' ? before.state.gameState : undefined
-    const budget = before.phase === 'ready' && ready && isFinitePositiveNumber(seconds) && seconds <= ready.timeline.storedTimeAvailableSeconds
-      ? farmingStoredTimeBudget(cloneCanonicalRuntimeState(before.state as CanonicalRuntimeState).gameState, seconds) : seconds
+    let budget = seconds
+    try {
+      if (before.phase === 'ready' && ready && isFinitePositiveNumber(seconds) && seconds <= ready.timeline.storedTimeAvailableSeconds) {
+        budget = farmingStoredTimeBudget(cloneCanonicalRuntimeState(before.state as CanonicalRuntimeState).gameState, seconds)
+      }
+    } catch (error) {
+      return rejectedStoredTimeCommit(before, seconds, 'CANONICAL_EVENT_INTERVAL_THREW',
+        error instanceof Error ? error.message : String(error))
+    }
     if (budget <= 0) return rejectedStoredTimeCommit(before, seconds, 'FARMING-MANUAL-ACTION-REQUIRED', 'Build the required Granary or complete the village before spending more Stored Time.')
     const result = this.storedTimeJobRunner !== undefined
       ? await this.commitStoredTimeInJob(envelope, budget, cancelRequested)
@@ -627,7 +639,7 @@ export class CanonicalGameApplicationFacade {
         'A Stored Time job is already active.',
       )
     }
-    if (before.phase !== 'ready') {
+    if (before.phase !== 'ready' || before.operation !== 'none') {
       return rejectedStoredTimeCommit(
         before,
         seconds,
@@ -785,7 +797,7 @@ export class CanonicalGameApplicationFacade {
     cancelRequested?: () => boolean,
   ): Promise<CanonicalStoredTimeCommitResult> {
     const before = this.snapshot()
-    if (before.phase !== 'ready') {
+    if (before.phase !== 'ready' || before.operation !== 'none') {
       return rejectedStoredTimeCommit(
         before,
         seconds,
@@ -1118,6 +1130,13 @@ export function createCanonicalGameEngineDefinition(
       if (command.kind === 'tinker.set-repeat') {
         return applyTinker(candidate, eventContext, (model) =>
           model.setTinkerRepeat(command.enabled))
+      }
+      if (command.kind === 'internal.choose-rework-with-away-state') {
+        if (candidate.gameState.meta.reworkMigrationChoice !== undefined || command.state.gameState.meta.reworkMigrationChoice !== undefined) {
+          return reject('rework:already-chosen', 'The migration choice has already been applied.')
+        }
+        replaceRuntimeState(candidate, command.state)
+        return applyPlayerCommand(candidate, { kind: 'rework.choose-migration', choice: command.choice }, eventContext, minimumCycleSeconds)
       }
       if (command.kind === 'internal.replace-away-state') {
         replaceRuntimeState(candidate, command.state)

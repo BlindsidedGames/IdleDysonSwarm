@@ -293,3 +293,9 @@ describe('canonical web save serialization', () => {
     )
   })
 })
+
+test('a development root22 input cannot claim a public IDSWEB1 transport', () => {
+  const payload = { format: 'IDSWEB1', schema: 22, state: { saveVersion: 22 } }
+  const text = `IDSWEB1:${Buffer.from(gzipSync(new TextEncoder().encode(JSON.stringify(payload)))).toString('base64')}`
+  expect(() => deserializeWebSave(text)).toThrow('Development schema 22 requires the IDLEDS envelope.')
+})

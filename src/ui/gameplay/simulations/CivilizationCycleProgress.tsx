@@ -40,8 +40,9 @@ interface PresentationSample {
 }
 
 /** The old Simulations composition: canonical semantics, compositor-only fill.
- * Interpolate observed work rather than predicting it: Farming publishes whole
- * game-second steps and can reallocate labor when a resource job stops/starts.
+ * Interpolate observed work rather than predicting it: elapsed-time work can
+ * reallocate labor when a resource job stops/starts. Paid-cycle identities reset
+ * interpolation even when several completions happen between publications.
  */
 export function CivilizationCycleProgress({
   label, value, maximum, valueText, timerText, sampleSeconds, cycleKey,

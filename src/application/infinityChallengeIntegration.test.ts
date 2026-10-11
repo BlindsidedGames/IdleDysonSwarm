@@ -26,13 +26,15 @@ import {
   type CanonicalRuntimeState,
 } from './canonicalRuntimeSession'
 
-const prepared = prepareIdb1Save(readFileSync(
+const legacyPrepared = prepareIdb1Save(readFileSync(
   new URL(
     '../../test/fixtures/schema-08-canonical-idb1-main-save.txt',
     import.meta.url,
   ),
   'utf8',
 )).prepared
+// This owner exercises gameplay after the rework choice has been committed.
+const prepared = legacyPrepared.withValidatedState({ ...legacyPrepared.copyValidatedState(), idsReworkMigrationChoice: 'keep' })
 
 describe('replacement Infinity challenge application integration', () => {
   async function setup() {

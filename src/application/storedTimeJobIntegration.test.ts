@@ -27,15 +27,56 @@ import type {
 } from '../workers/storedTime/storedTimeJobRunner'
 import { StoredTimeSimulation } from '../workers/storedTime/storedTimeSimulation'
 
-const prepared = prepareIdb1Save(readFileSync(
+const legacyPrepared = prepareIdb1Save(readFileSync(
   new URL(
     '../../test/fixtures/schema-08-canonical-idb1-main-save.txt',
     import.meta.url,
   ),
   'utf8',
 )).prepared
+// This owner exercises gameplay after the rework choice has been committed.
+const prepared = legacyPrepared.withValidatedState({ ...legacyPrepared.copyValidatedState(), idsReworkMigrationChoice: 'keep' })
 
 describe('Stored Time job application integration', () => {
+
+  test.each([
+    {worker:false,stage:'budget preview',elapsed:2**53,seconds:.25,doubleTime:false,bank:10},
+    {worker:true,stage:'budget preview',elapsed:2**53,seconds:.25,doubleTime:false,bank:10},
+    {worker:false,stage:'detached simulation',elapsed:2**50,seconds:1,doubleTime:false,bank:10},
+    {worker:true,stage:'detached simulation',elapsed:2**50,seconds:1,doubleTime:false,bank:10},
+    {worker:false,stage:'Double Time overflow',elapsed:0,seconds:Number.MAX_VALUE,doubleTime:true,bank:Number.MAX_VALUE},
+    {worker:true,stage:'Double Time overflow',elapsed:0,seconds:Number.MAX_VALUE,doubleTime:true,bank:Number.MAX_VALUE},
+  ])('Farming precision failure in $stage never charges or persists Stored Time (worker $worker)', async ({worker,stage,elapsed,seconds,doubleTime,bank})=>{
+    const repository=new MemoryRepository(),runner=simulationRunner()
+    const application=createApplication(repository,worker?runner:undefined)
+    await application.start();await installStoredBank(application,bank)
+    const initial=application.snapshot();if(initial.phase!=='ready')throw Error('Application not ready')
+    const candidate=structuredClone(initial.state) as CanonicalRuntimeState
+    let village=startFarming(advanceCivilization({...candidate.gameState,
+      meta:{...candidate.gameState.meta,reworkMigrationChoice:'keep'},
+      timeline:{...candidate.gameState.timeline,doubleTime:{...candidate.gameState.timeline.doubleTime,unlocked:doubleTime}}},7200))!
+    while(village.civilization!.farming!.phase==='settling-forager')village=advanceCivilization(village,1)
+    village={...village,civilization:{...village.civilization!,farming:{...village.civilization!.farming!,
+      elapsedSeconds:elapsed,tickRemainder:0,continuous:undefined,homes:[0],homesBuilt:1,granaries:1,
+      firstHarvest:true,jobs:{},resources:{food:0,materials:0,tools:0,goods:0}}}}
+    Object.assign(candidate,{gameState:village})
+    await expect(application.commitAwayReplacement({sessionRevision:initial.revision.session,
+      expectedStateRevision:initial.revision.state},candidate)).resolves.toMatchObject({committed:true})
+    const before=application.snapshot();if(before.phase!=='ready')throw Error('Application not ready')
+    const stored=await repository.loadCurrent(),commits=repository.commits
+    const result=await application.commitStoredTime({sessionRevision:before.revision.session,
+      expectedStateRevision:before.revision.state},seconds)
+    expect(result).toMatchObject({committed:false,consumedSeconds:0,remainingSeconds:seconds})
+    expect(result).toMatchObject(!worker&&stage==='detached simulation'
+      ?{transition:{code:'CANONICAL_EVENT_INTERVAL_THREW'}}:{code:'CANONICAL_EVENT_INTERVAL_THREW'})
+    expect(repository.commits).toBe(commits)
+    expect(await repository.loadCurrent()).toBe(stored)
+    expect(application.snapshot()).toEqual(before)
+    expect(application.storedTimeJobStatus()).toEqual({kind:'idle'})
+    if(stage!=='detached simulation')expect(result).toMatchObject({reason:stage==='Double Time overflow'
+      ?'Game-step elapsed game time must be finite.':'Farming clock precision exhausted.'})
+  })
+
   test.each([false,true])('Farming manual Granary stops a real worker spend before bank charge (Double Time %s)', async doubleTime => {
     const repository=new MemoryRepository(),application=createApplication(repository,simulationRunner())
     await application.start();await installStoredBank(application,2000)
@@ -770,7 +811,7 @@ describe('Stored Time job application integration', () => {
 
 function createApplication(
   repository: SaveRepository,
-  runner: StoredTimeJobRunner,
+  runner?: StoredTimeJobRunner,
 ) {
   return createCanonicalGameApplication({
     repository,

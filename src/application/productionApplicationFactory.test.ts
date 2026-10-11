@@ -1,4 +1,3 @@
-import { readFileSync } from 'node:fs'
 import { describe, expect, test, vi } from 'vitest'
 import { createDeferred, type Deferred } from './deferred.test-helper'
 import { gameDataCatalog } from '../game-data/catalog'
@@ -25,14 +24,9 @@ import {
   createProductionEventContext,
 } from './productionApplicationFactory'
 
-const fixtureUrl = new URL(
-  '../../test/fixtures/schema-08-canonical-idb1-main-save.txt',
-  import.meta.url,
-)
-
 describe('production canonical application factory', () => {
   test('retains a newer Cloud checkpoint after an older failure and retries the latest failure', async () => {
-    const prepared = prepareIdb1Save(readFileSync(fixtureUrl, 'utf8')).prepared
+    const prepared = createUnityFirstRunPreparedSave({ startedAtUtc: '2026-10-05T00:00:00Z' })
     const pending: Deferred<void>[] = []
     const publish = vi.fn(() => {
       const delivery = createDeferred<void>()
@@ -127,9 +121,7 @@ describe('production canonical application factory', () => {
   })
 
   test('invokes the authentic first-run seam only after repository discovery and checkpoints it', async () => {
-    const prepared = prepareIdb1Save(
-      readFileSync(fixtureUrl, 'utf8'),
-    ).prepared
+    const prepared = createUnityFirstRunPreparedSave({ startedAtUtc: '2026-10-05T00:00:00Z' })
     const repository = new FirstRunRepository()
     let firstRunCalls = 0
     let entitlementReads = 0

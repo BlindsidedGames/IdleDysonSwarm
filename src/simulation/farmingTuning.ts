@@ -1,6 +1,5 @@
 /** Approved Farming progression, including 10 October city-readiness projects. Work is worker-seconds, never a fixed timer. */
 export const FARMING_TUNING = Object.freeze({
-  tickSeconds: 1,
   initialFoodCapacity: 80,
   granaryCapacity: 160,
   exportFoodUnits: 100,

@@ -96,12 +96,19 @@ describe('portable transactional save repository', () => {
     await expect(repository.commit(source)).rejects.toThrow('atomic replace failed')
     expect(storage.files.get('/current')).toBe(text)
     expect(storage.files.get(archive)).toBe(text)
+    const receiptPath = `${archive}.json`
+    const receipt = JSON.parse(storage.files.get(receiptPath)!)
+    expect(receipt.destinationSchema).toBe(21)
+    // A development schema-22 archive stays immutable after consolidation.
+    const historicalReceipt = JSON.stringify({ ...receipt, destinationSchema: 22 })
+    storage.files.set(receiptPath, historicalReceipt)
     const archiveWrites = vi.spyOn(storage, 'writeText')
     storage.failAt = null
     await repository.commit(source)
     expect(storage.files.get('/current')).toMatch(/^IDLEDS:/)
     expect((await repository.loadCurrent())!.copyState()).toMatchObject({ saveVersion: 21, checkpointMarker: 'public', offlineTime: 600 })
-    expect(archiveWrites.mock.calls.some(([path]) => path === archive)).toBe(false)
+    expect(archiveWrites.mock.calls.some(([path]) => path === archive || path === receiptPath)).toBe(false)
+    expect(storage.files.get(receiptPath)).toBe(historicalReceipt)
     await repository.commit((await repository.loadCurrent())!)
     expect(storage.files.get(archive)).toBe(text)
   })
@@ -610,7 +617,7 @@ describe('portable transactional save repository', () => {
     const storage = new MemoryStorage()
     storage.files.set(
       '/current',
-      serializeWebSave({ saveVersion: 22 }),
+      serializeWebSave({ saveVersion: 23 }),
     )
     const repository = new PortableSaveRepository(
       storage,
@@ -1746,7 +1753,7 @@ describe('portable transactional save repository', () => {
     storage.files.set('/current', '{')
     storage.files.set(
       '/current.backup.1',
-      serializeWebSave({ saveVersion: 22 }),
+      serializeWebSave({ saveVersion: 23 }),
     )
     storage.files.set(
       '/current.backup.2',
@@ -1842,7 +1849,7 @@ describe('portable transactional save repository', () => {
 
   test('stops fallback when the current save has a future schema', async () => {
     const storage = new MemoryStorage()
-    storage.files.set('/current', serializeWebSave({ saveVersion: 22 }))
+    storage.files.set('/current', serializeWebSave({ saveVersion: 23 }))
     storage.files.set('/legacy', 'good')
     storage.candidates = [
       { id: 'legacy', sourcePath: '/legacy', text: 'good' },
@@ -1880,7 +1887,7 @@ describe('portable transactional save repository', () => {
         temporary: '/current.tmp',
         legacyRecovery: '/recovery/original-idb1.txt',
       },
-      (text) => ({ saveVersion: text === 'future' ? 22 : 12 }),
+      (text) => ({ saveVersion: text === 'future' ? 23 : 12 }),
     )
 
     await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
