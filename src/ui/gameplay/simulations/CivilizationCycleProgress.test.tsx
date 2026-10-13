@@ -212,50 +212,6 @@ test('pausing clears solid mode even with a previously fast rate', () => {
   expect(animations).toHaveLength(0)
 })
 
-test('countdown decimal/units and infinity keep their widest measured space through scale changes', () => {
-  let fontSize = 10
-  vi.spyOn(globalThis, 'getComputedStyle').mockImplementation(() => ({ fontSize: `${fontSize}px` }) as CSSStyleDeclaration)
-  vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function(this: HTMLElement) {
-    return { width: (this.textContent?.length ?? 0) * fontSize * .6 } as DOMRect
-  })
-  const mounted = render(view({ ...initial, timerText: '11.1s' }))
-  const timer = mounted.container.querySelector<HTMLElement>('.civilization-job-timer')!
-  expect(timer.style.getPropertyValue('--civilization-timer-width')).toBe('3em')
-  mounted.rerender(view({ ...initial, timerText: '11s' }))
-  expect(timer.style.getPropertyValue('--civilization-timer-width')).toBe('3em')
-  mounted.rerender(view({ ...initial, timerText: '1m 59.9s' }))
-  expect(timer.style.getPropertyValue('--civilization-timer-width')).toBe('4.8em')
-  fontSize = 20
-  mounted.rerender(view({ ...initial, timerText: '1m 59.8s' }))
-  expect(timer.style.getPropertyValue('--civilization-timer-width')).toBe('4.8em')
-  mounted.rerender(view({ ...initial, timerText: '∞', active: false }))
-  expect(timer.style.getPropertyValue('--civilization-timer-width')).toBe('4.8em')
-})
-
-test('native resize observation keeps timer space stable and disconnects when the row leaves', () => {
-  let notify = () => {}, width = 50, fontSize = 10
-  const disconnect = vi.fn(), observe = vi.fn()
-  vi.stubGlobal('ResizeObserver', class {
-    constructor(callback: () => void) { notify = callback }
-    observe = observe
-    disconnect = disconnect
-  })
-  vi.spyOn(globalThis, 'getComputedStyle').mockImplementation(() => ({ fontSize: `${fontSize}px` }) as CSSStyleDeclaration)
-  vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({ width }) as DOMRect)
-  const mounted = render(view())
-  const timer = mounted.container.querySelector<HTMLElement>('.civilization-job-timer')!
-  expect(observe).toHaveBeenCalledOnce()
-  expect(timer.style.getPropertyValue('--civilization-timer-width')).toBe('5em')
-  width = 100; fontSize = 20; act(notify)
-  expect(timer.style.getPropertyValue('--civilization-timer-width')).toBe('5em')
-  width = 140; act(notify)
-  expect(timer.style.getPropertyValue('--civilization-timer-width')).toBe('7em')
-  width = 40; act(notify)
-  expect(timer.style.getPropertyValue('--civilization-timer-width')).toBe('7em')
-  mounted.unmount()
-  expect(disconnect).toHaveBeenCalledOnce()
-})
-
 test.each(['missing', 'rejected'] as const)('a %s compositor falls back to real progress and unmount cancels animation', failure => {
   const mounted = render(view())
   now = 1_000

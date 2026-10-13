@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Progress } from '../../components'
 import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
@@ -51,9 +51,6 @@ export function CivilizationCycleProgress({
   const intl = useIntl()
   const reducedMotion = usePrefersReducedMotion()
   const fillRef = useRef<HTMLSpanElement>(null)
-  const timerRef = useRef<HTMLSpanElement>(null)
-  const timerTextRef = useRef<HTMLSpanElement>(null)
-  const timerWidthRef = useRef(0)
   const previousRef = useRef<PresentationSample | null>(null)
   const animationRef = useRef<Animation | null>(null)
   const validMaximum = Number.isFinite(maximum) && maximum > 0
@@ -121,27 +118,6 @@ export function CivilizationCycleProgress({
     }
   }, [fraction, maximum, sampleSeconds, cycleKey, gameSpeed, running, solid])
 
-  const measureTimer = useCallback(() => {
-    const text = timerTextRef.current, timer = timerRef.current
-    if (!text || !timer) return
-    const fontSize = Number.parseFloat(getComputedStyle(text).fontSize)
-    if (!(fontSize > 0)) return
-    // Keep the widest observed countdown in font-relative units. Losing the
-    // decimal or switching to infinity must not stretch the neighboring track.
-    timerWidthRef.current = Math.max(timerWidthRef.current, text.getBoundingClientRect().width / fontSize)
-    timer.style.setProperty('--civilization-timer-width', `${timerWidthRef.current}em`)
-  }, [])
-  useLayoutEffect(() => {
-    measureTimer()
-    if (typeof ResizeObserver !== 'function' || !timerTextRef.current) return undefined
-    const observer = new ResizeObserver(measureTimer)
-    observer.observe(timerTextRef.current)
-    return () => observer.disconnect()
-  }, [measureTimer])
-  useLayoutEffect(() => {
-    if (typeof ResizeObserver !== 'function') measureTimer()
-  }, [visibleTimer, measureTimer])
-
   return <div className="civilization-cycle" data-presentation={solid ? 'solid' : 'cycle'}>
     <div className="civilization-cycle-progress civilization-cycle-progress--animated">
       <Progress label={label} value={actualValue} maximum={actualMaximum} valueText={valueText} />
@@ -149,8 +125,8 @@ export function CivilizationCycleProgress({
         <span ref={fillRef} className="civilization-cycle-fill" style={{ transform: `scaleX(${solid ? 1 : fraction})` }} />
       </div>
     </div>
-    <span ref={timerRef} className="civilization-job-timer" aria-label={valueText} title={valueText}>
-      <span ref={timerTextRef}>{visibleTimer}</span>
+    <span className="civilization-job-timer" aria-label={valueText} title={valueText}>
+      <span>{visibleTimer}</span>
     </span>
   </div>
 }

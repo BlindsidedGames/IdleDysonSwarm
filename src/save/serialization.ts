@@ -100,6 +100,10 @@ export function stripNonShareableEntitlementClaims(
   // but a portable share must never carry the sender's selection.
   delete shareable.numberFormatting
   delete shareable.hidePurchased
+  // Completion identifies an exact download already resolved on this device.
+  // It cannot authorize acknowledgement on a receiving device.
+  delete shareable.idsResolvedCloudDownloadSha256
+  delete shareable.idsResolvedCloudSourceSha256
   // These local recovery proofs refer to retired files on the exporting
   // device. A receiver must never authorize its sidecar from sender claims.
   delete shareable[TRANSITIONAL_V2_CHECKPOINT_REVISION_FIELD]

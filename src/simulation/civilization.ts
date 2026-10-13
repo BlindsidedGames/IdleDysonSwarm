@@ -170,16 +170,27 @@ function normalize(c:MutableCivilization,state:CanonicalGameStateV1,fractures:nu
  }
  return {...state,civilization:c,challenges}
 }
-/** Transfer changes crew ownership without consuming time or admitting new work. */
+/** Finish already-paid Forager work at age entry without advancing its clock. */
 export function settleForagerHandoff(state:CanonicalGameStateV1):CanonicalGameStateV1 {
+ if(state.civilization?.farming?.phase!=='settling-forager')return state
  const c=clone(state.civilization!)
+ for(const job of Object.values(c.activities)){
+  const receipt=job.cycleReceipt;if(!job.active||!receipt)continue
+  job.progress=receipt.seconds
+  const completed={...receipt,rate:0,remainingWork:0};delete completed.finishAt
+  job.cycleReceipt=completed
+ }
+ // Normal settlement owns receipt outputs, population and one-time awards.
+ // Numeric-range guards still retain an output that cannot be represented.
  const result=normalize(c,state,permanentFractureCount(state))
  return Object.values(c.activities).some(j=>j.active)?result:finishForagerHandoff(result)
 }
 /** Paid receipts and their absolute deadlines survive call partitions/reloads.
  * Every completion settles before awards, automatic kits and new admissions. */
 export function advanceCivilization(state:CanonicalGameStateV1,seconds:number):CanonicalGameStateV1 {
- if(state.meta.reworkMigrationChoice===undefined||!Number.isFinite(seconds)||seconds<=0)return state
+ if(state.meta.reworkMigrationChoice===undefined||!Number.isFinite(seconds)||seconds<0)return state
+ if(state.civilization?.farming?.phase==='settling-forager')state=settleForagerHandoff(state)
+ if(seconds===0)return state
  if(state.civilization?.farming&&state.civilization.farming.phase!=='settling-forager')return advanceFarming(state,seconds)
  const source=state.civilization??EMPTY_CIVILIZATION,c=clone(source)
  let end=c.elapsedSeconds+seconds

@@ -47,6 +47,12 @@ export type CanonicalRuntimePresentationEvent =
       readonly application: Readonly<CanonicalRuntimeSkillPresetApplicationOutcome>
     }
   | {
+      /** A successful application ends this preset's automatic conflict episode. */
+      readonly kind: 'skill-preset-conflict-resolved'
+      readonly sequence: number
+      readonly slot: CanonicalRuntimeSkillPresetApplicationOutcome['slot']
+    }
+  | {
       readonly kind: 'automatic-dream-disaster'
       readonly sequence: number
       readonly cause: AutomaticDreamDisasterCause

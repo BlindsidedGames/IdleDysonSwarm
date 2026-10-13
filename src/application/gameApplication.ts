@@ -5,6 +5,7 @@ import type {
 import { TransactionalSimulationEngine } from '../core/simulationEngine'
 import { formatUnknownError as errorMessage } from '../core/unknownError'
 import type { PreparedSave } from '../save/prepare'
+import type { StartupPendingPublication } from '../save/startupResolver'
 import type { SaveCommitTarget } from '../save/repository'
 import { prepareImportedSaveText } from '../save/import'
 import type {
@@ -45,9 +46,8 @@ export class TransactionalGameApplication<TState, TCommand>
   private session: GameStateSession<TState> | undefined
   private startPromise: Promise<ApplicationSnapshot<TState>> | undefined
   private persistenceTail: Promise<void> = Promise.resolve()
-  private pendingMigration: {
+  private pendingMigration: StartupPendingPublication & {
     readonly owner: PreparedSave
-    readonly sourceText?: string
     readonly target?: SaveCommitTarget
   } | undefined
 
@@ -218,13 +218,15 @@ export class TransactionalGameApplication<TState, TCommand>
         return { committed: false, transition: staged }
       }
 
-      const prepared = staged.staged.readCandidate((candidate) => {
+      let prepared = staged.staged.readCandidate((candidate) => {
         const session = this.requireSession()
         return session.prepareForPersistence?.(candidate)
           ?? session.prepare(candidate)
       })
       let committed: PreparedSave
       try {
+        prepared = this.pendingMigration?.prepareForCommit?.(prepared) ?? prepared
+        await this.pendingMigration?.beforeCommit?.()
         committed = await this.options.repository.commit(prepared, this.pendingMigration?.target,
           this.pendingMigration?.sourceText, this.pendingMigration?.owner)
       } catch (error) {
@@ -240,6 +242,10 @@ export class TransactionalGameApplication<TState, TCommand>
           reason: errorMessage(error),
         }
       }
+
+      // Optional host completion cannot roll back an already durable choice.
+      // A failed Cloud acknowledgement keeps its publisher disabled instead.
+      try { await this.pendingMigration?.afterCommit?.() } catch { /* Retain the durable outcome. */ }
 
       let committedSession: GameStateSession<TState>
       try {
@@ -488,6 +494,8 @@ export class TransactionalGameApplication<TState, TCommand>
         resolution.save,
         resolution.kind === 'first-run' ? 'first-run' : resolution.source,
         resolution.kind === 'first-run' || resolution.publicationPending ? null : 0,
+        undefined,
+        resolution.pendingPublication,
       )
       if ((resolution.kind === 'first-run' || resolution.publicationPending) &&
           this.requireReadySnapshot().operation !== 'rework-choice-pending') await this.checkpoint()
@@ -509,7 +517,7 @@ export class TransactionalGameApplication<TState, TCommand>
     source: ReadySource,
     durableRevision: number | null,
     openedSession?: GameStateSession<TState>,
-    migrationInput?: { readonly sourceText: string; readonly target?: SaveCommitTarget },
+    migrationInput?: StartupPendingPublication & { readonly target?: SaveCommitTarget },
   ): void {
     const session = openedSession ?? this.options.sessionFactory.open(prepared)
     const engine = new TransactionalSimulationEngine(

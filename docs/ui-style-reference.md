@@ -442,3 +442,59 @@ upward to fit their content rather than using the shared short scrolling height 
 The preset management dialog remains scrollable on small screens with hidden
 scrollbar chrome. The ten preset colours are distinct choices, not subtle shades
 of the original five; each slot has its own default colour.
+
+## Automatic preset conflict notifications
+
+Matthew approved the backlog correction on 2026-10-11. Keep one notice per
+ongoing identical automatic conflict, identified by preset slot and the retained
+and blocked Skill ID sets, independently of names, locale or application sequence.
+Dismissal and the six-second timer do not reopen that episode. A successful
+compatible application ends it; editing away the blocked targets or removing
+retained ownership also clears stale feedback. A later reintroduced conflict can
+notify again.
+Distinct conflicts and manual feedback retain their order. Turning notices off
+clears queued preset notices; turning them on permits new applications without
+replaying acknowledged events. Disaster notices and first-occurrence modals retain
+their existing behavior and ordering. Reuse the existing dismissible banner,
+accessible announcement, timer and controls; this adds no visual pattern.
+
+This correction has source-level acceptance tests. Rendered scale/mobile/long
+locale, actual target geometry and native host comparisons remain unverified.
+
+## Live countdown precision and numeric spacing
+
+Matthew approved the Bots numeric convention for live countdowns: retain three
+visible digits, counting the leading zero, with at most two fractional places
+below ten seconds (`0.40s`, `1.00s`) and one from ten seconds (`12.0s`). Reuse
+`formatGameCountdown`; this shares Bots' existing rounding and fixed decimal
+padding. Its binary-number rounding gives `9.995 → 9.99s`; `59.95` and `59.999`
+round into `1m 0s`. At 60 seconds or longer, preserve whole-second floor and
+ordinary duration decomposition (`60.001 → 1m 0s`, `119.999 → 1m 59s`,
+`120 → 2m 0s`); never render a 60-second remainder. Historical statistics,
+completed challenge times and stored time stocks keep their own precision.
+
+Use the existing Bots numeric font token: `--font-family-numeric` starts with
+IDS Lexend Tabular Digits and falls back to the active body font for decimal
+separators and units. The digit-only derivative makes all three digits equal
+width; a decimal separator remains present throughout seconds-only display.
+Farming/Forager timers already use this token and `tabular-nums`. Matthew
+subsequently requested natural current-text width: the adjacent bar uses the
+remaining space, without the previous 7ch minimum or widest-observed timer
+reservation. Unit-format transitions may change width. Preserve the existing
+control gap; no punctuation wrapper or new font asset is needed.
+
+Reference comparison: Bots numeric formatting and the existing Simulations
+cycle timer typography. This is an approved shared display convention, with no
+new layout exception or changed touch/keyboard action. Browser preview access
+was denied before this change; rendered desktop app scales, text enlargement,
+mobile, long translations and native host acceptance remain unverified.
+
+Matthew visually reviewed the local preview and found its countdowns much better
+and stable, then requested the natural-width correction above. The Farming
+handoff action reuses shared `Button` purchase styling, with the established
+control text role, following the theme-colored Discovery start/purchase action
+restored in `fef6ebc0` and the shared Granary/Infinity purchase component. This
+restores theme accent, dark theme-page ink, lighting and shared interaction
+states without another bespoke button design. His supplied Forager screenshot
+confirms the pre-correction reservation and default button appearance; corrected
+pixels, scale/mobile/long-locale targets and native hosts remain unverified.

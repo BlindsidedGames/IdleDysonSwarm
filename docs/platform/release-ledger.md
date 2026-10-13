@@ -479,6 +479,70 @@ The prior unrelated skill/augment work remains preserved in its named stash and
 backup. No production rollout, App Review submission, Steam default promotion,
 website deployment or community message was performed.
 
+## 2026100501 — 4.1.11 runtime and Railgun fixes
+
+5 October 2026 (AEDT, UTC+11). Product source was already merged through
+[PR #222](https://github.com/BlindsidedGames/IdleDysonSwarm/pull/222) at exact
+`4c032bfd5d9a9e4f39f31dc2e55b018653854f9c`. Built in a clean isolated checkout
+from release-preparation commit `7fdd93af8b9972e3361563c3a1176c300be9d73f`,
+whose sole parent is that merged product source. The preparation changes only
+`hosts/native-release.json` and the three generated Android/iOS/Electron identity
+files; marketing version remains `4.1.11`. Source-bound Android and Steam
+manifests identify this preparation commit.
+
+| Destination | Identity | Verified state |
+| --- | --- | --- |
+| Google Play Internal testing | `2026100501` / `4.1.11` | **Available to internal testers**, released 5 October 16:33 AEDT |
+| Internal TestFlight | `2610.5.1` / `4.1.11` | **Testing**, existing Internal group with **3 testers** |
+| Steam `public-beta` | `25721019` | Active; all three platforms downloaded and byte-verified |
+
+- Includes the merged shared-runtime simplification and recovery for stalled
+  Railgun volleys. Saved bot allocations and presets are preserved. Internal
+  notes retain the separate, unreproduced Infinity-at-20× report as unresolved.
+- Canonical local gate passed after a clean lockfile install: **201 suites /
+  2,149 tests**, lint, localization validation/compilation, production and native
+  builds, Electron boundary, Capacitor sync, and signed Android bundling. Data
+  compatibility and `git diff --check` passed. The initial copied dependency
+  cache produced duplicate-React errors; it was replaced before this successful
+  gate. No product or test source was changed to bypass those errors.
+- Merged product source passed [shared CI](https://github.com/BlindsidedGames/IdleDysonSwarm/actions/runs/37265826718)
+  and [native candidate CI](https://github.com/BlindsidedGames/IdleDysonSwarm/actions/runs/37265907252).
+  These verify the merged gameplay source; the release-preparation identity is
+  separately verified by the local gate and signed/archive builds above.
+- Android AAB: **20,162,321 bytes**, SHA-256
+  `fc12a09994e2bbb9b8adc8c91aa1a733c21f9c75ec1a36c0c4328518831c5cb3`.
+  All eight existing Play languages have release notes. Release name is exactly
+  `2026100501 (4.1.11)`. The existing deobfuscation/native-symbol warnings were
+  nonblocking; device support was unchanged from the preceding internal build.
+- iOS archive: `com.blindsidedgames.idledysonswarm`, `4.1.11`, `2610.05.01`,
+  minimum iOS 16.0. All **295 public asset files** match the frozen synchronized
+  mobile assets. Executable SHA-256:
+  `644c3a98dbc4f8727ee07237d2ba7dd0559905edec57403d214e5d8af3e252ae`.
+  Xcode archive/upload succeeded using `testFlightInternalTestingOnly=true` and
+  `manageAppVersionAndBuildNumber=false`. Export compliance is complete; the
+  overview confirms **Testing** and the build details list the existing Internal
+  group with **3 testers**. What to Test persisted after a full page refresh.
+- Steam package manifests identify the release-preparation source and Steam
+  provider. Authenticated downloads confirm build `25721019` and `public-beta`;
+  all **76 Windows / 75 Linux / 265 macOS** files match the uploaded packages.
+  Local and freshly downloaded macOS startup passed with disposable state
+  and mock Keychain. Steam client commerce and overlay were not reverified. Default `public` remains
+  `25569496`.
+- Build artifacts, checksums, upload logs, console screenshots and downloaded
+  beta verification are in
+  `/Users/matthewrushworth/Builds/ids-release-2026100501/`.
+  No new mobile device/Simulator or Windows/Linux gameplay interaction QA is
+  claimed by this deployment; this release uses the merged candidate's earlier
+  feature QA, plus the packaging/startup checks stated above.
+- No production rollout, App Review submission, Steam default promotion,
+  website deployment or community message was performed.
+
+This entry was originally saved locally on `codex/internal-2026100501-record`
+and is retained in main by the 13 October PC handoff. It records verification
+performed during that release, not a fresh storefront check. Historical release
+identity files from the checkpoint were superseded and are not restored. No
+source PR was needed for the original deployment.
+
 ## 2026100601 — pre-Reality checkpoint and Steam beta
 
 6 October 2026 UTC (7 October AEDT). Product source is clean merged main

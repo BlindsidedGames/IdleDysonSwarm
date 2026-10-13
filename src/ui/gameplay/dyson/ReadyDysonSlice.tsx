@@ -1679,6 +1679,7 @@ function ReadyDysonSliceContent({
           onEventsAccepted={onPresentationEventsAccepted}
           locale={locale}
           showPresetApplicationNotices={showSkillPresetApplicationNotices}
+          skillState={gameplay.progression.skills}
           onViewReality={() => navigateTo('simulations')}
         />
       }

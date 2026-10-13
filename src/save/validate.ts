@@ -46,6 +46,8 @@ export function validatePreparedSave(
   const fractureError = validateLegacyFractures(value.fractures)
   if (fractureError) return invalid(fractureError)
   if (value.idsReworkMigrationChoice !== undefined && value.idsReworkMigrationChoice !== 'keep' && value.idsReworkMigrationChoice !== 'fresh') return invalid('Invalid rework migration choice.')
+  if (value.idsResolvedCloudDownloadSha256 !== undefined && (typeof value.idsResolvedCloudDownloadSha256 !== 'string' || !/^[a-f0-9]{64}$/u.test(value.idsResolvedCloudDownloadSha256))) return invalid('Invalid local Cloud completion hash.')
+  if (value.idsResolvedCloudSourceSha256 !== undefined && (typeof value.idsResolvedCloudSourceSha256 !== 'string' || !/^[a-f0-9]{64}$/u.test(value.idsResolvedCloudSourceSha256))) return invalid('Invalid local Cloud selected-source hash.')
   if (value.firstQuantumComplete !== undefined && typeof value.firstQuantumComplete !== 'boolean') return invalid('Invalid first Quantum milestone.')
   const tinkerError = validateCompletedTinkers(value.completedTinkers)
   if (tinkerError) return invalid(tinkerError)

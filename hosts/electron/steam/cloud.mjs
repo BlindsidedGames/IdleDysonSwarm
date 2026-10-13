@@ -1,4 +1,4 @@
-import { mkdir, open, readFile, rename, stat, lstat } from 'node:fs/promises'
+import { mkdir, open, readFile, rename, stat, lstat, unlink } from 'node:fs/promises'
 import { realpathSync, mkdirSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { createHash, randomUUID } from 'node:crypto'
@@ -21,13 +21,21 @@ async function read(path) {
   await rejectLinks(path)
   try {if ((await lstat(path)).isSymbolicLink() || (await stat(path)).size>maximumBytes) throw new Error('Unsafe cloud file');return await readFile(path,'utf8')}catch(error){if(error.code==='ENOENT')return null;throw error}
 }
-async function write(path,text) {
+async function write(path,text,beforeReplace) {
   await rejectLinks(path)
   await mkdir(dirname(path),{recursive:true})
   const temporary=`${path}.${randomUUID()}.tmp`
   const handle=await open(temporary,'wx',0o600)
   try {await handle.writeFile(text);await handle.sync()}finally{await handle.close()}
-  await rename(temporary,path)
+  try {
+    // Backup rotation and preparing/fsyncing the temporary file yield to
+    // external writers. Check immediately before the destructive rename.
+    await beforeReplace?.()
+    await rename(temporary,path)
+  } catch(error) {
+    try { await unlink(temporary) } catch { /* Preserve the original failure. */ }
+    throw error
+  }
   let directory
   try { directory=await open(dirname(path),'r'); await directory.sync() }
   catch(error) { if(!['EINVAL','ENOTSUP','EPERM','EISDIR'].includes(error.code)) throw error }
@@ -70,7 +78,12 @@ export class SteamCloud {
     // A recovered download may have a damaged header. Acknowledge its exact
     // bytes after recovery, without treating them as a publishable snapshot.
     if(typeof text !== 'string' || Buffer.byteLength(text)>maximumBytes) throw new Error('Invalid Cloud acknowledgement')
-    this.ensureIdentity();await write(this.marker,hash(text))
+    this.ensureIdentity()
+    if(await read(join(this.directory,'current.idsw'))!==text) throw new Error('Cloud changed before acknowledgement; restart to resolve it')
+    await write(this.marker,hash(text),async()=>{
+      this.ensureIdentity()
+      if(await read(join(this.directory,'current.idsw'))!==text) throw new Error('Cloud changed before acknowledgement; restart to resolve it')
+    })
   }
   async choose(local,remote){
     validateSnapshot(local);validateSnapshot(remote)
@@ -89,9 +102,15 @@ export class SteamCloud {
       this.ensureIdentity()
       if(!this.readSucceeded) throw new Error('Cloud startup read failed; publication disabled')
       const current=join(this.directory,'current.idsw')
-      if(await read(current)===text){await this.acknowledge(text);return}
+      const previousCurrent=await read(current)
+      if(previousCurrent===text){await this.acknowledge(text);return}
+      if(previousCurrent!==null && hash(previousCurrent)!==await read(this.marker)) throw new Error('Cloud changed before publication; restart to resolve it')
       for(let i=3;i>=1;i--){const source=i===1?current:join(this.directory,`backup-${i-1}.idsw`);const previous=await read(source);if(previous!==null)await write(join(this.directory,`backup-${i}.idsw`),previous)}
-      await write(current,text);await this.acknowledge(text)
+      await write(current,text,async()=>{
+        this.ensureIdentity()
+        if(await read(current)!==previousCurrent) throw new Error('Cloud changed during publication; restart to resolve it')
+      })
+      await this.acknowledge(text)
     })
     this.queue=run.catch(()=>undefined);return run
   }

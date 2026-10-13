@@ -1424,6 +1424,14 @@ function applyPlayerCommand(
           .name,
       application: nextSkillPresetApplication,
     }))
+  } else if (nextSkillPresetApplication?.blockedByRetainedSkillIds.length === 0) {
+    // Deliver resolution in order with conflicts: frontend frames may combine
+    // a successful application and a later reintroduction of the same conflict.
+    appendPresentationEvent(candidate, (sequence) => ({
+      kind: 'skill-preset-conflict-resolved',
+      sequence,
+      slot: nextSkillPresetApplication.slot,
+    }))
   }
   return { accepted: true, changed: true }
 }
@@ -2018,6 +2026,12 @@ function validatePresentationEvents(
       return 'CANONICAL-PRESENTATION-EVENTS-INVALID'
     }
     previousSequence = event.sequence
+    if (event.kind === 'skill-preset-conflict-resolved') {
+      if (!Number.isInteger(event.slot) || event.slot < 1 || event.slot > 10) {
+        return 'CANONICAL-PRESENTATION-EVENTS-INVALID'
+      }
+      continue
+    }
     if (event.kind === 'skill-preset-conflict') {
       if (
         typeof event.presetName !== 'string' ||

@@ -381,6 +381,19 @@ export function formatGameDuration(
   return components.join(' ')
 }
 
+/** Formats a live countdown; historical durations retain their own precision. */
+export function formatGameCountdown(locale: EnabledLocale, seconds: number): string {
+  // Keep whole-second decomposition (including its existing floor) for minutes
+  // and longer. Below a minute, reuse Bots' rounding and fixed decimal padding.
+  if (!Number.isFinite(seconds) || Math.abs(seconds) >= 60) {
+    return formatGameDuration(locale, seconds)
+  }
+  const roundedSeconds = roundToThreeSignificantDigits(Math.abs(seconds))
+  // Normalize a rounded minute before rendering, so no countdown shows 60.0s.
+  if (roundedSeconds >= 60) return formatGameDuration(locale, roundedSeconds)
+  return `${formatGameNumber(locale, roundedSeconds)}s`
+}
+
 export function clearFormatterCachesForTests(): void {
   numberFormatters.clear()
   fixedFractionNumberFormatters.clear()

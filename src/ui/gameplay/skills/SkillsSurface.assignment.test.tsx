@@ -107,12 +107,12 @@ test.each([true, false])('production comparison preference %s controls preview w
       expect(dispatch).toHaveBeenCalledExactlyOnceWith({ kind: 'skill.purchase', skillId: 'startHereTree' })
       return
     }
-    expect(screen.getByText(/^7(?:\.0+)?\/s \(10(?:\.0+)?m\)$/)).not.toBeNull()
+    expect(screen.getByText('7.00/s (10m 0s)')).not.toBeNull()
     const calls = query.mock.calls.length
     after = 8
     act(() => vi.advanceTimersByTime(1000))
     expect(query).toHaveBeenCalledTimes(calls + 1)
-    expect(screen.getByText(/^8(?:\.0+)?\/s \(10(?:\.0+)?m\)$/)).not.toBeNull()
+    expect(screen.getByText('8.00/s (10m 0s)')).not.toBeNull()
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
     act(() => vi.advanceTimersByTime(3000))
     expect(query).toHaveBeenCalledTimes(calls + 1)

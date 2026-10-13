@@ -8,7 +8,7 @@ import type { FrontendGameplaySnapshot } from '../../../application/frontendSnap
 import type { CanonicalPlayerCommand } from '../../../application/canonicalPlayerCommands'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
-import { formatGameDuration, formatWholeGameNumber } from '../../i18n/formatters'
+import { formatGameCountdown, formatWholeGameNumber } from '../../i18n/formatters'
 import { Button, Progress, ProgressControlsPanel, InlineResourceAmount } from '../../components'
 import { CIVILIZATION_ACTIVITIES, CIVILIZATION_RESOURCES, CIVILIZATION_SECTIONS, CIVILIZATION_FOCUSES, EMPTY_CIVILIZATION, allocateCivilizationWorkers, civilizationActivityUnlocked, civilizationSpeed, civilizationJobWaiting, civilizationHousing, civilizationActivityInputs, civilizationCycle, nextCivilizationCatalyst, civilizationMilestoneProgress, civilizationOpeningComplete, type CivilizationResource, type CivilizationRecipe, type CivilizationActivityId } from '../../../simulation/civilization'
 import { realTimeDuration, realTimeRate } from '../effectiveSpeed'
@@ -34,7 +34,7 @@ export function ForagerSurface({ gameplay, locale, gameSpeed, dispatchPlayer, ac
   const settingsId = useId()
   const fractures = gameplay.progression.challenges?.galvanizedSkillIds?.length ?? 0
   const number = (value: bigint | number) => formatWholeGameNumber(locale, value)
-  const duration = (seconds: number) => formatGameDuration(locale, realTimeDuration(seconds, gameSpeed), { maximumFractionDigits: 1 })
+  const duration = (seconds: number) => formatGameCountdown(locale, realTimeDuration(seconds, gameSpeed))
   const recipe = (items: CivilizationRecipe) => intl.formatList(Object.entries(items).map(([id, value]) => intl.formatMessage(m.amount, { value: number(value!), resource: intl.formatMessage(m[id as CivilizationResource]) })), { type: 'conjunction' })
   const requirements = (items: Readonly<Record<string, bigint>>) => intl.formatList(Object.entries(items).map(([id, target]) => intl.formatMessage(m.milestoneStep, { name: intl.formatMessage(m[id as CivilizationActivityId]), value: number(state.activities[id].completions), target: number(target) })))
   const [pending, setPending] = useState(false), [failed, setFailed] = useState(false)
@@ -111,7 +111,7 @@ export function ForagerSurface({ gameplay, locale, gameSpeed, dispatchPlayer, ac
         <CivilizationCycleProgress label={intl.formatMessage(m[definition.id])} value={job.progress} maximum={cycle.seconds} valueText={status} timerText={waiting.reason === 'running' ? status : '∞'} sampleSeconds={state.elapsedSeconds} cycleKey={`${definition.id}:${job.completions}`} gameSpeed={gameSpeed} active={job.active && waiting.reason === 'running'} cycleRate={realTimeRate(speed / cycle.seconds, gameSpeed)} locale={locale} />
         <span className="civilization-chevron" aria-hidden="true">›</span></summary><div className="civilization-activity-details"><dl className="civilization-facts civilization-recipe"><div><dt>{intl.formatMessage(m.inputs)}</dt><dd>{recipe(civilizationActivityInputs(state,index)) || '—'}</dd></div><div><dt>{intl.formatMessage(m.outputs)}</dt><dd>{[recipe(cycle.outputs), cycle.populationDelta > 0n ? intl.formatMessage(m.amount, { value: number(cycle.populationDelta), resource: intl.formatMessage(m.workers) }) : ''].filter(Boolean).join(', ')}</dd></div></dl><dl className="civilization-facts"><div><dt>{intl.formatMessage(m.workers)}</dt><dd>{number(job.workers)}</dd></div><div><dt>{intl.formatMessage(m.completed)}</dt><dd>{number(job.completions)}</dd></div><div><dt>{intl.formatMessage(m.duration)}</dt><dd>{duration(cycle.seconds/(speed||1))}</dd></div></dl>{waiting.reason !== 'running' && <p>{status}</p>}{job.active && <p>{intl.formatMessage(m.paid)}</p>}{index === 0 && <p>{intl.formatMessage(m.bootstrapV4)}</p>}{definition.id === 'campProvisioning' && <p>{intl.formatMessage(m.recruitment)}</p>}{definition.id === 'campExpansion' && <p>{intl.formatMessage(m.conversionV4)}</p>}</div></details></article></li>
     })}</ol></section>)}</div>
-    {civilizationOpeningComplete(state) && <section className="civilization-preview"><h3>{intl.formatMessage(m.phaseComplete)}</h3><p>{intl.formatMessage(farmingMessages.handoff)}</p><Button fullWidth disabled={pending} onClick={()=>void action({kind:'civilization.enter-farming'})}>{intl.formatMessage(farmingMessages.begin)}</Button></section>}
+    {civilizationOpeningComplete(state) && <section className="civilization-preview"><h3>{intl.formatMessage(m.phaseComplete)}</h3><p>{intl.formatMessage(farmingMessages.handoff)}</p><Button variant="purchase" fullWidth disabled={pending} onClick={()=>void action({kind:'civilization.enter-farming'})}>{intl.formatMessage(farmingMessages.begin)}</Button></section>}
   </div>
     <footer className="simulations-surface__footer civilization-dock">
       <ProgressControlsPanel

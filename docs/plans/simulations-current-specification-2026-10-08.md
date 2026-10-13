@@ -1087,3 +1087,117 @@ Rendered browser/mobile/locale/scale,
 keyboard/touch target comparisons and native host acceptance remain unverified:
 localhost browser access is blocked and was not retried; native playtesting is
 outside this task. DOM/animation tests do not establish visual acceptance.
+
+### Approved live countdown display (2026-10-11)
+
+Farming and Forager share the [live countdown precision and numeric spacing
+standard](../ui-style-reference.md#live-countdown-precision-and-numeric-spacing):
+`0.40s`, `1.00s`, `12.0s`, then whole seconds once a minute is displayed. Keep
+Bots' existing tabular digit font and decimal fallback. Paid work, rate presentation, animation and accessible progress semantics are
+unchanged. Timer geometry follows the subsequent natural-width correction below. Formatter and surface wiring checks cover the display contract;
+pixel acceptance at app scales/mobile/long locales/native hosts is unverified
+because browser preview access was denied, and no retry was authorized.
+
+### Requested timer gap and Farming handoff styling (2026-10-11)
+
+Matthew reviewed the current preview and found countdowns much better and stable.
+He requested removal of the remaining space between track and timer: the current
+text now determines the grid's trailing column, with no 7ch minimum, remembered
+maximum, resize observer or measurement effect. The existing control gap and
+Bots numeric font/trailing zeros remain. Unit-format changes may adjust the bar.
+This supersedes the earlier countdown reservation recorded above.
+
+“Begin Farming Villages” now uses shared `Button` purchase styling and control
+text sizing, matching the restored Discovery start/purchase action and shared
+Granary/Infinity treatment. The existing full-width target, pending disable,
+keyboard activation and canonical handoff command remain. Two obsolete tests
+requiring remembered widths/resize observation were removed; behavioral animation,
+mode, accessibility and handoff coverage remains. Corrected pixel acceptance is
+unverified: browser access was not retried. The recorded isolated loopback server
+was restored under existing preview authorization after its default sandbox bind
+was denied. Its verified source root and test-save namespace are unchanged; no
+reset/import or persistent permission change was performed.
+
+
+### Immediate Forager→Farming paid-work completion (2026-10-11)
+
+Matthew explicitly chose immediate completion of already-started Forager jobs
+when entering Farming, replacing the earlier wait for paid work to drain. The
+transition marks only existing paid receipts complete and reuses normal output,
+population and one-time Catalyst settlement. It admits no new Forager cycles,
+charges no Stored Time and advances no camp/village clock, exports, equipment
+timer or weather. Existing numeric-range guards retain receipts whose output
+cannot be represented; these are not silently discarded or overflowed.
+
+Previously saved `settling-forager` states use the same settlement on their next
+Civilization update, including a zero-time normalization. Founder transfer is
+not repeated. Fractional weighted worker allocation, upkeep, village balance,
+manual gates and the isolated preview's save namespace remain unchanged.
+
+The separate Farming Finish action still drains its own paid village jobs via
+`settling-village`. That endpoint was inspected but is outside this age-entry
+correction; no First Cities consumer or broader transition rule is introduced.
+
+Verification and review patch are recorded in the task handoff. No denied
+browser access was retried; current browser/native visual acceptance remains
+unverified.
+
+
+### Post-merge Cloud transaction correction — 11 October 2026
+
+PR 228's green validation covered local startup/recovery and manual import. It
+omitted the optional Cloud resolver: that path still committed converted remote
+progress and acknowledged the download before Keep/Fresh. The beta's disabled
+Cloud limits exposure, but does not make the single-publication contract complete.
+
+The follow-up candidate passes the same choice predicate to Cloud resolution.
+Selected primary or backup progress stays pending with the local receiving
+checkpoint untouched. The final choice verifies the remote primary and selected
+backup, archives their exact bytes, rotates the receiving checkpoint, and writes
+conversion plus outcome once. Acknowledgement follows the verified local write;
+failed writes retain the pending transaction. Completion callbacks belong to that
+staged session and cannot acknowledge a cancelled session after a rescue import.
+Selecting local progress also waits for its pending Keep/Fresh choice before
+acknowledging the resolved download.
+
+Device-local hashes of both the exact primary download and selected incoming
+source are included in the final save. If the local write succeeds but
+acknowledgement fails or the process stops, reopening recognizes that completed
+local game before preparing remote recovery. It retains the chosen outcome and
+later progress even if acknowledgement repeatedly fails or the backup vanishes.
+Acknowledgement/publication remains disabled if the selected backup changes,
+becomes unreadable, or a newer valid/future backup precedes the preserved source;
+the primary hash alone cannot authorize resolving a different recovery input.
+It does not offer compensation again. Cloud/shared exports and manual imports
+strip both completion hashes. Future primary/backup/local inputs block fallback.
+Changed primary/backup inputs reject a pending commit; changes after local commit
+or acknowledgement failure keep Cloud reporting disabled. The provider checks
+stale acknowledgement and unacknowledged remote changes before marker/publication
+writes. After rotation and temporary-file fsync it checks the exact primary again,
+immediately before renaming the prepared current or acknowledgement marker. A
+failed guard preserves current/marker bytes and attempts to remove the abandoned
+temporary.
+This detects changes through those asynchronous boundaries, including after
+portable preflight. Ordinary filesystem operations offer no cross-process
+compare-and-swap: an external writer racing the final read-to-rename interval
+remains a limitation. Cloud stays disabled; these checks do not authorize enabling
+it or claim universal concurrent-writer safety.
+
+Proof uses the actual production application and portable repository with a
+synthetic Cloud adapter, and the existing Steam provider with disposable temporary
+files. No Cloud accounts, real saves, release, browser, native game launch or
+Cloud enablement is involved. Rendered and actual host acceptance remains
+unverified. This follow-up is a local review candidate, not a pushed or merged fix.
+
+
+### Current-source PC handoff — 13 October 2026
+
+Matthew authorized committing and pushing all current intended source to main.
+The final notification preview, timer v2/natural-width/button corrections, instant
+Forager handoff and corrected Cloud transaction candidate are integrated together.
+Earlier local/held status paragraphs above record historical preparation state;
+this handoff supersedes their source-publication hold without authorizing release
+or Cloud/achievement enablement. Current gameplay/balance and the separate Farming
+Finish settlement remain unchanged. Full pinned-Node verification passes 2,473
+tests in 219 files and all required checks; corrected rendered/native acceptance
+remains unverified. See [the checkpoint inventory](../qa/pc-handoff-2026-10-13.md).

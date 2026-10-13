@@ -37,6 +37,7 @@
 .civilization-activity-details p, .civilization-equipment p, .civilization-confirmation p, .civilization-preview p { margin-block: var(--ui-card-gap) 0; font-size: var(--ui-text-body); }
 .civilization-confirmation { margin-block-start: var(--ui-card-gap); border-block-start: 1px solid var(--theme-divider); }
 .civilization-preview { margin-block-start: var(--ui-section-gap); padding: var(--game-card-content-inset); }
+.civilization-preview > .ui-button--purchase { --purchase-action-font-size: var(--ui-text-control); }
 .civilization-preview h3 { margin: 0; font-size: var(--ui-text-card-title); }
 .farming-surface .civilization-preview { overflow-wrap: anywhere; }
 :is(.civilization-stock, .civilization-workforce, .civilization-job) > summary:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
@@ -135,7 +136,7 @@
 .civilization-cycle-track { block-size: .72rem; overflow: hidden; border: 1px solid var(--color-border); border-radius: .2rem; background: var(--theme-page); }
 .civilization-cycle-fill { display: block; inline-size: 100%; block-size: 100%; transform-origin: left center; border-radius: inherit; background-color: var(--theme-accent); background-image: var(--ui-action-gradient); }
 .civilization-cycle[data-presentation="solid"] .civilization-cycle-fill { background-image: none; }
-.civilization-cycle-progress--animated + .civilization-job-timer { min-inline-size: max(7ch, var(--civilization-timer-width, 0em)); text-align: end; }
+.civilization-cycle-progress--animated + .civilization-job-timer { text-align: end; }
 .civilization-cycle-progress--animated + .civilization-job-timer > span { display: inline-block; }
 @media (forced-colors: active) { .civilization-cycle-track { background: Canvas; border-color: CanvasText; } .civilization-cycle-fill { background: Highlight; } }
 .civilization-job > summary, .civilization-stock > summary, .civilization-workforce > summary { min-block-size: max(44px,var(--target-minimum)); }

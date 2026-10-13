@@ -76,7 +76,7 @@ export interface SaveRepository {
   commit(
     save: PreparedSave,
     target?: SaveCommitTarget,
-    migrationSourceText?: string,
+    migrationSourceText?: string | readonly string[],
     publicationOwner?: PreparedSave,
   ): Promise<PreparedSave>
   /** Abandon recovery effects when its staged application cannot be installed. */
@@ -534,14 +534,18 @@ export class PortableSaveRepository implements SaveRepository {
   async commit(
     save: PreparedSave,
     target: SaveCommitTarget = 'development',
-    migrationSourceText?: string,
+    migrationSourceText?: string | readonly string[],
     publicationOwner?: PreparedSave,
   ): Promise<PreparedSave> {
     this.requirePublicationAllowed()
     const recovery = this.pendingRecoveryPublication?.owner === publicationOwner
       ? this.pendingRecoveryPublication : undefined
     if (recovery === undefined) this.cancelPendingPublication()
-    if (migrationSourceText !== undefined) this.pendingMigrationSources.add(migrationSourceText)
+    if (migrationSourceText !== undefined) {
+      for (const text of typeof migrationSourceText === 'string' ? [migrationSourceText] : migrationSourceText) {
+        this.pendingMigrationSources.add(text)
+      }
+    }
     await recovery?.beforeCommit?.()
     const committed = await this.publish(
       await this.carryForwardLocalStoredTimeJobRetirementProof(save),

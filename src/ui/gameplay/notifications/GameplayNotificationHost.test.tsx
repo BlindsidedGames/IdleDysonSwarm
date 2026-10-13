@@ -117,8 +117,112 @@ describe('GameplayNotificationHost', () => {
     view.rerender(hostTree([first]))
     expect(screen.queryByRole('status')).toBeNull()
 
-    view.rerender(hostTree([first, presetConflict(5)]))
+    view.rerender(hostTree([first, { ...presetConflict(5), application: { ...presetConflict(5).application, slot: 3 } }]))
     expect(await screen.findByRole('status')).not.toBeNull()
+  })
+
+  test('repeated automatic route applications share one notice even after it is dismissed', () => {
+    vi.useFakeTimers()
+    const accepted = vi.fn()
+    const props = { sessionRevision: 1, locale: 'en' as const, showPresetApplicationNotices: true,
+      onViewReality: vi.fn(), onEventsAccepted: accepted }
+    const tree = (events: readonly CanonicalRuntimePresentationEvent[]) =>
+      <IntlProvider locale="en"><GameplayNotificationHost {...props} events={events} /></IntlProvider>
+    const view = render(tree([presetConflict(1)]))
+    for (let sequence = 2; sequence <= 8; sequence++) {
+      act(() => vi.advanceTimersByTime(500))
+      view.rerender(tree([{ ...presetConflict(sequence), presetName: 'Renamed preset', application: {
+        ...presetConflict(sequence).application, retainedSkillIds: ['retained'],
+      } }]))
+    }
+    expect(accepted).toHaveBeenCalledTimes(8)
+    act(() => vi.advanceTimersByTime(2500))
+    expect(screen.queryByRole('status')).toBeNull()
+    view.rerender(tree([presetConflict(9)]))
+    expect(screen.queryByRole('status')).toBeNull()
+    expect(accepted).toHaveBeenLastCalledWith(1, 9)
+  })
+
+  test('a resolution clears only its automatic conflict and permits a later identical conflict in the same batch', () => {
+    const other = { ...presetConflict(2), presetName: 'Other preset', application: { ...presetConflict(2).application, slot: 3 as const } }
+    const manual = { ...presetConflict(3), presetName: 'Manual preset', application: { ...presetConflict(3).application, trigger: 'manual' as const } }
+    const view = renderHost([presetConflict(1), other, manual, { ...manual, sequence: 4 }])
+    view.rerender(hostTree([resolvedPreset(5), presetConflict(6)]))
+    fireEvent.click(screen.getByRole('button', { name: /Other preset was partially applied/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Manual preset was partially applied/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Manual preset was partially applied/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Conflict preset was partially applied/ }))
+    expect(screen.queryByRole('status')).toBeNull()
+  })
+
+  test('disabling notices clears queued conflicts without replaying acknowledged events on re-enable', () => {
+    const props = { sessionRevision: 1, locale: 'en' as const, onViewReality: vi.fn() }
+    const tree = (events: readonly CanonicalRuntimePresentationEvent[], show: boolean) =>
+      <IntlProvider locale="en"><GameplayNotificationHost {...props} events={events} showPresetApplicationNotices={show} /></IntlProvider>
+    const view = render(tree([presetConflict(1), disaster({ sequence: 2, firstLifetimeOccurrence: false })], true))
+    view.rerender(tree([presetConflict(3)], false))
+    fireEvent.click(screen.getByRole('button', { name: /Meteor Storm reset the Simulation/ }))
+    expect(screen.queryByRole('status')).toBeNull()
+    view.rerender(tree([presetConflict(3)], true))
+    expect(screen.queryByRole('status')).toBeNull()
+    view.rerender(tree([presetConflict(4)], true))
+    expect(screen.queryByRole('status')).not.toBeNull()
+  })
+
+  test('a new session clears ongoing conflict identities and the previous queue', () => {
+    const props = { locale: 'en' as const, showPresetApplicationNotices: true, onViewReality: vi.fn() }
+    const tree = (session: number, events: readonly CanonicalRuntimePresentationEvent[]) =>
+      <IntlProvider locale="en"><GameplayNotificationHost {...props} sessionRevision={session} events={events} /></IntlProvider>
+    const view = render(tree(1, [presetConflict(1), disaster({ sequence: 2, firstLifetimeOccurrence: false })]))
+    fireEvent.click(screen.getByRole('button', { name: /Conflict preset was partially applied/ }))
+    view.rerender(tree(2, [presetConflict(1)]))
+    fireEvent.click(screen.getByRole('button', { name: /Conflict preset was partially applied/ }))
+    expect(screen.queryByRole('status')).toBeNull()
+  })
+
+  test('conflict identity uses slot and unordered retained/blocked sets while preserving different conflicts', () => {
+    const first = { ...presetConflict(1), application: { ...presetConflict(1).application, retainedSkillIds: ['a', 'b'], blockedByRetainedSkillIds: ['x', 'y'] } }
+    const reordered = { ...first, sequence: 2, presetName: 'Renamed', application: { ...first.application, applicationSequence: 2, retainedSkillIds: ['b', 'a'], blockedByRetainedSkillIds: ['y', 'x'] } }
+    const distinct = { ...presetConflict(3), presetName: 'Changed conflict', application: { ...presetConflict(3).application, retainedSkillIds: ['c'] } }
+    renderHost([first, reordered, distinct])
+    fireEvent.click(screen.getByRole('button', { name: /Conflict preset was partially applied/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Changed conflict was partially applied/ }))
+    expect(screen.queryByRole('status')).toBeNull()
+  })
+
+  test('resolution preserves the first-disaster modal, repeat coalescing and remaining queue order', () => {
+    const view = renderHost([disaster({ sequence: 1, firstLifetimeOccurrence: true }), presetConflict(2),
+      disaster({ sequence: 3, firstLifetimeOccurrence: false }), disaster({ sequence: 4, firstLifetimeOccurrence: false }),
+      disaster({ sequence: 5, firstLifetimeOccurrence: false, cause: 'GlobalWarming' })])
+    view.rerender(hostTree([resolvedPreset(6)]))
+    expect(screen.getByRole('dialog', { name: 'Meteor Storm' })).not.toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Meteor Storm reset 2 Simulations · +4.00 Strange Matter' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Global Warming reset the Simulation · +2.00 Strange Matter' }))
+    expect(screen.queryByRole('status')).toBeNull()
+    expect(screen.queryByRole('dialog')).toBeNull()
+  })
+
+  test('a silent resolution between repeat disasters preserves their batch coalescing', () => {
+    renderHost([disaster({ sequence: 1, firstLifetimeOccurrence: false }), resolvedPreset(2),
+      disaster({ sequence: 3, firstLifetimeOccurrence: false })])
+    fireEvent.click(screen.getByRole('button', { name: 'Meteor Storm reset 2 Simulations · +4.00 Strange Matter' }))
+    expect(screen.queryByRole('status')).toBeNull()
+  })
+
+  test.each(['preset-edited', 'retained-ownership-removed'] as const)('%s clears stale automatic feedback without needing another preset application', cause => {
+    const skills = { presets: [{ skillIds: [] }, { skillIds: ['blocked'] }], byId: { retained: { owned: true } } }
+    const props = { sessionRevision: 1, locale: 'en' as const, showPresetApplicationNotices: true, onViewReality: vi.fn() }
+    const tree = (skillState: typeof skills, events: readonly CanonicalRuntimePresentationEvent[]) =>
+      <IntlProvider locale="en"><GameplayNotificationHost {...props} skillState={skillState} events={events} /></IntlProvider>
+    const view = render(tree(skills, [presetConflict(1)]))
+    expect(screen.queryByRole('status')).not.toBeNull()
+    const changed = cause === 'preset-edited' ? { ...skills, presets: [{ skillIds: [] }, { skillIds: [] }] }
+      : { ...skills, byId: { retained: { owned: false } } }
+    view.rerender(tree(changed, []))
+    expect(screen.queryByRole('status')).toBeNull()
+    view.rerender(tree(skills, [presetConflict(2)]))
+    expect(screen.queryByRole('status')).not.toBeNull()
   })
 
   test('presents a released Stored Time discovery as a dialog and never replays it', async () => {
@@ -176,7 +280,7 @@ function hostTree(
   )
 }
 
-function presetConflict(sequence: number): CanonicalRuntimePresentationEvent {
+function presetConflict(sequence: number): Extract<CanonicalRuntimePresentationEvent, { kind: 'skill-preset-conflict' }> {
   return {
     kind: 'skill-preset-conflict',
     sequence,
@@ -212,4 +316,8 @@ function disaster(
     preResetEra: 'foundational',
     ...overrides,
   }
+}
+
+function resolvedPreset(sequence: number): CanonicalRuntimePresentationEvent {
+  return { kind: 'skill-preset-conflict-resolved', sequence, slot: 2 }
 }

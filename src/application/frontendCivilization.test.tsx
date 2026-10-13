@@ -312,6 +312,7 @@ test.each(['forager', 'farming'] as const)('%s bars animate published work while
     // A nearly finished slow job is still slow: frequency uses the entire
     // paid receipt, not its tiny remaining time.
     expect(row.querySelector('.civilization-cycle')?.getAttribute('data-presentation')).toBe('cycle')
+    expect(row.querySelector('.civilization-job-timer')?.textContent).toBe('0.00s')
     mounted.rerender(view(1000))
     expect(row.querySelector('.civilization-cycle')?.getAttribute('data-presentation')).toBe('solid')
     const current=ready(app).state.gameState.civilization!
@@ -329,7 +330,7 @@ test('switching the mounted Forager surface to Farming cancels old fills and sta
     return animation as unknown as Animation
   }
   try {
-    const app = factory(seed()); await app.start(); app.advanceActive(7043000)
+    const repo = seed(), app = factory(repo); await app.start(); app.advanceActive(7043000)
     const view = () => {
       const snapshot = app.frontendSnapshot('simulations')
       if (snapshot.phase !== 'ready') throw Error(snapshot.phase)
@@ -340,11 +341,24 @@ test('switching the mounted Forager surface to Farming cancels old fills and sta
     expect(animations.length).toBeGreaterThan(0)
     const oldAnimations = [...animations]
     const oldFill = mounted.container.querySelector('.civilization-cycle-fill')!
+    const before = ready(app).state.gameState, commits = repo.commits
+    repo.failNext = true
+    expect((await dispatch(app, { kind: 'civilization.enter-farming' })).accepted).toBe(false)
+    expect(ready(app).state.gameState).toEqual(before)
+    expect(repo.commits).toBe(commits)
     expect((await dispatch(app, { kind: 'civilization.enter-farming' })).accepted).toBe(true)
+    const entered = ready(app).state.gameState
+    expect(entered.civilization!.farming!.phase).toBe('farming')
+    expect(entered.civilization!.farming!.elapsedSeconds).toBe(0)
+    expect(entered.timeline).toEqual(before.timeline)
+    expect(entered.civilization!.elapsedSeconds).toBe(before.civilization!.elapsedSeconds)
+    expect(hydrateGameState(await repo.loadCurrent()).state.civilization).toEqual(entered.civilization)
+    expect((await dispatch(app, { kind: 'civilization.enter-farming' })).accepted).toBe(false)
+    expect(ready(app).state.gameState).toEqual(entered)
+    expect(repo.commits).toBe(commits + 1)
     mounted.rerender(view())
     expect(oldFill.isConnected).toBe(false)
     for (const animation of oldAnimations) expect(animation.cancel).toHaveBeenCalledOnce()
-    for (let n = 0; n < 2_000 && ready(app).state.gameState.civilization!.farming!.phase === 'settling-forager'; n++) app.advanceActive(1000)
     expect(ready(app).state.gameState.civilization!.farming!.phase).toBe('farming')
     app.advanceActive(1000); mounted.rerender(view())
     const job = ready(app).state.gameState.civilization!.farming!.jobs.food

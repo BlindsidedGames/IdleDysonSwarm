@@ -75,7 +75,7 @@
     "test": "vitest run",
     "preview": "vite preview",
     "native:steam:build": "node scripts/build-steam-native.mjs",
-    "native:steam:package:macos": "VITE_IDS_DESKTOP_DISTRIBUTION=steam npm run build:native && electron-builder --config hosts/electron/electron-builder.yml --mac --config.extraMetadata.idsDesktopDistribution=steam",
+    "native:steam:package:macos": "VITE_IDS_DESKTOP_DISTRIBUTION=steam npm run build:native && node scripts/package-steam-platform.mjs macos",
     "promotions:sync": "tsx scripts/sync-promotion-catalog.ts",
     "promotions:check": "tsx scripts/check-promotion-catalog.ts",
     "verify:promotions:browser": "tsx scripts/verify-promotion-cache.ts"

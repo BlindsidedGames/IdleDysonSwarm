@@ -5,7 +5,7 @@ import type { CanonicalPlayerCommand } from '../../../application/canonicalPlaye
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import { DEFAULT_OFFLINE_BOOST } from '../../../simulation/offlineBoost'
 import { Button } from '../../components'
-import { formatGameDuration } from '../../i18n/formatters'
+import { formatGameCountdown, formatGameDuration } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import { offlineTimeMessages as messages } from './messages'
 import './offlineTime.css'
@@ -88,7 +88,7 @@ export function OfflineTimeSurface({ locale, resources, previews, storedTimeChea
         </div>
         {boost.multiplier > 1 && <dl className="offline-time-boost-facts">
           <div><dt>{intl.formatMessage(messages.boostDrainLabel)}</dt><dd>{intl.formatMessage(messages.boostDrain, { seconds: boost.multiplier - 1 })}</dd></div>
-          <div><dt>{intl.formatMessage(messages.boostDurationLabel)}</dt><dd>{formatGameDuration(locale, bank / (boost.multiplier - 1))}</dd></div>
+          <div><dt>{intl.formatMessage(messages.boostDurationLabel)}</dt><dd>{formatGameCountdown(locale, bank / (boost.multiplier - 1))}</dd></div>
         </dl>}
         <details className="offline-time-boost-details"><summary>{intl.formatMessage(messages.boostDetails)}</summary><p>{intl.formatMessage(messages.boostStack)}</p></details>
       </article>

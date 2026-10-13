@@ -56,6 +56,7 @@ import {
   StableSingleLineText,
 } from '../../components'
 import {
+  formatGameCountdown,
   formatGameNumber,
   formatWholeGameNumber,
 } from '../../i18n/formatters'
@@ -1949,7 +1950,7 @@ function SkillDetails({
     `${formatGameNumber(locale, unit === '/s' ? realTimeRate(value, gameSpeed) : value)}${unit}`
   const projectedSeconds = realTimeDuration(liveProduction?.projectedSeconds ?? 0, gameSpeed)
   const productionWait = liveProduction?.projected
-    ? ` (${formatGameNumber(locale, projectedSeconds < 60 ? projectedSeconds : projectedSeconds / 60)}${projectedSeconds < 60 ? 's' : 'm'})`
+    ? ` (${formatGameCountdown(locale, projectedSeconds)})`
     : ''
 
   return (

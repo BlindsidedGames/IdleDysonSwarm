@@ -13,6 +13,7 @@ import { WEB_LIFECYCLE_POLICY } from '../simulation/lifecycleAwayTime'
 import { createBrowserRuntimeFoundation } from '../ui/runtime/browserRuntimeFoundation'
 import { SingleHostSessionWriterAuthority } from '../platform/singleHostSessionWriterAuthority'
 import type { CanonicalGameApplicationFacade } from './canonicalGameApplication'
+import type { PortableCloud } from '../platform/portableCloud'
 import type { CanonicalPlayerCommand } from './canonicalPlayerCommands'
 
 // Real save/application owners; only filesystem primitives and the host clock
@@ -419,4 +420,262 @@ test('owned recovery callbacks remain retryable through promotion/replace failur
   await app.checkpoint()
   expect(recovery.counts()).toEqual({ promotions: 3, notation: 1, visibility: 1 })
   app.disposeStoredTimeJobRunner()
+})
+
+
+// Synthetic remote transport: the real application/repository still own decode,
+// migration, backup rotation, final publication and completion ordering.
+function cloudMigration(storage: Memory, remoteText: string, options: { backup?: string; choose?: 'local' | 'cloud'; failOpen?: boolean } = {}) {
+  let remote = remoteText, acknowledged: string | undefined, failAcknowledge = false, entitlementReads = 0
+  const acknowledgements: { text: string; publications: number }[] = [], uploads: string[] = []
+  const cloud: PortableCloud = {
+    read: async () => remote === acknowledged ? null : remote,
+    readBackups: async () => options.backup === undefined ? [] : [options.backup],
+    choose: async () => options.choose ?? 'cloud',
+    acknowledge: async text => {
+      if (failAcknowledge) throw Error('interrupted cloud acknowledgement')
+      acknowledgements.push({ text, publications: storage.publications.length }); acknowledged = text
+    },
+    publish: async text => { uploads.push(text); remote = acknowledged = text },
+  }
+  const create = createProductionCanonicalApplicationFactory({ createFirstRunSave: firstRun, cloud,
+    readHostEntitlements: () => {
+      if (options.failOpen && ++entitlementReads === 2) throw Error('interrupted cloud session open')
+      return { permanentDoubleIp: true }
+    } })
+  const app = create(repository(storage))
+  return { app, cloud, acknowledgements, uploads, remote: () => remote,
+    changeRemote: (text: string) => { remote = text }, failAcknowledgement: (fail: boolean) => { failAcknowledge = fail } }
+}
+
+for (const fromBackup of [false, true]) test.each(['keep', 'fresh'] as const)('cloud choice %s (backup=' + fromBackup + ') publishes once after selection, retains both originals and acknowledges afterward', async choice => {
+  const storage = new Memory(), receiver = serializeWebSave(firstRun().copyState()), incoming = source(), downloaded = fromBackup ? 'damaged-cloud-primary' : incoming
+  storage.files.set(paths.current, receiver)
+  const f = cloudMigration(storage, downloaded, { backup: fromBackup ? incoming : undefined })
+  await f.app.start()
+  expect(ready(f.app)).toMatchObject({ operation: 'rework-choice-pending', revision: { durable: null }, checkpoint: { kind: 'dirty' } })
+  expect(storage.publications).toHaveLength(0)
+  expect(storage.files.get(paths.current)).toBe(receiver)
+  expect(f.acknowledgements).toHaveLength(0); expect(f.uploads).toHaveLength(0)
+  expect((await f.app.checkpoint()).committed).toBe(false)
+  expect(accepted(await f.app.dispatchPlayer(command(f.app, { kind: 'rework.choose-migration', choice })))).toBe(true)
+  expect(storage.publications).toHaveLength(1)
+  expect(storage.files.get(paths.backups[0])).toBe(receiver)
+  expect(storage.files.get(archivePath(incoming))).toBe(incoming)
+  expect(storage.files.get(archivePath(downloaded))).toBe(downloaded)
+  const completion = deserializeWebSave(storage.files.get(paths.current)!)
+  expect(completion.idsResolvedCloudDownloadSha256).toBe(createHash('sha256').update(downloaded).digest('hex'))
+  expect(completion.idsResolvedCloudSourceSha256).toBe(createHash('sha256').update(incoming).digest('hex'))
+  expect(f.acknowledgements).toEqual([{ text: downloaded, publications: 1 }])
+  expect(ready(f.app).state.gameState.timeline.storedTimeAvailableSeconds).toBe(4000.625)
+  expect(accepted(await f.app.dispatchPlayer(command(f.app, { kind: 'rework.choose-migration', choice })))).toBe(false)
+  expect(f.acknowledgements).toHaveLength(1)
+  const reopened = factory(repository(storage)); await reopened.start()
+  expect(ready(reopened).operation).toBe('none'); expect(storage.publications).toHaveLength(1)
+  reopened.disposeStoredTimeJobRunner(); f.app.disposeStoredTimeJobRunner()
+})
+
+test.each(['archive-write', 'temporary-read', 'replace'] as const)('cloud choice remains unacknowledged and retryable after %s', async fault => {
+  const storage = new Memory(), incoming = source(), receiver = serializeWebSave(firstRun().copyState())
+  storage.files.set(paths.current, receiver)
+  const f = cloudMigration(storage, incoming); await f.app.start(); storage.fault = fault
+  expect(accepted(await f.app.dispatchPlayer(command(f.app, { kind: 'rework.choose-migration', choice: 'keep' })))).toBe(false)
+  expect(ready(f.app).operation).toBe('rework-choice-pending')
+  expect(storage.files.get(paths.current)).toBe(receiver); expect(storage.publications).toHaveLength(0)
+  expect(f.acknowledgements).toHaveLength(0); expect(f.uploads).toHaveLength(0)
+  storage.fault = undefined
+  expect(accepted(await f.app.dispatchPlayer(command(f.app, { kind: 'rework.choose-migration', choice: 'keep' })))).toBe(true)
+  expect(storage.publications).toHaveLength(1); expect(f.acknowledgements).toEqual([{ text: incoming, publications: 1 }])
+  f.app.disposeStoredTimeJobRunner()
+})
+
+
+test.each(['primary', 'backup', 'local'] as const)('cloud future %s prevents fallback, acknowledgement and publication', async slot => {
+  const storage = new Memory(), receiver = serializeWebSave(firstRun().copyState()), graph = deserializeWebSave(source())
+  graph.saveVersion = 99
+  const future = transport(graph, 'IDSWEB1', 99)
+  storage.files.set(paths.current, slot === 'local' ? future : receiver)
+  const f = cloudMigration(storage, slot === 'primary' ? future : slot === 'backup' ? 'damaged' : source(), { backup: slot === 'backup' ? future : undefined })
+  if (slot === 'backup') f.cloud.readBackups = async () => [future, receiver]
+  await f.app.start()
+  expect(f.app.snapshot()).toMatchObject({ phase: 'blocked', outcome: 'unsupported-future-version' })
+  expect(storage.publications).toHaveLength(0); expect(f.acknowledgements).toHaveLength(0); expect(f.uploads).toHaveLength(0)
+  expect(storage.files.get(paths.current)).toBe(slot === 'local' ? future : receiver)
+  f.app.disposeStoredTimeJobRunner()
+})
+
+test('choosing local defers remote acknowledgement until the local migration choice succeeds', async () => {
+  const storage = new Memory(), local = source('late-quantum', '2026-10-10T00:00:00Z'), incoming = source()
+  storage.files.set(paths.current, local)
+  const f = cloudMigration(storage, incoming, { choose: 'local' }); await f.app.start()
+  expect(ready(f.app).source).toBe('primary'); expect(ready(f.app).operation).toBe('rework-choice-pending')
+  expect(f.acknowledgements).toHaveLength(0); expect(storage.publications).toHaveLength(0)
+  storage.fault = 'replace'
+  expect(accepted(await f.app.dispatchPlayer(command(f.app, { kind: 'rework.choose-migration', choice: 'keep' })))).toBe(false)
+  expect(f.acknowledgements).toHaveLength(0)
+  storage.fault = undefined
+  expect(accepted(await f.app.dispatchPlayer(command(f.app, { kind: 'rework.choose-migration', choice: 'keep' })))).toBe(true)
+  expect(f.acknowledgements).toEqual([{ text: incoming, publications: 1 }])
+  expect(storage.files.get(archivePath(local))).toBe(local)
+  f.app.disposeStoredTimeJobRunner()
+})
+
+test('failed cloud session installation abandons acknowledgement before an unrelated rescue import', async () => {
+  const storage = new Memory(), receiver = serializeWebSave(firstRun().copyState()), incoming = source()
+  storage.files.set(paths.current, receiver)
+  const f = cloudMigration(storage, incoming, { failOpen: true }); await f.app.start()
+  expect(f.app.snapshot()).toMatchObject({ phase: 'blocked', outcome: 'storage-failed' })
+  expect(storage.publications).toHaveLength(0); expect(f.acknowledgements).toHaveLength(0)
+  expect((await f.app.importSave({ text: receiver, importedAtUtc: '2026-10-11T00:00:00Z', overwriteApproved: true })).imported).toBe(true)
+  await f.app.checkpoint()
+  expect(storage.publications).toHaveLength(2); expect(f.acknowledgements).toHaveLength(0); expect(f.uploads).toHaveLength(0)
+  expect(f.remote()).toBe(incoming)
+  f.app.disposeStoredTimeJobRunner()
+})
+
+test('changed remote rejects a pending choice before replacing local progress and permits retry of its exact original', async () => {
+  const storage = new Memory(), receiver = serializeWebSave(firstRun().copyState()), incoming = source(), conflict = source('quantum-unlock')
+  storage.files.set(paths.current, receiver)
+  const f = cloudMigration(storage, incoming); await f.app.start(); f.changeRemote(conflict)
+  expect(accepted(await f.app.dispatchPlayer(command(f.app, { kind: 'rework.choose-migration', choice: 'fresh' })))).toBe(false)
+  expect(storage.publications).toHaveLength(0); expect(storage.files.get(paths.current)).toBe(receiver)
+  expect(ready(f.app).operation).toBe('rework-choice-pending'); expect(f.acknowledgements).toHaveLength(0); expect(f.uploads).toHaveLength(0)
+  f.changeRemote(incoming)
+  expect(accepted(await f.app.dispatchPlayer(command(f.app, { kind: 'rework.choose-migration', choice: 'fresh' })))).toBe(true)
+  expect(storage.publications).toHaveLength(1); expect(f.acknowledgements).toHaveLength(1)
+  f.app.disposeStoredTimeJobRunner()
+})
+
+test.each(['remote-change', 'acknowledgement-failure'] as const)('cloud %s after local replace retains the durable choice without acknowledgement or remote overwrite', async interruption => {
+  const storage = new Memory(), incoming = source(), conflict = source('quantum-unlock')
+  const f = cloudMigration(storage, incoming); await f.app.start()
+  const replace = storage.replaceAtomically.bind(storage)
+  storage.replaceAtomically = async (from, to) => { await replace(from, to); if (interruption === 'remote-change') f.changeRemote(conflict) }
+  if (interruption === 'acknowledgement-failure') f.failAcknowledgement(true)
+  expect(accepted(await f.app.dispatchPlayer(command(f.app, { kind: 'rework.choose-migration', choice: 'keep' })))).toBe(true)
+  expect(storage.publications).toHaveLength(1); expect(ready(f.app).operation).toBe('none')
+  await f.app.checkpoint()
+  expect(f.acknowledgements).toHaveLength(0); expect(f.uploads).toHaveLength(0)
+  expect(f.remote()).toBe(interruption === 'remote-change' ? conflict : incoming)
+  expect(storage.files.get(archivePath(incoming))).toBe(incoming)
+  f.app.disposeStoredTimeJobRunner()
+})
+
+test('a new remote after successful migration blocks later checkpoint upload', async () => {
+  const storage = new Memory(), incoming = source(), conflict = source('quantum-unlock')
+  const f = cloudMigration(storage, incoming); await f.app.start()
+  expect(accepted(await f.app.dispatchPlayer(command(f.app, { kind: 'rework.choose-migration', choice: 'keep' })))).toBe(true)
+  // Allow the successful initial reporting request to finish before injecting a
+  // later device's checkpoint; the provider owns its own publication queue.
+  await new Promise<void>(resolve => setTimeout(resolve, 0))
+  const previousUploads = f.uploads.length
+  f.changeRemote(conflict); await f.app.checkpoint()
+  expect(f.uploads).toHaveLength(previousUploads); expect(f.remote()).toBe(conflict)
+  f.app.disposeStoredTimeJobRunner()
+})
+
+test.each(['cloud', 'local'] as const)('reopening %s after failed cloud acknowledgement recognizes the durable choice without migration or compensation again', async selection => {
+  const storage = new Memory(), incoming = source('late-quantum', undefined, true)
+  if (selection === 'local') storage.files.set(paths.current, source('late-quantum', '2026-10-10T00:00:00Z', true))
+  const f = cloudMigration(storage, incoming, { choose: selection }); await f.app.start(); f.failAcknowledgement(true)
+  expect(accepted(await f.app.dispatchPlayer(command(f.app, { kind: 'rework.choose-migration', choice: 'fresh' })))).toBe(true)
+  expect(storage.publications).toHaveLength(1)
+  const before = ready(f.app).state
+  f.app.disposeStoredTimeJobRunner()
+  const reopened = cloudMigration(storage, incoming); await reopened.app.start()
+  expect(ready(reopened.app).operation).toBe('none')
+  expect(storage.publications).toHaveLength(1)
+  expect(ready(reopened.app).state.gameState.skills.points).toBe(before.gameState.skills.points)
+  expect(reopened.acknowledgements).toEqual([{ text: incoming, publications: 1 }])
+  reopened.app.disposeStoredTimeJobRunner()
+})
+
+
+test('changed selected cloud backup rejects final choice even while the damaged primary is unchanged', async () => {
+  const storage = new Memory(), receiver = serializeWebSave(firstRun().copyState()), incoming = source()
+  storage.files.set(paths.current, receiver)
+  const f = cloudMigration(storage, 'damaged', { backup: incoming }); await f.app.start()
+  f.cloud.readBackups = async () => [receiver]
+  expect(accepted(await f.app.dispatchPlayer(command(f.app, { kind: 'rework.choose-migration', choice: 'keep' })))).toBe(false)
+  expect(storage.files.get(paths.current)).toBe(receiver); expect(storage.publications).toHaveLength(0)
+  expect(f.acknowledgements).toHaveLength(0); expect(f.uploads).toHaveLength(0)
+  f.app.disposeStoredTimeJobRunner()
+})
+
+test('device-local cloud completion cannot travel through a shared import or cloud upload', async () => {
+  const storage = new Memory(), incoming = source()
+  const f = cloudMigration(storage, incoming); await f.app.start()
+  expect(accepted(await f.app.dispatchPlayer(command(f.app, { kind: 'rework.choose-migration', choice: 'keep' })))).toBe(true)
+  const committed = storage.files.get(paths.current)!
+  expect(deserializeWebSave(committed).idsResolvedCloudDownloadSha256).toBe(createHash('sha256').update(incoming).digest('hex'))
+  const { serializeSharedWebSave, serializeCloudWebSave } = await import('../save/serialization')
+  for (const serialize of [serializeSharedWebSave, serializeCloudWebSave]) {
+    const transferred = deserializeWebSave(serialize(deserializeWebSave(committed)))
+    expect(transferred.idsResolvedCloudDownloadSha256).toBeUndefined()
+    expect(transferred.idsResolvedCloudSourceSha256).toBeUndefined()
+  }
+  const receivingStorage = new Memory(), receiving = factory(repository(receivingStorage)); await receiving.start()
+  expect((await receiving.importSave({ text: committed, importedAtUtc: '2026-10-11T00:00:00Z', overwriteApproved: true })).imported).toBe(true)
+  const imported = deserializeWebSave(receivingStorage.files.get(paths.current)!)
+  expect(imported.idsResolvedCloudDownloadSha256).toBeUndefined()
+  expect(imported.idsResolvedCloudSourceSha256).toBeUndefined()
+  receiving.disposeStoredTimeJobRunner(); f.app.disposeStoredTimeJobRunner()
+})
+
+test('a synchronous choice listener receives its cloud transaction before the pending snapshot is published', async () => {
+  const storage = new Memory(), incoming = source(), f = cloudMigration(storage, incoming)
+  let result: ReturnType<CanonicalGameApplicationFacade['dispatchPlayer']> | undefined
+  f.app.subscribe(snapshot => {
+    if (snapshot.phase === 'ready' && snapshot.operation === 'rework-choice-pending' && result === undefined) {
+      result = f.app.dispatchPlayer({ sessionRevision: snapshot.revision.session, expectedStateRevision: snapshot.revision.state, command: { kind: 'rework.choose-migration', choice: 'keep' } })
+    }
+  })
+  await f.app.start()
+  expect(result).toBeDefined(); expect(accepted(await result!)).toBe(true)
+  expect(storage.files.get(archivePath(incoming))).toBe(incoming)
+  expect(storage.publications).toHaveLength(1); expect(f.acknowledgements).toEqual([{ text: incoming, publications: 1 }])
+  f.app.disposeStoredTimeJobRunner()
+})
+
+
+test.each(['cloud', 'local'] as const)('reopening a completed %s choice keeps later local progress playable through repeated acknowledgement failure', async selection => {
+  const storage = new Memory(), incoming = source('late-quantum', undefined, true)
+  if (selection === 'local') storage.files.set(paths.current, source('late-quantum', '2026-10-10T00:00:00Z', true))
+  const first = cloudMigration(storage, incoming, { choose: selection }); await first.app.start(); first.failAcknowledgement(true)
+  expect(accepted(await first.app.dispatchPlayer(command(first.app, { kind: 'rework.choose-migration', choice: 'fresh' })))).toBe(true)
+  expect(accepted(await first.app.dispatchPlayer(command(first.app, { kind: 'dyson.set-buy-mode', buyMode: 'buy-10' })))).toBe(true)
+  await first.app.checkpoint()
+  const checkpoint = storage.files.get(paths.current), progress = ready(first.app).state.gameState
+  first.app.disposeStoredTimeJobRunner()
+  const reopened = cloudMigration(storage, incoming); reopened.failAcknowledgement(true); await reopened.app.start()
+  expect(ready(reopened.app).operation).toBe('none')
+  expect(ready(reopened.app).state.gameState).toEqual(progress)
+  expect(storage.files.get(paths.current)).toBe(checkpoint); expect(storage.publications).toHaveLength(2)
+  expect(reopened.acknowledgements).toHaveLength(0); expect(reopened.uploads).toHaveLength(0)
+  expect(accepted(await reopened.app.dispatchPlayer(command(reopened.app, { kind: 'dyson.set-buy-mode', buyMode: 'buy-max' })))).toBe(true)
+  await reopened.app.checkpoint()
+  expect(reopened.acknowledgements).toHaveLength(0); expect(reopened.uploads).toHaveLength(0)
+  reopened.app.disposeStoredTimeJobRunner()
+})
+
+test.each(['missing', 'changed', 'future', 'unreadable', 'newer-before-original'] as const)('completed backup recovery remains local and cannot acknowledge/upload when selected source is %s on reopening', async conflict => {
+  const storage = new Memory(), incoming = source('late-quantum', undefined, true), primary = 'damaged stable primary'
+  const first = cloudMigration(storage, primary, { backup: incoming }); await first.app.start(); first.failAcknowledgement(true)
+  expect(accepted(await first.app.dispatchPlayer(command(first.app, { kind: 'rework.choose-migration', choice: 'fresh' })))).toBe(true)
+  const checkpoint = storage.files.get(paths.current), progress = ready(first.app).state.gameState
+  first.app.disposeStoredTimeJobRunner()
+  const reopened = cloudMigration(storage, primary)
+  const newer = source('quantum-unlock'), graph = deserializeWebSave(incoming); graph.saveVersion = 99
+  reopened.cloud.readBackups = async () => {
+    if (conflict === 'unreadable') throw Error('interrupted backup read')
+    return conflict === 'missing' ? [] : conflict === 'changed' ? [newer] : conflict === 'future' ? [transport(graph, 'IDSWEB1', 99), incoming] : [newer, incoming]
+  }
+  await reopened.app.start()
+  expect(ready(reopened.app).operation).toBe('none'); expect(ready(reopened.app).state.gameState).toEqual(progress)
+  expect(storage.files.get(paths.current)).toBe(checkpoint); expect(storage.publications).toHaveLength(1)
+  expect(reopened.acknowledgements).toHaveLength(0)
+  expect(accepted(await reopened.app.dispatchPlayer(command(reopened.app, { kind: 'dyson.set-buy-mode', buyMode: 'buy-10' })))).toBe(true)
+  await reopened.app.checkpoint(); await new Promise<void>(resolve => setTimeout(resolve, 0))
+  expect(reopened.uploads).toHaveLength(0); expect(reopened.remote()).toBe(primary)
+  reopened.app.disposeStoredTimeJobRunner()
 })

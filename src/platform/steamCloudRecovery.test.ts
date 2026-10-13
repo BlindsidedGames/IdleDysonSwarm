@@ -141,3 +141,26 @@ test('independent local progress after a successful sync still requires a preser
   const [conflict] = await readdir(join(f.cloud.localDirectory, 'conflicts'))
   expect(await readFile(join(f.cloud.localDirectory, 'conflicts', conflict, 'local.idsw'), 'utf8')).toBe(localText)
 })
+
+
+test('a changed primary rejects stale acknowledgement without hiding the new download', async () => {
+  const f = await fixture()
+  await writeFile(join(f.cloud.directory, 'current.idsw'), portable)
+  expect(await f.cloud.read()).toBe(portable)
+  const changed = publicCloudFixture({ ...original.copyValidatedState(), dateQuitString: '2026-10-11T03:00:00Z' })
+  await writeFile(join(f.cloud.directory, 'current.idsw'), changed)
+  await expect(f.cloud.acknowledge(portable)).rejects.toThrow('changed')
+  await expect(readFile(f.cloud.marker, 'utf8')).rejects.toMatchObject({ code: 'ENOENT' })
+  expect(await f.cloud.read()).toBe(changed)
+})
+
+test('provider refuses checkpoint publication over a changed primary after the portable preflight', async () => {
+  const f = await fixture()
+  await f.cloud.read(); await f.cloud.publish(portable)
+  expect(await f.cloud.read()).toBeNull()
+  const changed = publicCloudFixture({ ...original.copyValidatedState(), dateQuitString: '2026-10-11T04:00:00Z' })
+  await writeFile(join(f.cloud.directory, 'current.idsw'), changed)
+  await expect(f.cloud.publish(portable)).rejects.toThrow('changed')
+  expect(await readFile(join(f.cloud.directory, 'current.idsw'), 'utf8')).toBe(changed)
+  await expect(readFile(join(f.cloud.directory, 'backup-1.idsw'), 'utf8')).rejects.toMatchObject({ code: 'ENOENT' })
+})

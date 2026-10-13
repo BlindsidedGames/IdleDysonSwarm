@@ -681,6 +681,7 @@ describe('IndexedDbBrowserSaveDatabase', () => {
         runtime: {
           ...structuredClone(expected.gameplay.runtime),
           lastSkillPresetApplication: null,
+          presentationEvents: [],
         },
         progression: {
           ...structuredClone(expected.gameplay.progression),

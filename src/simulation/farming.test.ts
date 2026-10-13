@@ -5,8 +5,8 @@ import { hydrateGameState, dehydrateGameState } from '../game-state/mapping'
 import { validateCanonicalGameState } from '../game-state/validate'
 import { PreparedSave } from '../save/prepare'
 import { deserializeWebSave, serializeWebSave } from '../save/serialization'
-import type { CanonicalGameStateV1, CivilizationFocus, FarmingState } from '../game-state/types'
-import { advanceCivilization, validateCivilization } from './civilization'
+import type { CanonicalGameStateV1, CivilizationFocus, CivilizationState, CivilizationActivityState, FarmingState } from '../game-state/types'
+import { advanceCivilization, validateCivilization, allocateCivilizationWorkers } from './civilization'
 import { advanceFarming, validateFarming, startFarming, farmingGoal, farmingCanBuyGranary, buyFarmingGranary, farmingComplete, setFarmingFocus, completeFarmingAge, farmingWorkers, farmingCapacity, farmingGranaryCost, farmingGranaryPurchaseStatus, farmingStoredTimeBudget, farmingMilestoneFlags, farmingManualGate } from './farming'
 import { eligibleCanonicalFractureIds, galvanizeCanonicalSkill } from './canonicalSkillTransactions'
 import { restartInfinityChallenge } from './canonicalInfinityChallengeRestart'
@@ -20,19 +20,59 @@ function until(s:CanonicalGameStateV1,p:(s:CanonicalGameStateV1)=>boolean,max=25
 const farm=()=>until(startFarming(opening())!,s=>s.civilization!.farming!.phase==='farming')
 const gate=()=>until(farm(),s=>farmingCanBuyGranary(s.civilization!.farming!))
 
-test('explicit age handoff settles paid work, transfers founders once and retains one camp owner',()=>{
+test.each(['pending','none','mixed'] as const)('%s paid Forager jobs finish once at immediate age entry and after legacy reload',scenario=>{
  expect(startFarming(fresh())).toBeNull()
- const old=opening(),paid=Object.entries(old.civilization!.activities).filter(([,j])=>j.active),start=startFarming(old)!
- expect(start.civilization!.workers).toBe(old.civilization!.workers-3n)
- expect(start.civilization!.resources).toEqual(old.civilization!.resources)
- expect(validateCanonicalGameState(start)).toEqual({valid:true,errors:[]})
- expect(startFarming(reload(start))).toBeNull()
- const ready=until(reload(start),s=>s.civilization!.farming!.phase==='farming')
- for(const [id,j]of paid)expect(ready.civilization!.activities[id].completions).toBe(j.completions+1n)
- expect(Object.values(ready.civilization!.activities).every(j=>!j.active&&j.workers===0n)).toBe(true)
- expect(ready.civilization!.farming!.inheritedFoodPerMinute).toBe(1.89)
- expect(ready.civilization!.farming!.inheritedMaterialsPerMinute).toBe(1.89)
- expect(advanceCivilization(ready,500).civilization!.resources).toEqual(ready.civilization!.resources)
+ const original=opening(),c=structuredClone(original.civilization!) as Omit<CivilizationState,'activities'> & {activities:Record<string,{-readonly [K in keyof CivilizationActivityState]:CivilizationActivityState[K]}>}
+ if(scenario==='none')for(const job of Object.values(c.activities)){
+  job.active=false;job.workers=0n;job.progress=0;delete job.cycleReceipt
+ }
+ if(scenario==='mixed'){
+  const job=c.activities.gathering,r=job.cycleReceipt!
+  const {finishAt:_deadline,...receipt}=r
+  job.progress=r.seconds;job.cycleReceipt={...receipt,remainingWork:0,rate:0}
+ }
+ const old={...original,civilization:c},before=structuredClone(old)
+ expect(validateCanonicalGameState(old)).toEqual({valid:true,errors:[]})
+ const paid=Object.entries(c.activities).filter(([,j])=>j.active)
+ if(scenario==='none')expect(paid.length).toBe(0)
+ else expect(paid.length).toBeGreaterThan(1)
+ const expectedResources={...c.resources}
+ let population=0n
+ for(const [,job] of paid){
+  population+=job.cycleReceipt!.populationDelta
+  for(const [id,n] of Object.entries(job.cycleReceipt!.outputs))expectedResources[id as keyof typeof expectedResources]+=n!
+ }
+ const assertHandoff=(ready:CanonicalGameStateV1)=>{
+  const next=ready.civilization!,f=next.farming!
+  expect(f.phase).toBe('farming')
+  expect(next.resources).toEqual(expectedResources)
+  expect(next.workers).toBe(c.workers-3n+population)
+  expect(next.elapsedSeconds).toBe(c.elapsedSeconds)
+  expect(next.nextEquipmentSeconds).toBe(c.nextEquipmentSeconds)
+  expect(next.equippedWorkers).toBe(c.equippedWorkers)
+  expect(f.elapsedSeconds).toBe(0);expect(f.weathering).toBe(0)
+  expect(f.resources).toEqual({food:0,materials:0,tools:0,goods:0});expect(f.jobs).toEqual({})
+  for(const [id,job] of Object.entries(c.activities))expect(next.activities[id].completions).toBe(job.completions+BigInt(job.active))
+  expect(Object.values(next.activities).every(j=>!j.active&&j.workers===0n&&!j.cycleReceipt)).toBe(true)
+  expect(ready.challenges).toEqual(old.challenges)
+  expect({...ready,civilization:old.civilization,challenges:old.challenges}).toEqual(old)
+  expect(validateCanonicalGameState(ready)).toEqual({valid:true,errors:[]})
+  const saved=reload(ready);expect(saved.civilization).toEqual(next)
+  expect(startFarming(saved)).toBeNull()
+  expect(advanceCivilization(saved,0)).toEqual(saved)
+  expect(advanceCivilization(saved,500).civilization!.resources).toEqual(next.resources)
+ }
+ const start=startFarming(old)!
+ assertHandoff(start);expect(old).toEqual(before)
+ // Build a validated old release handoff with real paid receipts and founders
+ // already transferred. Reload it through the same serializer as player saves.
+ const legacyCamp={...c,version:5 as const,workers:c.workers-3n,
+  populationBaseline:start.civilization!.populationBaseline,populationGranted:start.civilization!.populationGranted-population,
+  farming:{...start.civilization!.farming!,phase:'settling-forager' as const,inheritedFoodPerMinute:0,inheritedMaterialsPerMinute:0}}
+ const crews=allocateCivilizationWorkers(legacyCamp)
+ const legacy={...old,civilization:{...legacyCamp,activities:Object.fromEntries(Object.entries(c.activities).map(([id,j])=>[id,{...j,workers:crews[id]}]))}}
+ expect(validateCanonicalGameState(legacy)).toEqual({valid:true,errors:[]})
+ assertHandoff(advanceCivilization(reload(legacy),0))
  expect(reload(old).civilization!.version).toBe(4)
 })
 

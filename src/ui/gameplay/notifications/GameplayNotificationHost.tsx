@@ -23,6 +23,29 @@ type DisasterEvent = Extract<
   { readonly kind: 'automatic-dream-disaster' }
 >
 
+type PresetConflict = Extract<CanonicalRuntimePresentationEvent, { readonly kind: 'skill-preset-conflict' }>
+type VisiblePresentationEvent = Exclude<CanonicalRuntimePresentationEvent, { readonly kind: 'skill-preset-conflict-resolved' }>
+
+interface PresetConflictSkillState {
+  readonly presets: readonly { readonly skillIds: readonly string[] }[]
+  readonly byId: Readonly<Record<string, { readonly owned: boolean }>>
+}
+
+function isCurrentConflict(event: PresetConflict, skills?: PresetConflictSkillState): boolean {
+  if (event.application.trigger !== 'automatic' || skills === undefined) return true
+  return event.application.retainedSkillIds.every(id => skills.byId[id]?.owned === true) &&
+    event.application.blockedByRetainedSkillIds.some(id => skills.presets[event.application.slot - 1]?.skillIds.includes(id))
+}
+
+function automaticConflictIdentity(event: PresetConflict): string {
+  const application = event.application
+  // Skill sets and the persisted slot identify the conflict independently of
+  // names, translation, ordering, or a repeated application's sequence number.
+  return JSON.stringify([application.slot,
+    [...application.retainedSkillIds].sort(),
+    [...application.blockedByRetainedSkillIds].sort()])
+}
+
 type QueuedNotice =
   | Extract<CanonicalRuntimePresentationEvent, { readonly kind: 'skill-preset-conflict' }>
   | DisasterEvent
@@ -43,6 +66,8 @@ export interface GameplayNotificationHostProps {
   readonly storedTimeFirstDisasterEvents?: readonly Readonly<DisasterEvent>[]
   readonly locale: EnabledLocale
   readonly showPresetApplicationNotices: boolean
+  /** Canonical targets/ownership retire stale automatic feedback after edits or resets. */
+  readonly skillState?: PresetConflictSkillState
   readonly onEventsAccepted?: (sessionRevision: number, throughSequence: number) => void
   readonly onViewReality: () => void
 }
@@ -53,6 +78,7 @@ export function GameplayNotificationHost({
   storedTimeFirstDisasterEvents = [],
   locale,
   showPresetApplicationNotices,
+  skillState,
   onViewReality,
   onEventsAccepted,
 }: GameplayNotificationHostProps) {
@@ -64,12 +90,14 @@ export function GameplayNotificationHost({
   const [queue, setQueue] = useState<readonly QueuedNotice[]>([])
   const seenRef = useRef({ sessionRevision, sequence: 0 })
   const seenStoredTimeSequencesRef = useRef(new Set<number>())
+  const ongoingAutomaticConflictsRef = useRef(new Map<string, PresetConflict>())
 
   useEffect(() => {
     let reset = false
     if (seenRef.current.sessionRevision !== sessionRevision) {
       seenRef.current = { sessionRevision, sequence: 0 }
       seenStoredTimeSequencesRef.current.clear()
+      ongoingAutomaticConflictsRef.current.clear()
       reset = true
     }
     const unseen = events.filter(
@@ -84,25 +112,45 @@ export function GameplayNotificationHost({
     for (const event of unseenStoredTime) {
       seenStoredTimeSequencesRef.current.add(event.sequence)
     }
-    const additions = [
-      ...buildQueuedNotices(
-        unseen,
-        showPresetApplicationNotices,
-      ),
-      ...unseenStoredTime,
-    ]
-    if (reset || additions.length > 0) {
-      setQueue((current) => mergePendingNotices(
-        reset ? [] : current,
-        additions,
-      ))
+    if (!showPresetApplicationNotices) ongoingAutomaticConflictsRef.current.clear()
+    for (const [identity, conflict] of ongoingAutomaticConflictsRef.current) {
+      if (!isCurrentConflict(conflict, skillState)) ongoingAutomaticConflictsRef.current.delete(identity)
     }
+    const resolvedSlots = new Set<PresetConflict['application']['slot']>()
+    let visibleEvents: VisiblePresentationEvent[] = []
+    for (const event of unseen) {
+      if (event.kind === 'skill-preset-conflict-resolved') {
+        for (const [identity, conflict] of ongoingAutomaticConflictsRef.current) {
+          if (conflict.application.slot === event.slot) ongoingAutomaticConflictsRef.current.delete(identity)
+        }
+        resolvedSlots.add(event.slot)
+        // Remove earlier conflicts in this batch, but allow a subsequent
+        // reintroduction. Silent resolutions do not split disaster batches.
+        visibleEvents = visibleEvents.filter(notice => notice.kind !== 'skill-preset-conflict' ||
+          notice.application.trigger !== 'automatic' || notice.application.slot !== event.slot)
+      } else {
+        if (event.kind === 'skill-preset-conflict' && event.application.trigger === 'automatic') {
+          if (!showPresetApplicationNotices || !isCurrentConflict(event, skillState)) continue
+          const identity = automaticConflictIdentity(event)
+          if (ongoingAutomaticConflictsRef.current.has(identity)) continue
+          ongoingAutomaticConflictsRef.current.set(identity, event)
+        }
+        visibleEvents.push(event)
+      }
+    }
+    const additions = [...buildQueuedNotices(visibleEvents, showPresetApplicationNotices), ...unseenStoredTime]
+    setQueue((current) => {
+      const next = removePresetNotices(reset ? [] : current,
+        showPresetApplicationNotices ? resolvedSlots : undefined, skillState)
+      return additions.length > 0 ? mergePendingNotices(next, additions) : next
+    })
     if (unseen.length > 0) onEventsAccepted?.(sessionRevision, unseen.at(-1)!.sequence)
   }, [
     onEventsAccepted,
     events,
     sessionRevision,
     showPresetApplicationNotices,
+    skillState,
     storedTimeFirstDisasterEvents,
   ])
 
@@ -176,8 +224,19 @@ function mergePendingNotices(
   return merged
 }
 
+function removePresetNotices(
+  queue: readonly QueuedNotice[],
+  resolvedSlots?: ReadonlySet<PresetConflict['application']['slot']>,
+  skills?: PresetConflictSkillState,
+): readonly QueuedNotice[] {
+  const remaining = queue.filter((notice) => notice.kind !== 'skill-preset-conflict' ||
+    (resolvedSlots !== undefined && isCurrentConflict(notice, skills) &&
+      (notice.application.trigger !== 'automatic' || !resolvedSlots.has(notice.application.slot))))
+  return remaining.length === queue.length ? queue : remaining
+}
+
 function buildQueuedNotices(
-  events: readonly Readonly<CanonicalRuntimePresentationEvent>[],
+  events: readonly Readonly<VisiblePresentationEvent>[],
   showPresetApplicationNotices: boolean,
 ): QueuedNotice[] {
   const queue: QueuedNotice[] = []

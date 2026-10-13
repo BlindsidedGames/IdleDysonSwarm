@@ -18,17 +18,27 @@ export type StartupBlockedReason =
   | 'recovery-write-failed'
   | 'storage-failed'
 
+/** Completion effects belong to the staged startup transaction, never to a later import. */
+export interface StartupPendingPublication {
+  readonly sourceText?: string | readonly string[]
+  readonly prepareForCommit?: (save: PreparedSave) => PreparedSave
+  readonly beforeCommit?: () => Promise<void>
+  readonly afterCommit?: () => Promise<void>
+}
+
 export type StartupSaveResolution =
   | {
       readonly kind: 'ready'
       readonly source: StartupReadySource
       readonly save: PreparedSave
       readonly publicationPending?: boolean
+      readonly pendingPublication?: StartupPendingPublication
     }
   | {
       readonly kind: 'first-run'
       readonly save: PreparedSave
       readonly publicationPending?: boolean
+      readonly pendingPublication?: StartupPendingPublication
     }
   | {
       readonly kind: 'blocked'
