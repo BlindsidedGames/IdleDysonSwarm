@@ -1,4 +1,5 @@
-import {advanceCivilization,civilizationOpeningComplete} from './civilization'
+import { growForager } from '../../test/support/foragerPopulation'
+import {advanceCivilization} from './civilization'
 import {startFarming,farmingCanBuyGranary,buyFarmingGranary} from './farming'
 import { MANUAL_LABOUR_AUGMENTS } from './skillSubskills'
 import { EMPTY_INFINITY_CHALLENGES } from './infinityChallenges'
@@ -1564,9 +1565,8 @@ test('Stored Time charges Patient Hands without activating Manual Labour or addi
 
 // Active boost has its own bank-funding boundary, distinct from worker admission.
 test.each([false,true])('Farming manual gate pauses active Stored Time boost without charging the bank (Double Time %s)',doubleTime=>{
- const seed={...hydrated.state,meta:{...hydrated.state.meta,reworkMigrationChoice:'keep' as const},infinity:{...hydrated.state.infinity,automaticResetEnabled:false},timeline:{...hydrated.state.timeline,doubleTime:{...hydrated.state.timeline.doubleTime,unlocked:doubleTime},offlineBoost:{multiplier:42},storedTimeAvailableSeconds:10000}}
- let camp=advanceCivilization(seed,1)
- for(let n=0;n<20000&&!civilizationOpeningComplete(camp.civilization!);n++)camp=advanceCivilization(camp,1)
+ const seed={...hydrated.state,dyson:{...hydrated.state.dyson,goalStage:10n},meta:{...hydrated.state.meta,reworkMigrationChoice:'keep' as const},infinity:{...hydrated.state.infinity,automaticResetEnabled:false},timeline:{...hydrated.state.timeline,doubleTime:{...hydrated.state.timeline.doubleTime,unlocked:doubleTime},offlineBoost:{multiplier:8},storedTimeAvailableSeconds:10000}}
+ const camp=growForager(seed)
  const entered=startFarming(camp);if(!entered)throw Error('Forager opening did not unlock Farming')
  let village=entered
  for(let n=0;n<5000&&!farmingCanBuyGranary(village.civilization!.farming!);n++)village=advanceCivilization(village,1)
@@ -1576,6 +1576,6 @@ test.each([false,true])('Farming manual gate pauses active Stored Time boost wit
  expect(paused.state.gameState.timeline.storedTimeAvailableSeconds).toBe(10000)
  const bought=buyFarmingGranary(paused.state.gameState)!
  const resumed=advanceGame({...paused.state,gameState:bought},{source:'active',baseSeconds:1,automation:'enabled'},context(),1/60)
- expect(resumed.issue).toBeUndefined();expect(resumed.gameSpeed).toBe(doubleTime?84:42)
- expect(resumed.state.gameState.timeline.storedTimeAvailableSeconds).toBe(9959)
+ expect(resumed.issue).toBeUndefined();expect(resumed.gameSpeed).toBe(doubleTime?16:8)
+ expect(resumed.state.gameState.timeline.storedTimeAvailableSeconds).toBe(9993)
 })

@@ -14,10 +14,10 @@ function firstRunState(): CanonicalGameStateV1 {
 }
 
 describe('progression-aware navigation visibility', () => {
-  test('Simulations remain available through Transcendence without retired Influence prerequisites', () => {
+  test('earned Simulations access remains available through Transcendence', () => {
     const initial = firstRunState()
-    expect(selectGameplayVisibility(initial).simulations).toMatchObject({ routeVisible: true, routeUnlocked: true })
-    const before = { ...initial, dyson: { ...initial.dyson, bots: 4e242 },
+    expect(selectGameplayVisibility(initial).simulations).toMatchObject({ routeVisible: false, routeUnlocked: false })
+    const before = { ...initial, dyson: { ...initial.dyson, bots: 4e242, goalStage: 10n },
       statistics: { ...initial.statistics, lifetime: { ...initial.statistics.lifetime, manualInfluence: 128 } } }
     const reset = applyCanonicalOverflowReset(before)
     if (!reset.ok) throw new Error(reset.code)
@@ -86,7 +86,7 @@ describe('progression-aware navigation visibility', () => {
     { name: 'legacy Quantum', firstInfinity: true, secrets: 27n, quantumPoints: 1n, manualInfluence: 0, automaticInfluence: 0 },
     { name: 'manual Influence', firstInfinity: false, secrets: 0n, quantumPoints: 0n, manualInfluence: 128, automaticInfluence: 0 },
     { name: 'automatic Influence', firstInfinity: false, secrets: 0n, quantumPoints: 0n, manualInfluence: 0, automaticInfluence: 128 },
-  ])('keeps retired routes hidden and Simulations available with $name history', row => {
+  ])('retired $name history cannot bypass the Bots-goal gate', row => {
     const initial = firstRunState()
     const state = { ...initial, meta: { ...initial.meta, firstInfinityComplete: row.firstInfinity },
       infinity: { ...initial.infinity, secretsOfTheUniverse: row.secrets },
@@ -96,10 +96,10 @@ describe('progression-aware navigation visibility', () => {
     const visibility = selectGameplayVisibility(state)
     expect(visibility.quantum).toMatchObject({ routeVisible: false, routeUnlocked: false })
     expect(visibility.reality).toMatchObject({ routeVisible: false, routeUnlocked: false })
-    expect(visibility.simulations).toMatchObject({ routeVisible: true, routeUnlocked: true })
+    expect(visibility.simulations).toMatchObject({ routeVisible: false, routeUnlocked: false })
   })
 
-  test('keeps Simulations unlocked for an existing save with Simulation progress', () => {
+  test('legacy Simulation progress cannot bypass the Bots-goal gate', () => {
     const initial = firstRunState()
     const existingSimulationSave = {
       ...initial,
@@ -113,12 +113,12 @@ describe('progression-aware navigation visibility', () => {
     }
 
     expect(selectGameplayVisibility(existingSimulationSave).simulations).toEqual({
-      routeVisible: true,
-      routeUnlocked: true,
+      routeVisible: false,
+      routeUnlocked: false,
       unlockProgress: {
-        currentInfluence: 128,
-        requiredInfluence: 128,
-        fraction: 1,
+        currentInfluence: 0,
+        requiredInfluence: 10,
+        fraction: 0,
       },
     })
   })

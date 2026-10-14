@@ -128,6 +128,10 @@ export const readyDysonMessages = defineMessages({
     description:
       'Accessible Bot unlock progress for the visible but locked Infinity destination.',
   },
+  simulationsGoalsProgress: {
+    id: 'navigation.simulations-goals-progress',
+    defaultMessage: '{destination}, {current} of {required} Bots goals completed',
+  },
   simulationsInfluenceProgress: {
     id: 'navigation.simulations-influence-progress',
     defaultMessage: '{destination}, {current} of {required} Influence gathered',

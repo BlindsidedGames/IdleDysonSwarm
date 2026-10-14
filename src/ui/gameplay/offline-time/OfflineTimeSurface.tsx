@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import type { FrontendCanonicalResources, FrontendGameplayPreviews } from '../../../application/frontendSnapshot'
 import type { CanonicalPlayerCommand } from '../../../application/canonicalPlayerCommands'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
-import { DEFAULT_OFFLINE_BOOST } from '../../../simulation/offlineBoost'
+import { DEFAULT_OFFLINE_BOOST, MAXIMUM_OFFLINE_BOOST_MULTIPLIER } from '../../../simulation/offlineBoost'
 import { Button } from '../../components'
 import { formatGameCountdown, formatGameDuration } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
@@ -81,7 +81,7 @@ export function OfflineTimeSurface({ locale, resources, previews, storedTimeChea
         </div>
         <div className="offline-time-boost-control">
           <output htmlFor="offline-boost-speed" aria-label={intl.formatMessage(messages.boostSpeed)}>{boost.multiplier === 1 ? intl.formatMessage(messages.boostRegular) : `${boost.multiplier}×`}</output>
-          <input id="offline-boost-speed" type="range" min={1} max={42} step={1} value={boost.multiplier} disabled={disabled}
+          <input id="offline-boost-speed" type="range" min={1} max={MAXIMUM_OFFLINE_BOOST_MULTIPLIER} step={1} value={boost.multiplier} disabled={disabled}
             aria-labelledby="offline-boost-label"
             aria-valuetext={boost.multiplier === 1 ? intl.formatMessage(messages.boostRegular) : `${boost.multiplier}×`}
             onChange={event => void select(event.currentTarget.valueAsNumber)} />

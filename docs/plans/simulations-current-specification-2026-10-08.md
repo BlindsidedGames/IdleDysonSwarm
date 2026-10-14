@@ -1,6 +1,6 @@
 # Current Simulations specification — 8 October 2026
 
-**Status: approved Forager icon/layout baseline retained; frozen V4 and approved Farming candidate implemented locally for review.**
+**Status: 14 October Forager simplification implemented locally; see the latest section below. Earlier economy and focus specifications are historical where they conflict.**
 
 This is the canonical record of the user's current requested Simulations screen.
 It accompanies the [audited UI style guide](../ui-style-guide.md). Source commit
@@ -1201,3 +1201,181 @@ or Cloud/achievement enablement. Current gameplay/balance and the separate Farmi
 Finish settlement remain unchanged. Full pinned-Node verification passes 2,473
 tests in 219 files and all required checks; corrected rendered/native acceptance
 remains unverified. See [the checkpoint inventory](../qa/pc-handoff-2026-10-13.md).
+
+
+## Forager simplification and compact purchases — 14 October 2026
+
+The user's latest request supersedes the older automatic housing, expedition,
+trade and bottom workforce-focus designs. Forager has four automatic activities:
+Gathering, Hunting, Toolmaking and Hideworking. Gathering/Hunting priority is a
+single-choice radio control inside those activity rows, with arrow/Home/End
+keyboard selection. Selected priority increases that activity's allocation weight
+fourfold. The separate bottom workforce distribution and focus controls are removed.
+
+Tents and Camps are immediate manual purchases. Their existing escalating bills
+remain; a Tent adds two residents, while a Camp consumes three Tents and adds three
+residents. The presentation reuses Farming's compact Granary purchase classes:
+owned quantity, inline costs and population output, and a small trailing Buy button.
+Explanations and missing resources appear only in the expandable purchase details.
+Automatic Toolmaking and Hideworking consume available inputs without the old
+housing stock reservations.
+
+Seasons run for ten simulated minutes each, starting Spring, then Summer, Autumn
+(or Fall in US English) and Winter. Gathering produces four Food in Spring/Summer
+and one otherwise; Hunting produces twelve Food in Autumn/Winter and three
+otherwise. Gathering Materials increase from three to six in Autumn/Winter;
+Hunting always produces two Hides. A paid/in-progress cycle retains the output
+recipe admitted when it started. The calendar handles season boundaries during
+bulk advancement.
+
+Catalysts now use population targets displayed as current/required population.
+The implementation uses 5, 10, 20, 40, 80, 160, then doubling targets; these numeric
+thresholds are the implementation's tuning choice. Farming opens at population
+160 or an existing sixth Catalyst award. Save migration preserves stocks,
+population and awards and refunds committed inputs from removed activity queues
+once. Existing retained production cycles keep their receipts.
+
+Offline boost is capped at 8x in simulation validation and its slider.
+
+Local verification: 130 focused tests pass across simulation, Farming, durable
+frontend commands, offline boost and activity presentation. TypeScript and the
+production build pass. Browser inspection covers the compact desktop and 360px
+purchase layouts, German at enlarged interface size, row priority keyboard
+selection and expanded housing details. Native platforms, fluent translation
+review, screen-reader use and the full aggregate test suite remain unverified.
+These pixels await user review.
+
+
+### Forager completion dock correction — 14 October 2026
+
+The separate opening-complete heading, handoff paragraph and button section are
+removed. Until the sixth Forager Catalyst is earned, the existing bottom dock
+shows Next Catalyst with the population icon and current/required count (the
+localized population label remains available to assistive technology). Once
+earned, a single “Begin Farming era” button replaces that progress in the dock.
+The canonical handoff gate now requires the earned sixth Catalyst; reaching a
+population threshold without its award does not independently open Farming.
+
+
+### Restored settings and season status — 14 October 2026
+
+The shared upward-expanding settings gear is restored. Immediately to its left,
+a flat white seasonal symbol and shared formatted countdown show the current
+season and time until the next. The earlier season row above production is
+removed. Settings show the season name/effects and the existing Gathering/Hunting
+priority choice; the activity-row priority controls remain available. Editable
+season masters are in source-assets/skill-icons/seasons; Spring/Autumn reuse
+existing Forager leaf geometry. The dock retains its Catalyst/Begin Farming switch.
+
+The navigation sidebar no longer reserves an empty scrollbar gutter when it does
+not overflow, so the visible left and right button insets match.
+
+
+### Farming presentation alignment — 14 October 2026
+
+Farming now uses the visible resource legend with population in the header,
+the same compact progress/action dock, seasonal symbol/countdown and upward
+settings panel as Forager. The workforce balance/focus choices and expanded
+allocation breakdown are removed. Existing stored allocation and facility
+mechanics are preserved. The season calendar continues from Forager elapsed time
+plus Farming elapsed time; this display adds no seasonal production modifiers.
+The existing Establish the village action replaces dock progress when ready;
+the completed endpoint stays concise. No next era is invented.
+
+Local verification: 44 existing Farming/application tests, TypeScript and lint
+pass; desktop and narrow enlarged German collapsed/expanded settings inspected.
+Native platforms and completed-state visual review remain unverified.
+
+
+### Forager input tuning — 14 October 2026
+
+Toolmaking now costs 5 Materials per cycle; Hunting costs 1 Tool; Hideworking
+adds a 10-Tool cost alongside its existing 2 Hides and 1 Material. Already paid
+cycles retain their original bills; new cycles use these costs.
+
+
+### Forager production chain revision — 14 October 2026
+
+Supersedes the food-priority and equipment rules above. New camps begin with one tent, three workers, and no material stockpile. Gathering unlocks Toolmaking; its first completed cycle unlocks Hunting; the first hunt unlocks Hideworking; the first processed Leather unlocks manual housing. Materials make Tools (5 Materials -> 2 Tools); Hunting consumes 1 Tool; Hideworking consumes 10 Tools and 2 Hides -> 1 Leather. The historical `clothing` save key now represents Leather.
+
+A Tent starts at 6 Food, 2 Leather and 1 Tool, adds one tent and two workers. A Camp starts at three tents, 12 Food, 4 Leather and 2 Tools, adds one camp and three workers while retaining existing residents. Existing lifetime purchase price scaling remains. Purchases are manual.
+
+Workers choose the highest available job in this order: Hideworking, Hunting, Toolmaking, Gathering. Eligible jobs each receive one worker where population allows; remaining workers are shared with weights 8:4:2:1 in that priority order. Small populations use priority order when there are fewer workers than eligible jobs. Paid receipts remain intact when a crew changes. Hunting reserves ten Tools when at least two Hides await processing. Both consumers reserve the Tools for housing whose Leather (and tents for a Camp) is already available. This allows the chain to produce Leather and leave housing affordable. Automatic equipment purchases and their labor bonus are removed from the new rules. Previous stocks, population, earned Catalysts and paid production receipts survive migration. Old auto-construction/expedition receipts are refunded once. The ten-minute seasonal rules remain.
+
+
+Approved artwork: Game uses the left-facing full-body deer (concept E), selected after the in-game preview. The existing stretched-hide symbol represents Leather. The player-facing Hides resource is renamed Game; its `hides` save key, quantities, production costs and receipts remain unchanged.
+
+
+Provisioning preference restored: Gathering/Hunting selection is available in activity rows and Forager settings. It persists in the existing priority field. Eligible jobs retain baseline crews; remaining-worker weights are Hideworking 8, preferred food job 4, Toolmaking 2, other food job 1. Tool reservations are unchanged.
+
+
+Hunting now spends 1 Tool once, automatically when its first hunt starts. Completed Hunting history retains the unlock across saves; all later hunts have no inputs. Existing paid hunts retain their receipts. Hunting no longer needs a Tool reservation against Hideworking or housing because it has no recurring Tool cost. Hideworking and housing costs are unchanged.
+
+
+Hunting unlock is now manual: a compact purchase row in Provisioning costs 1 Tool after Toolmaking completes. It becomes the Hunting production row after purchase. Preference controls in both production rows and settings remain hidden until Hunting is owned. Existing paid/completed hunts retain ownership. Selector circles use the dark bar-track background. The Catalyst footer shows only its icon, an inline production-style bar, and current/required workers; Next Catalyst remains an accessible label only.
+
+
+### Four-season balance — 14 October 2026
+
+Approved replacement for the two-profile calendar above. Each season still lasts 600 simulated seconds. Gathering yields Food/Materials: Spring 4/3, Summer 3/5, Autumn 2/6, Winter 1/4. Hunting yields Food/Game: Spring 6/2, Summer 3/1, Autumn 12/4, Winter 9/1. Annual totals for equal cycle counts remain unchanged. Cycle-start yields remain funded through a season change and reload; historical receipts remain valid.
+
+Hideworking now costs 4 Tools and 2 Game per Leather. Base Tent Food cost is 40; Camp Food cost is 100. Existing Leather, Tool, tent-conversion, population rewards and price scaling remain unchanged. No upkeep, decay or starvation is added.
+
+Provisioning pools its allocated workers and shares their time two-to-one toward the selected job. Both jobs advance even with one pooled worker. Craft allocation retains its priority and reserves 4 Tools plus an affordable housing Tool bill before admitting Hideworking. The displayed provisioning crew is its effective fractional labour share, not an extra population grant. Switching preference conserves total labour and preserves paid cycle progress. Seasonal settings show actual current-season recipe amounts; in-flight rows retain their paid output.
+
+Verification: 70 focused simulation, Farming and frontend tests pass; TypeScript, lint, translation checks and production build pass. Desktop and 360px German at 130% Interface size inspected, including preference switching and expanded season details. Fixed-priority synthetic runs buying housing whenever affordable reached 160 population in 44,610 simulated seconds (Gathering) and 40,580 (Hunting), without fractures. These establish progression viability, not an optimal seasonal policy. Native platforms and other Interface sizes were not checked for this change.
+
+
+### Chieftain and seasonal settings — 14 October 2026
+
+The Chieftain purchase appears after the first Camp and requires two currently owned Camps. Camps are not consumed. The one-time cost is 3 population, deducted from workers and populationGranted; earned Catalysts are retained. Hiring enables automation, and a persistent On/Off button allows returning to the existing Gathering/Hunting radios. The radios show the current automatic choice and are disabled while the Chieftain is on.
+
+The Chieftain targets a Camp when at least three Tents are held, otherwise a Tent; its purchase row shows this growth target. Every 30 simulated seconds it compares the provisioning time required for that housing bill under each two-to-one allocation, including Food, Materials for Tools, and Game for missing Leather. Already-funded outputs count toward stock. A switch requires at least a 10% improvement. When the immediate bill is supplied, it prepares a Game buffer in autumn or a Materials buffer in other seasons. Automation never buys housing or consumes Camps. Decision deadlines are saved and included in offline advancement so tick partitioning cannot change decisions.
+
+The bottom settings expansion contains only seasonal information. Its duplicate food-priority label/dropdown and explanatory worker-sharing paragraph are removed. Existing seasonal spacing is unchanged.
+
+Verification: 74 focused domain/application/UI tests pass, including failed-save purchase rollback, one-time population debit, retained Camps and Catalysts, on/off persistence, scarcity/season choices, and serialized split-tick equivalence. TypeScript, lint, all locale catalogs and production build pass. Desktop and 360px German at 130% Interface size checked, with purchase disclosure, on/off, reload, scrolling to the Chieftain and season-only footer. Native platforms and other scale settings remain unverified.
+
+
+### Leadership and independent priorities — 14 October 2026
+
+Supersedes the previous single-priority and population-price designs. Provisioning and Craft each have a separate row-radio selection: Gathering/Hunting and Toolmaking/Hideworking. Within each pair the preferred available job receives twice its counterpart’s worker time. Switching a pair preserves the other pair’s labour share. Unavailable jobs release labour, and paid work is retained through changes. Craft defaults to Hideworking; Provisioning keeps its saved preference. An interim saved craft choice in the original priority field migrates to craftPriority.
+
+Chieftain is renamed Leadership. It requires two Camps (retained), costs 12 Tools and 6 Game, and its compact purchase recipe reads those inputs -> Auto-Priority. It automates both independent choices when On. Each decision compares the appropriate pair’s housing-input deficits, including Tools and Leather for Craft and seasonal yields for Provisioning. The saved 30-second decision interval and 10% switching margin remain. Existing ownership is retained; old population-priced ownership refunds the three residents once without charging the new recipe. Once two Camps exist, Hideworking reserves the hiring resources until Leadership is acquired, so automatic crafting cannot consume the unlock’s stockpile.
+
+Leadership uses the user-supplied second icon (person with star badge), chosen for small-size clarity. The original transparent 512px PNG and its alpha-traced editable SVG are preserved in source-assets/skill-icons/forager. Runtime is a supersampled transparent 256px lossless WebP.
+Resource totals now follow Provisioning/Craft and precede Settlement. The seasonal footer removes its extra bottom body padding while retaining the gear button's touch target.
+
+Verification: 76 focused simulation, Farming and frontend tests pass, including independent priorities, purchase conservation, migration refunds, save-failure rollback and offline decision boundaries. TypeScript, lint, locale checks and production build pass. Desktop and 360px German at 130% Interface size inspected for resource order, wrapped craft rows, expanded Leadership help, scrolling and seasonal footer. Native platforms remain unverified.
+
+Header spacing correction: removed the zero top-padding override from civilization-scroll, restoring the shared game-card-content-inset below the era divider. Verified the running English Forager screen at its current scale and 360px width; measured 7.2px matching the shared inset. Other scales, locales, Farming and native hosts were not rechecked for this one-line correction.
+
+Locked Forager purchase presentation: buttons retain Buy while disabled. Unmet unlock prerequisites replace the compact price; Leadership displays localized Requires 2 plus the Camp icon, with Camps named accessibly and in the disclosure. Hunting and housing show their cycle prerequisite until unlocked. Real prices return once the prerequisite is met; affordability alone retains the price. Checked Leadership at desktop and 360px in English; other locked rows, locales, scale settings and native hosts were not visually rechecked.
+
+Resource reveal/order revision: Population always leads; Food/Materials, Game/Tools/Leather, then Tents/Camps form three stock groups. Resources appear after stock or completed production establishes acquisition and remain visible at zero after production. Camp purchase reveals at two held Tents or a recorded Tent purchase, retaining visibility after conversion; previously built Camps also retain access. Three columns on wide screens reflow within each group on mobile for readable long locales. Verified early English and mature German (130% Interface size), desktop and 360px. TypeScript and 11 existing frontend tests pass. Other interface sizes/native hosts remain unverified.
+
+Resource layout clarification: the approved sequence is ordering only, not fixed row groups. Restored the original single auto-fit resource grid with Population, Food, Materials, Game, Tools, Leather, Tents, Camps. Acquisition visibility and Camp reveal rules remain. Verified desktop and two-column 360px English; TypeScript passes. No new layout exception; other locales/scales/native hosts were not rechecked for this restoration.
+
+Icon-only stock revision (explicitly approved): move the existing responsive stock grid above Provisioning/Craft, preserve ordering/reveal rules, and remove visible stock names while retaining accessible names. Expanded Infinity-style settings now contains a localized Resources icon/name key for every Forager stock plus Population. Seasonal Gathering/Hunting yields use existing icon/quantity components and wrap naturally inline. Checked English expanded settings and stock at 360px and 1280px; TypeScript passes. Other scales/locales/native hosts not rechecked for this revision.
+
+Compact stock clarification: icon-only totals now use a content-sized wrapping flex row rather than stretched grid cells. Each icon stays beside its number using the standard .16em symbol gutter; existing section spacing separates pairs. Verified desktop and 360px English with expanded settings. Other scales/locales/native hosts not rechecked.
+
+Seasonal yield alignment correction: explicitly centre icon/number pairs and their surrounding activity line, matching the top stock alignment rather than the shared inline baseline default. Verified pixels and measured matching vertical centres in the running English preview. Other locales/scales/native hosts not rechecked for this CSS-only correction.
+
+Craft priority reveal: Craft radios and radiogroup semantics now wait for Hideworking to unlock. Provisioning retains its Hunting unlock gate. Verified running early-game desktop preview has Provisioning choices but no lone Toolmaking radio; TypeScript passes. Other viewports and the mature state were not rechecked for this visibility-only change.
+
+
+Opening challenge and Convergence (Matthew, 14 October 2026): Beginnings is automatically active from a new game and completes after all ten Bots goals. It awards Simulations access only; each goal retains its ordinary SP reward. The persisted completion survives Infinity and Transcendence. Existing unlocked civilizations retain access. Challenges remains available from the start and ends with Convergence progress out of ten (Beginnings plus the nine replacement challenges). All ten completions enable continuous Galactic Brain growth at ln(2)/1800 per game second, doubling the current total in 30 game minutes. Growth is credited to generated ownership, never creates the first Brain, respects facility prohibitions in challenges and uses the canonical active/Stored Time arrival path. Resets still clear Brain ownership normally; the earned entitlement remains.
+
+Verification: 119 focused simulation, snapshot and challenge interaction tests pass; TypeScript, lint and translation structure checks pass. Existing flat Infinity challenge cards are reused for opening/reward progress. German at 130% Interface size inspected on desktop and at 360 CSS pixels with no horizontal overflow; the footer remains reachable. Other Interface scales, separate enlarged text, unlocked Convergence visual state and native hosts remain unverified.
+
+
+Correction (Matthew, 14 October 2026): hide Simulations from both drawer and bottom navigation until Beginnings is complete, and redirect stale locked route requests to Bots. Remove the locked Beginnings panel entirely. Previously started civilization data remains saved but does not bypass this gate. Convergence retains its completion count; its Galactic Brain effect description is revealed only at six completed challenges, while activation still requires all ten. This supersedes the earlier existing-civilization access exception.
+
+Simulations reveal refinement (Matthew, 14 October 2026): hidden before 4/10 Bots goals; at 4 through 9 goals show the disabled Simulations destination with the existing Infinity-style navigation progress bar in drawer and bottom bar. Fill is completed goals / 10, with localized accessible progress. At 10 goals remove the bar and enable access permanently. Keep the locked content panel removed and stale-route guard intact.
+
+Reveal verification: 16 snapshot tests pass, including 3/4/9/10-goal boundaries; TypeScript and locale compilation/structure checks pass. A separate synthetic 4-goal save shows disabled Simulations with 40% fill in both drawer and bottom navigation, visually inspected in German at 130% Interface size. Other scales and native hosts remain unverified.
+
+Reveal threshold update (Matthew, 14 October 2026): Simulations now appears after the first completed Bots goal (1/10), superseding the four-goal reveal threshold. Both navigation progress bars and the ten-goal permanent unlock remain unchanged.
+
+Navigation order correction (Matthew, 14 October 2026): Simulations precedes Challenges in both the drawer and bottom navigation, including the navigation-shortcut settings list. Reveal at 1/10 and unlock at 10/10 remain unchanged.

@@ -1,6 +1,19 @@
 import { defineMessages } from 'react-intl'
 
 export const challengeMessages = defineMessages({
+  openingTitle: { id: "pilotChallenges.openingTitle", defaultMessage: "Beginnings" },
+  openingRule: { id: "pilotChallenges.openingRule", defaultMessage: "Complete all 10 goals in the Bots tab." },
+  openingReward: { id: "pilotChallenges.openingReward", defaultMessage: "Reward: unlock Simulations" },
+  openingEarned: { id: "pilotChallenges.openingEarned", defaultMessage: "Simulations unlocked" },
+  openingComplete: { id: "pilotChallenges.openingComplete", defaultMessage: "Completed" },
+  openingProgress: { id: "pilotChallenges.openingProgress", defaultMessage: "Active \u00b7 {value} / 10 goals" },
+  convergenceTitle: { id: "pilotChallenges.convergenceTitle", defaultMessage: "Convergence" },
+  convergenceProgress: { id: "pilotChallenges.convergenceProgress", defaultMessage: "{value} / 10 challenges completed" },
+  convergenceRule: { id: "pilotChallenges.convergenceRule", defaultMessage: "Your Galactic Brains grow continuously, doubling every 30 minutes of game time. Requires at least one Galactic Brain." },
+  convergenceEarned: { id: "pilotChallenges.convergenceEarned", defaultMessage: "Convergence unlocked" },
+  convergenceLocked: { id: "pilotChallenges.convergenceLocked", defaultMessage: "Complete all 10 challenges to unlock." },
+  simulationsLocked: { id: "pilotChallenges.simulationsLocked", defaultMessage: "Complete Beginnings by finishing all 10 goals in the Bots tab to unlock Simulations." },
+
   compactTitle: { id: "pilotChallenges.compactTitle", defaultMessage: "Infinity Challenges" },
   "title": { id: "pilotChallenges.title", defaultMessage: "Infinity Challenges" },
   "intro": { id: "pilotChallenges.intro", defaultMessage: "Each attempt starts a fresh Infinity. Only IP earned during the attempt counts. First completions award permanent SP once." },

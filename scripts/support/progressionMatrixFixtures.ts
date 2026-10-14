@@ -423,7 +423,7 @@ export function deriveProgressionRoutes(state: CanonicalGameStateV1): readonly P
   if (visibility.simulations.routeVisible && visibility.simulations.routeUnlocked) routes.push('simulations')
   if (visibility.quantum.routeVisible && visibility.quantum.routeUnlocked) routes.push('quantum')
   if (state.meta.firstInfinityComplete) routes.push('transcendence', 'avocato')
-  if (state.challenges?.unlocked) routes.push('challenges')
+  routes.push('challenges')
   routes.push('story', 'wiki', 'offline-time', 'statistics', 'settings')
   return Object.freeze(routes)
 }

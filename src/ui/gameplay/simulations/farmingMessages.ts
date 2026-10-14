@@ -34,7 +34,7 @@ export const farmingMessages = defineMessages({
   constructed: { id: 'farming.constructed', defaultMessage: 'Constructed upgrades' },
   automatic: { id: 'farming.automatic', defaultMessage: 'Built automatically by the village plan.' },
   era: { id: 'farming.era', defaultMessage: 'Farming Villages' },
-  begin: { id: 'farming.begin', defaultMessage: 'Begin Farming Villages' },
+  begin: { id: 'farming.begin', defaultMessage: 'Begin Farming era' },
   handoff: { id: 'farming.handoff', defaultMessage: 'Three founders move into a new village. The remaining camp keeps its stocks and exports Food and Materials. Paid work finishes before the handoff.' },
   settling: { id: 'farming.settling', defaultMessage: 'Finishing paid Forager work before the village begins.' },
   complete: { id: 'farming.complete', defaultMessage: 'Village established' },

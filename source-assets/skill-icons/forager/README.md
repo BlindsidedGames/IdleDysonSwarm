@@ -29,3 +29,19 @@ for (const file of await readdir('source-assets/skill-icons/forager')) {
 }
 JS
 ```
+
+## Game / Leather selection — 14 October 2026
+
+Matthew selected the left-facing full-body deer (concept E) for Game after reviewing it in the running game.
+`foragerGame.svg` traces the selected 1280px generated master, smoothing alpha
+noise and removing small disconnected artifacts while retaining its silhouette.
+Game uses the historical `hides` save key; Leather uses `clothing` and the existing
+`foragerHides` stretched-hide artwork. The tunic is no longer used for Leather.
+
+## Leadership — 14 October 2026
+
+Selected user-provided option 2: a person with a star badge. Preserved as
+`foragerChieftain.png` (original 512px transparent black silhouette).
+`foragerChieftain.svg` traces the original alpha with potrace (threshold 128,
+optTolerance 0.2, turdSize 2) using white fill. Export follows the command above.
+The historical Chieftain asset name remains; the visible upgrade is Leadership.

@@ -1,6 +1,10 @@
 import { defineMessages } from 'react-intl'
 
 export const debugSurfaceMessages = defineMessages({
+  simulationEra: { id: 'debug.simulation-era', defaultMessage: 'Simulation era' },
+  era: { id: 'debug.era', defaultMessage: 'Era' },
+  jumpEra: { id: 'debug.jump-era', defaultMessage: 'Jump to era' },
+  eraHelp: { id: 'debug.era-help', defaultMessage: 'Start the selected era fresh. Replaces simulation progress; other progress is kept.' },
   overflowPoints: { id: 'debug.overflow-points', defaultMessage: 'Transcendence Points', description: 'Debug purchase currency.' },
   speedrunWarning: { id: 'debug.speedrun-warning', defaultMessage: 'Using gameplay tools makes this save ineligible for speedruns. Unlocking or opening Developer Options does not.', description: 'Explains persistent Debug usage for speedruns.' },
   title: { id: 'debug.title', defaultMessage: 'Developer Options', description: 'Heading for the developer tools screen.' },

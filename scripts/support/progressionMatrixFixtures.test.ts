@@ -109,14 +109,14 @@ describe('production-valid progression matrix fixtures', () => {
       fixtures.map((fixture) => [fixture.id, fixture]),
     )
     expect(byId.fresh.reachableRoutes).toEqual([
-      'bots', 'research', 'simulations', 'story', 'wiki', 'offline-time', 'statistics', 'settings',
+      'bots', 'research', 'challenges', 'story', 'wiki', 'offline-time', 'statistics', 'settings',
     ])
     expect(byId['mid-swarm'].reachableRoutes).toContain('skills')
     expect(byId['first-infinity'].reachableRoutes).toContain('infinity')
     expect(byId['mature-infinity'].reachableRoutes).not.toContain('reality')
     expect(byId['reality-unlock'].reachableRoutes).not.toContain('reality')
-    expect(byId['reality-unlock'].reachableRoutes).toContain('simulations')
-    expect(byId['mature-simulations'].reachableRoutes).toContain('simulations')
+    expect(byId['reality-unlock'].reachableRoutes).not.toContain('simulations')
+    expect(byId['mature-simulations'].reachableRoutes).not.toContain('simulations')
     expect(byId['quantum-unlock'].reachableRoutes).not.toContain('quantum')
     expect(byId['late-quantum'].reachableRoutes).toContain('avocato')
     expect(byId['late-quantum'].state.quantum.pointsEarned).toBe(420n)
@@ -143,7 +143,7 @@ describe('production-valid progression matrix fixtures', () => {
     expect(deriveProgressionRoutes(withSecrets(26n))).not.toContain('reality')
     const realityUnlocked = withSecrets(27n)
     expect(deriveProgressionRoutes(realityUnlocked)).not.toContain('reality')
-    expect(deriveProgressionRoutes(realityUnlocked)).toContain('simulations')
+    expect(deriveProgressionRoutes(realityUnlocked)).not.toContain('simulations')
     const withManualInfluence = (manualInfluence: number) => ({
       ...realityUnlocked,
       statistics: {
@@ -154,8 +154,8 @@ describe('production-valid progression matrix fixtures', () => {
         },
       },
     })
-    expect(deriveProgressionRoutes(withManualInfluence(127))).toContain('simulations')
-    expect(deriveProgressionRoutes(withManualInfluence(128))).toContain('simulations')
+    expect(deriveProgressionRoutes(withManualInfluence(127))).not.toContain('simulations')
+    expect(deriveProgressionRoutes(withManualInfluence(128))).not.toContain('simulations')
     expect(deriveProgressionRoutes(withSecrets(26n))).not.toContain('quantum')
     expect(deriveProgressionRoutes({ ...withSecrets(26n), infinity: { ...withSecrets(26n).infinity, points: 42n } })).not.toContain('quantum')
     expect(deriveProgressionRoutes(fresh)).not.toContain('avocato')

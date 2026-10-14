@@ -12,7 +12,7 @@ import { CanonicalRuntimeSession } from './canonicalRuntimeSession'
 
 const prepared = prepareIdb1Save(readFileSync(new URL('./firstRun/generated/first-run-schema-12.idb1.txt', import.meta.url), 'utf8')).prepared
 const now = Date.UTC(2026, 9, 4)
-function setup(bank = 10, multiplier = 42, doubleTime = false) {
+function setup(bank = 10, multiplier = 8, doubleTime = false) {
   const session = new CanonicalRuntimeSession(prepared, { entitlements: { permanentDoubleIp: false }, nowUtcMilliseconds: () => now })
   const state = structuredClone(session.initialState)
   state.gameState = { ...state.gameState,
@@ -27,17 +27,17 @@ function setup(bank = 10, multiplier = 42, doubleTime = false) {
 
 describe('bank-funded foreground speed through the authoritative engine', () => {
   test.each([false, true])('charges only excess base seconds, while Double Time=%s stacks separately', doubleTime => {
-    const engine = setup(10, 42, doubleTime).create()
+    const engine = setup(10, 8, doubleTime).create()
     const before = engine.snapshot().state.gameState
     expect(engine.advanceBy(200).accepted).toBe(true)
     const after = engine.snapshot().state.gameState
-    expect(after.timeline.storedTimeAvailableSeconds).toBeCloseTo(1.8, 10)
-    expect(after.statistics.trackedSimulatedSeconds - before.statistics.trackedSimulatedSeconds).toBeCloseTo(doubleTime ? 16.8 : 8.4, 10)
+    expect(after.timeline.storedTimeAvailableSeconds).toBeCloseTo(8.6, 10)
+    expect(after.statistics.trackedSimulatedSeconds - before.statistics.trackedSimulatedSeconds).toBeCloseTo(doubleTime ? 3.2 : 1.6, 10)
     expect(after.timeline.infinityCycleSeconds - before.timeline.infinityCycleSeconds).toBeCloseTo(0.2, 10)
     expect(after.statistics.speedruns?.activeSeconds).toBeCloseTo(0.2, 10)
-    expect(after.statistics.speedruns?.storedTimeSeconds).toBeCloseTo(8.2, 10)
+    expect(after.statistics.speedruns?.storedTimeSeconds).toBeCloseTo(1.4, 10)
     expect(after.statistics.speedruns?.storedTime).toBe('yes')
-    expect(after.infinity.storedTimeUsedThisCycleSeconds).toBeCloseTo(8.2, 10)
+    expect(after.infinity.storedTimeUsedThisCycleSeconds).toBeCloseTo(1.4, 10)
     expect(after.infinity.manualCalibrationObservedActiveSeconds).toBe(0)
   })
 
@@ -48,22 +48,22 @@ describe('bank-funded foreground speed through the authoritative engine', () => 
     expect(before.tinker.running).toBe(true)
     engine.advanceBy(33)
     const after = engine.snapshot().state
-    expect(after.gameState.timeline.storedTimeAvailableSeconds).toBeCloseTo(8.647, 10)
+    expect(after.gameState.timeline.storedTimeAvailableSeconds).toBeCloseTo(9.769, 10)
     expect(after.tinker.elapsedSeconds).toBeGreaterThan(before.tinker.elapsedSeconds)
   })
 
   test('partial exhaustion consumes the last fraction in one tick, then advances normally', () => {
-    const engine = setup(0.5).create()
+    const engine = setup(0.1).create()
     const before = engine.snapshot().state.gameState.statistics.trackedSimulatedSeconds
     engine.advanceBy(33)
     let state = engine.snapshot().state.gameState
     expect(state.timeline.storedTimeAvailableSeconds).toBe(0)
     expect(state.timeline.offlineBoost).toEqual({ multiplier: 1 })
-    expect(state.statistics.trackedSimulatedSeconds - before).toBeCloseTo(0.533, 10)
+    expect(state.statistics.trackedSimulatedSeconds - before).toBeCloseTo(0.133, 10)
     engine.advanceBy(33)
     state = engine.snapshot().state.gameState
-    expect(state.statistics.trackedSimulatedSeconds - before).toBeCloseTo(0.566, 10)
-    expect(state.statistics.speedruns?.storedTimeSeconds).toBe(0.5)
+    expect(state.statistics.trackedSimulatedSeconds - before).toBeCloseTo(0.166, 10)
+    expect(state.statistics.speedruns?.storedTimeSeconds).toBe(0.1)
   })
 
   test.each([0, 1e20])('a bank of %s never creates unfunded progress when a debit cannot be represented', bank => {
@@ -89,7 +89,7 @@ describe('bank-funded foreground speed through the authoritative engine', () => 
     engine.advanceBy(33)
     const after = engine.snapshot().state.gameState
     expect(after.timeline.storedTimeAvailableSeconds).toBe(10)
-    expect(after.timeline.offlineBoost?.multiplier).toBe(42)
+    expect(after.timeline.offlineBoost?.multiplier).toBe(8)
     expect(after.statistics.trackedSimulatedSeconds).toBe(before)
     expect(after.statistics.speedruns?.storedTime).toBe('no')
   })
@@ -127,11 +127,11 @@ describe('bank-funded foreground speed through the authoritative engine', () => 
     h.state.storedTimeCheater = cheater
     const engine = h.create()
     const before = engine.snapshot()
-    expect(engine.dispatch({ expectedRevision: before.revision, command: { kind: 'time.set-offline-boost-multiplier', multiplier: 42 } }).accepted).toBe(false)
+    expect(engine.dispatch({ expectedRevision: before.revision, command: { kind: 'time.set-offline-boost-multiplier', multiplier: 8 } }).accepted).toBe(false)
     expect(engine.snapshot()).toEqual(before)
   })
 
-  test.each([0, 43, 1.5])('rejects invalid multiplier %s without changing bank or gameplay', multiplier => {
+  test.each([0, 9, 42, 1.5])('rejects invalid multiplier %s without changing bank or gameplay', multiplier => {
     const engine = setup().create()
     const before = engine.snapshot()
     expect(engine.dispatch({ expectedRevision: before.revision, command: { kind: 'time.set-offline-boost-multiplier', multiplier } }).accepted).toBe(false)
@@ -152,8 +152,8 @@ describe('bank-funded foreground speed through the authoritative engine', () => 
     expect(after.infinity.points).toBeGreaterThan(0n)
     expect(after.dyson.bots).toBeLessThan(42e18)
     if (automatic) expect(after.statistics.lifetime.ordinaryInfinityCount).toBe(1n)
-    expect(after.timeline.offlineBoost?.multiplier).toBe(automatic ? 42 : 1)
+    expect(after.timeline.offlineBoost?.multiplier).toBe(automatic ? 8 : 1)
     expect(after.statistics.recentActiveAutomaticInfinityCycles).toEqual([])
-    expect(after.timeline.storedTimeAvailableSeconds).toBeCloseTo(automatic ? 8.647 : 10, 10)
+    expect(after.timeline.storedTimeAvailableSeconds).toBeCloseTo(automatic ? 9.769 : 10, 10)
   })
 })

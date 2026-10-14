@@ -659,10 +659,28 @@
       "value": "value"
     }
   ],
+  "civilization.autoPriority": [
+    {
+      "type": 0,
+      "value": "Auto-Priority"
+    }
+  ],
   "civilization.automaticAward": [
     {
       "type": 0,
       "value": "Awarded automatically when every requirement is complete."
+    }
+  ],
+  "civilization.automaticPriority": [
+    {
+      "type": 0,
+      "value": "Provisioning workers share their time: two-thirds on your preferred job, one-third on the other. Worker counts show these shares. Tool reserves still apply."
+    }
+  ],
+  "civilization.autumn": [
+    {
+      "type": 0,
+      "value": "Autumn"
     }
   ],
   "civilization.available": [
@@ -703,6 +721,30 @@
       "value": "Three founders begin with one shelter kit. Gathering needs a real crew and no inputs."
     }
   ],
+  "civilization.buildCamp": [
+    {
+      "type": 0,
+      "value": "Build camp"
+    }
+  ],
+  "civilization.buildTent": [
+    {
+      "type": 0,
+      "value": "Build tent"
+    }
+  ],
+  "civilization.camp": [
+    {
+      "type": 0,
+      "value": "Camp"
+    }
+  ],
+  "civilization.campBenefit": [
+    {
+      "type": 0,
+      "value": "Converts 3 tents into a camp. Keeps their residents and adds 3 more."
+    }
+  ],
   "civilization.campExpansion": [
     {
       "type": 0,
@@ -713,6 +755,12 @@
     {
       "type": 0,
       "value": "Camp Provisioning"
+    }
+  ],
+  "civilization.campUnlock": [
+    {
+      "type": 0,
+      "value": "Complete one Hideworking cycle, then convert 3 tents."
     }
   ],
   "civilization.camps": [
@@ -733,10 +781,62 @@
       "value": "Catalysts"
     }
   ],
+  "civilization.chieftain": [
+    {
+      "type": 0,
+      "value": "Leadership"
+    }
+  ],
+  "civilization.chieftainAuto": [
+    {
+      "type": 0,
+      "value": "Leadership automation"
+    }
+  ],
+  "civilization.chieftainHelp": [
+    {
+      "type": 0,
+      "value": "Automatically chooses a priority for Provisioning and Craft based on growth needs and the season. Turn off to choose manually."
+    }
+  ],
+  "civilization.chieftainOff": [
+    {
+      "type": 0,
+      "value": "Off"
+    }
+  ],
+  "civilization.chieftainOn": [
+    {
+      "type": 0,
+      "value": "On"
+    }
+  ],
+  "civilization.chieftainRequirement": [
+    {
+      "type": 0,
+      "value": "Requires 2 Camps. Costs 12 Tools and 6 Game; Camps are kept."
+    }
+  ],
+  "civilization.chieftainTarget": [
+    {
+      "type": 0,
+      "value": "Preparing for "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
   "civilization.clothing": [
     {
       "type": 0,
-      "value": "Clothing"
+      "value": "Leather"
+    }
+  ],
+  "civilization.coldSeason": [
+    {
+      "type": 0,
+      "value": "Hunting: full food yield. Gathering: 25% food yield and double materials. Game yield is unchanged."
     }
   ],
   "civilization.completed": [
@@ -771,6 +871,12 @@
     {
       "type": 0,
       "value": "Craft"
+    }
+  ],
+  "civilization.craftPriority": [
+    {
+      "type": 0,
+      "value": "Craft priority"
     }
   ],
   "civilization.craftSpecialization": [
@@ -899,6 +1005,12 @@
     {
       "type": 0,
       "value": "Action failed. Try again."
+    }
+  ],
+  "civilization.fall": [
+    {
+      "type": 0,
+      "value": "Fall"
     }
   ],
   "civilization.firstHunt": [
@@ -1038,13 +1150,19 @@
   "civilization.hides": [
     {
       "type": 0,
-      "value": "Hides"
+      "value": "Game"
     }
   ],
   "civilization.hideworking": [
     {
       "type": 0,
       "value": "Hideworking"
+    }
+  ],
+  "civilization.hireChieftain": [
+    {
+      "type": 0,
+      "value": "Unlock Leadership"
     }
   ],
   "civilization.housing": [
@@ -1057,6 +1175,18 @@
     {
       "type": 0,
       "value": "Hunting"
+    }
+  ],
+  "civilization.huntingPrerequisite": [
+    {
+      "type": 0,
+      "value": "Complete one Toolmaking cycle to unlock."
+    }
+  ],
+  "civilization.huntingUnlock": [
+    {
+      "type": 0,
+      "value": "Unlock Hunting for 1 Tool. Further hunts cost no Tools."
     }
   ],
   "civilization.inputs": [
@@ -1161,10 +1291,50 @@
       "value": "Forager opening complete"
     }
   ],
+  "civilization.population": [
+    {
+      "type": 0,
+      "value": "Population"
+    }
+  ],
+  "civilization.populationGoal": [
+    {
+      "type": 0,
+      "value": "Population "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "target"
+    }
+  ],
   "civilization.preview": [
     {
       "type": 0,
       "value": "Agriculture continues in a later phase. Your activities keep running."
+    }
+  ],
+  "civilization.priority": [
+    {
+      "type": 0,
+      "value": "Provisioning priority"
+    }
+  ],
+  "civilization.priorityChoice": [
+    {
+      "type": 0,
+      "value": "Prioritize: "
+    },
+    {
+      "type": 1,
+      "value": "name"
     }
   ],
   "civilization.provisioning": [
@@ -1183,6 +1353,16 @@
     {
       "type": 0,
       "value": "Workers remain in the camp. Each needs a housing place."
+    }
+  ],
+  "civilization.seasonRemaining": [
+    {
+      "type": 0,
+      "value": "Next season in "
+    },
+    {
+      "type": 1,
+      "value": "time"
     }
   ],
   "civilization.seasonalExpeditions": [
@@ -1215,10 +1395,46 @@
       "value": "Progress speed"
     }
   ],
+  "civilization.spring": [
+    {
+      "type": 0,
+      "value": "Spring"
+    }
+  ],
+  "civilization.summer": [
+    {
+      "type": 0,
+      "value": "Summer"
+    }
+  ],
   "civilization.suppliesFocus": [
     {
       "type": 0,
       "value": "Supplies"
+    }
+  ],
+  "civilization.tent": [
+    {
+      "type": 0,
+      "value": "Tent"
+    }
+  ],
+  "civilization.tentBenefit": [
+    {
+      "type": 0,
+      "value": "Adds 2 residents. Built immediately."
+    }
+  ],
+  "civilization.tentUnlock": [
+    {
+      "type": 0,
+      "value": "Complete one Hideworking cycle to unlock."
+    }
+  ],
+  "civilization.tents": [
+    {
+      "type": 0,
+      "value": "Tents"
     }
   ],
   "civilization.toolmaking": [
@@ -1255,6 +1471,12 @@
     {
       "type": 1,
       "value": "name"
+    }
+  ],
+  "civilization.unlockHunting": [
+    {
+      "type": 0,
+      "value": "Unlock Hunting"
     }
   ],
   "civilization.upcoming": [
@@ -1301,6 +1523,18 @@
     {
       "type": 0,
       "value": "Waiting for workers"
+    }
+  ],
+  "civilization.warmSeason": [
+    {
+      "type": 0,
+      "value": "Gathering: full food yield. Hunting: 25% food yield. Game yield is unchanged."
+    }
+  ],
+  "civilization.winter": [
+    {
+      "type": 0,
+      "value": "Winter"
     }
   ],
   "civilization.workers": [
@@ -1463,6 +1697,24 @@
       "value": "Enable for free"
     }
   ],
+  "debug.era": [
+    {
+      "type": 0,
+      "value": "Era"
+    }
+  ],
+  "debug.era-help": [
+    {
+      "type": 0,
+      "value": "Start the selected era fresh. Replaces simulation progress; other progress is kept."
+    }
+  ],
+  "debug.jump-era": [
+    {
+      "type": 0,
+      "value": "Jump to era"
+    }
+  ],
   "debug.lock-tabs": [
     {
       "type": 0,
@@ -1539,6 +1791,12 @@
     {
       "type": 0,
       "value": "Whole cap"
+    }
+  ],
+  "debug.simulation-era": [
+    {
+      "type": 0,
+      "value": "Simulation era"
     }
   ],
   "debug.speedrun-warning": [
@@ -5078,7 +5336,7 @@
   "farming.begin": [
     {
       "type": 0,
-      "value": "Begin Farming Villages"
+      "value": "Begin Farming era"
     }
   ],
   "farming.betaEndpoint": [
@@ -6479,6 +6737,32 @@
       "value": "Simulations"
     }
   ],
+  "navigation.simulations-goals-progress": [
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": ", "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " Bots goals completed"
+    }
+  ],
   "navigation.simulations-influence-progress": [
     {
       "type": 1,
@@ -7151,6 +7435,40 @@
       "value": "Confirm restart"
     }
   ],
+  "pilotChallenges.convergenceEarned": [
+    {
+      "type": 0,
+      "value": "Convergence unlocked"
+    }
+  ],
+  "pilotChallenges.convergenceLocked": [
+    {
+      "type": 0,
+      "value": "Complete all 10 challenges to unlock."
+    }
+  ],
+  "pilotChallenges.convergenceProgress": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 10 challenges completed"
+    }
+  ],
+  "pilotChallenges.convergenceRule": [
+    {
+      "type": 0,
+      "value": "Your Galactic Brains grow continuously, doubling every 30 minutes of game time. Requires at least one Galactic Brain."
+    }
+  ],
+  "pilotChallenges.convergenceTitle": [
+    {
+      "type": 0,
+      "value": "Convergence"
+    }
+  ],
   "pilotChallenges.earned": [
     {
       "type": 0,
@@ -7243,6 +7561,50 @@
     {
       "type": 0,
       "value": "Earn 32 IP without Science, Research or Discovery."
+    }
+  ],
+  "pilotChallenges.openingComplete": [
+    {
+      "type": 0,
+      "value": "Completed"
+    }
+  ],
+  "pilotChallenges.openingEarned": [
+    {
+      "type": 0,
+      "value": "Simulations unlocked"
+    }
+  ],
+  "pilotChallenges.openingProgress": [
+    {
+      "type": 0,
+      "value": "Active · "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 10 goals"
+    }
+  ],
+  "pilotChallenges.openingReward": [
+    {
+      "type": 0,
+      "value": "Reward: unlock Simulations"
+    }
+  ],
+  "pilotChallenges.openingRule": [
+    {
+      "type": 0,
+      "value": "Complete all 10 goals in the Bots tab."
+    }
+  ],
+  "pilotChallenges.openingTitle": [
+    {
+      "type": 0,
+      "value": "Beginnings"
     }
   ],
   "pilotChallenges.other": [
@@ -7349,6 +7711,12 @@
     {
       "type": 0,
       "value": "Earn 64 IP with panel lifetime fixed at 2 seconds."
+    }
+  ],
+  "pilotChallenges.simulationsLocked": [
+    {
+      "type": 0,
+      "value": "Complete Beginnings by finishing all 10 goals in the Bots tab to unlock Simulations."
     }
   ],
   "pilotChallenges.start": [

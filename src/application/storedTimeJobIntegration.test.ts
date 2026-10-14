@@ -1,3 +1,4 @@
+import { growForager } from '../../test/support/foragerPopulation'
 import { advanceCivilization } from '../simulation/civilization'
 import { startFarming, buyFarmingGranary, farmingCanBuyGranary } from '../simulation/farming'
 import { OVERFLOW_BOT_CAP } from '../simulation/overflowBoundary'
@@ -52,9 +53,10 @@ describe('Stored Time job application integration', () => {
     await application.start();await installStoredBank(application,bank)
     const initial=application.snapshot();if(initial.phase!=='ready')throw Error('Application not ready')
     const candidate=structuredClone(initial.state) as CanonicalRuntimeState
-    let village=startFarming(advanceCivilization({...candidate.gameState,
+    let village=startFarming(growForager({...candidate.gameState,
+      dyson:{...candidate.gameState.dyson,goalStage:10n},
       meta:{...candidate.gameState.meta,reworkMigrationChoice:'keep'},
-      timeline:{...candidate.gameState.timeline,doubleTime:{...candidate.gameState.timeline.doubleTime,unlocked:doubleTime}}},7200))!
+      timeline:{...candidate.gameState.timeline,doubleTime:{...candidate.gameState.timeline.doubleTime,unlocked:doubleTime}}}))!
     while(village.civilization!.farming!.phase==='settling-forager')village=advanceCivilization(village,1)
     village={...village,civilization:{...village.civilization!,farming:{...village.civilization!.farming!,
       elapsedSeconds:elapsed,tickRemainder:0,continuous:undefined,homes:[0],homesBuilt:1,granaries:1,
@@ -82,8 +84,8 @@ describe('Stored Time job application integration', () => {
     await application.start();await installStoredBank(application,2000)
     const initial=application.snapshot();if(initial.phase!=='ready')throw Error('Application not ready')
     const candidate=structuredClone(initial.state) as CanonicalRuntimeState
-    const opted={...candidate.gameState,meta:{...candidate.gameState.meta,reworkMigrationChoice:'keep' as const},timeline:{...candidate.gameState.timeline,doubleTime:{...candidate.gameState.timeline.doubleTime,unlocked:doubleTime}}}
-    const village=startFarming(advanceCivilization(opted,7200))!
+    const opted={...candidate.gameState,dyson:{...candidate.gameState.dyson,goalStage:10n},meta:{...candidate.gameState.meta,reworkMigrationChoice:'keep' as const},timeline:{...candidate.gameState.timeline,doubleTime:{...candidate.gameState.timeline.doubleTime,unlocked:doubleTime}}}
+    const village=startFarming(growForager(opted))!
     Object.assign(candidate,{gameState:village})
     await expect(application.commitAwayReplacement({sessionRevision:initial.revision.session,expectedStateRevision:initial.revision.state},candidate)).resolves.toMatchObject({committed:true})
     const spend=async()=>{const snap=application.snapshot();if(snap.phase!=='ready')throw Error('Application not ready');return application.commitStoredTime({sessionRevision:snap.revision.session,expectedStateRevision:snap.revision.state},1000)}

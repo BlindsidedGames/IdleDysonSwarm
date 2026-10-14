@@ -1,6 +1,6 @@
 import { activeReworkChallenge } from '../simulation/reworkChallenges'
 import { startFarming, buyFarmingGranary, setFarmingFocus, completeFarmingAge } from '../simulation/farming'
-import { setCivilizationFocus, equipCivilizationWorkers } from '../simulation/civilization'
+import { buyCivilizationChieftain, setCivilizationChieftain, buyCivilizationHunting, buyCivilizationHousing, setCivilizationFocus, equipCivilizationWorkers } from '../simulation/civilization'
 import { chooseGameplayReworkMigration, hasRetiredGameplayProgress, type ReworkMigrationChoice } from '../simulation/gameplayRework'
 import { purchaseDiscovery, type DiscoveryPurchase } from '../simulation/discovery'
 import { isOfflineBoostMultiplier, offlineBoost, withOfflineBoost } from '../simulation/offlineBoost'
@@ -118,6 +118,10 @@ export type CanonicalGameCommand =
   | { readonly kind: 'civilization.build-granary' }
   | { readonly kind: 'civilization.complete-farming' }
   | { readonly kind: 'civilization.farming-focus'; readonly focus: string }
+  | { readonly kind: 'civilization.unlock-hunting' }
+  | { readonly kind: 'civilization.buy-chieftain' }
+  | { readonly kind: 'civilization.set-chieftain'; readonly enabled: boolean }
+  | { readonly kind: 'civilization.buy-housing'; readonly building: 'tent' | 'camp' }
   | { readonly kind: 'civilization.set-focus'; readonly focus: string }
   | { readonly kind: 'civilization.equip-worker'; readonly count?: bigint }
   | { readonly kind: 'rework.choose-migration'; readonly choice: ReworkMigrationChoice }
@@ -557,6 +561,10 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
   'civilization.build-granary': { supported: true, authority: 'buyFarmingGranary', requires: ['runtime-evaluation-port'] },
   'civilization.complete-farming': { supported: true, authority: 'completeFarmingAge', requires: ['runtime-evaluation-port'] },
   'civilization.farming-focus': { supported: true, authority: 'setFarmingFocus', requires: ['runtime-evaluation-port'] },
+  'civilization.buy-chieftain': { supported: true, authority: 'buyCivilizationChieftain', requires: ['runtime-evaluation-port'] },
+  'civilization.set-chieftain': { supported: true, authority: 'setCivilizationChieftain', requires: ['runtime-evaluation-port'] },
+  'civilization.unlock-hunting': { supported: true, authority: 'buyCivilizationHunting', requires: ['runtime-evaluation-port'] },
+  'civilization.buy-housing': { supported: true, authority: 'buyCivilizationHousing', requires: ['runtime-evaluation-port'] },
   'civilization.set-focus': { supported: true, authority: 'setCivilizationFocus', requires: ['runtime-evaluation-port'] },
   'civilization.equip-worker': { supported: true, authority: 'equipCivilizationWorkers', requires: ['runtime-evaluation-port'] },
   'rework.choose-migration': { supported: true, authority: 'chooseGameplayReworkMigration', requires: ['runtime-evaluation-port'] },
@@ -908,9 +916,13 @@ export function routeCanonicalGameCommand(
     case 'civilization.build-granary':
     case 'civilization.complete-farming':
     case 'civilization.farming-focus':
+    case 'civilization.buy-chieftain':
+    case 'civilization.set-chieftain':
+    case 'civilization.unlock-hunting':
+    case 'civilization.buy-housing':
     case 'civilization.set-focus':
     case 'civilization.equip-worker': {
-      const next = command.kind === 'civilization.enter-farming' ? startFarming(state) : command.kind === 'civilization.build-granary' ? buyFarmingGranary(state) : command.kind === 'civilization.complete-farming' ? completeFarmingAge(state) : command.kind === 'civilization.farming-focus' ? setFarmingFocus(state, command.focus) : command.kind === 'civilization.set-focus' ? setCivilizationFocus(state, command.focus) : equipCivilizationWorkers(state, command.count)
+      const next = command.kind === 'civilization.buy-chieftain' ? buyCivilizationChieftain(state) : command.kind === 'civilization.set-chieftain' ? setCivilizationChieftain(state,command.enabled) : command.kind === 'civilization.unlock-hunting' ? buyCivilizationHunting(state) : command.kind === 'civilization.buy-housing' ? (['tent','camp'].includes(command.building) ? buyCivilizationHousing(state,command.building) : null) : command.kind === 'civilization.enter-farming' ? startFarming(state) : command.kind === 'civilization.build-granary' ? buyFarmingGranary(state) : command.kind === 'civilization.complete-farming' ? completeFarmingAge(state) : command.kind === 'civilization.farming-focus' ? setFarmingFocus(state, command.focus) : command.kind === 'civilization.set-focus' ? setCivilizationFocus(state, command.focus) : equipCivilizationWorkers(state, command.count)
       if (!next) return rejectDomain(state, carriers, 'civilization:action-unavailable', command.kind, 'Civilization action unavailable.')
       return finalizeAccepted(state, next, true, 'civilization:updated', carriers, options.runtimeEvaluation)
     }
@@ -2221,7 +2233,7 @@ export function routeCanonicalGameCommand(
 
     case 'time.set-offline-boost-multiplier': {
       if (!isOfflineBoostMultiplier(command.multiplier)) {
-        return rejectDomain(state, carriers, 'OFFLINE-BOOST-INVALID-MULTIPLIER', command.kind, 'Choose a whole-number multiplier from 1 to 42.')
+        return rejectDomain(state, carriers, 'OFFLINE-BOOST-INVALID-MULTIPLIER', command.kind, 'Choose a whole-number multiplier from 1 to 8.')
       }
       if (command.multiplier > 1 && (
         carriers.storedTimeCheater !== false || state.timeline.storedTimeAvailableSeconds <= 0

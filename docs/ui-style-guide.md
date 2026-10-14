@@ -41,6 +41,13 @@ natural aspect ratio and −.08em baseline. Inspect actual optical bounds. Disti
 stock, input cost and output/reward; explain direction and state without colour
 alone. Runtime tokens/assets govern; older palette/variable-font prose is stale.
 
+Challenge Start/Replay actions use the shared `Button variant="purchase"` purple
+palette, matching Simulations: pale lavender when enabled, dark purple when
+disabled, with the shared hover/pressed lighting. Pink action fills are not the
+approved purple theme. Keep destructive restart/abandon confirmation semantics.
+Challenges is a flat list; no redundant Infinity Challenges category header or
+large introductory/attempt-rules explainer (Matthew, 14 October 2026).
+
 ## Mobile, scale and acceptance
 
 Desktop Interface size changes the root (.8–1.5); text multiplier, browser zoom
@@ -75,3 +82,7 @@ provides a review process, not automatic enforcement.
 [Transcendence](ui-style-reference.md#transcendence-separate-specialist-standard) ·
 [Visual checklist](ui-style-reference.md#acceptance-and-exceptions).
 Only for Simulations: [current specification](plans/simulations-current-specification-2026-10-08.md).
+
+Selected Research drawer icon exception (Matthew, 14 October 2026): its fine
+magnifying-glass strokes use the darker page foreground matching selected text,
+rather than the panel foreground used by the other selected drawer icons.

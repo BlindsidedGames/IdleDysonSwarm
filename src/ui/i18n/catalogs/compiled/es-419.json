@@ -659,10 +659,28 @@
       "value": "value"
     }
   ],
+  "civilization.autoPriority": [
+    {
+      "type": 0,
+      "value": "Prioridad automática"
+    }
+  ],
   "civilization.automaticAward": [
     {
       "type": 0,
       "value": "Se otorga automáticamente al completar todos los requisitos."
+    }
+  ],
+  "civilization.automaticPriority": [
+    {
+      "type": 0,
+      "value": "Los trabajadores de suministros reparten su tiempo: dos tercios para el trabajo prioritario y un tercio para el otro. Las cifras de trabajadores muestran esas proporciones. Se mantienen las reservas de Herramientas."
+    }
+  ],
+  "civilization.autumn": [
+    {
+      "type": 0,
+      "value": "Otoño"
     }
   ],
   "civilization.available": [
@@ -703,6 +721,30 @@
       "value": "Tres fundadores comienzan con un kit de refugio. La recolección necesita un equipo real y ningún insumo."
     }
   ],
+  "civilization.buildCamp": [
+    {
+      "type": 0,
+      "value": "Construir campamento"
+    }
+  ],
+  "civilization.buildTent": [
+    {
+      "type": 0,
+      "value": "Construir tienda"
+    }
+  ],
+  "civilization.camp": [
+    {
+      "type": 0,
+      "value": "Campamento"
+    }
+  ],
+  "civilization.campBenefit": [
+    {
+      "type": 0,
+      "value": "Convierte 3 tiendas en un campamento. Conserva sus habitantes y añade 3 más."
+    }
+  ],
   "civilization.campExpansion": [
     {
       "type": 0,
@@ -713,6 +755,12 @@
     {
       "type": 0,
       "value": "Abastecimiento del campamento"
+    }
+  ],
+  "civilization.campUnlock": [
+    {
+      "type": 0,
+      "value": "Completa un ciclo de curtido y luego convierte 3 tiendas."
     }
   ],
   "civilization.camps": [
@@ -733,10 +781,62 @@
       "value": "Catalizadores"
     }
   ],
+  "civilization.chieftain": [
+    {
+      "type": 0,
+      "value": "Liderazgo"
+    }
+  ],
+  "civilization.chieftainAuto": [
+    {
+      "type": 0,
+      "value": "Automatización del liderazgo"
+    }
+  ],
+  "civilization.chieftainHelp": [
+    {
+      "type": 0,
+      "value": "Elige automáticamente una prioridad para Suministros y Artesanía según las necesidades de crecimiento y la estación. Desactívalo para elegir manualmente."
+    }
+  ],
+  "civilization.chieftainOff": [
+    {
+      "type": 0,
+      "value": "Desactivada"
+    }
+  ],
+  "civilization.chieftainOn": [
+    {
+      "type": 0,
+      "value": "Activada"
+    }
+  ],
+  "civilization.chieftainRequirement": [
+    {
+      "type": 0,
+      "value": "Requiere 2 Campamentos. Cuesta 12 Herramientas y 6 piezas de Caza; conservas los Campamentos."
+    }
+  ],
+  "civilization.chieftainTarget": [
+    {
+      "type": 0,
+      "value": "Preparando: "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
   "civilization.clothing": [
     {
       "type": 0,
-      "value": "Ropa"
+      "value": "Cuero"
+    }
+  ],
+  "civilization.coldSeason": [
+    {
+      "type": 0,
+      "value": "Caza: producción completa de alimentos. Recolección: 25 % de alimentos y el doble de materiales. La cantidad de presas no cambia."
     }
   ],
   "civilization.completed": [
@@ -771,6 +871,12 @@
     {
       "type": 0,
       "value": "Artesanía"
+    }
+  ],
+  "civilization.craftPriority": [
+    {
+      "type": 0,
+      "value": "Prioridad de artesanía"
     }
   ],
   "civilization.craftSpecialization": [
@@ -899,6 +1005,12 @@
     {
       "type": 0,
       "value": "La acción falló. Inténtalo de nuevo."
+    }
+  ],
+  "civilization.fall": [
+    {
+      "type": 0,
+      "value": "Otoño"
     }
   ],
   "civilization.firstHunt": [
@@ -1038,13 +1150,19 @@
   "civilization.hides": [
     {
       "type": 0,
-      "value": "Pieles"
+      "value": "Presas"
     }
   ],
   "civilization.hideworking": [
     {
       "type": 0,
       "value": "Trabajo de pieles"
+    }
+  ],
+  "civilization.hireChieftain": [
+    {
+      "type": 0,
+      "value": "Desbloquear liderazgo"
     }
   ],
   "civilization.housing": [
@@ -1057,6 +1175,18 @@
     {
       "type": 0,
       "value": "Caza"
+    }
+  ],
+  "civilization.huntingPrerequisite": [
+    {
+      "type": 0,
+      "value": "Completa un ciclo de fabricación de herramientas para desbloquear."
+    }
+  ],
+  "civilization.huntingUnlock": [
+    {
+      "type": 0,
+      "value": "Desbloquea la caza por 1 herramienta. Las cacerías siguientes no cuestan herramientas."
     }
   ],
   "civilization.inputs": [
@@ -1161,10 +1291,50 @@
       "value": "Inicio de la era de los cazadores-recolectores completado"
     }
   ],
+  "civilization.population": [
+    {
+      "type": 0,
+      "value": "Población"
+    }
+  ],
+  "civilization.populationGoal": [
+    {
+      "type": 0,
+      "value": "Población "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "target"
+    }
+  ],
   "civilization.preview": [
     {
       "type": 0,
       "value": "La agricultura continúa en una fase posterior. Tus actividades siguen funcionando."
+    }
+  ],
+  "civilization.priority": [
+    {
+      "type": 0,
+      "value": "Prioridad de suministros"
+    }
+  ],
+  "civilization.priorityChoice": [
+    {
+      "type": 0,
+      "value": "Priorizar: "
+    },
+    {
+      "type": 1,
+      "value": "name"
     }
   ],
   "civilization.provisioning": [
@@ -1183,6 +1353,16 @@
     {
       "type": 0,
       "value": "Los trabajadores permanecen en el campamento. Cada uno necesita alojamiento."
+    }
+  ],
+  "civilization.seasonRemaining": [
+    {
+      "type": 0,
+      "value": "Próxima estación en "
+    },
+    {
+      "type": 1,
+      "value": "time"
     }
   ],
   "civilization.seasonalExpeditions": [
@@ -1215,10 +1395,46 @@
       "value": "Velocidad de progreso"
     }
   ],
+  "civilization.spring": [
+    {
+      "type": 0,
+      "value": "Primavera"
+    }
+  ],
+  "civilization.summer": [
+    {
+      "type": 0,
+      "value": "Verano"
+    }
+  ],
   "civilization.suppliesFocus": [
     {
       "type": 0,
       "value": "Suministros"
+    }
+  ],
+  "civilization.tent": [
+    {
+      "type": 0,
+      "value": "Tienda"
+    }
+  ],
+  "civilization.tentBenefit": [
+    {
+      "type": 0,
+      "value": "Añade 2 habitantes. Construcción inmediata."
+    }
+  ],
+  "civilization.tentUnlock": [
+    {
+      "type": 0,
+      "value": "Completa un ciclo de curtido para desbloquear."
+    }
+  ],
+  "civilization.tents": [
+    {
+      "type": 0,
+      "value": "Tiendas"
     }
   ],
   "civilization.toolmaking": [
@@ -1255,6 +1471,12 @@
     {
       "type": 1,
       "value": "name"
+    }
+  ],
+  "civilization.unlockHunting": [
+    {
+      "type": 0,
+      "value": "Desbloquear caza"
     }
   ],
   "civilization.upcoming": [
@@ -1301,6 +1523,18 @@
     {
       "type": 0,
       "value": "Esperando trabajadores"
+    }
+  ],
+  "civilization.warmSeason": [
+    {
+      "type": 0,
+      "value": "Recolección: producción completa de alimentos. Caza: 25 % de alimentos. La cantidad de presas no cambia."
+    }
+  ],
+  "civilization.winter": [
+    {
+      "type": 0,
+      "value": "Invierno"
     }
   ],
   "civilization.workers": [
@@ -1463,6 +1697,24 @@
       "value": "Activar gratis"
     }
   ],
+  "debug.era": [
+    {
+      "type": 0,
+      "value": "Era"
+    }
+  ],
+  "debug.era-help": [
+    {
+      "type": 0,
+      "value": "Empieza la era elegida desde cero. Reemplaza el progreso de la simulación; conserva el resto."
+    }
+  ],
+  "debug.jump-era": [
+    {
+      "type": 0,
+      "value": "Ir a la era"
+    }
+  ],
   "debug.lock-tabs": [
     {
       "type": 0,
@@ -1539,6 +1791,12 @@
     {
       "type": 0,
       "value": "Tope entero"
+    }
+  ],
+  "debug.simulation-era": [
+    {
+      "type": 0,
+      "value": "Era de simulación"
     }
   ],
   "debug.speedrun-warning": [
@@ -5078,7 +5336,7 @@
   "farming.begin": [
     {
       "type": 0,
-      "value": "Iniciar una aldea agrícola"
+      "value": "Comenzar la era agrícola"
     }
   ],
   "farming.betaEndpoint": [
@@ -6479,6 +6737,32 @@
       "value": "Simulaciones"
     }
   ],
+  "navigation.simulations-goals-progress": [
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": ", "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " de "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " objetivos de Bots completados"
+    }
+  ],
   "navigation.simulations-influence-progress": [
     {
       "type": 1,
@@ -7151,6 +7435,40 @@
       "value": "Confirmar reinicio"
     }
   ],
+  "pilotChallenges.convergenceEarned": [
+    {
+      "type": 0,
+      "value": "Convergencia desbloqueada"
+    }
+  ],
+  "pilotChallenges.convergenceLocked": [
+    {
+      "type": 0,
+      "value": "Completa los 10 desafíos para desbloquear."
+    }
+  ],
+  "pilotChallenges.convergenceProgress": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 10 desafíos completados"
+    }
+  ],
+  "pilotChallenges.convergenceRule": [
+    {
+      "type": 0,
+      "value": "Tus cerebros galácticos crecen continuamente y se duplican cada 30 minutos de juego. Requiere al menos un cerebro galáctico."
+    }
+  ],
+  "pilotChallenges.convergenceTitle": [
+    {
+      "type": 0,
+      "value": "Convergencia"
+    }
+  ],
   "pilotChallenges.earned": [
     {
       "type": 0,
@@ -7243,6 +7561,50 @@
     {
       "type": 0,
       "value": "Obtén 32 IP sin Ciencia, Investigación ni Descubrimiento."
+    }
+  ],
+  "pilotChallenges.openingComplete": [
+    {
+      "type": 0,
+      "value": "Completado"
+    }
+  ],
+  "pilotChallenges.openingEarned": [
+    {
+      "type": 0,
+      "value": "Simulaciones desbloqueadas"
+    }
+  ],
+  "pilotChallenges.openingProgress": [
+    {
+      "type": 0,
+      "value": "Activo · "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 10 objetivos"
+    }
+  ],
+  "pilotChallenges.openingReward": [
+    {
+      "type": 0,
+      "value": "Recompensa: desbloquear Simulaciones"
+    }
+  ],
+  "pilotChallenges.openingRule": [
+    {
+      "type": 0,
+      "value": "Completa los 10 objetivos de la pestaña Bots."
+    }
+  ],
+  "pilotChallenges.openingTitle": [
+    {
+      "type": 0,
+      "value": "Comienzos"
     }
   ],
   "pilotChallenges.other": [
@@ -7349,6 +7711,12 @@
     {
       "type": 0,
       "value": "Obtén 64 IP con la duración de los paneles fijada en 2 segundos."
+    }
+  ],
+  "pilotChallenges.simulationsLocked": [
+    {
+      "type": 0,
+      "value": "Completa Comienzos logrando los 10 objetivos de la pestaña Bots para desbloquear Simulaciones."
     }
   ],
   "pilotChallenges.start": [

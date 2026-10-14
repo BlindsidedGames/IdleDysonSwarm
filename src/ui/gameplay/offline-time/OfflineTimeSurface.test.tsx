@@ -20,7 +20,7 @@ async function harness(bank: number, capacity = 86400) {
   const hydrated = hydrateGameState(prepareIdb1Save(fixtureText).prepared)
   const candidate = structuredClone(hydrated.state)
   Object.assign(candidate.meta, { reworkMigrationChoice: 'keep' })
-  Object.assign(candidate, { timeline: { ...candidate.timeline, lastSuspendedAtLegacyText: null, storedTimeAvailableSeconds: bank, storedTimeCapacitySeconds: capacity, offlineBoost: { multiplier: 42 }, doubleTime: { ...candidate.timeline.doubleTime, unlocked: false } }, infinity: { ...candidate.infinity, automaticResetEnabled: false } })
+  Object.assign(candidate, { timeline: { ...candidate.timeline, lastSuspendedAtLegacyText: null, storedTimeAvailableSeconds: bank, storedTimeCapacitySeconds: capacity, offlineBoost: { multiplier: 8 }, doubleTime: { ...candidate.timeline.doubleTime, unlocked: false } }, infinity: { ...candidate.infinity, automaticResetEnabled: false } })
   const prepared = dehydrateGameState(hydrated, candidate)
   const source = prepared.copyValidatedState(); source.cheater = false; source.idsLastActiveAtUtc = new Date(Date.UTC(2026, 9, 4)).toISOString()
   const save = prepared.withValidatedState(source)
@@ -81,12 +81,12 @@ test('one live slider starts, changes and stops spending with no Start/Pause or 
 })
 
 test('bank exhaustion visibly returns the slider to 1× and leaves the capacity action visible', async () => {
-  const h = await harness(0.5)
-  await choose(42)
+  const h = await harness(0.1)
+  await choose(8)
   await h.advance()
   expect(h.time().storedTimeAvailableSeconds).toBe(0)
   expect(h.time().offlineBoost).toEqual({ multiplier: 1 })
-  expect(slider().value).toBe('1')
+  await waitFor(() => expect(slider().value).toBe('1'))
   expect(output()).toBe('Regular 1×')
   expect(slider().disabled).toBe(true)
   expect(capacityButton().disabled).toBe(true)
@@ -104,7 +104,7 @@ test('partial storage shows the requirement, full-bank cost and prospective doub
 test('a full bank upgrades only at regular speed and spends all stored time', async () => {
   const h = await harness(86400)
   expect(capacityButton().disabled).toBe(false)
-  await choose(42)
+  await choose(8)
   expect(capacityButton().disabled).toBe(true)
   await choose(1)
   await waitFor(() => expect(capacityButton().disabled).toBe(false))
@@ -128,7 +128,7 @@ test('the absolute capacity ceiling displays a disabled Maxed action', async () 
 
 test('backgrounding resets the visible slider and resume banks away wall time without restarting it', async () => {
   const h = await harness(10)
-  await choose(42)
+  await choose(8)
   await h.advance()
   const bankBefore = h.time().storedTimeAvailableSeconds
   await h.changePhase('background')

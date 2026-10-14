@@ -659,10 +659,28 @@
       "value": "value"
     }
   ],
+  "civilization.autoPriority": [
+    {
+      "type": 0,
+      "value": "Auto-Priorität"
+    }
+  ],
   "civilization.automaticAward": [
     {
       "type": 0,
       "value": "Automatische Vergabe, sobald alle Anforderungen erfüllt sind."
+    }
+  ],
+  "civilization.automaticPriority": [
+    {
+      "type": 0,
+      "value": "Versorgungsarbeiter teilen ihre Zeit: zwei Drittel für die bevorzugte Aufgabe, ein Drittel für die andere. Die Arbeiterzahlen zeigen diese Anteile. Werkzeugreserven gelten weiterhin."
+    }
+  ],
+  "civilization.autumn": [
+    {
+      "type": 0,
+      "value": "Herbst"
     }
   ],
   "civilization.available": [
@@ -703,6 +721,30 @@
       "value": "Drei Gründer beginnen mit einem Unterkunftsbausatz. Sammeln benötigt eine echte Arbeitsgruppe und keine Zutaten."
     }
   ],
+  "civilization.buildCamp": [
+    {
+      "type": 0,
+      "value": "Lager bauen"
+    }
+  ],
+  "civilization.buildTent": [
+    {
+      "type": 0,
+      "value": "Zelt bauen"
+    }
+  ],
+  "civilization.camp": [
+    {
+      "type": 0,
+      "value": "Lager"
+    }
+  ],
+  "civilization.campBenefit": [
+    {
+      "type": 0,
+      "value": "Wandelt 3 Zelte in ein Lager um. Behält ihre Bewohner und fügt 3 hinzu."
+    }
+  ],
   "civilization.campExpansion": [
     {
       "type": 0,
@@ -713,6 +755,12 @@
     {
       "type": 0,
       "value": "Lagerversorgung"
+    }
+  ],
+  "civilization.campUnlock": [
+    {
+      "type": 0,
+      "value": "Schließe einen Zyklus der Fellverarbeitung ab und wandle dann 3 Zelte um."
     }
   ],
   "civilization.camps": [
@@ -733,10 +781,62 @@
       "value": "Katalysatoren"
     }
   ],
+  "civilization.chieftain": [
+    {
+      "type": 0,
+      "value": "Führung"
+    }
+  ],
+  "civilization.chieftainAuto": [
+    {
+      "type": 0,
+      "value": "Führungsautomatik"
+    }
+  ],
+  "civilization.chieftainHelp": [
+    {
+      "type": 0,
+      "value": "Wählt automatisch je eine Priorität für Versorgung und Handwerk nach Wachstumsbedarf und Jahreszeit. Zum manuellen Wählen ausschalten."
+    }
+  ],
+  "civilization.chieftainOff": [
+    {
+      "type": 0,
+      "value": "Aus"
+    }
+  ],
+  "civilization.chieftainOn": [
+    {
+      "type": 0,
+      "value": "An"
+    }
+  ],
+  "civilization.chieftainRequirement": [
+    {
+      "type": 0,
+      "value": "Benötigt 2 Lager. Kostet 12 Werkzeuge und 6 Wild; die Lager bleiben erhalten."
+    }
+  ],
+  "civilization.chieftainTarget": [
+    {
+      "type": 0,
+      "value": "Vorbereitung: "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
   "civilization.clothing": [
     {
       "type": 0,
-      "value": "Kleidung"
+      "value": "Leder"
+    }
+  ],
+  "civilization.coldSeason": [
+    {
+      "type": 0,
+      "value": "Jagd: voller Nahrungsertrag. Sammeln: 25 % Nahrungsertrag und doppelte Materialien. Der Wildertrag bleibt unverändert."
     }
   ],
   "civilization.completed": [
@@ -771,6 +871,12 @@
     {
       "type": 0,
       "value": "Handwerk"
+    }
+  ],
+  "civilization.craftPriority": [
+    {
+      "type": 0,
+      "value": "Handwerkspriorität"
     }
   ],
   "civilization.craftSpecialization": [
@@ -899,6 +1005,12 @@
     {
       "type": 0,
       "value": "Aktion fehlgeschlagen. Erneut versuchen."
+    }
+  ],
+  "civilization.fall": [
+    {
+      "type": 0,
+      "value": "Herbst"
     }
   ],
   "civilization.firstHunt": [
@@ -1038,13 +1150,19 @@
   "civilization.hides": [
     {
       "type": 0,
-      "value": "Felle"
+      "value": "Wild"
     }
   ],
   "civilization.hideworking": [
     {
       "type": 0,
       "value": "Fellverarbeitung"
+    }
+  ],
+  "civilization.hireChieftain": [
+    {
+      "type": 0,
+      "value": "Führung freischalten"
     }
   ],
   "civilization.housing": [
@@ -1057,6 +1175,18 @@
     {
       "type": 0,
       "value": "Jagen"
+    }
+  ],
+  "civilization.huntingPrerequisite": [
+    {
+      "type": 0,
+      "value": "Schließe einen Zyklus der Werkzeugherstellung ab."
+    }
+  ],
+  "civilization.huntingUnlock": [
+    {
+      "type": 0,
+      "value": "Schalte die Jagd für 1 Werkzeug frei. Weitere Jagden kosten keine Werkzeuge."
     }
   ],
   "civilization.inputs": [
@@ -1161,10 +1291,50 @@
       "value": "Auftakt der Jäger und Sammler abgeschlossen"
     }
   ],
+  "civilization.population": [
+    {
+      "type": 0,
+      "value": "Bevölkerung"
+    }
+  ],
+  "civilization.populationGoal": [
+    {
+      "type": 0,
+      "value": "Bevölkerung "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "target"
+    }
+  ],
   "civilization.preview": [
     {
       "type": 0,
       "value": "Landwirtschaft folgt in einer späteren Phase. Deine Aktivitäten laufen weiter."
+    }
+  ],
+  "civilization.priority": [
+    {
+      "type": 0,
+      "value": "Versorgungspriorität"
+    }
+  ],
+  "civilization.priorityChoice": [
+    {
+      "type": 0,
+      "value": "Bevorzugen: "
+    },
+    {
+      "type": 1,
+      "value": "name"
     }
   ],
   "civilization.provisioning": [
@@ -1183,6 +1353,16 @@
     {
       "type": 0,
       "value": "Arbeiter bleiben im Lager. Jeder benötigt einen Wohnplatz."
+    }
+  ],
+  "civilization.seasonRemaining": [
+    {
+      "type": 0,
+      "value": "Nächste Jahreszeit in "
+    },
+    {
+      "type": 1,
+      "value": "time"
     }
   ],
   "civilization.seasonalExpeditions": [
@@ -1215,10 +1395,46 @@
       "value": "Fortschrittstempo"
     }
   ],
+  "civilization.spring": [
+    {
+      "type": 0,
+      "value": "Frühling"
+    }
+  ],
+  "civilization.summer": [
+    {
+      "type": 0,
+      "value": "Sommer"
+    }
+  ],
   "civilization.suppliesFocus": [
     {
       "type": 0,
       "value": "Vorräte"
+    }
+  ],
+  "civilization.tent": [
+    {
+      "type": 0,
+      "value": "Zelt"
+    }
+  ],
+  "civilization.tentBenefit": [
+    {
+      "type": 0,
+      "value": "Fügt 2 Bewohner hinzu. Sofortiger Bau."
+    }
+  ],
+  "civilization.tentUnlock": [
+    {
+      "type": 0,
+      "value": "Schließe einen Zyklus der Fellverarbeitung ab."
+    }
+  ],
+  "civilization.tents": [
+    {
+      "type": 0,
+      "value": "Zelte"
     }
   ],
   "civilization.toolmaking": [
@@ -1255,6 +1471,12 @@
     {
       "type": 1,
       "value": "name"
+    }
+  ],
+  "civilization.unlockHunting": [
+    {
+      "type": 0,
+      "value": "Jagd freischalten"
     }
   ],
   "civilization.upcoming": [
@@ -1301,6 +1523,18 @@
     {
       "type": 0,
       "value": "Warten auf Arbeiter"
+    }
+  ],
+  "civilization.warmSeason": [
+    {
+      "type": 0,
+      "value": "Sammeln: voller Nahrungsertrag. Jagd: 25 % Nahrungsertrag. Der Wildertrag bleibt unverändert."
+    }
+  ],
+  "civilization.winter": [
+    {
+      "type": 0,
+      "value": "Winter"
     }
   ],
   "civilization.workers": [
@@ -1463,6 +1697,24 @@
       "value": "Kostenlos aktivieren"
     }
   ],
+  "debug.era": [
+    {
+      "type": 0,
+      "value": "Zeitalter"
+    }
+  ],
+  "debug.era-help": [
+    {
+      "type": 0,
+      "value": "Startet das gewählte Zeitalter neu. Ersetzt den Simulationsfortschritt; anderer Fortschritt bleibt erhalten."
+    }
+  ],
+  "debug.jump-era": [
+    {
+      "type": 0,
+      "value": "Zum Zeitalter springen"
+    }
+  ],
   "debug.lock-tabs": [
     {
       "type": 0,
@@ -1539,6 +1791,12 @@
     {
       "type": 0,
       "value": "Ganzzahl-Grenze"
+    }
+  ],
+  "debug.simulation-era": [
+    {
+      "type": 0,
+      "value": "Simulationszeitalter"
     }
   ],
   "debug.speedrun-warning": [
@@ -5078,7 +5336,7 @@
   "farming.begin": [
     {
       "type": 0,
-      "value": "Bauerndorf beginnen"
+      "value": "Landwirtschaftszeitalter beginnen"
     }
   ],
   "farming.betaEndpoint": [
@@ -6479,6 +6737,32 @@
       "value": "Simulationen"
     }
   ],
+  "navigation.simulations-goals-progress": [
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": ", "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " von "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " Bots-Zielen abgeschlossen"
+    }
+  ],
   "navigation.simulations-influence-progress": [
     {
       "type": 1,
@@ -7151,6 +7435,40 @@
       "value": "Neustart bestätigen"
     }
   ],
+  "pilotChallenges.convergenceEarned": [
+    {
+      "type": 0,
+      "value": "Konvergenz freigeschaltet"
+    }
+  ],
+  "pilotChallenges.convergenceLocked": [
+    {
+      "type": 0,
+      "value": "Schließe alle 10 Herausforderungen zum Freischalten ab."
+    }
+  ],
+  "pilotChallenges.convergenceProgress": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 10 Herausforderungen abgeschlossen"
+    }
+  ],
+  "pilotChallenges.convergenceRule": [
+    {
+      "type": 0,
+      "value": "Deine galaktischen Gehirne wachsen kontinuierlich und verdoppeln sich alle 30 Minuten Spielzeit. Benötigt mindestens ein galaktisches Gehirn."
+    }
+  ],
+  "pilotChallenges.convergenceTitle": [
+    {
+      "type": 0,
+      "value": "Konvergenz"
+    }
+  ],
   "pilotChallenges.earned": [
     {
       "type": 0,
@@ -7243,6 +7561,50 @@
     {
       "type": 0,
       "value": "Verdiene 32 IP ohne Wissenschaft, Forschung oder Entdeckung."
+    }
+  ],
+  "pilotChallenges.openingComplete": [
+    {
+      "type": 0,
+      "value": "Abgeschlossen"
+    }
+  ],
+  "pilotChallenges.openingEarned": [
+    {
+      "type": 0,
+      "value": "Simulationen freigeschaltet"
+    }
+  ],
+  "pilotChallenges.openingProgress": [
+    {
+      "type": 0,
+      "value": "Aktiv · "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 10 Ziele"
+    }
+  ],
+  "pilotChallenges.openingReward": [
+    {
+      "type": 0,
+      "value": "Belohnung: Simulationen freischalten"
+    }
+  ],
+  "pilotChallenges.openingRule": [
+    {
+      "type": 0,
+      "value": "Schließe alle 10 Ziele im Bots-Tab ab."
+    }
+  ],
+  "pilotChallenges.openingTitle": [
+    {
+      "type": 0,
+      "value": "Anfänge"
     }
   ],
   "pilotChallenges.other": [
@@ -7349,6 +7711,12 @@
     {
       "type": 0,
       "value": "Verdiene 64 IP mit einer festen Paneellebensdauer von 2 Sekunden."
+    }
+  ],
+  "pilotChallenges.simulationsLocked": [
+    {
+      "type": 0,
+      "value": "Schließe Anfänge mit allen 10 Zielen im Bots-Tab ab, um Simulationen freizuschalten."
     }
   ],
   "pilotChallenges.start": [

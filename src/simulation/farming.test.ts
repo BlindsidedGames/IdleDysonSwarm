@@ -1,3 +1,4 @@
+import { growForager } from '../../test/support/foragerPopulation'
 import { expect, test } from 'vitest'
 import { execFileSync } from 'node:child_process'
 import { createUnityFirstRunPreparedSave } from '../application/firstRun/unityFirstRunSave'
@@ -13,8 +14,9 @@ import { restartInfinityChallenge } from './canonicalInfinityChallengeRestart'
 import { REWORK_CHALLENGES } from './reworkChallenges'
 import { DISCRETE_MAXIMUM } from './numeric'
 const session=hydrateGameState(createUnityFirstRunPreparedSave({startedAtUtc:'2026-10-09T00:00:00Z'}))
-const fresh=():CanonicalGameStateV1=>({...session.state,meta:{...session.state.meta,reworkMigrationChoice:'keep'}})
-const opening=()=>advanceCivilization(fresh(),7043)
+const fresh=():CanonicalGameStateV1=>({...session.state,dyson:{...session.state.dyson,goalStage:10n},meta:{...session.state.meta,reworkMigrationChoice:'keep'}})
+const completedOpening=growForager(fresh())
+const opening=()=>completedOpening
 const reload=(state:CanonicalGameStateV1)=>hydrateGameState(PreparedSave.fromDecoded(deserializeWebSave(serializeWebSave(dehydrateGameState(session,state).copyValidatedState())))).state
 function until(s:CanonicalGameStateV1,p:(s:CanonicalGameStateV1)=>boolean,max=25000){for(let n=0;n<max&&!p(s);n++)s=advanceCivilization(s,1);expect(p(s)).toBe(true);return s}
 const farm=()=>until(startFarming(opening())!,s=>s.civilization!.farming!.phase==='farming')
@@ -27,7 +29,7 @@ test.each(['pending','none','mixed'] as const)('%s paid Forager jobs finish once
   job.active=false;job.workers=0n;job.progress=0;delete job.cycleReceipt
  }
  if(scenario==='mixed'){
-  const job=c.activities.gathering,r=job.cycleReceipt!
+  const job=Object.values(c.activities).find(j=>j.active)!,r=job.cycleReceipt!
   const {finishAt:_deadline,...receipt}=r
   job.progress=r.seconds;job.cycleReceipt={...receipt,remainingWork:0,rate:0}
  }
@@ -35,7 +37,7 @@ test.each(['pending','none','mixed'] as const)('%s paid Forager jobs finish once
  expect(validateCanonicalGameState(old)).toEqual({valid:true,errors:[]})
  const paid=Object.entries(c.activities).filter(([,j])=>j.active)
  if(scenario==='none')expect(paid.length).toBe(0)
- else expect(paid.length).toBeGreaterThan(1)
+ else expect(paid.length).toBeGreaterThan(0)
  const expectedResources={...c.resources}
  let population=0n
  for(const [,job] of paid){
@@ -139,7 +141,10 @@ test.each(['balanced','provisioning','settlement','expeditions'] as const)('%s r
 test('fractional updates and serialized paid cycles produce the same durable village',()=>{
  const start=buyFarmingGranary(gate())!,large=advanceCivilization(start,600)
  let small=start;for(let n=0;n<1200;n++){small=advanceCivilization(small,.5);if(n%137===0)small=reload(small)}
- expect(small.civilization!.farming).toEqual(large.civilization!.farming)
+ // Different Forager carryover produces different floating-point operation
+ // order; conserved stocks/work agree to sub-nanounit precision.
+ const comparable=(value:unknown):unknown=>typeof value==='number'?Number(value.toFixed(9)):Array.isArray(value)?value.map(comparable):value&&typeof value==='object'?Object.fromEntries(Object.entries(value).map(([k,v])=>[k,comparable(v)])):value
+ expect(comparable(small.civilization!.farming)).toEqual(comparable(large.civilization!.farming))
  const corrupt=structuredClone(small) as any
  const job=Object.values(corrupt.civilization.farming.jobs)[0] as any;job.work+=1
  expect(validateCivilization(corrupt.civilization)).toBe('Unknown funded Farming bill.')

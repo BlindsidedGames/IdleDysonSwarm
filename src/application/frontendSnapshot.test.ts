@@ -146,3 +146,14 @@ test.each([[1n, 50], [3n, 250]] as const)('Built by Hand goal %s projects its Ti
   const dyson = snapshot.derived.dyson
   expect(dyson.status === 'ready' && dyson.value.presentation.currentGoal).toEqual({ kind: 'tinkers', target })
 })
+
+// Reveal and admission are separate: a visible preview must not grant access.
+test.each([[0n, false, false, 0], [1n, true, false, .1], [4n, true, false, .4], [9n, true, false, .9], [10n, true, true, 1]] as const)(
+  'Simulations navigation at %s completed Bots goals', (goalStage, visible, unlocked, fraction) => {
+    const state = { ...runtime.gameState, dyson: { ...runtime.gameState.dyson, goalStage } }
+    const actual = selectGameplayVisibility(state).simulations
+    expect(actual.routeVisible).toBe(visible)
+    expect(actual.routeUnlocked).toBe(unlocked)
+    expect(actual.unlockProgress.fraction).toBe(fraction)
+  },
+)

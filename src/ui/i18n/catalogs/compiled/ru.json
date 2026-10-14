@@ -659,10 +659,28 @@
       "value": "value"
     }
   ],
+  "civilization.autoPriority": [
+    {
+      "type": 0,
+      "value": "Автоприоритет"
+    }
+  ],
   "civilization.automaticAward": [
     {
       "type": 0,
       "value": "Выдаётся автоматически после выполнения всех требований."
+    }
+  ],
+  "civilization.automaticPriority": [
+    {
+      "type": 0,
+      "value": "Работники снабжения тратят две трети времени на приоритетную работу и треть на другую. Число работников показывает эти доли. Резервирование инструментов сохраняется."
+    }
+  ],
+  "civilization.autumn": [
+    {
+      "type": 0,
+      "value": "Осень"
     }
   ],
   "civilization.available": [
@@ -703,6 +721,30 @@
       "value": "Три основателя начинают с набора для постройки жилья. Сбор требует настоящую рабочую группу, но не расходует материалы."
     }
   ],
+  "civilization.buildCamp": [
+    {
+      "type": 0,
+      "value": "Построить лагерь"
+    }
+  ],
+  "civilization.buildTent": [
+    {
+      "type": 0,
+      "value": "Построить палатку"
+    }
+  ],
+  "civilization.camp": [
+    {
+      "type": 0,
+      "value": "Лагерь"
+    }
+  ],
+  "civilization.campBenefit": [
+    {
+      "type": 0,
+      "value": "Превращает 3 палатки в лагерь. Сохраняет их жителей и добавляет ещё 3."
+    }
+  ],
   "civilization.campExpansion": [
     {
       "type": 0,
@@ -713,6 +755,12 @@
     {
       "type": 0,
       "value": "Снабжение лагеря"
+    }
+  ],
+  "civilization.campUnlock": [
+    {
+      "type": 0,
+      "value": "Завершите один цикл обработки шкур, затем преобразуйте 3 палатки."
     }
   ],
   "civilization.camps": [
@@ -733,10 +781,62 @@
       "value": "Катализаторы"
     }
   ],
+  "civilization.chieftain": [
+    {
+      "type": 0,
+      "value": "Лидерство"
+    }
+  ],
+  "civilization.chieftainAuto": [
+    {
+      "type": 0,
+      "value": "Автоматизация лидерства"
+    }
+  ],
+  "civilization.chieftainHelp": [
+    {
+      "type": 0,
+      "value": "Автоматически выбирает приоритет для снабжения и ремесла с учётом потребностей роста и времени года. Отключите для ручного выбора."
+    }
+  ],
+  "civilization.chieftainOff": [
+    {
+      "type": 0,
+      "value": "Выкл."
+    }
+  ],
+  "civilization.chieftainOn": [
+    {
+      "type": 0,
+      "value": "Вкл."
+    }
+  ],
+  "civilization.chieftainRequirement": [
+    {
+      "type": 0,
+      "value": "Требуется 2 лагеря. Стоимость — 12 инструментов и 6 дичи; лагеря сохраняются."
+    }
+  ],
+  "civilization.chieftainTarget": [
+    {
+      "type": 0,
+      "value": "Подготовка: "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
   "civilization.clothing": [
     {
       "type": 0,
-      "value": "Одежда"
+      "value": "Кожа"
+    }
+  ],
+  "civilization.coldSeason": [
+    {
+      "type": 0,
+      "value": "Охота: полный выход пищи. Собирательство: 25% пищи и вдвое больше материалов. Количество дичи не меняется."
     }
   ],
   "civilization.completed": [
@@ -771,6 +871,12 @@
     {
       "type": 0,
       "value": "Ремесло"
+    }
+  ],
+  "civilization.craftPriority": [
+    {
+      "type": 0,
+      "value": "Приоритет ремесла"
     }
   ],
   "civilization.craftSpecialization": [
@@ -899,6 +1005,12 @@
     {
       "type": 0,
       "value": "Действие не удалось. Повторите попытку."
+    }
+  ],
+  "civilization.fall": [
+    {
+      "type": 0,
+      "value": "Осень"
     }
   ],
   "civilization.firstHunt": [
@@ -1038,13 +1150,19 @@
   "civilization.hides": [
     {
       "type": 0,
-      "value": "Шкуры"
+      "value": "Дичь"
     }
   ],
   "civilization.hideworking": [
     {
       "type": 0,
       "value": "Обработка шкур"
+    }
+  ],
+  "civilization.hireChieftain": [
+    {
+      "type": 0,
+      "value": "Открыть лидерство"
     }
   ],
   "civilization.housing": [
@@ -1057,6 +1175,18 @@
     {
       "type": 0,
       "value": "Охота"
+    }
+  ],
+  "civilization.huntingPrerequisite": [
+    {
+      "type": 0,
+      "value": "Завершите один цикл изготовления инструментов."
+    }
+  ],
+  "civilization.huntingUnlock": [
+    {
+      "type": 0,
+      "value": "Откройте охоту за 1 инструмент. Последующие охоты не расходуют инструменты."
     }
   ],
   "civilization.inputs": [
@@ -1161,10 +1291,50 @@
       "value": "Начало эры охотников и собирателей завершено"
     }
   ],
+  "civilization.population": [
+    {
+      "type": 0,
+      "value": "Население"
+    }
+  ],
+  "civilization.populationGoal": [
+    {
+      "type": 0,
+      "value": "Население "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "target"
+    }
+  ],
   "civilization.preview": [
     {
       "type": 0,
       "value": "Сельское хозяйство продолжится на следующем этапе. Ваши занятия продолжают работать."
+    }
+  ],
+  "civilization.priority": [
+    {
+      "type": 0,
+      "value": "Приоритет снабжения"
+    }
+  ],
+  "civilization.priorityChoice": [
+    {
+      "type": 0,
+      "value": "Приоритет: "
+    },
+    {
+      "type": 1,
+      "value": "name"
     }
   ],
   "civilization.provisioning": [
@@ -1183,6 +1353,16 @@
     {
       "type": 0,
       "value": "Рабочие остаются в лагере. Каждому нужно место в жилье."
+    }
+  ],
+  "civilization.seasonRemaining": [
+    {
+      "type": 0,
+      "value": "Следующий сезон через "
+    },
+    {
+      "type": 1,
+      "value": "time"
     }
   ],
   "civilization.seasonalExpeditions": [
@@ -1215,10 +1395,46 @@
       "value": "Скорость прогресса"
     }
   ],
+  "civilization.spring": [
+    {
+      "type": 0,
+      "value": "Весна"
+    }
+  ],
+  "civilization.summer": [
+    {
+      "type": 0,
+      "value": "Лето"
+    }
+  ],
   "civilization.suppliesFocus": [
     {
       "type": 0,
       "value": "Запасы"
+    }
+  ],
+  "civilization.tent": [
+    {
+      "type": 0,
+      "value": "Палатка"
+    }
+  ],
+  "civilization.tentBenefit": [
+    {
+      "type": 0,
+      "value": "Добавляет 2 жителей. Строится сразу."
+    }
+  ],
+  "civilization.tentUnlock": [
+    {
+      "type": 0,
+      "value": "Завершите один цикл обработки шкур, чтобы открыть."
+    }
+  ],
+  "civilization.tents": [
+    {
+      "type": 0,
+      "value": "Палатки"
     }
   ],
   "civilization.toolmaking": [
@@ -1255,6 +1471,12 @@
     {
       "type": 1,
       "value": "name"
+    }
+  ],
+  "civilization.unlockHunting": [
+    {
+      "type": 0,
+      "value": "Открыть охоту"
     }
   ],
   "civilization.upcoming": [
@@ -1301,6 +1523,18 @@
     {
       "type": 0,
       "value": "Ожидание работников"
+    }
+  ],
+  "civilization.warmSeason": [
+    {
+      "type": 0,
+      "value": "Собирательство: полный выход пищи. Охота: 25% пищи. Количество дичи не меняется."
+    }
+  ],
+  "civilization.winter": [
+    {
+      "type": 0,
+      "value": "Зима"
     }
   ],
   "civilization.workers": [
@@ -1463,6 +1697,24 @@
       "value": "Включить бесплатно"
     }
   ],
+  "debug.era": [
+    {
+      "type": 0,
+      "value": "Эпоха"
+    }
+  ],
+  "debug.era-help": [
+    {
+      "type": 0,
+      "value": "Начать выбранную эпоху заново. Прогресс симуляции заменяется, остальной сохраняется."
+    }
+  ],
+  "debug.jump-era": [
+    {
+      "type": 0,
+      "value": "Перейти к эпохе"
+    }
+  ],
   "debug.lock-tabs": [
     {
       "type": 0,
@@ -1539,6 +1791,12 @@
     {
       "type": 0,
       "value": "Целый предел"
+    }
+  ],
+  "debug.simulation-era": [
+    {
+      "type": 0,
+      "value": "Эпоха симуляции"
     }
   ],
   "debug.speedrun-warning": [
@@ -5078,7 +5336,7 @@
   "farming.begin": [
     {
       "type": 0,
-      "value": "Основать земледельческую деревню"
+      "value": "Начать земледельческую эпоху"
     }
   ],
   "farming.betaEndpoint": [
@@ -6479,6 +6737,32 @@
       "value": "Симуляции"
     }
   ],
+  "navigation.simulations-goals-progress": [
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": ", выполнено "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " из "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " целей ботов"
+    }
+  ],
   "navigation.simulations-influence-progress": [
     {
       "type": 1,
@@ -7151,6 +7435,40 @@
       "value": "Подтвердить перезапуск"
     }
   ],
+  "pilotChallenges.convergenceEarned": [
+    {
+      "type": 0,
+      "value": "Конвергенция открыта"
+    }
+  ],
+  "pilotChallenges.convergenceLocked": [
+    {
+      "type": 0,
+      "value": "Завершите все 10 испытаний, чтобы открыть."
+    }
+  ],
+  "pilotChallenges.convergenceProgress": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 10 испытаний завершено"
+    }
+  ],
+  "pilotChallenges.convergenceRule": [
+    {
+      "type": 0,
+      "value": "Количество галактических мозгов непрерывно растёт, удваиваясь каждые 30 минут игрового времени. Нужен хотя бы один галактический мозг."
+    }
+  ],
+  "pilotChallenges.convergenceTitle": [
+    {
+      "type": 0,
+      "value": "Конвергенция"
+    }
+  ],
   "pilotChallenges.earned": [
     {
       "type": 0,
@@ -7243,6 +7561,50 @@
     {
       "type": 0,
       "value": "Заработайте 32 IP без Науки, Исследований и Открытия."
+    }
+  ],
+  "pilotChallenges.openingComplete": [
+    {
+      "type": 0,
+      "value": "Завершено"
+    }
+  ],
+  "pilotChallenges.openingEarned": [
+    {
+      "type": 0,
+      "value": "Симуляции открыты"
+    }
+  ],
+  "pilotChallenges.openingProgress": [
+    {
+      "type": 0,
+      "value": "Активно · "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 10 целей"
+    }
+  ],
+  "pilotChallenges.openingReward": [
+    {
+      "type": 0,
+      "value": "Награда: открыть симуляции"
+    }
+  ],
+  "pilotChallenges.openingRule": [
+    {
+      "type": 0,
+      "value": "Выполните все 10 целей на вкладке ботов."
+    }
+  ],
+  "pilotChallenges.openingTitle": [
+    {
+      "type": 0,
+      "value": "Начало"
     }
   ],
   "pilotChallenges.other": [
@@ -7349,6 +7711,12 @@
     {
       "type": 0,
       "value": "Заработайте 64 IP со сроком службы панелей, равным 2 секундам."
+    }
+  ],
+  "pilotChallenges.simulationsLocked": [
+    {
+      "type": 0,
+      "value": "Завершите «Начало», выполнив все 10 целей на вкладке ботов, чтобы открыть симуляции."
     }
   ],
   "pilotChallenges.start": [

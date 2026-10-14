@@ -334,8 +334,17 @@
   "civilization.amount": {
     "defaultMessage": "{resource}: {value}"
   },
+  "civilization.autoPriority": {
+    "defaultMessage": "Auto-Priority"
+  },
   "civilization.automaticAward": {
     "defaultMessage": "Awarded automatically when every requirement is complete."
+  },
+  "civilization.automaticPriority": {
+    "defaultMessage": "Provisioning workers share their time: two-thirds on your preferred job, one-third on the other. Worker counts show these shares. Tool reserves still apply."
+  },
+  "civilization.autumn": {
+    "defaultMessage": "Autumn"
   },
   "civilization.available": {
     "defaultMessage": "Unassigned / total"
@@ -352,11 +361,26 @@
   "civilization.bootstrapV4": {
     "defaultMessage": "Three founders begin with one shelter kit. Gathering needs a real crew and no inputs."
   },
+  "civilization.buildCamp": {
+    "defaultMessage": "Build camp"
+  },
+  "civilization.buildTent": {
+    "defaultMessage": "Build tent"
+  },
+  "civilization.camp": {
+    "defaultMessage": "Camp"
+  },
+  "civilization.campBenefit": {
+    "defaultMessage": "Converts 3 tents into a camp. Keeps their residents and adds 3 more."
+  },
   "civilization.campExpansion": {
     "defaultMessage": "Camp Expansion"
   },
   "civilization.campProvisioning": {
     "defaultMessage": "Camp Provisioning"
+  },
+  "civilization.campUnlock": {
+    "defaultMessage": "Complete one Hideworking cycle, then convert 3 tents."
   },
   "civilization.camps": {
     "defaultMessage": "Camps"
@@ -367,8 +391,32 @@
   "civilization.catalysts": {
     "defaultMessage": "Catalysts"
   },
+  "civilization.chieftain": {
+    "defaultMessage": "Leadership"
+  },
+  "civilization.chieftainAuto": {
+    "defaultMessage": "Leadership automation"
+  },
+  "civilization.chieftainHelp": {
+    "defaultMessage": "Automatically chooses a priority for Provisioning and Craft based on growth needs and the season. Turn off to choose manually."
+  },
+  "civilization.chieftainOff": {
+    "defaultMessage": "Off"
+  },
+  "civilization.chieftainOn": {
+    "defaultMessage": "On"
+  },
+  "civilization.chieftainRequirement": {
+    "defaultMessage": "Requires 2 Camps. Costs 12 Tools and 6 Game; Camps are kept."
+  },
+  "civilization.chieftainTarget": {
+    "defaultMessage": "Preparing for {name}"
+  },
   "civilization.clothing": {
-    "defaultMessage": "Clothing"
+    "defaultMessage": "Leather"
+  },
+  "civilization.coldSeason": {
+    "defaultMessage": "Hunting: full food yield. Gathering: 25% food yield and double materials. Game yield is unchanged."
   },
   "civilization.completed": {
     "defaultMessage": "Completed cycles"
@@ -384,6 +432,9 @@
   },
   "civilization.craft": {
     "defaultMessage": "Craft"
+  },
+  "civilization.craftPriority": {
+    "defaultMessage": "Craft priority"
   },
   "civilization.craftSpecialization": {
     "defaultMessage": "Craft Specialization"
@@ -433,6 +484,9 @@
   "civilization.failed": {
     "defaultMessage": "Action failed. Try again."
   },
+  "civilization.fall": {
+    "defaultMessage": "Fall"
+  },
   "civilization.firstHunt": {
     "defaultMessage": "First hunt"
   },
@@ -479,16 +533,25 @@
     "defaultMessage": "Growth"
   },
   "civilization.hides": {
-    "defaultMessage": "Hides"
+    "defaultMessage": "Game"
   },
   "civilization.hideworking": {
     "defaultMessage": "Hideworking"
+  },
+  "civilization.hireChieftain": {
+    "defaultMessage": "Unlock Leadership"
   },
   "civilization.housing": {
     "defaultMessage": "Housing capacity"
   },
   "civilization.hunting": {
     "defaultMessage": "Hunting"
+  },
+  "civilization.huntingPrerequisite": {
+    "defaultMessage": "Complete one Toolmaking cycle to unlock."
+  },
+  "civilization.huntingUnlock": {
+    "defaultMessage": "Unlock Hunting for 1 Tool. Further hunts cost no Tools."
   },
   "civilization.inputs": {
     "defaultMessage": "Cycle cost"
@@ -529,8 +592,20 @@
   "civilization.phaseComplete": {
     "defaultMessage": "Forager opening complete"
   },
+  "civilization.population": {
+    "defaultMessage": "Population"
+  },
+  "civilization.populationGoal": {
+    "defaultMessage": "Population {current} / {target}"
+  },
   "civilization.preview": {
     "defaultMessage": "Agriculture continues in a later phase. Your activities keep running."
+  },
+  "civilization.priority": {
+    "defaultMessage": "Provisioning priority"
+  },
+  "civilization.priorityChoice": {
+    "defaultMessage": "Prioritize: {name}"
   },
   "civilization.provisioning": {
     "defaultMessage": "Provisioning"
@@ -540,6 +615,9 @@
   },
   "civilization.recruitment": {
     "defaultMessage": "Workers remain in the camp. Each needs a housing place."
+  },
+  "civilization.seasonRemaining": {
+    "defaultMessage": "Next season in {time}"
   },
   "civilization.seasonalExpeditions": {
     "defaultMessage": "Seasonal Expeditions"
@@ -556,8 +634,26 @@
   "civilization.speed": {
     "defaultMessage": "Progress speed"
   },
+  "civilization.spring": {
+    "defaultMessage": "Spring"
+  },
+  "civilization.summer": {
+    "defaultMessage": "Summer"
+  },
   "civilization.suppliesFocus": {
     "defaultMessage": "Supplies"
+  },
+  "civilization.tent": {
+    "defaultMessage": "Tent"
+  },
+  "civilization.tentBenefit": {
+    "defaultMessage": "Adds 2 residents. Built immediately."
+  },
+  "civilization.tentUnlock": {
+    "defaultMessage": "Complete one Hideworking cycle to unlock."
+  },
+  "civilization.tents": {
+    "defaultMessage": "Tents"
   },
   "civilization.toolmaking": {
     "defaultMessage": "Toolmaking"
@@ -570,6 +666,9 @@
   },
   "civilization.unlock": {
     "defaultMessage": "Required cycles: {value} of {name}"
+  },
+  "civilization.unlockHunting": {
+    "defaultMessage": "Unlock Hunting"
   },
   "civilization.upcoming": {
     "defaultMessage": "Next activities"
@@ -591,6 +690,12 @@
   },
   "civilization.waitingWorkers": {
     "defaultMessage": "Waiting for workers"
+  },
+  "civilization.warmSeason": {
+    "defaultMessage": "Gathering: full food yield. Hunting: 25% food yield. Game yield is unchanged."
+  },
+  "civilization.winter": {
+    "defaultMessage": "Winter"
   },
   "civilization.workers": {
     "defaultMessage": "Workers"
@@ -687,6 +792,15 @@
     "defaultMessage": "Enable for free",
     "description": "Action that re-enables previously purchased developer tools."
   },
+  "debug.era": {
+    "defaultMessage": "Era"
+  },
+  "debug.era-help": {
+    "defaultMessage": "Start the selected era fresh. Replaces simulation progress; other progress is kept."
+  },
+  "debug.jump-era": {
+    "defaultMessage": "Jump to era"
+  },
   "debug.lock-tabs": {
     "defaultMessage": "Lock tabs",
     "description": "Removes the developer tab override; progression unlocks remain available."
@@ -738,6 +852,9 @@
   "debug.set-whole-cap": {
     "defaultMessage": "Whole cap",
     "description": "Button that fills the developer amount field with the maximum supported whole-number value."
+  },
+  "debug.simulation-era": {
+    "defaultMessage": "Simulation era"
   },
   "debug.speedrun-warning": {
     "defaultMessage": "Using gameplay tools makes this save ineligible for speedruns. Unlocking or opening Developer Options does not.",
@@ -2113,7 +2230,7 @@
     "defaultMessage": "Balanced"
   },
   "farming.begin": {
-    "defaultMessage": "Begin Farming Villages"
+    "defaultMessage": "Begin Farming era"
   },
   "farming.betaEndpoint": {
     "defaultMessage": "Forager and Farming are complete. More coming soon."
@@ -2730,6 +2847,9 @@
     "defaultMessage": "Simulations",
     "description": "Unity live Simulations destination."
   },
+  "navigation.simulations-goals-progress": {
+    "defaultMessage": "{destination}, {current} of {required} Bots goals completed"
+  },
   "navigation.simulations-influence-progress": {
     "defaultMessage": "{destination}, {current} of {required} Influence gathered",
     "description": "Accessible manual Influence unlock progress for the visible but locked Simulations destination."
@@ -3084,6 +3204,21 @@
   "pilotChallenges.confirm": {
     "defaultMessage": "Confirm restart"
   },
+  "pilotChallenges.convergenceEarned": {
+    "defaultMessage": "Convergence unlocked"
+  },
+  "pilotChallenges.convergenceLocked": {
+    "defaultMessage": "Complete all 10 challenges to unlock."
+  },
+  "pilotChallenges.convergenceProgress": {
+    "defaultMessage": "{value} / 10 challenges completed"
+  },
+  "pilotChallenges.convergenceRule": {
+    "defaultMessage": "Your Galactic Brains grow continuously, doubling every 30 minutes of game time. Requires at least one Galactic Brain."
+  },
+  "pilotChallenges.convergenceTitle": {
+    "defaultMessage": "Convergence"
+  },
   "pilotChallenges.earned": {
     "defaultMessage": "Earned {value} permanent SP"
   },
@@ -3123,6 +3258,24 @@
   "pilotChallenges.no-science.rule": {
     "defaultMessage": "Earn 32 IP without Science, Research or Discovery."
   },
+  "pilotChallenges.openingComplete": {
+    "defaultMessage": "Completed"
+  },
+  "pilotChallenges.openingEarned": {
+    "defaultMessage": "Simulations unlocked"
+  },
+  "pilotChallenges.openingProgress": {
+    "defaultMessage": "Active · {value} / 10 goals"
+  },
+  "pilotChallenges.openingReward": {
+    "defaultMessage": "Reward: unlock Simulations"
+  },
+  "pilotChallenges.openingRule": {
+    "defaultMessage": "Complete all 10 goals in the Bots tab."
+  },
+  "pilotChallenges.openingTitle": {
+    "defaultMessage": "Beginnings"
+  },
   "pilotChallenges.other": {
     "defaultMessage": "Finish or abandon the active challenge."
   },
@@ -3155,6 +3308,9 @@
   },
   "pilotChallenges.short-circuit.rule": {
     "defaultMessage": "Earn 64 IP with panel lifetime fixed at 2 seconds."
+  },
+  "pilotChallenges.simulationsLocked": {
+    "defaultMessage": "Complete Beginnings by finishing all 10 goals in the Bots tab to unlock Simulations."
   },
   "pilotChallenges.start": {
     "defaultMessage": "Start"

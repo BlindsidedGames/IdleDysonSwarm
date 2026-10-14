@@ -1,4 +1,6 @@
 import type { CanonicalGameStateV1 } from '../game-state/types'
+import { EMPTY_INFINITY_CHALLENGES } from './infinityChallenges'
+import { openingChallengeComplete } from './reworkChallenges'
 import { addDiscrete } from './numeric'
 import { runCanonicalSkillAutoAssignment } from './canonicalSkillTransactions'
 import { resolvePanelArea } from './stellarArithmetic'
@@ -86,6 +88,9 @@ export function advanceCanonicalGoalProgression(
     }
   }
 
+  if (openingChallengeComplete(state) && !state.challenges?.openingCompleted) {
+    state = { ...state, challenges: { ...(state.challenges ?? EMPTY_INFINITY_CHALLENGES), openingCompleted: true } }
+  }
   return {
     ok: true,
     state,

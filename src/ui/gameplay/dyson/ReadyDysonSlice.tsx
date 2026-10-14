@@ -621,10 +621,11 @@ function ReadyDysonSliceContent({
     overflowPoints: gameplay.resources.avocado.overflowPoints, overflowPending: gameplay.progression.infinity.botCapTransitionPending,
     developmentOverride: allTabsUnlocked,
   })
-  const challengesUnlocked = allTabsUnlocked || (gameplay.progression.challenges?.unlocked ?? false)
+  const challengesUnlocked = true
   const requestedRouteUnavailable =
     ((requestedRoute === 'transcendence' || requestedRoute === 'avocato') && !transcendenceAvailable) ||
     (requestedRoute === 'challenges' && !challengesUnlocked) ||
+    (requestedRoute === 'simulations' && !gameplay.visibility.simulations.routeUnlocked) ||
     (requestedRoute === 'research' && !discoveryUnlocked &&
       !(gameplay.visibility.research?.routeUnlocked ?? true)) ||
     (requestedRoute === 'skills' &&
@@ -874,8 +875,8 @@ function ReadyDysonSliceContent({
     ...(!discoveryUnlocked ? ['research' as const] : []),
     ...(gameplay.visibility.skills.routeVisible ? ['skills' as const] : []),
     ...(gameplay.visibility.infinity.routeVisible ? ['infinity' as const] : []),
+    ...(gameplay.visibility.simulations.routeVisible ? ['simulations' as const] : []),
     ...(challengesUnlocked ? ['challenges' as const] : []),
-    'simulations',
     ...(storeVisible ? ['store' as const] : []),
     'story',
     'wiki',
@@ -1048,6 +1049,20 @@ function ReadyDysonSliceContent({
                     }),
               }]
             : []),
+          ...(gameplay.visibility.simulations.routeVisible ? [{
+            id: 'simulations' as const, label: intl.formatMessage(messages.simulationsRoute),
+            iconSrc: navigationAssets.simulations, bottom: bottomVisible('simulations'),
+            newlyUnlocked: newlyUnlockedRoutes.has('simulations'),
+            ...(gameplay.visibility.simulations.routeUnlocked
+              ? simulationsActive ? { current: true as const } : { onActivate: () => navigateTo('simulations') }
+              : { disabled: true, progress: {
+                  fraction: gameplay.visibility.simulations.unlockProgress.fraction,
+                  label: intl.formatMessage(messages.simulationsGoalsProgress, {
+                    destination: intl.formatMessage(messages.simulationsRoute),
+                    current: displayWhole(gameplay.progression.dyson.goalStage), required: displayWhole(10n),
+                  }),
+                } }),
+          }] : []),
           ...(challengesUnlocked ? [{
             id: 'challenges',
             label: intl.formatMessage(challengeMessages.route),
@@ -1058,11 +1073,6 @@ function ReadyDysonSliceContent({
             ...(challengesActive ? { current: true as const }
               : { onActivate: () => navigateTo('challenges') }),
           }] : []),
-          {
-            id: 'simulations', label: intl.formatMessage(messages.simulationsRoute),
-            iconSrc: navigationAssets.simulations, bottom: bottomVisible('simulations'),
-            ...(simulationsActive ? { current: true as const } : { onActivate: () => navigateTo('simulations') }),
-          },
           ...(storeVisible
             ? [
                 {
@@ -1442,7 +1452,7 @@ function ReadyDysonSliceContent({
               : challengesActive
                 ? {
                     ariaLabel: intl.formatMessage(challengeMessages.route),
-                    content: <ReworkChallengesSurface progress={gameplay.progression.challenges} earnedIp={gameplay.resources.infinity.points} firstInfinity={gameplay.progression.meta.firstInfinityComplete} breakTheLoop={gameplay.progression.quantum.unlocks.breakTheLoop} overflowPending={gameplay.progression.infinity.botCapTransitionPending} dispatchPlayer={dispatchPlayer} />,
+                    content: <ReworkChallengesSurface goalStage={gameplay.progression.dyson.goalStage} progress={gameplay.progression.challenges} earnedIp={gameplay.resources.infinity.points} firstInfinity={gameplay.progression.meta.firstInfinityComplete} breakTheLoop={gameplay.progression.quantum.unlocks.breakTheLoop} overflowPending={gameplay.progression.infinity.botCapTransitionPending} dispatchPlayer={dispatchPlayer} />,
                   }
               : infinityActive
                 ? {

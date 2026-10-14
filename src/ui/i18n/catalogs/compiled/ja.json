@@ -659,10 +659,28 @@
       "value": "value"
     }
   ],
+  "civilization.autoPriority": [
+    {
+      "type": 0,
+      "value": "自動優先設定"
+    }
+  ],
   "civilization.automaticAward": [
     {
       "type": 0,
       "value": "すべての条件を満たすと自動的に付与されます。"
+    }
+  ],
+  "civilization.automaticPriority": [
+    {
+      "type": 0,
+      "value": "食料調達の労働者は、優先作業に3分の2、もう一方に3分の1の時間を使います。労働者数はこの配分を表示します。道具の備蓄ルールは引き続き適用されます。"
+    }
+  ],
+  "civilization.autumn": [
+    {
+      "type": 0,
+      "value": "秋"
     }
   ],
   "civilization.available": [
@@ -703,6 +721,30 @@
       "value": "3人の創設者は住居用の資材一式を持って始めます。採集には実際の作業班が必要ですが、材料は消費しません。"
     }
   ],
+  "civilization.buildCamp": [
+    {
+      "type": 0,
+      "value": "野営地を建設"
+    }
+  ],
+  "civilization.buildTent": [
+    {
+      "type": 0,
+      "value": "テントを建設"
+    }
+  ],
+  "civilization.camp": [
+    {
+      "type": 0,
+      "value": "野営地"
+    }
+  ],
+  "civilization.campBenefit": [
+    {
+      "type": 0,
+      "value": "テント3張を野営地に変えます。住民はそのままで、さらに3人増えます。"
+    }
+  ],
   "civilization.campExpansion": [
     {
       "type": 0,
@@ -713,6 +755,12 @@
     {
       "type": 0,
       "value": "野営地への補給"
+    }
+  ],
+  "civilization.campUnlock": [
+    {
+      "type": 0,
+      "value": "皮なめしを1回完了し、テント3張りを転換します。"
     }
   ],
   "civilization.camps": [
@@ -733,10 +781,62 @@
       "value": "触媒"
     }
   ],
+  "civilization.chieftain": [
+    {
+      "type": 0,
+      "value": "統率力"
+    }
+  ],
+  "civilization.chieftainAuto": [
+    {
+      "type": 0,
+      "value": "統率力の自動割り当て"
+    }
+  ],
+  "civilization.chieftainHelp": [
+    {
+      "type": 0,
+      "value": "成長に必要な資源と季節に応じて、食料調達と製作それぞれの優先作業を自動で選びます。オフにすると手動で選べます。"
+    }
+  ],
+  "civilization.chieftainOff": [
+    {
+      "type": 0,
+      "value": "オフ"
+    }
+  ],
+  "civilization.chieftainOn": [
+    {
+      "type": 0,
+      "value": "オン"
+    }
+  ],
+  "civilization.chieftainRequirement": [
+    {
+      "type": 0,
+      "value": "野営地2つが必要です。道具12と獲物6を消費しますが、野営地は残ります。"
+    }
+  ],
+  "civilization.chieftainTarget": [
+    {
+      "type": 0,
+      "value": "準備中："
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
   "civilization.clothing": [
     {
       "type": 0,
-      "value": "衣服"
+      "value": "革"
+    }
+  ],
+  "civilization.coldSeason": [
+    {
+      "type": 0,
+      "value": "狩猟：食料生産量100%。採集：食料生産量25%、資材は2倍。獲物の量は変わりません。"
     }
   ],
   "civilization.completed": [
@@ -771,6 +871,12 @@
     {
       "type": 0,
       "value": "工芸"
+    }
+  ],
+  "civilization.craftPriority": [
+    {
+      "type": 0,
+      "value": "製作の優先作業"
     }
   ],
   "civilization.craftSpecialization": [
@@ -899,6 +1005,12 @@
     {
       "type": 0,
       "value": "操作に失敗しました。再試行してください。"
+    }
+  ],
+  "civilization.fall": [
+    {
+      "type": 0,
+      "value": "秋"
     }
   ],
   "civilization.firstHunt": [
@@ -1038,13 +1150,19 @@
   "civilization.hides": [
     {
       "type": 0,
-      "value": "毛皮"
+      "value": "獲物"
     }
   ],
   "civilization.hideworking": [
     {
       "type": 0,
       "value": "皮革加工"
+    }
+  ],
+  "civilization.hireChieftain": [
+    {
+      "type": 0,
+      "value": "統率力を解放"
     }
   ],
   "civilization.housing": [
@@ -1057,6 +1175,18 @@
     {
       "type": 0,
       "value": "狩猟"
+    }
+  ],
+  "civilization.huntingPrerequisite": [
+    {
+      "type": 0,
+      "value": "道具作りを1回完了すると解放。"
+    }
+  ],
+  "civilization.huntingUnlock": [
+    {
+      "type": 0,
+      "value": "道具1個で狩猟を解放します。その後の狩猟では道具を消費しません。"
     }
   ],
   "civilization.inputs": [
@@ -1161,10 +1291,50 @@
       "value": "狩猟採集時代の序盤を完了"
     }
   ],
+  "civilization.population": [
+    {
+      "type": 0,
+      "value": "人口"
+    }
+  ],
+  "civilization.populationGoal": [
+    {
+      "type": 0,
+      "value": "人口 "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "target"
+    }
+  ],
   "civilization.preview": [
     {
       "type": 0,
       "value": "農業は後の段階で続きます。現在の活動は稼働し続けます。"
+    }
+  ],
+  "civilization.priority": [
+    {
+      "type": 0,
+      "value": "食料調達の優先作業"
+    }
+  ],
+  "civilization.priorityChoice": [
+    {
+      "type": 0,
+      "value": "優先："
+    },
+    {
+      "type": 1,
+      "value": "name"
     }
   ],
   "civilization.provisioning": [
@@ -1183,6 +1353,16 @@
     {
       "type": 0,
       "value": "労働者は野営地に残ります。各人に居住場所が必要です。"
+    }
+  ],
+  "civilization.seasonRemaining": [
+    {
+      "type": 0,
+      "value": "次の季節まで"
+    },
+    {
+      "type": 1,
+      "value": "time"
     }
   ],
   "civilization.seasonalExpeditions": [
@@ -1215,10 +1395,46 @@
       "value": "進行速度"
     }
   ],
+  "civilization.spring": [
+    {
+      "type": 0,
+      "value": "春"
+    }
+  ],
+  "civilization.summer": [
+    {
+      "type": 0,
+      "value": "夏"
+    }
+  ],
   "civilization.suppliesFocus": [
     {
       "type": 0,
       "value": "物資"
+    }
+  ],
+  "civilization.tent": [
+    {
+      "type": 0,
+      "value": "テント"
+    }
+  ],
+  "civilization.tentBenefit": [
+    {
+      "type": 0,
+      "value": "住民が2人増えます。すぐに建設されます。"
+    }
+  ],
+  "civilization.tentUnlock": [
+    {
+      "type": 0,
+      "value": "皮なめしを1回完了すると解放。"
+    }
+  ],
+  "civilization.tents": [
+    {
+      "type": 0,
+      "value": "テント"
     }
   ],
   "civilization.toolmaking": [
@@ -1255,6 +1471,12 @@
     {
       "type": 1,
       "value": "name"
+    }
+  ],
+  "civilization.unlockHunting": [
+    {
+      "type": 0,
+      "value": "狩猟を解放"
     }
   ],
   "civilization.upcoming": [
@@ -1301,6 +1523,18 @@
     {
       "type": 0,
       "value": "働き手を待機中"
+    }
+  ],
+  "civilization.warmSeason": [
+    {
+      "type": 0,
+      "value": "採集：食料生産量100%。狩猟：食料生産量25%。獲物の量は変わりません。"
+    }
+  ],
+  "civilization.winter": [
+    {
+      "type": 0,
+      "value": "冬"
     }
   ],
   "civilization.workers": [
@@ -1463,6 +1697,24 @@
       "value": "無料で有効化"
     }
   ],
+  "debug.era": [
+    {
+      "type": 0,
+      "value": "時代"
+    }
+  ],
+  "debug.era-help": [
+    {
+      "type": 0,
+      "value": "選択した時代を最初から開始します。シミュレーションの進行状況を置き換え、その他の進行状況は保持します。"
+    }
+  ],
+  "debug.jump-era": [
+    {
+      "type": 0,
+      "value": "時代へ移動"
+    }
+  ],
   "debug.lock-tabs": [
     {
       "type": 0,
@@ -1539,6 +1791,12 @@
     {
       "type": 0,
       "value": "整数上限"
+    }
+  ],
+  "debug.simulation-era": [
+    {
+      "type": 0,
+      "value": "シミュレーション時代"
     }
   ],
   "debug.speedrun-warning": [
@@ -5078,7 +5336,7 @@
   "farming.begin": [
     {
       "type": 0,
-      "value": "農耕集落を始める"
+      "value": "農耕時代を始める"
     }
   ],
   "farming.betaEndpoint": [
@@ -6479,6 +6737,32 @@
       "value": "シミュレーション"
     }
   ],
+  "navigation.simulations-goals-progress": [
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": "、ボット目標 "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " 達成"
+    }
+  ],
   "navigation.simulations-influence-progress": [
     {
       "type": 1,
@@ -7151,6 +7435,40 @@
       "value": "再開始を確認"
     }
   ],
+  "pilotChallenges.convergenceEarned": [
+    {
+      "type": 0,
+      "value": "コンバージェンス解放済み"
+    }
+  ],
+  "pilotChallenges.convergenceLocked": [
+    {
+      "type": 0,
+      "value": "チャレンジを10個すべて達成すると解放。"
+    }
+  ],
+  "pilotChallenges.convergenceProgress": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 10 チャレンジ達成"
+    }
+  ],
+  "pilotChallenges.convergenceRule": [
+    {
+      "type": 0,
+      "value": "銀河ブレインが連続的に増加し、ゲーム内時間30分ごとに2倍になります。銀河ブレインが1つ以上必要です。"
+    }
+  ],
+  "pilotChallenges.convergenceTitle": [
+    {
+      "type": 0,
+      "value": "コンバージェンス"
+    }
+  ],
   "pilotChallenges.earned": [
     {
       "type": 0,
@@ -7243,6 +7561,50 @@
     {
       "type": 0,
       "value": "サイエンス、研究、発見なしで32 IPを獲得します。"
+    }
+  ],
+  "pilotChallenges.openingComplete": [
+    {
+      "type": 0,
+      "value": "達成済み"
+    }
+  ],
+  "pilotChallenges.openingEarned": [
+    {
+      "type": 0,
+      "value": "シミュレーション解放済み"
+    }
+  ],
+  "pilotChallenges.openingProgress": [
+    {
+      "type": 0,
+      "value": "進行中 · 目標 "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 10"
+    }
+  ],
+  "pilotChallenges.openingReward": [
+    {
+      "type": 0,
+      "value": "報酬：シミュレーションを解放"
+    }
+  ],
+  "pilotChallenges.openingRule": [
+    {
+      "type": 0,
+      "value": "ボットタブの目標を10個すべて達成する。"
+    }
+  ],
+  "pilotChallenges.openingTitle": [
+    {
+      "type": 0,
+      "value": "始まり"
     }
   ],
   "pilotChallenges.other": [
@@ -7349,6 +7711,12 @@
     {
       "type": 0,
       "value": "パネル寿命を2秒に固定して64 IPを獲得します。"
+    }
+  ],
+  "pilotChallenges.simulationsLocked": [
+    {
+      "type": 0,
+      "value": "ボットタブの目標を10個すべて達成して「始まり」を完了すると、シミュレーションが解放されます。"
     }
   ],
   "pilotChallenges.start": [

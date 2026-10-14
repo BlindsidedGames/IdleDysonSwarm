@@ -139,6 +139,14 @@ not already approved work.
 
 ## Controls, progress and state
 
+Approved purple action palette: Challenges Start/Replay reuse Simulations'
+`Button variant="purchase"`, including its lavender enabled fill, dark-purple
+disabled fill and shared interaction states. Do not substitute pink generic
+button fills. Retain explicit confirmation for challenge resets/abandonment.
+The Challenges route uses a flat card list with its reward total; the redundant
+Infinity Challenges wrapper and lengthy introductory/rules block are removed
+(Matthew, 14 October 2026).
+
 Reuse `Button`, native disclosures/shared `CollapsibleSection`, existing segmented
 quantity controls and `ProgressControlsPanel`. Preserve full-row hit targets,
 visible selection/focus, labelled states and keyboard/touch activation. Focus
@@ -498,3 +506,9 @@ restores theme accent, dark theme-page ink, lighting and shared interaction
 states without another bespoke button design. His supplied Forager screenshot
 confirms the pre-correction reservation and default button appearance; corrected
 pixels, scale/mobile/long-locale targets and native hosts remain unverified.
+
+Sidebar selection trial (Matthew, 14 October 2026): selected drawer tabs use the active theme accent and action lighting, full opacity, and dark theme-page labels/status amounts with theme-panel-coloured icons instead of disabled-looking dimming. Scoped to the left panel/drawer; bottom tabs retain their current presentation. Requested for trial, not yet confirmed as a final shared convention. Checked desktop Challenges/Simulations switching; other themes, mobile drawer, scales and native hosts remain unverified.
+
+Sidebar trial refinement: selected Offline Time status inherits dark selected ink; selected icons use the theme-panel colour without a shadow (superseding the light-icon trial). Verified desktop Offline Time and Store; mobile drawer and other scales remain unverified.
+
+Sidebar annotated reference correction: Bots/Store/Story/Wiki selected-tab fill is #d1b6d7, matching the Assembly Line purchase button with shared action lighting. Selected icons use the panel colour (#443148 in that palette), as explicitly requested; labels/status remain dark. Verified matching computed colours on Bots, Store and Wiki at desktop size. Mobile and other scales not rechecked.

@@ -1,3 +1,4 @@
+import { simulationsAvailable } from '../simulation/reworkChallenges'
 import { builtByHandTinkerGoal } from '../simulation/canonicalGoalProgression'
 import { challengeAllowsTinker, effectiveDivisions, isQuantumChallengeActive, quantumDoubleIpEnabled, isBreakInfinityEnabled, infinityChallenges } from '../simulation/infinityChallenges'
 import { deriveDiscoveryEffects, type DiscoveryEffects } from '../simulation/discoveryEffects'
@@ -1223,10 +1224,6 @@ export function selectGameplayVisibility(
   const visibleBasicFacilityIds = BASIC_DYSON_FACILITY_IDS.filter(
     (facilityId) => basicVisible[facilityId],
   )
-  const realityUnlocked = unlockAllTabs ||
-    state.quantum.pointsEarned > 0n ||
-    state.infinity.secretsOfTheUniverse >=
-      QUANTUM_CONSTANTS.maximumSecrets
   const skillPointEarned = unlockAllTabs ||
     infinityChallenges(state).hasEarnedGalvanizer ||
     state.skills.points > 0n ||
@@ -1257,44 +1254,10 @@ export function selectGameplayVisibility(
     requiredSecrets: QUANTUM_CONSTANTS.maximumSecrets,
     fraction: realitySecretsFraction,
   }
-  const hasExistingSimulationProgress =
-    state.dream.resetCount > 0n ||
-    state.dream.strangeMatter > 0 ||
-    Object.values(state.dream.upgrades).some(Boolean) ||
-    Object.values(state.dream.education).some(
-      (education) =>
-        education.active ||
-        education.complete ||
-        education.progress > 0,
-    ) ||
-    Object.values(state.dream.purchaseBatches ?? {}).some(
-      (batches) => batches > 0n,
-    ) ||
-    state.dream.resources.hunters > 0n ||
-    state.dream.resources.gatherers > 0n
-  const simulationsRequiredInfluence = 128
-  const simulationsUnlocked = unlockAllTabs ||
-    (realityUnlocked && state.statistics.lifetime.manualInfluence >= simulationsRequiredInfluence) ||
-    hasExistingSimulationProgress
-  const simulationsPendingWorkers = Number(
-    state.reality.workersReady < BigInt(simulationsRequiredInfluence)
-      ? state.reality.workersReady
-      : BigInt(simulationsRequiredInfluence),
-  )
-  const simulationsCurrentInfluence = simulationsUnlocked
-    ? simulationsRequiredInfluence
-    : simulationsPendingWorkers
-  const simulationsProgressFraction = simulationsUnlocked
-    ? 1
-    : Math.min(
-        1,
-        Math.max(
-          0,
-          (simulationsPendingWorkers +
-            state.reality.workerGenerationProgress) /
-            simulationsRequiredInfluence,
-        ),
-      )
+  const simulationsRequiredInfluence = 10
+  const simulationsUnlocked = unlockAllTabs || simulationsAvailable(state)
+  const simulationsCurrentInfluence = simulationsUnlocked ? 10 : Number(state.dyson.goalStage)
+  const simulationsProgressFraction = Math.min(1, simulationsCurrentInfluence / 10)
 
   return {
     allTabsUnlocked: unlockAllTabs,
@@ -1340,8 +1303,8 @@ export function selectGameplayVisibility(
       unlockProgress: realityUnlockProgress,
     },
     simulations: {
-      routeVisible: true,
-      routeUnlocked: true,
+      routeVisible: simulationsUnlocked || state.dyson.goalStage >= 1n,
+      routeUnlocked: simulationsUnlocked,
       unlockProgress: {
         currentInfluence: simulationsCurrentInfluence,
         requiredInfluence: simulationsRequiredInfluence,

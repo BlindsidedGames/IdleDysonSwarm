@@ -106,7 +106,6 @@
 .civilization-distribution .civilization-camp-details { max-block-size: min(24vh, 14rem); overflow-y: auto; scrollbar-width: none; }
 .civilization-distribution .civilization-camp-details::-webkit-scrollbar { display: none; }
 @media (max-width:720px) { .civilization-distribution .civilization-balances > div:nth-child(2) { border-inline-end: 0; } }
-.civilization-scroll { padding-block-start: 0; }
 .civilization-stock { margin-block-end: 0; }
 .civilization-focus-heading { display: flex; flex: 0 0 auto; justify-content: space-between; gap: var(--ui-card-gap); align-items: center; }
 .civilization-dock .civilization-focus { margin-block: var(--ui-card-gap); }
@@ -239,7 +238,7 @@
 /* Research purchase roles, separate from Bots production cycles. */
 .farming-shop, .farming-constructed { margin-block:var(--ui-section-gap); }
 .farming-shop > h3, .farming-constructed > h3 { margin:0 0 var(--ui-card-gap); font-size:var(--ui-text-section-title); }
-.farming-shop .farming-granary { display:flex; flex-wrap:wrap; align-items:start; gap:var(--ui-control-gap); padding:0; border:1px solid var(--theme-divider); border-radius:var(--ui-control-radius); background:var(--theme-panel); }
+.farming-shop .farming-granary, .civilization-hunting-purchase { display:flex; flex-wrap:wrap; align-items:start; gap:var(--ui-control-gap); padding:0; border:1px solid var(--theme-divider); border-radius:var(--ui-control-radius); background:var(--theme-panel); }
 
 .farming-granary > details { flex:1 1 calc(9rem * var(--game-text-scale)); min-inline-size:0; }
 .farming-granary summary { min-block-size:44px; padding:var(--game-card-content-inset); list-style:none; cursor:pointer; display:grid; gap:var(--ui-control-gap); }
@@ -297,3 +296,64 @@
 .farming-constructed ul { grid-template-columns:minmax(0,1fr); }
 .farming-surface .civilization-facts dt { overflow-wrap:anywhere; }
 .farming-surface .civilization-facts dd { flex-shrink:0; }
+
+/* Forager purchases reuse Farming's existing compact granary purchase. */
+.civilization-visible-stock { border-block-start:0; margin-block-end:var(--ui-card-gap); }
+.civilization-season { font-size:var(--ui-text-body); margin-block-end:var(--ui-card-gap); }
+.civilization-season > summary { display:flex; align-items:center; justify-content:space-between; gap:var(--ui-card-gap); min-block-size:44px; cursor:pointer; }
+.civilization-season p { margin:0 0 var(--ui-card-gap); color:var(--color-text-secondary); }
+.forager-purchase-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--ui-section-gap); }
+.farming-shop .forager-purchase-grid .farming-granary { max-inline-size:none; }
+.civilization-population-goal { padding:var(--game-card-content-inset); }
+.civilization-population-goal .ui-progress { --color-accent-value:var(--theme-accent); }
+@media(max-width:720px){ .forager-purchase-grid { grid-template-columns:minmax(0,1fr); } }
+
+/* Season status stays beside the shared upward-expanding Settings control. */
+.forager-dock-summary { display:flex; align-items:center; gap:var(--ui-section-gap); min-inline-size:0; }
+.forager-dock-progress { flex:1; min-inline-size:0; }
+.forager-dock-progress .ui-progress__value { flex-shrink:0; white-space:nowrap; }
+.forager-dock-progress .ui-progress { --color-accent-value:var(--theme-accent); }
+.forager-season-clock { flex:none; font-size:var(--ui-text-body); white-space:nowrap; }
+.forager-season-details { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:var(--ui-control-gap); font-size:var(--ui-text-body); }
+.forager-season-details p { flex-basis:100%; margin:0; color:var(--color-text-secondary); }
+
+/* Match the completion action's horizontal and vertical dock insets. */
+:is(.forager-control-panel, .farming-control-panel) .ui-progress-controls-panel__summary:has(.forager-dock-progress > button) {
+  padding-inline-start: max(.42rem, var(--safe-area-left));
+}
+@media (min-width: 721px) {
+  :is(.forager-control-panel, .farming-control-panel) .ui-progress-controls-panel__summary:has(.forager-dock-progress > button) {
+    padding-inline-start: max(1px, var(--safe-area-left));
+  }
+}
+
+.forager-automatic-priority { margin:0; font-size:var(--ui-text-body); color:var(--color-text-secondary); }
+
+.civilization-activity[data-priority-choice] { display:grid; grid-template-columns:44px minmax(0,1fr); }
+.civilization-row-priority { display:grid; place-items:center; min-block-size:44px; border-inline-end:1px solid var(--theme-divider); cursor:pointer; }
+.civilization-row-priority:has(:checked) { background:var(--theme-selected); }
+.civilization-row-priority input { inline-size:1rem; block-size:1rem; margin:0; appearance:none; border:1px solid var(--theme-accent); border-radius:50%; background:var(--theme-page); display:grid; place-items:center; cursor:pointer; }
+.forager-priority-setting { display:flex; align-items:center; justify-content:space-between; gap:var(--ui-card-gap); font-size:var(--ui-text-body); }
+.forager-priority-setting select { min-block-size:44px; max-inline-size:55%; background:var(--theme-panel); color:var(--color-text-primary); border:1px solid var(--theme-divider); border-radius:var(--ui-control-radius); font:inherit; padding:var(--ui-control-gap); }
+
+.civilization-row-priority input::before { content:""; inline-size:.5rem; block-size:.5rem; border-radius:50%; background:var(--theme-accent); transform:scale(0); }
+.civilization-row-priority input:checked::before { transform:scale(1); }
+.civilization-row-priority input:focus-visible { outline:2px solid var(--color-focus); outline-offset:3px; }
+@media (forced-colors:active) { .civilization-row-priority input { appearance:auto; } .civilization-row-priority input::before { display:none; } }
+.civilization-activities .civilization-hunting-purchase { border:0; border-radius:0; }
+.forager-catalyst-goal { display:flex; align-items:center; gap:var(--ui-card-gap); min-inline-size:0; font-size:var(--ui-text-body); }
+.forager-catalyst-goal > .civilization-cycle-progress { flex:1; min-inline-size:1rem; }
+.forager-catalyst-goal > .ui-resource-value__content { flex:none; white-space:nowrap; }
+
+/* The settings row already provides clearance beneath the seasonal copy. */
+.forager-control-panel .ui-progress-controls-panel__body { padding-block-end: 0; }
+
+.forager-season-yields { display: flex; flex-wrap: wrap; gap: var(--ui-card-gap) var(--ui-section-gap); }
+.forager-season-yields > span { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--ui-control-gap); }
+.forager-season-yields .ui-resource-value__content { align-items: center; }
+.forager-resource-key h3 { margin: 0 0 var(--ui-card-gap); font-size: var(--ui-text-card-title); }
+.forager-resource-key ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9em), 1fr)); gap: var(--ui-card-gap); list-style: none; margin: 0; padding: 0; font-size: var(--ui-text-body); }
+.forager-resource-key li { display: flex; align-items: center; gap: var(--ui-control-gap); }
+
+.civilization-resource-legend.civilization-visible-stock { display: flex; flex-wrap: wrap; gap: var(--ui-card-gap) var(--ui-section-gap); }
+.civilization-visible-stock > div { justify-content: flex-start; gap: .16em; }

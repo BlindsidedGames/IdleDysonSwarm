@@ -659,10 +659,28 @@
       "value": "value"
     }
   ],
+  "civilization.autoPriority": [
+    {
+      "type": 0,
+      "value": "自动优先级"
+    }
+  ],
   "civilization.automaticAward": [
     {
       "type": 0,
       "value": "完成所有要求后自动发放。"
+    }
+  ],
+  "civilization.automaticPriority": [
+    {
+      "type": 0,
+      "value": "补给工人将三分之二的时间用于优先工作，三分之一用于另一项工作。工人数显示相应的劳动力份额。工具储备规则仍然有效。"
+    }
+  ],
+  "civilization.autumn": [
+    {
+      "type": 0,
+      "value": "秋季"
     }
   ],
   "civilization.available": [
@@ -703,6 +721,30 @@
       "value": "三名创建者带着一套住所材料开始。采集需要真实的工作队，但不消耗原料。"
     }
   ],
+  "civilization.buildCamp": [
+    {
+      "type": 0,
+      "value": "建造营地"
+    }
+  ],
+  "civilization.buildTent": [
+    {
+      "type": 0,
+      "value": "建造帐篷"
+    }
+  ],
+  "civilization.camp": [
+    {
+      "type": 0,
+      "value": "营地"
+    }
+  ],
+  "civilization.campBenefit": [
+    {
+      "type": 0,
+      "value": "将3顶帐篷改建为营地。保留原有居民，并增加3名居民。"
+    }
+  ],
   "civilization.campExpansion": [
     {
       "type": 0,
@@ -713,6 +755,12 @@
     {
       "type": 0,
       "value": "营地补给"
+    }
+  ],
+  "civilization.campUnlock": [
+    {
+      "type": 0,
+      "value": "完成一次制革，然后将3顶帐篷改建为营地。"
     }
   ],
   "civilization.camps": [
@@ -733,10 +781,62 @@
       "value": "催化剂"
     }
   ],
+  "civilization.chieftain": [
+    {
+      "type": 0,
+      "value": "领导力"
+    }
+  ],
+  "civilization.chieftainAuto": [
+    {
+      "type": 0,
+      "value": "领导力自动分配"
+    }
+  ],
+  "civilization.chieftainHelp": [
+    {
+      "type": 0,
+      "value": "根据发展需求和季节，分别为补给和制作自动选择优先工作。关闭后可手动选择。"
+    }
+  ],
+  "civilization.chieftainOff": [
+    {
+      "type": 0,
+      "value": "关闭"
+    }
+  ],
+  "civilization.chieftainOn": [
+    {
+      "type": 0,
+      "value": "开启"
+    }
+  ],
+  "civilization.chieftainRequirement": [
+    {
+      "type": 0,
+      "value": "需要2个营地。消耗12工具和6猎物；营地会保留。"
+    }
+  ],
+  "civilization.chieftainTarget": [
+    {
+      "type": 0,
+      "value": "正在筹备："
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
   "civilization.clothing": [
     {
       "type": 0,
-      "value": "衣物"
+      "value": "皮革"
+    }
+  ],
+  "civilization.coldSeason": [
+    {
+      "type": 0,
+      "value": "狩猎：全部食物产量。采集：25%食物产量，材料翻倍。猎物产量不变。"
     }
   ],
   "civilization.completed": [
@@ -771,6 +871,12 @@
     {
       "type": 0,
       "value": "工艺"
+    }
+  ],
+  "civilization.craftPriority": [
+    {
+      "type": 0,
+      "value": "制作优先级"
     }
   ],
   "civilization.craftSpecialization": [
@@ -899,6 +1005,12 @@
     {
       "type": 0,
       "value": "操作失败，请重试。"
+    }
+  ],
+  "civilization.fall": [
+    {
+      "type": 0,
+      "value": "秋季"
     }
   ],
   "civilization.firstHunt": [
@@ -1038,13 +1150,19 @@
   "civilization.hides": [
     {
       "type": 0,
-      "value": "兽皮"
+      "value": "猎物"
     }
   ],
   "civilization.hideworking": [
     {
       "type": 0,
       "value": "兽皮加工"
+    }
+  ],
+  "civilization.hireChieftain": [
+    {
+      "type": 0,
+      "value": "解锁领导力"
     }
   ],
   "civilization.housing": [
@@ -1057,6 +1175,18 @@
     {
       "type": 0,
       "value": "狩猎"
+    }
+  ],
+  "civilization.huntingPrerequisite": [
+    {
+      "type": 0,
+      "value": "完成一次工具制作以解锁。"
+    }
+  ],
+  "civilization.huntingUnlock": [
+    {
+      "type": 0,
+      "value": "花费1个工具解锁狩猎。之后的狩猎不再消耗工具。"
     }
   ],
   "civilization.inputs": [
@@ -1161,10 +1291,50 @@
       "value": "狩猎采集时代的初始阶段已完成"
     }
   ],
+  "civilization.population": [
+    {
+      "type": 0,
+      "value": "人口"
+    }
+  ],
+  "civilization.populationGoal": [
+    {
+      "type": 0,
+      "value": "人口 "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "target"
+    }
+  ],
   "civilization.preview": [
     {
       "type": 0,
       "value": "农业将在后续阶段继续展开。现有活动会持续运行。"
+    }
+  ],
+  "civilization.priority": [
+    {
+      "type": 0,
+      "value": "补给优先级"
+    }
+  ],
+  "civilization.priorityChoice": [
+    {
+      "type": 0,
+      "value": "优先："
+    },
+    {
+      "type": 1,
+      "value": "name"
     }
   ],
   "civilization.provisioning": [
@@ -1183,6 +1353,16 @@
     {
       "type": 0,
       "value": "工人会留在营地，每人需要一个住房位置。"
+    }
+  ],
+  "civilization.seasonRemaining": [
+    {
+      "type": 0,
+      "value": "距下一季节还有"
+    },
+    {
+      "type": 1,
+      "value": "time"
     }
   ],
   "civilization.seasonalExpeditions": [
@@ -1215,10 +1395,46 @@
       "value": "进度速度"
     }
   ],
+  "civilization.spring": [
+    {
+      "type": 0,
+      "value": "春季"
+    }
+  ],
+  "civilization.summer": [
+    {
+      "type": 0,
+      "value": "夏季"
+    }
+  ],
   "civilization.suppliesFocus": [
     {
       "type": 0,
       "value": "物资"
+    }
+  ],
+  "civilization.tent": [
+    {
+      "type": 0,
+      "value": "帐篷"
+    }
+  ],
+  "civilization.tentBenefit": [
+    {
+      "type": 0,
+      "value": "增加2名居民。立即建成。"
+    }
+  ],
+  "civilization.tentUnlock": [
+    {
+      "type": 0,
+      "value": "完成一次制革以解锁。"
+    }
+  ],
+  "civilization.tents": [
+    {
+      "type": 0,
+      "value": "帐篷"
     }
   ],
   "civilization.toolmaking": [
@@ -1255,6 +1471,12 @@
     {
       "type": 1,
       "value": "name"
+    }
+  ],
+  "civilization.unlockHunting": [
+    {
+      "type": 0,
+      "value": "解锁狩猎"
     }
   ],
   "civilization.upcoming": [
@@ -1301,6 +1523,18 @@
     {
       "type": 0,
       "value": "等待工人"
+    }
+  ],
+  "civilization.warmSeason": [
+    {
+      "type": 0,
+      "value": "采集：全部食物产量。狩猎：25%食物产量。猎物产量不变。"
+    }
+  ],
+  "civilization.winter": [
+    {
+      "type": 0,
+      "value": "冬季"
     }
   ],
   "civilization.workers": [
@@ -1463,6 +1697,24 @@
       "value": "免费启用"
     }
   ],
+  "debug.era": [
+    {
+      "type": 0,
+      "value": "时代"
+    }
+  ],
+  "debug.era-help": [
+    {
+      "type": 0,
+      "value": "从头开始所选时代。替换模拟进度，保留其他进度。"
+    }
+  ],
+  "debug.jump-era": [
+    {
+      "type": 0,
+      "value": "跳转到时代"
+    }
+  ],
   "debug.lock-tabs": [
     {
       "type": 0,
@@ -1539,6 +1791,12 @@
     {
       "type": 0,
       "value": "整数上限"
+    }
+  ],
+  "debug.simulation-era": [
+    {
+      "type": 0,
+      "value": "模拟时代"
     }
   ],
   "debug.speedrun-warning": [
@@ -5078,7 +5336,7 @@
   "farming.begin": [
     {
       "type": 0,
-      "value": "建立农业村落"
+      "value": "开始农耕时代"
     }
   ],
   "farming.betaEndpoint": [
@@ -6479,6 +6737,32 @@
       "value": "模拟"
     }
   ],
+  "navigation.simulations-goals-progress": [
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": "，已完成 "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " 个机器人目标"
+    }
+  ],
   "navigation.simulations-influence-progress": [
     {
       "type": 1,
@@ -7151,6 +7435,40 @@
       "value": "确认重新开始"
     }
   ],
+  "pilotChallenges.convergenceEarned": [
+    {
+      "type": 0,
+      "value": "汇聚已解锁"
+    }
+  ],
+  "pilotChallenges.convergenceLocked": [
+    {
+      "type": 0,
+      "value": "完成全部10个挑战即可解锁。"
+    }
+  ],
+  "pilotChallenges.convergenceProgress": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 10 个挑战已完成"
+    }
+  ],
+  "pilotChallenges.convergenceRule": [
+    {
+      "type": 0,
+      "value": "银河大脑持续增长，每30分钟游戏时间翻倍。需要至少拥有一个银河大脑。"
+    }
+  ],
+  "pilotChallenges.convergenceTitle": [
+    {
+      "type": 0,
+      "value": "汇聚"
+    }
+  ],
   "pilotChallenges.earned": [
     {
       "type": 0,
@@ -7243,6 +7561,50 @@
     {
       "type": 0,
       "value": "不使用科学、研究或发现，赚取32 IP。"
+    }
+  ],
+  "pilotChallenges.openingComplete": [
+    {
+      "type": 0,
+      "value": "已完成"
+    }
+  ],
+  "pilotChallenges.openingEarned": [
+    {
+      "type": 0,
+      "value": "模拟已解锁"
+    }
+  ],
+  "pilotChallenges.openingProgress": [
+    {
+      "type": 0,
+      "value": "进行中 · "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 10 个目标"
+    }
+  ],
+  "pilotChallenges.openingReward": [
+    {
+      "type": 0,
+      "value": "奖励：解锁模拟"
+    }
+  ],
+  "pilotChallenges.openingRule": [
+    {
+      "type": 0,
+      "value": "完成机器人页签中的全部10个目标。"
+    }
+  ],
+  "pilotChallenges.openingTitle": [
+    {
+      "type": 0,
+      "value": "开端"
     }
   ],
   "pilotChallenges.other": [
@@ -7349,6 +7711,12 @@
     {
       "type": 0,
       "value": "在面板寿命固定为2秒的情况下赚取64 IP。"
+    }
+  ],
+  "pilotChallenges.simulationsLocked": [
+    {
+      "type": 0,
+      "value": "完成机器人页签中的全部10个目标，完成“开端”挑战并解锁模拟。"
     }
   ],
   "pilotChallenges.start": [
