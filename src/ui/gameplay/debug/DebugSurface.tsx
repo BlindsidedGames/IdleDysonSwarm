@@ -1,3 +1,5 @@
+import { civilizationMessages } from '../simulations/civilizationMessages'
+import { farmingMessages } from '../simulations/farmingMessages'
 import { discoveryMessages } from '../discovery/messages'
 import { DEBUG_OVERFLOW_COST } from '../../../simulation/speedrunStatistics'
 import { useId, useState } from 'react'
@@ -69,6 +71,8 @@ export function DebugSurface({
   const amountId = useId()
   const amountFeedbackId = useId()
   const presetId = useId()
+  const eraId = useId()
+  const [era, setEra] = useState<'forager' | 'farming'>('forager')
   const [amount, setAmount] = useState(() =>
     clampAmountDraftToContinuousMaximum(initialDraft?.amount ?? '1', locale))
   const [preset, setPreset] = useState(() => initialDraft?.preset ?? 'early')
@@ -253,6 +257,19 @@ export function DebugSurface({
                 }} />
               </div>
               <ActionButton label={intl.formatMessage(allTabsUnlocked ? messages.lockTabs : messages.unlockTabs)} disabled={pending} onClick={() => apply({ kind: allTabsUnlocked ? 'lock-tabs' : 'unlock-all-tabs' }, intl.formatMessage(messages.actionSuccess))} />
+            </section>
+
+            <section className="debug-surface__panel">
+              <h2>{intl.formatMessage(messages.simulationEra)}</h2>
+              <p>{intl.formatMessage(messages.eraHelp)}</p>
+              <div className="debug-surface__preset-row">
+                <label htmlFor={eraId}>{intl.formatMessage(messages.era)}</label>
+                <select id={eraId} value={era} disabled={pending} onChange={event => setEra(event.currentTarget.value as 'forager' | 'farming')}>
+                  <option value="forager">{intl.formatMessage(civilizationMessages.era)}</option>
+                  <option value="farming">{intl.formatMessage(farmingMessages.era)}</option>
+                </select>
+                <ActionButton label={intl.formatMessage(messages.jumpEra)} disabled={pending} onClick={() => apply({ kind: 'jump-to-era', era }, intl.formatMessage(messages.actionSuccess))} />
+              </div>
             </section>
 
             <section className="debug-surface__panel">

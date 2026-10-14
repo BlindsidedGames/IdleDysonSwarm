@@ -96,6 +96,11 @@ export interface FarmingState {
 }
 
 export interface CivilizationState {
+  readonly foragerRulesVersion?: 1 | 2
+  readonly priority?: 'gathering' | 'hunting' | 'toolmaking' | 'hideworking'
+  readonly craftPriority?: 'toolmaking' | 'hideworking'
+  readonly huntingUnlocked?: boolean
+  readonly chieftain?: { readonly enabled: boolean; readonly nextDecisionSeconds: number; readonly costVersion?: 2 }
   readonly version: 4 | 5
   /** Absent on V4 saves predating the approved focus-rate trial. */
   readonly focusBalanceVersion?: 2
@@ -654,6 +659,7 @@ export interface ReplacementChallengeProgress {
 }
 
 export interface InfinityChallengeState {
+  readonly openingCompleted?: boolean
   readonly replacement?: ReplacementChallengeProgress
   readonly galvanizedSkillIds?: readonly string[]
   readonly unlocked: boolean

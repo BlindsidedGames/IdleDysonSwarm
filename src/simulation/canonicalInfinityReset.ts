@@ -166,7 +166,7 @@ export function applyCanonicalInfinityReset(
   if (!rulesResult.ok) return failed(state, rulesResult.issues)
 
   const challenge = infinityChallenges(state)
-  const nextChallenges = request.restartOnly ? challenge : { ...challenge, unlocked: true }
+  const nextChallenges = { ...challenge, openingCompleted: challenge.openingCompleted === true || state.dyson.goalStage >= 10n, ...(!request.restartOnly ? { unlocked: true } : {}) }
   const previousPoints = state.infinity.points
   const nextPoints = addDiscrete(
     previousPoints,

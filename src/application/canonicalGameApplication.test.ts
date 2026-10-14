@@ -1,3 +1,5 @@
+import { validateCanonicalGameState } from '../game-state/validate'
+import { advanceCivilization } from '../simulation/civilization'
 import { createSpeedrunStatistics, markSpeedrunUsage } from '../simulation/speedrunStatistics'
 import { OVERFLOW_BOT_CAP } from '../simulation/overflowBoundary'
 import { readFileSync } from 'node:fs'
@@ -1373,4 +1375,30 @@ test('Stored Time counts consumed bank seconds once at double speed and snapshot
   state.gameState.avocado.overflowPoints = 10n
   expect(definition.applyCommand(state, { kind: 'internal.advance-active-continuous', milliseconds: 1000 }).accepted).toBe(true)
   expect(state.gameState.statistics.speedruns?.milestones.debugQualification).toMatchObject({ elapsedSeconds: 72, activeSeconds: 12, storedTimeSeconds: 60, timingBasis: 'combined' })
+})
+
+
+test('debug era jumps start playable simulations and preserve unrelated progress', () => {
+  const state = runtime()
+  state.gameState = { ...state.gameState, meta: { ...state.gameState.meta, reworkMigrationChoice: 'keep' } }
+  const original = structuredClone(state.gameState)
+  const definition = createCanonicalGameEngineDefinition({ eventContext: context() })
+  for (const era of ['farming', 'forager'] as const) {
+    expect(definition.applyCommand(state, { kind: 'internal.development-apply-action', action: { kind: 'jump-to-era', era } })).toEqual({ accepted: true, changed: true })
+    expect(validateCanonicalGameState(state.gameState)).toEqual({ valid: true, errors: [] })
+    const { civilization: _before, ...expected } = markSpeedrunUsage({ ...original, challenges: { ...original.challenges!, openingCompleted: true } }, 'debug')
+    const { civilization, ...unchanged } = state.gameState
+    expect(unchanged).toEqual(expected)
+    if (era === 'farming') {
+      expect(civilization?.farming?.phase).toBe('farming')
+      expect(civilization?.farming?.homes).toEqual([])
+    } else {
+      expect(civilization?.farming).toBeUndefined()
+      expect(civilization?.workers).toBe(3n)
+      expect(civilization?.awardedCatalystMilestoneIds).toEqual([])
+    }
+    const advanced = advanceCivilization(state.gameState, 60)
+    expect(validateCanonicalGameState(advanced).valid).toBe(true)
+    expect(era === 'farming' ? advanced.civilization!.farming!.elapsedSeconds : advanced.civilization!.elapsedSeconds).toBeGreaterThan(0)
+  }
 })

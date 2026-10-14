@@ -38,7 +38,7 @@ export function applyCanonicalOverflowReset(
     state: {
       ...state,
       ...(state.discovery ? { discovery: resetDiscoveryProgress(state.discovery) } : {}),
-      ...(state.challenges ? { challenges: { ...state.challenges, active: null } } : {}),
+      ...(state.challenges ? { challenges: { ...state.challenges, openingCompleted: state.challenges.openingCompleted === true || state.dyson.goalStage >= 10n, active: null } } : {}),
       meta: { ...state.meta, firstInfinityComplete: false, firstQuantumComplete: hasCompletedQuantum(state) },
       dyson: {
         ...state.dyson,

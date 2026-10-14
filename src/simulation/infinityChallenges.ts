@@ -34,6 +34,7 @@ export function validateInfinityChallenges(value: unknown): string | null {
   if (value === undefined) return null
   if (value === null || typeof value !== 'object' || Array.isArray(value)) return 'Invalid Infinity challenge progress.'
   const c = value as Record<string, unknown>
+  if (c.openingCompleted !== undefined && typeof c.openingCompleted !== 'boolean') return 'Invalid opening challenge completion.'
   if (c.replacement !== undefined) {
     const r = c.replacement as Record<string, unknown>
     const valid = (id: unknown) => REWORK_CHALLENGES.some(definition => definition.id === id)

@@ -57,3 +57,15 @@ export function settleChallengeInfinity(state: CanonicalGameStateV1, reward: big
     } : {}),
   }
 }
+
+/** The opening challenge is always active until all ten Bots goals are complete. */
+export function openingChallengeComplete(state: Pick<CanonicalGameStateV1, 'challenges' | 'dyson'>): boolean {
+  return state.challenges?.openingCompleted === true || state.dyson.goalStage >= 10n
+}
+export function simulationsAvailable(state: Pick<CanonicalGameStateV1, 'challenges' | 'dyson' | 'civilization'>): boolean {
+  return openingChallengeComplete(state)
+}
+export function convergenceUnlocked(state: Pick<CanonicalGameStateV1, 'challenges' | 'dyson'>): boolean {
+  return openingChallengeComplete(state) && REWORK_CHALLENGES.every(c => state.challenges?.replacement?.completedIds.includes(c.id))
+}
+export const CONVERGENCE_GROWTH_PER_SECOND = Math.LN2 / 1800

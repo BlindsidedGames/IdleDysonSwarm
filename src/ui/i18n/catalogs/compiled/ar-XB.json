@@ -1427,6 +1427,20 @@
       "value": "‬"
     }
   ],
+  "civilization.autoPriority": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀nʇo-Ԁɹıoɹıʇʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "civilization.automaticAward": [
     {
       "type": 0,
@@ -1435,6 +1449,34 @@
     {
       "type": 0,
       "value": "∀ʍɐɹpǝp ɐnʇoɯɐʇıɔɐʅʅʎ ʍɥǝu ǝʌǝɹʎ ɹǝbnıɹǝɯǝuʇ ıs ɔoɯdʅǝʇǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.automaticPriority": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹoʌısıouıuƃ ʍoɹʞǝɹs sɥɐɹǝ ʇɥǝıɹ ʇıɯǝ: ʇʍo-ʇɥıɹps ou ʎonɹ dɹǝɟǝɹɹǝp ɾoq, ouǝ-ʇɥıɹp ou ʇɥǝ oʇɥǝɹ. Moɹʞǝɹ ɔonuʇs sɥoʍ ʇɥǝsǝ sɥɐɹǝs. ⊥ooʅ ɹǝsǝɹʌǝs sʇıʅʅ ɐddʅʎ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.autumn": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀nʇnɯu"
     },
     {
       "type": 0,
@@ -1519,6 +1561,62 @@
       "value": "‬"
     }
   ],
+  "civilization.buildCamp": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑnıʅp ɔɐɯd"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.buildTent": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑnıʅp ʇǝuʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.camp": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɐɯd"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.campBenefit": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄouʌǝɹʇs 3 ʇǝuʇs ıuʇo ɐ ɔɐɯd. Ӽǝǝds ʇɥǝıɹ ɹǝsıpǝuʇs ɐup ɐpps 3 ɯoɹǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "civilization.campExpansion": [
     {
       "type": 0,
@@ -1541,6 +1639,20 @@
     {
       "type": 0,
       "value": "Ↄɐɯd Ԁɹoʌısıouıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.campUnlock": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝ ouǝ Hıpǝʍoɹʞıuƃ ɔʎɔʅǝ, ʇɥǝu ɔouʌǝɹʇ 3 ʇǝuʇs."
     },
     {
       "type": 0,
@@ -1589,6 +1701,108 @@
       "value": "‬"
     }
   ],
+  "civilization.chieftain": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅂ǝɐpǝɹsɥıd"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.chieftainAuto": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅂ǝɐpǝɹsɥıd ɐnʇoɯɐʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.chieftainHelp": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀nʇoɯɐʇıɔɐʅʅʎ ɔɥoosǝs ɐ dɹıoɹıʇʎ ɟoɹ Ԁɹoʌısıouıuƃ ɐup Ↄɹɐɟʇ qɐsǝp ou ƃɹoʍʇɥ uǝǝps ɐup ʇɥǝ sǝɐsou. ⊥nɹu oɟɟ ʇo ɔɥoosǝ ɯɐunɐʅʅʎ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.chieftainOff": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oɟɟ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.chieftainOn": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.chieftainRequirement": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝbnıɹǝs 2 Ↄɐɯds. Ↄosʇs 12 ⊥ooʅs ɐup 6 ⅁ɐɯǝ; Ↄɐɯds ɐɹǝ ʞǝdʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.chieftainTarget": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹǝdɐɹıuƃ ɟoɹ "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "civilization.clothing": [
     {
       "type": 0,
@@ -1596,7 +1810,21 @@
     },
     {
       "type": 0,
-      "value": "Ↄʅoʇɥıuƃ"
+      "value": "⅂ǝɐʇɥǝɹ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.coldSeason": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Hnuʇıuƃ: ɟnʅʅ ɟoop ʎıǝʅp. ⅁ɐʇɥǝɹıuƃ: 25% ɟoop ʎıǝʅp ɐup ponqʅǝ ɯɐʇǝɹıɐʅs. ⅁ɐɯǝ ʎıǝʅp ıs nuɔɥɐuƃǝp."
     },
     {
       "type": 0,
@@ -1671,6 +1899,20 @@
     {
       "type": 0,
       "value": "Ↄɹɐɟʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.craftPriority": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɹɐɟʇ dɹıoɹıʇʎ"
     },
     {
       "type": 0,
@@ -1927,6 +2169,20 @@
     {
       "type": 0,
       "value": "∀ɔʇıou ɟɐıʅǝp. ⊥ɹʎ ɐƃɐıu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.fall": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎɐʅʅ"
     },
     {
       "type": 0,
@@ -2194,7 +2450,7 @@
     },
     {
       "type": 0,
-      "value": "Hıpǝs"
+      "value": "⅁ɐɯǝ"
     },
     {
       "type": 0,
@@ -2209,6 +2465,20 @@
     {
       "type": 0,
       "value": "Hıpǝʍoɹʞıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.hireChieftain": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩uʅoɔʞ ⅂ǝɐpǝɹsɥıd"
     },
     {
       "type": 0,
@@ -2237,6 +2507,34 @@
     {
       "type": 0,
       "value": "Hnuʇıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.huntingPrerequisite": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝ ouǝ ⊥ooʅɯɐʞıuƃ ɔʎɔʅǝ ʇo nuʅoɔʞ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.huntingUnlock": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩uʅoɔʞ Hnuʇıuƃ ɟoɹ 1 ⊥ooʅ. Ⅎnɹʇɥǝɹ ɥnuʇs ɔosʇ uo ⊥ooʅs."
     },
     {
       "type": 0,
@@ -2449,6 +2747,46 @@
       "value": "‬"
     }
   ],
+  "civilization.population": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁodnʅɐʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.populationGoal": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁodnʅɐʇıou "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "target"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "civilization.preview": [
     {
       "type": 0,
@@ -2457,6 +2795,38 @@
     {
       "type": 0,
       "value": "∀ƃɹıɔnʅʇnɹǝ ɔouʇıunǝs ıu ɐ ʅɐʇǝɹ dɥɐsǝ. ⅄onɹ ɐɔʇıʌıʇıǝs ʞǝǝd ɹnuuıuƃ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.priority": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹoʌısıouıuƃ dɹıoɹıʇʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.priorityChoice": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹıoɹıʇızǝ: "
+    },
+    {
+      "type": 1,
+      "value": "name"
     },
     {
       "type": 0,
@@ -2499,6 +2869,24 @@
     {
       "type": 0,
       "value": "Moɹʞǝɹs ɹǝɯɐıu ıu ʇɥǝ ɔɐɯd. Ǝɐɔɥ uǝǝps ɐ ɥonsıuƃ dʅɐɔǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.seasonRemaining": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Nǝxʇ sǝɐsou ıu "
+    },
+    {
+      "type": 1,
+      "value": "time"
     },
     {
       "type": 0,
@@ -2575,6 +2963,34 @@
       "value": "‬"
     }
   ],
+  "civilization.spring": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sdɹıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.summer": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Snɯɯǝɹ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "civilization.suppliesFocus": [
     {
       "type": 0,
@@ -2583,6 +2999,62 @@
     {
       "type": 0,
       "value": "Snddʅıǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.tent": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ǝuʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.tentBenefit": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀pps 2 ɹǝsıpǝuʇs. Ԑnıʅʇ ıɯɯǝpıɐʇǝʅʎ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.tentUnlock": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝ ouǝ Hıpǝʍoɹʞıuƃ ɔʎɔʅǝ ʇo nuʅoɔʞ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.tents": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ǝuʇs"
     },
     {
       "type": 0,
@@ -2651,6 +3123,20 @@
     {
       "type": 1,
       "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.unlockHunting": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩uʅoɔʞ Hnuʇıuƃ"
     },
     {
       "type": 0,
@@ -2753,6 +3239,34 @@
     {
       "type": 0,
       "value": "Mɐıʇıuƃ ɟoɹ ʍoɹʞǝɹs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.warmSeason": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɐʇɥǝɹıuƃ: ɟnʅʅ ɟoop ʎıǝʅp. Hnuʇıuƃ: 25% ɟoop ʎıǝʅp. ⅁ɐɯǝ ʎıǝʅp ıs nuɔɥɐuƃǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "civilization.winter": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Mıuʇǝɹ"
     },
     {
       "type": 0,
@@ -3111,6 +3625,48 @@
       "value": "‬"
     }
   ],
+  "debug.era": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɹɐ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "debug.era-help": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɐɹʇ ʇɥǝ sǝʅǝɔʇǝp ǝɹɐ ɟɹǝsɥ. ᴚǝdʅɐɔǝs sıɯnʅɐʇıou dɹoƃɹǝss; oʇɥǝɹ dɹoƃɹǝss ıs ʞǝdʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "debug.jump-era": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ſnɯd ʇo ǝɹɐ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "debug.lock-tabs": [
     {
       "type": 0,
@@ -3287,6 +3843,20 @@
     {
       "type": 0,
       "value": "Mɥoʅǝ ɔɐd"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "debug.simulation-era": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sıɯnʅɐʇıou ǝɹɐ"
     },
     {
       "type": 0,
@@ -9834,7 +10404,7 @@
     },
     {
       "type": 0,
-      "value": "Ԑǝƃıu Ⅎɐɹɯıuƃ Ʌıʅʅɐƃǝs"
+      "value": "Ԑǝƃıu Ⅎɐɹɯıuƃ ǝɹɐ"
     },
     {
       "type": 0,
@@ -12663,6 +13233,40 @@
       "value": "‬"
     }
   ],
+  "navigation.simulations-goals-progress": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": ", "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " oɟ "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " Ԑoʇs ƃoɐʅs ɔoɯdʅǝʇǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "navigation.simulations-influence-progress": [
     {
       "type": 0,
@@ -14103,6 +14707,80 @@
       "value": "‬"
     }
   ],
+  "pilotChallenges.convergenceEarned": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄouʌǝɹƃǝuɔǝ nuʅoɔʞǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.convergenceLocked": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝ ɐʅʅ 10 ɔɥɐʅʅǝuƃǝs ʇo nuʅoɔʞ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.convergenceProgress": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 10 ɔɥɐʅʅǝuƃǝs ɔoɯdʅǝʇǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.convergenceRule": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅄onɹ ⅁ɐʅɐɔʇıɔ Ԑɹɐıus ƃɹoʍ ɔouʇıunonsʅʎ, ponqʅıuƃ ǝʌǝɹʎ 30 ɯıunʇǝs oɟ ƃɐɯǝ ʇıɯǝ. ᴚǝbnıɹǝs ɐʇ ʅǝɐsʇ ouǝ ⅁ɐʅɐɔʇıɔ Ԑɹɐıu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.convergenceTitle": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄouʌǝɹƃǝuɔǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "pilotChallenges.earned": [
     {
       "type": 0,
@@ -14301,6 +14979,98 @@
       "value": "‬"
     }
   ],
+  "pilotChallenges.openingComplete": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.openingEarned": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sıɯnʅɐʇıous nuʅoɔʞǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.openingProgress": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ɔʇıʌǝ · "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 10 ƃoɐʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.openingReward": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝʍɐɹp: nuʅoɔʞ Sıɯnʅɐʇıous"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.openingRule": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝ ɐʅʅ 10 ƃoɐʅs ıu ʇɥǝ Ԑoʇs ʇɐq."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.openingTitle": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑǝƃıuuıuƃs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "pilotChallenges.other": [
     {
       "type": 0,
@@ -14489,6 +15259,20 @@
     {
       "type": 0,
       "value": "Ǝɐɹu 64 IԀ ʍıʇɥ dɐuǝʅ ʅıɟǝʇıɯǝ ɟıxǝp ɐʇ 2 sǝɔoups."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pilotChallenges.simulationsLocked": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝ Ԑǝƃıuuıuƃs qʎ ɟıuısɥıuƃ ɐʅʅ 10 ƃoɐʅs ıu ʇɥǝ Ԑoʇs ʇɐq ʇo nuʅoɔʞ Sıɯnʅɐʇıous."
     },
     {
       "type": 0,

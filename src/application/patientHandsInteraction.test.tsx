@@ -70,12 +70,12 @@ afterEach(() => { cleanup(); vi.useRealTimers() })
 // Real tap/hold -> application -> canonical update. Only the stopped interval's
 // remainder is idle; fractional progress and stored work must remain intact.
 test.each([
-  { tick: 33, boost: 42, double: true, partial: 0, expected: 2.572 },
-  { tick: 200, boost: 42, double: true, partial: 0, expected: 16.6 },
-  { tick: 200, boost: 42, double: false, partial: 0, expected: 8.2 },
+  { tick: 33, boost: 8, double: true, partial: 0, expected: .328 },
+  { tick: 200, boost: 8, double: true, partial: 0, expected: 3 },
+  { tick: 200, boost: 8, double: false, partial: 0, expected: 1.4 },
   { tick: 200, boost: 1, double: false, partial: 0, expected: 0 },
   { tick: 33, boost: 1, double: false, partial: 0, expected: .031 },
-  { tick: 200, boost: 42, double: true, partial: 130, expected: 16.73 },
+  { tick: 200, boost: 8, double: true, partial: 130, expected: 3.13 },
 ])('a tap recharges Patient Hands with its unused update time: %j', async p => {
   const h = await fixture()
   await h.command({ kind: 'settings.set-processing-interval', milliseconds: p.tick })
@@ -97,7 +97,7 @@ test.each([
   // Consume the recovered charge once; independently sum the documented ramp.
   await act(async () => { h.refresh() })
   await act(async () => { fireEvent.keyDown(button, { key: ' ' }); fireEvent.keyUp(button, { key: ' ' }) })
-  // Respect the represented timer at a whole-action boundary (16.6 can
+  // Respect the represented timer at a whole-action boundary (3 can
   // be stored just below that decimal after funded-time arithmetic).
   const stored = Math.floor(first.skills.byId[A.patientHands].timerSeconds / .2)
   let reward = 0
@@ -113,19 +113,19 @@ test('holding consumes boosted time; stopping repeat restores idle charge and it
   vi.useFakeTimers()
   const h = await fixture()
   await h.command({ kind: 'infinity.purchase-shop-item', itemId: 'rework-DoubleTime' })
-  await h.command({ kind: 'time.set-offline-boost-multiplier', multiplier: 42 })
+  await h.command({ kind: 'time.set-offline-boost-multiplier', multiplier: 8 })
   const button = screen.getByRole('button')
   await act(async () => { fireEvent.keyDown(button, { key: ' ' }); await vi.advanceTimersByTimeAsync(600) })
   expect(h.state().tinker.repeat).toBe(true)
   h.advance(200)
-  expect(h.state().gameState.skills.byId[A.handAssembly].level).toBe(84)
+  expect(h.state().gameState.skills.byId[A.handAssembly].level).toBe(16)
   expect(h.state().gameState.skills.byId[A.patientHands].timerSeconds).toBe(0)
   await act(async () => { h.refresh(); fireEvent.pointerDown(document.body) })
   expect(h.state().tinker.repeat).toBe(false)
   h.advance(200)
-  expect(h.state().gameState.skills.byId[A.handAssembly].level).toBe(85)
-  expect(h.state().gameState.skills.byId[A.patientHands].timerSeconds).toBeCloseTo(16.6, 10)
-  h.advance(1000)
+  expect(h.state().gameState.skills.byId[A.handAssembly].level).toBe(17)
+  expect(h.state().gameState.skills.byId[A.patientHands].timerSeconds).toBeCloseTo(3, 10)
+  h.advance(3000)
   expect(h.state().gameState.skills.byId[A.patientHands].timerSeconds).toBe(42)
 })
 

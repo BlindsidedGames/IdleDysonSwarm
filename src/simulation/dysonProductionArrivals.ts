@@ -1,3 +1,4 @@
+import { convergenceUnlocked, CONVERGENCE_GROWTH_PER_SECOND } from './reworkChallenges'
 import { challengeAllowsFacility, effectiveDivisions, isBreakInfinityEnabled } from './infinityChallenges'
 import { hasCashScienceSubskill } from './skillSubskills'
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
@@ -102,6 +103,16 @@ export function applyDysonProductionArrivals(
       rates[id],
       seconds,
     )
+  }
+
+  if (convergenceUnlocked(state) && challengeAllowsFacility(state, 'galactic_brains')) {
+    const [automatic, manual] = facilities.galactic_brains
+    const total = addContinuous(automatic, manual)
+    if (total > 0) {
+      const exponent = CONVERGENCE_GROWTH_PER_SECOND * seconds
+      const growth = exponent > 709 ? Number.MAX_VALUE : multiplyContinuous(total, Math.expm1(exponent))
+      facilities.galactic_brains[0] = addContinuous(automatic, growth)
+    }
   }
 
   return {

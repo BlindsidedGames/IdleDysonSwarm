@@ -198,6 +198,7 @@ export type UiRuntimeDevelopmentRealityResult =
     }
 
 export type UiRuntimeDevelopmentAction =
+  | { readonly kind: 'jump-to-era'; readonly era: 'forager' | 'farming' }
   | { readonly kind: 'add-discoveries'; readonly amount: bigint }
   | { readonly kind: 'add-transcendence-points'; readonly amount: bigint }
   | { readonly kind: 'add-cash'; readonly amount: number }

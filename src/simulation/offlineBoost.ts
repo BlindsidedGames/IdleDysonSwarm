@@ -1,7 +1,7 @@
 import type { CanonicalGameStateV1, TimelineState } from '../game-state/types'
 import { settleContinuousDebit } from './conservativeSettlement'
 
-export const MAXIMUM_OFFLINE_BOOST_MULTIPLIER = 42
+export const MAXIMUM_OFFLINE_BOOST_MULTIPLIER = 8
 export const DEFAULT_OFFLINE_BOOST_MULTIPLIER = 1
 export const DEFAULT_OFFLINE_BOOST = Object.freeze({ multiplier: DEFAULT_OFFLINE_BOOST_MULTIPLIER })
 
@@ -10,7 +10,7 @@ export function isOfflineBoostMultiplier(value: unknown): value is number {
 }
 
 export function offlineBoost(timeline: Readonly<Pick<TimelineState, 'offlineBoost'>>) {
-  return timeline.offlineBoost ?? DEFAULT_OFFLINE_BOOST
+  return timeline.offlineBoost ? { multiplier: Math.min(MAXIMUM_OFFLINE_BOOST_MULTIPLIER, timeline.offlineBoost.multiplier) } : DEFAULT_OFFLINE_BOOST
 }
 
 export function pauseOfflineBoost(state: CanonicalGameStateV1): CanonicalGameStateV1 {

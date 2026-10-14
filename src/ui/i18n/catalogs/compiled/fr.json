@@ -659,10 +659,28 @@
       "value": "value"
     }
   ],
+  "civilization.autoPriority": [
+    {
+      "type": 0,
+      "value": "Priorité auto"
+    }
+  ],
   "civilization.automaticAward": [
     {
       "type": 0,
       "value": "Attribué automatiquement lorsque toutes les conditions sont remplies."
+    }
+  ],
+  "civilization.automaticPriority": [
+    {
+      "type": 0,
+      "value": "Les travailleurs du ravitaillement partagent leur temps : deux tiers pour la tâche prioritaire, un tiers pour l’autre. Les effectifs affichent ces parts. Les réserves d’Outils restent applicables."
+    }
+  ],
+  "civilization.autumn": [
+    {
+      "type": 0,
+      "value": "Automne"
     }
   ],
   "civilization.available": [
@@ -703,6 +721,30 @@
       "value": "Trois fondateurs commencent avec un kit d’abri. La collecte nécessite une vraie équipe et aucun matériau."
     }
   ],
+  "civilization.buildCamp": [
+    {
+      "type": 0,
+      "value": "Construire un camp"
+    }
+  ],
+  "civilization.buildTent": [
+    {
+      "type": 0,
+      "value": "Construire une tente"
+    }
+  ],
+  "civilization.camp": [
+    {
+      "type": 0,
+      "value": "Camp"
+    }
+  ],
+  "civilization.campBenefit": [
+    {
+      "type": 0,
+      "value": "Transforme 3 tentes en un camp. Conserve leurs habitants et en ajoute 3."
+    }
+  ],
   "civilization.campExpansion": [
     {
       "type": 0,
@@ -713,6 +755,12 @@
     {
       "type": 0,
       "value": "Approvisionnement du camp"
+    }
+  ],
+  "civilization.campUnlock": [
+    {
+      "type": 0,
+      "value": "Terminez un cycle de travail des peaux, puis convertissez 3 tentes."
     }
   ],
   "civilization.camps": [
@@ -733,10 +781,62 @@
       "value": "Catalyseurs"
     }
   ],
+  "civilization.chieftain": [
+    {
+      "type": 0,
+      "value": "Direction"
+    }
+  ],
+  "civilization.chieftainAuto": [
+    {
+      "type": 0,
+      "value": "Automatisation de la direction"
+    }
+  ],
+  "civilization.chieftainHelp": [
+    {
+      "type": 0,
+      "value": "Choisit automatiquement une priorité pour le ravitaillement et l’artisanat selon les besoins de croissance et la saison. Désactivez pour choisir manuellement."
+    }
+  ],
+  "civilization.chieftainOff": [
+    {
+      "type": 0,
+      "value": "Désactivée"
+    }
+  ],
+  "civilization.chieftainOn": [
+    {
+      "type": 0,
+      "value": "Activée"
+    }
+  ],
+  "civilization.chieftainRequirement": [
+    {
+      "type": 0,
+      "value": "Nécessite 2 Camps. Coûte 12 Outils et 6 Gibiers ; les Camps sont conservés."
+    }
+  ],
+  "civilization.chieftainTarget": [
+    {
+      "type": 0,
+      "value": "Préparation : "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
   "civilization.clothing": [
     {
       "type": 0,
-      "value": "Vêtements"
+      "value": "Cuir"
+    }
+  ],
+  "civilization.coldSeason": [
+    {
+      "type": 0,
+      "value": "Chasse : rendement alimentaire maximal. Cueillette : 25 % du rendement alimentaire et matériaux doublés. Le rendement en gibier reste inchangé."
     }
   ],
   "civilization.completed": [
@@ -771,6 +871,12 @@
     {
       "type": 0,
       "value": "Artisanat"
+    }
+  ],
+  "civilization.craftPriority": [
+    {
+      "type": 0,
+      "value": "Priorité de l’artisanat"
     }
   ],
   "civilization.craftSpecialization": [
@@ -899,6 +1005,12 @@
     {
       "type": 0,
       "value": "Échec de l’action. Réessayez."
+    }
+  ],
+  "civilization.fall": [
+    {
+      "type": 0,
+      "value": "Automne"
     }
   ],
   "civilization.firstHunt": [
@@ -1038,13 +1150,19 @@
   "civilization.hides": [
     {
       "type": 0,
-      "value": "Peaux"
+      "value": "Gibier"
     }
   ],
   "civilization.hideworking": [
     {
       "type": 0,
       "value": "Travail des peaux"
+    }
+  ],
+  "civilization.hireChieftain": [
+    {
+      "type": 0,
+      "value": "Débloquer la direction"
     }
   ],
   "civilization.housing": [
@@ -1057,6 +1175,18 @@
     {
       "type": 0,
       "value": "Chasse"
+    }
+  ],
+  "civilization.huntingPrerequisite": [
+    {
+      "type": 0,
+      "value": "Terminez un cycle de fabrication d’outils pour débloquer."
+    }
+  ],
+  "civilization.huntingUnlock": [
+    {
+      "type": 0,
+      "value": "Débloquez la chasse pour 1 outil. Les chasses suivantes ne coûtent aucun outil."
     }
   ],
   "civilization.inputs": [
@@ -1161,10 +1291,50 @@
       "value": "Début de l’ère des chasseurs-cueilleurs terminé"
     }
   ],
+  "civilization.population": [
+    {
+      "type": 0,
+      "value": "Population"
+    }
+  ],
+  "civilization.populationGoal": [
+    {
+      "type": 0,
+      "value": "Population "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "target"
+    }
+  ],
   "civilization.preview": [
     {
       "type": 0,
       "value": "L’agriculture arrive dans une phase ultérieure. Vos activités continuent."
+    }
+  ],
+  "civilization.priority": [
+    {
+      "type": 0,
+      "value": "Priorité du ravitaillement"
+    }
+  ],
+  "civilization.priorityChoice": [
+    {
+      "type": 0,
+      "value": "Priorité : "
+    },
+    {
+      "type": 1,
+      "value": "name"
     }
   ],
   "civilization.provisioning": [
@@ -1183,6 +1353,16 @@
     {
       "type": 0,
       "value": "Les travailleurs restent dans le camp. Chacun a besoin d’une place de logement."
+    }
+  ],
+  "civilization.seasonRemaining": [
+    {
+      "type": 0,
+      "value": "Prochaine saison dans "
+    },
+    {
+      "type": 1,
+      "value": "time"
     }
   ],
   "civilization.seasonalExpeditions": [
@@ -1215,10 +1395,46 @@
       "value": "Vitesse de progression"
     }
   ],
+  "civilization.spring": [
+    {
+      "type": 0,
+      "value": "Printemps"
+    }
+  ],
+  "civilization.summer": [
+    {
+      "type": 0,
+      "value": "Été"
+    }
+  ],
   "civilization.suppliesFocus": [
     {
       "type": 0,
       "value": "Fournitures"
+    }
+  ],
+  "civilization.tent": [
+    {
+      "type": 0,
+      "value": "Tente"
+    }
+  ],
+  "civilization.tentBenefit": [
+    {
+      "type": 0,
+      "value": "Ajoute 2 habitants. Construction immédiate."
+    }
+  ],
+  "civilization.tentUnlock": [
+    {
+      "type": 0,
+      "value": "Terminez un cycle de travail des peaux pour débloquer."
+    }
+  ],
+  "civilization.tents": [
+    {
+      "type": 0,
+      "value": "Tentes"
     }
   ],
   "civilization.toolmaking": [
@@ -1255,6 +1471,12 @@
     {
       "type": 1,
       "value": "name"
+    }
+  ],
+  "civilization.unlockHunting": [
+    {
+      "type": 0,
+      "value": "Débloquer la chasse"
     }
   ],
   "civilization.upcoming": [
@@ -1301,6 +1523,18 @@
     {
       "type": 0,
       "value": "En attente de travailleurs"
+    }
+  ],
+  "civilization.warmSeason": [
+    {
+      "type": 0,
+      "value": "Cueillette : rendement alimentaire maximal. Chasse : 25 % du rendement alimentaire. Le rendement en gibier reste inchangé."
+    }
+  ],
+  "civilization.winter": [
+    {
+      "type": 0,
+      "value": "Hiver"
     }
   ],
   "civilization.workers": [
@@ -1463,6 +1697,24 @@
       "value": "Activer gratuitement"
     }
   ],
+  "debug.era": [
+    {
+      "type": 0,
+      "value": "Ère"
+    }
+  ],
+  "debug.era-help": [
+    {
+      "type": 0,
+      "value": "Recommence l’ère choisie. Remplace la progression de la simulation ; le reste est conservé."
+    }
+  ],
+  "debug.jump-era": [
+    {
+      "type": 0,
+      "value": "Aller à cette ère"
+    }
+  ],
   "debug.lock-tabs": [
     {
       "type": 0,
@@ -1539,6 +1791,12 @@
     {
       "type": 0,
       "value": "Plafond entier"
+    }
+  ],
+  "debug.simulation-era": [
+    {
+      "type": 0,
+      "value": "Ère de simulation"
     }
   ],
   "debug.speedrun-warning": [
@@ -5078,7 +5336,7 @@
   "farming.begin": [
     {
       "type": 0,
-      "value": "Commencer un village agricole"
+      "value": "Commencer l’ère agricole"
     }
   ],
   "farming.betaEndpoint": [
@@ -6479,6 +6737,32 @@
       "value": "Simulations"
     }
   ],
+  "navigation.simulations-goals-progress": [
+    {
+      "type": 1,
+      "value": "destination"
+    },
+    {
+      "type": 0,
+      "value": ", "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " objectifs Bots sur "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " terminés"
+    }
+  ],
   "navigation.simulations-influence-progress": [
     {
       "type": 1,
@@ -7151,6 +7435,40 @@
       "value": "Confirmer le redémarrage"
     }
   ],
+  "pilotChallenges.convergenceEarned": [
+    {
+      "type": 0,
+      "value": "Convergence débloquée"
+    }
+  ],
+  "pilotChallenges.convergenceLocked": [
+    {
+      "type": 0,
+      "value": "Terminez les 10 défis pour débloquer."
+    }
+  ],
+  "pilotChallenges.convergenceProgress": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 10 défis terminés"
+    }
+  ],
+  "pilotChallenges.convergenceRule": [
+    {
+      "type": 0,
+      "value": "Vos cerveaux galactiques augmentent en continu et doublent toutes les 30 minutes de jeu. Nécessite au moins un cerveau galactique."
+    }
+  ],
+  "pilotChallenges.convergenceTitle": [
+    {
+      "type": 0,
+      "value": "Convergence"
+    }
+  ],
   "pilotChallenges.earned": [
     {
       "type": 0,
@@ -7243,6 +7561,50 @@
     {
       "type": 0,
       "value": "Gagnez 32 IP sans Science, Recherche ni Découverte."
+    }
+  ],
+  "pilotChallenges.openingComplete": [
+    {
+      "type": 0,
+      "value": "Terminé"
+    }
+  ],
+  "pilotChallenges.openingEarned": [
+    {
+      "type": 0,
+      "value": "Simulations débloquées"
+    }
+  ],
+  "pilotChallenges.openingProgress": [
+    {
+      "type": 0,
+      "value": "En cours · "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 10 objectifs"
+    }
+  ],
+  "pilotChallenges.openingReward": [
+    {
+      "type": 0,
+      "value": "Récompense : débloquer les Simulations"
+    }
+  ],
+  "pilotChallenges.openingRule": [
+    {
+      "type": 0,
+      "value": "Terminez les 10 objectifs de l’onglet Bots."
+    }
+  ],
+  "pilotChallenges.openingTitle": [
+    {
+      "type": 0,
+      "value": "Les débuts"
     }
   ],
   "pilotChallenges.other": [
@@ -7349,6 +7711,12 @@
     {
       "type": 0,
       "value": "Gagnez 64 IP avec une durée de vie des panneaux fixée à 2 secondes."
+    }
+  ],
+  "pilotChallenges.simulationsLocked": [
+    {
+      "type": 0,
+      "value": "Terminez Les débuts en accomplissant les 10 objectifs de l’onglet Bots pour débloquer les Simulations."
     }
   ],
   "pilotChallenges.start": [

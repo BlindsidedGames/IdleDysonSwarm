@@ -1,3 +1,4 @@
+import { REWORK_CHALLENGES } from '../../../simulation/reworkChallenges'
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { IntlProvider } from 'react-intl'
@@ -25,4 +26,21 @@ test('moves focus to restart confirmation and restores it after failure/cancel',
   const cancel = card.getByRole('button', { name: 'Cancel' })
   cancel.focus(); fireEvent.click(cancel)
   expect(document.activeElement).toBe(card.getByRole('button', { name: 'Start' }))
+})
+
+// This owns spoiler visibility; engine tests own when production is earned.
+test('reveals the Convergence effect at six completions but earns it only at ten', () => {
+  const view = (count: number) => <IntlProvider locale="en" messages={{}}><ReworkChallengesSurface
+    progress={{ ...EMPTY_INFINITY_CHALLENGES, openingCompleted: true, replacement: {
+      version: 1, active: null, completedIds: REWORK_CHALLENGES.slice(0, count - 1).map(c => c.id),
+      earnedIp: 0n, infinities: 0, paidPurchases: 0, paidFacilityIds: [], savedAutoAssignment: [],
+      savedBreakTarget: 1n, savedBotDistribution: 0, savedDiscovery: undefined,
+    } }} earnedIp={128n} firstInfinity breakTheLoop overflowPending={false} dispatchPlayer={vi.fn()} /></IntlProvider>
+  const { rerender } = render(view(5))
+  expect(screen.queryByText(/Your Galactic Brains grow continuously/)).toBeNull()
+  rerender(view(6))
+  expect(screen.getByText(/Your Galactic Brains grow continuously/)).toBeTruthy()
+  expect(screen.queryByText('Convergence unlocked')).toBeNull()
+  rerender(view(10))
+  expect(screen.getByText('Convergence unlocked')).toBeTruthy()
 })

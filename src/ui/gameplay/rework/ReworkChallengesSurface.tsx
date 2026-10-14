@@ -5,13 +5,13 @@ import type { CanonicalPlayerCommand } from '../../../application/canonicalPlaye
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import type { InfinityChallengeState, ReworkChallengeId } from '../../../game-state/types'
 import { REWORK_CHALLENGES, replacementSkillPoints } from '../../../simulation/reworkChallenges'
-import { Button, CollapsibleSection, StatusFeedback } from '../../components'
+import { Button, StatusFeedback } from '../../components'
 import '../infinity/infinity.css'
 import './challenges.css'
 import { challengeMessages } from './challengeMessages'
 
-export function ReworkChallengesSurface({ progress, earnedIp, firstInfinity, breakTheLoop, overflowPending, dispatchPlayer }: {
-  progress?: DeepReadonly<InfinityChallengeState>; earnedIp: bigint; firstInfinity: boolean;
+export function ReworkChallengesSurface({ progress, goalStage = 0n, earnedIp, firstInfinity, breakTheLoop, overflowPending, dispatchPlayer }: {
+  progress?: DeepReadonly<InfinityChallengeState>; goalStage?: bigint; earnedIp: bigint; firstInfinity: boolean;
   breakTheLoop: boolean; overflowPending: boolean;
   dispatchPlayer: (command: CanonicalPlayerCommand) => Promise<UiRuntimePlayerCommandResult>;
 }) {
@@ -29,9 +29,8 @@ export function ReworkChallengesSurface({ progress, earnedIp, firstInfinity, bre
     if (confirm === null) focusOrigin.current = null
   }, [confirm, pending])
   const run = progress?.replacement
-  const legacy = new Set(progress?.completedQuantumChallenges ?? [])
-  if (progress?.noScienceCompleted) legacy.add('no-science')
-  const history = legacy.size + Number(progress?.blankSlateCompleted === true) + Number(progress?.trialAndErrorCompleted === true)
+  const openingComplete = progress?.openingCompleted === true || goalStage >= 10n
+  const completed = Number(openingComplete) + REWORK_CHALLENGES.filter(c => run?.completedIds.includes(c.id)).length
   const message = (key: keyof typeof challengeMessages, values?: Record<string, string | number>) => intl.formatMessage(challengeMessages[key], values)
   const act = async (id: ReworkChallengeId) => {
     if (pending) return
@@ -44,11 +43,12 @@ export function ReworkChallengesSurface({ progress, earnedIp, firstInfinity, bre
     finally { setPending(false) }
   }
   return <section className="challenges-surface">
-    <CollapsibleSection storageKey="replacement-infinity-challenges" ariaLabel={message('compactTitle')===message('title')?message('title'):`${message('compactTitle')} — ${message('title')}`} title={<><span className="challenge-title-full">{message('title')}</span><span className="challenge-title-compact">{message('compactTitle')}</span></>}>
-      <p>{message('intro')}</p>
-      <CollapsibleSection storageKey="replacement-challenge-rules" headingLevel="h3" defaultExpanded={false} title={message('rulesTitle')}>
-        <p>{message('rules')}</p>
-      </CollapsibleSection>
+      <article className="infinity-shop-card infinity-challenge-card"><div>
+        <h3>{message('openingTitle')}</h3>
+        <p>{message('openingRule')}</p>
+        <p>{message(openingComplete ? 'openingEarned' : 'openingReward')}</p>
+        <p>{message(openingComplete ? 'openingComplete' : 'openingProgress', { value: Number(goalStage > 10n ? 10n : goalStage) })}</p>
+      </div></article>
       <p>{message('budget', { value: String(replacementSkillPoints(progress)) })}</p>
       {REWORK_CHALLENGES.map(c => {
         const active = run?.active === c.id
@@ -69,11 +69,15 @@ export function ReworkChallengesSurface({ progress, earnedIp, firstInfinity, bre
           {confirm === c.id ? <div className="infinity-challenge-card__confirmation">
             <p>{message('restart')}</p>
             <div className="infinity-challenge-card__actions"><Button disabled={!!issue || pending} variant="danger" state={pending ? 'pending' : 'idle'} onClick={() => void act(c.id)}>{message('confirm')}</Button><Button disabled={pending} onClick={() => setConfirm(null)}>{message('cancel')}</Button></div>
-          </div> : <Button disabled={!!issue || pending} onClick={() => { focusOrigin.current = c.id; setConfirm(c.id) }}>{message(active ? 'abandon' : completed ? 'replay' : 'start')}</Button>}
+          </div> : <Button variant={active ? 'danger' : 'purchase'} disabled={!!issue || pending} onClick={() => { focusOrigin.current = c.id; setConfirm(c.id) }}>{message(active ? 'abandon' : completed ? 'replay' : 'start')}</Button>}
         </article>
       })}
       {error && <StatusFeedback tone="error">{message('failure')}</StatusFeedback>}
-    </CollapsibleSection>
-    <p>{message('history', { value: history })}</p>
+    <article className="infinity-shop-card infinity-challenge-card"><div>
+      <h3>{message('convergenceTitle')}</h3>
+      <p>{message('convergenceProgress', { value: completed })}</p>
+      {completed >= 6 && <p>{message('convergenceRule')}</p>}
+      <p>{message(completed === 10 ? 'convergenceEarned' : 'convergenceLocked')}</p>
+    </div></article>
   </section>
 }

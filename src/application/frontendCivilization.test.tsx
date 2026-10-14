@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { growForager } from '../../test/support/foragerPopulation'
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { IntlProvider } from 'react-intl'
 import { afterEach, expect, test, vi } from 'vitest'
@@ -10,8 +11,7 @@ import { createProductionCanonicalApplicationFactory } from './productionApplica
 import { createUnityFirstRunPreparedSave } from './firstRun/unityFirstRunSave'
 import { hydrateGameState, dehydrateGameState } from '../game-state/mapping'
 import { validateCanonicalGameState } from '../game-state/validate'
-import { formatWholeGameNumber } from '../ui/i18n/formatters'
-import { CIVILIZATION_ACTIVITIES, civilizationCycle, civilizationActivityInputs } from '../simulation/civilization'
+import { civilizationCycle } from '../simulation/civilization'
 import { CivilizationSurface } from '../ui/gameplay/simulations/CivilizationSurface'
 import { ReadyDysonSlice, type ReadyGameRoute } from '../ui/gameplay/dyson/ReadyDysonSlice'
 
@@ -46,6 +46,7 @@ async function dispatch(app: Application, command: CanonicalPlayerCommand) {
 function seed(legacy = false) {
   const h = hydrateGameState(prepared)
   return new MemoryRepository(dehydrateGameState(h, { ...h.state,
+    dyson: { ...h.state.dyson, goalStage: 10n },
     meta: { ...h.state.meta, reworkMigrationChoice: legacy ? undefined : 'keep', firstInfinityComplete: legacy },
     quantum: { ...h.state.quantum, cashBonusLevels: legacy ? 1n : 0n },
     infinity: { ...h.state.infinity, automaticResetEnabled: false },
@@ -56,6 +57,8 @@ function surface(app: Application, route: ReadyGameRoute, dispatchPlayer: (comma
   const s = app.frontendSnapshot(route === 'simulations' ? 'simulations' : 'skills'); if (s.phase !== 'ready') throw Error(s.phase)
   return <IntlProvider locale="en" messages={{}} onError={() => undefined}><ReadyDysonSlice locale="en" route={route} snapshot={s} dispatchPlayer={dispatchPlayer} /></IntlProvider>
 }
+
+function matureSeed(){const h=hydrateGameState(prepared);return new MemoryRepository(dehydrateGameState(h,growForager({...h.state,dyson:{...h.state.dyson,goalStage:10n},meta:{...h.state.meta,reworkMigrationChoice:'keep'}})))}
 
 test.each(['first-run', 'keep', 'fresh'] as const)('playable civilization and first Catalyst/fracture/save path: %s', async path => {
   const repo = seed(path !== 'first-run'); const app = factory(repo); await app.start()
@@ -71,13 +74,17 @@ test.each(['first-run', 'keep', 'fresh'] as const)('playable civilization and fi
   const mounted = render(surface(app, 'simulations', dispatchPlayer))
   expect(screen.getByRole('progressbar', { name: /^Gathering/ })).toBeTruthy()
   expect(mounted.container.querySelectorAll('.civilization-activity')).toHaveLength(1)
-  expect(screen.getByRole('progressbar', {name:'Next Catalyst'}).getAttribute('value')).toBe('0')
+  expect(screen.getByRole('progressbar', {name:'Next Catalyst'}).getAttribute('value')).toBe('0.6')
+  expect(screen.queryByRole('radio')).toBeNull()
+  expect(app.advanceActive(400000).accepted).toBe(true)
+  expect((await dispatch(app,{kind:'civilization.unlock-hunting'})).accepted).toBe(true)
   expect(app.advanceActive(9000000).accepted).toBe(true)
   mounted.rerender(surface(app, 'simulations', dispatchPlayer))
   refresh = () => mounted.rerender(surface(app, 'simulations', dispatchPlayer))
-  expect(mounted.container.querySelectorAll('.civilization-activity')).toHaveLength(9)
-  expect(ready(app).state.gameState.challenges?.galvanizers).toBe(7n)
-  expect(ready(app).state.gameState.civilization?.awardedCatalystMilestoneIds).toHaveLength(7)
+  await act(async()=>fireEvent.click(screen.getByRole('button',{name:'Build tent'})))
+  expect(mounted.container.querySelectorAll('.civilization-activity')).toHaveLength(4)
+  expect(ready(app).state.gameState.challenges?.galvanizers).toBe(1n)
+  expect(ready(app).state.gameState.civilization?.awardedCatalystMilestoneIds).toHaveLength(1)
   expect(screen.queryByRole('button', {name:/Buy|Claim/})).toBeNull()
   expect(screen.getByText('Fracture boost +0%')).toBeTruthy()
   expect(app.frontendSnapshot('skills').phase).toBe('ready')
@@ -87,7 +94,7 @@ test.each(['first-run', 'keep', 'fresh'] as const)('playable civilization and fi
   fireEvent.click(screen.getByRole('button', { name: /^Fracture/ }))
   await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Spend 1 Catalyst' })) })
   const after = (ready(app).state as CanonicalRuntimeState).gameState
-  expect(after.challenges).toMatchObject({ galvanizers: 6n, galvanizedSkillIds: ['startHereTree'] })
+  expect(after.challenges).toMatchObject({ galvanizers: 0n, galvanizedSkillIds: ['startHereTree'] })
   expect(screen.getByText('Fractured: +5% overall simulation speed. Bonuses are additive.')).toBeTruthy()
   expect(validateCanonicalGameState(after)).toEqual({ valid: true, errors: [] })
   const reopened = factory(repo); await reopened.start()
@@ -95,15 +102,15 @@ test.each(['first-run', 'keep', 'fresh'] as const)('playable civilization and fi
   expect(ready(reopened).state.gameState.civilization).toEqual(after.civilization)
 })
 
-test('failed durable focus change preserves progress and retry saves selected weights', async () => {
-  const repo=seed(),app=factory(repo);await app.start();app.advanceActive(9000000)
+test('failed durable housing purchase preserves stocks and retry saves population', async () => {
+  const repo=seed(),app=factory(repo);await app.start();app.advanceActive(400000);await dispatch(app,{kind:'civilization.unlock-hunting'});app.advanceActive(9000000)
   const before=ready(app).state.gameState.civilization
   repo.failNext=true
-  expect((await dispatch(app,{kind:'civilization.set-focus',focus:'settlement'})).accepted).toBe(false)
+  expect((await dispatch(app,{kind:'civilization.buy-housing',building:'tent'})).accepted).toBe(false)
   expect(ready(app).state.gameState.civilization).toEqual(before)
-  expect((await dispatch(app,{kind:'civilization.set-focus',focus:'settlement'})).accepted).toBe(true)
+  expect((await dispatch(app,{kind:'civilization.buy-housing',building:'tent'})).accepted).toBe(true)
   const reopened=factory(repo);await reopened.start()
-  expect(ready(reopened).state.gameState.civilization?.focus).toBe('settlement')
+  expect(ready(reopened).state.gameState.civilization?.workers).toBe(5n)
 })
 
 test('large Stored Time spend matches active advancement, charges once and awards exactly once', async () => {
@@ -121,8 +128,8 @@ test('large Stored Time spend matches active advancement, charges once and award
     expect(stored.activities[id].completions).toBe(played.activities[id].completions)
     expect(stored.activities[id].progress).toBeCloseTo(played.activities[id].progress, 6)
   }
-  expect(stored.awardedCatalystMilestoneIds).toEqual(['forager-catalyst-1'])
-  expect(ready(app).state.gameState.challenges?.galvanizers).toBe(1n)
+  expect(stored.awardedCatalystMilestoneIds).toEqual([])
+  expect(ready(app).state.gameState.challenges?.galvanizers).toBe(0n)
   const reopened = factory(repo); await reopened.start()
   expect(ready(reopened).state.gameState.civilization).toEqual(stored)
 })
@@ -148,123 +155,45 @@ test('interrupted Stored Time candidates credit nothing; repeated successful spe
 })
 
 
-test('automatic gear and paid cycles persist with no manual equipment purchase surface',async()=>{
- const repo=seed(),app=factory(repo);await app.start();expect(app.advanceActive(9000000).accepted).toBe(true)
- expect((await dispatch(app,{kind:'civilization.set-focus',focus:'settlement'})).accepted).toBe(true)
- const c=ready(app).state.gameState.civilization!
- expect(c.equippedWorkers).toBeGreaterThan(0n);expect(c.equippedWorkers).toBeLessThanOrEqual(c.workers/4n)
- const mounted=render(surface(app,'simulations',async(command)=>{if(command.kind==='civilization.equip-worker')throw Error('No manual purchase expected');const result=await dispatch(app,command);if(!result.accepted)throw Error(result.reason);return {status:'accepted' as const,kind:'transition' as const,changed:result.changed,stateRevision:result.revision,activationRevision:{session:ready(app).revision.session,state:result.revision}}}))
- fireEvent.click(screen.getByRole('button',{name:'Forager details'}));fireEvent.click(mounted.container.querySelector('.civilization-workforce > summary')!)
- expect(screen.queryByRole('button',{name:/Equip/})).toBeNull();expect(screen.getByText(/Every simulation minute/)).toBeTruthy()
- const reopened=factory(repo);await reopened.start();expect(ready(reopened).state.gameState.civilization).toEqual(c)
-})
-
-test('era focus stays exposed, distribution matches current crews, and locked requirements use the upward dock',async()=>{
- const repo=seed(),app=factory(repo);await app.start()
+test('manual purchases, automatic jobs, resource labels and population goals use the authoritative application',async()=>{
+ const repo=seed(),app=factory(repo);await app.start();app.advanceActive(7200000)
  let refresh=()=>{}
- const dispatchPlayer=async(command:CanonicalPlayerCommand)=>{
-  const result=await dispatch(app,command);refresh()
-  if(!result.accepted)throw Error(result.reason)
-  return {status:'accepted' as const,kind:'transition' as const,changed:result.changed,stateRevision:result.revision,activationRevision:{session:ready(app).revision.session,state:result.revision}}
- }
- const mounted=render(surface(app,'simulations',dispatchPlayer));refresh=()=>mounted.rerender(surface(app,'simulations',dispatchPlayer))
- expect(screen.queryByRole('combobox')).toBeNull()
- const options=screen.getByRole('radiogroup',{name:'Workforce focus'})
- expect(options.querySelectorAll('button')).toHaveLength(4)
- const catalystSummary = mounted.container.querySelector('.civilization-catalyst-summary')!
- expect(catalystSummary.textContent).toContain('Next Catalyst')
- expect(catalystSummary.textContent).not.toContain('First hunt')
- expect(catalystSummary.querySelector('bdi')).toBeNull()
- expect(screen.getByRole('radio',{name:'Balanced'}).getAttribute('aria-checked')).toBe('true')
- expect(mounted.container.querySelectorAll('.civilization-path')).toHaveLength(1)
- expect(mounted.container.querySelector('[data-locked-activity]')).toBeNull()
- const settings=screen.getByRole('button',{name:'Forager details'})
- expect(settings.getAttribute('aria-expanded')).toBe('false')
- fireEvent.click(settings)
- expect(settings.getAttribute('aria-expanded')).toBe('true')
- expect(mounted.container.querySelector('.civilization-goal-details')).toBeNull()
- const expandedCopy = mounted.container.querySelector('.civilization-control-panel .ui-progress-controls-panel__body')!.textContent!
- expect(expandedCopy).not.toContain('First hunt')
- expect(expandedCopy).not.toContain('Awarded automatically')
- const tool=mounted.container.querySelector('[data-locked-activity="toolmaking"]')!
- expect(tool.textContent).toContain('Gathering: 0 / 2')
- expect(tool.querySelector('details,summary,button')).toBeNull()
- fireEvent.click(settings)
- expect(mounted.container.querySelector('[data-locked-activity]')).toBeNull()
- app.advanceActive(9000000);refresh()
- await act(async()=>{fireEvent.click(screen.getByRole('radio',{name:'Growth'}))})
- expect(screen.getByRole('radio',{name:'Growth'}).getAttribute('aria-checked')).toBe('true')
- expect(options.querySelectorAll('[aria-checked="true"]')).toHaveLength(1)
- expect(screen.getByRole('radio',{name:'Growth'}).tabIndex).toBe(0)
- expect(screen.getByRole('radio',{name:'Balanced'}).tabIndex).toBe(-1)
- await waitFor(()=>expect(screen.getByRole('radio',{name:'Growth'}).hasAttribute('disabled')).toBe(false))
- await act(async()=>{fireEvent.keyDown(screen.getByRole('radio',{name:'Growth'}),{key:'ArrowDown'})})
- expect(screen.getByRole('radio',{name:'Travel'}).getAttribute('aria-checked')).toBe('true')
- expect(document.activeElement).toBe(screen.getByRole('radio',{name:'Travel'}))
- await waitFor(()=>expect(screen.getByRole('radio',{name:'Travel'}).hasAttribute('disabled')).toBe(false))
- await act(async()=>{fireEvent.keyDown(screen.getByRole('radio',{name:'Travel'}),{key:'Home'})})
- expect(screen.getByRole('radio',{name:'Balanced'}).getAttribute('aria-checked')).toBe('true')
- expect(options.querySelectorAll('[aria-checked="true"]')).toHaveLength(1)
- const c=ready(app).state.gameState.civilization!
- fireEvent.click(settings)
- const distribution=mounted.container.querySelectorAll('[data-workforce-section]')
- expect([...distribution].reduce((sum,row)=>sum+BigInt(row.querySelector('dd')!.textContent!.replaceAll(',','')),0n)).toBe(c.workers)
- expect(ready(app).state.gameState.challenges!.galvanizers).toBe(7n)
+ const mounted=render(surface(app,'simulations',async(command)=>{const result=await dispatch(app,command);refresh();if(!result.accepted)throw Error(result.reason);return {status:'accepted',kind:'transition',changed:result.changed,stateRevision:result.revision,activationRevision:{session:ready(app).revision.session,state:result.revision}}}))
+ refresh=()=>mounted.rerender(surface(app,'simulations',async command=>{const result=await dispatch(app,command);refresh();if(!result.accepted)throw Error(result.reason);return {status:'accepted',kind:'transition',changed:result.changed,stateRevision:result.revision,activationRevision:{session:ready(app).revision.session,state:result.revision}}}))
+ expect(screen.queryByRole('radio')).toBeNull()
+ expect(screen.queryByRole('combobox',{name:'Food production priority'})).toBeNull()
+ const beforeUnlock=ready(app).state.gameState.civilization!
+ repo.failNext=true
+ await act(async()=>fireEvent.click(screen.getByRole('button',{name:'Unlock Hunting'})))
+ expect(ready(app).state.gameState.civilization).toEqual(beforeUnlock)
+ await waitFor(()=>expect((screen.getByRole('button',{name:'Unlock Hunting'}) as HTMLButtonElement).disabled).toBe(false))
+ expect(screen.queryByRole('radio')).toBeNull()
+ await act(async()=>fireEvent.click(screen.getByRole('button',{name:'Unlock Hunting'})))
+ await waitFor(()=>expect(ready(app).state.gameState.civilization!.resources.tools).toBe(beforeUnlock.resources.tools-1n))
+ expect(screen.queryByRole('button',{name:'Unlock Hunting'})).toBeNull()
+ await act(async()=>{app.advanceActive(7200000);refresh()})
+ expect(screen.queryByText('Expeditions & Trade')).toBeNull()
+ expect(screen.getByRole('button',{name:'Forager details'}).getAttribute('aria-expanded')).toBe('false')
+ expect(screen.getByRole('progressbar', {name:'Next Catalyst'}).getAttribute('aria-valuetext')).toBe('Population 3 / 5')
+ expect(screen.getByRole('term',{name:'Tents'})).toBeTruthy()
+ await act(async()=>fireEvent.click(screen.getByRole('button',{name:'Build tent'})))
+ expect(ready(app).state.gameState.civilization!.workers).toBe(5n)
+ expect(screen.getByRole('progressbar', {name:'Next Catalyst'}).getAttribute('aria-valuetext')).toBe('Population 5 / 10')
+ await act(async()=>fireEvent.click(screen.getByRole('radio',{name:'Prioritize: Hunting'})))
+ await waitFor(()=>expect((screen.getByRole('radio',{name:'Prioritize: Hunting'}) as HTMLInputElement).checked).toBe(true))
+ await act(async()=>fireEvent.click(screen.getByRole('button',{name:'Forager details'})))
+ expect(screen.getByText('Leather')).toBeTruthy()
+ const reopened=factory(repo);await reopened.start()
+ expect(ready(reopened).state.gameState.civilization!.workers).toBe(5n)
+ expect(ready(reopened).state.gameState.civilization!.priority).toBe('hunting')
 })
-
- test('following-era fixture renders the retained Forager economy as one output source', async () => {
-  const app = factory(seed()); await app.start(); app.advanceActive(9000000)
-  const snapshot = app.frontendSnapshot('simulations'); if(snapshot.phase !== 'ready') throw Error(snapshot.phase)
-  const mounted = render(<IntlProvider locale="en" messages={{}}><CivilizationSurface gameplay={snapshot.gameplay} locale="en" gameSpeed={1} activeEraId="synthetic-following-era" dispatchPlayer={async () => { throw Error('Fixture must not dispatch') }} /></IntlProvider>)
-  expect(mounted.container.querySelectorAll('.civilization-retained-generator')).toHaveLength(1)
-  expect(mounted.container.querySelector('.civilization-retained-generator')?.getAttribute('data-feeds-era')).toBe('synthetic-following-era')
-  expect(mounted.container.querySelectorAll('.civilization-balances > div')).toHaveLength(8)
-  expect(mounted.container.querySelector('.civilization-activity')).toBeNull()
-  expect(mounted.container.querySelector('[data-focus]')).toBeNull()
-  expect(ready(app).state.gameState.civilization?.awardedCatalystMilestoneIds).toHaveLength(7)
- })
-
- test('collapsed rows expose actual crews, every numeric start cost, paid reservations and shortages', async () => {
-  const app = factory(seed()); await app.start(); app.advanceActive(9000000)
-  const snapshot = app.frontendSnapshot('simulations'); if(snapshot.phase !== 'ready') throw Error(snapshot.phase)
-  const c = ready(app).state.gameState.civilization!
-  const view = (gameplay = snapshot.gameplay) => <IntlProvider locale="en" messages={{}}><CivilizationSurface gameplay={gameplay} locale="en" gameSpeed={1} dispatchPlayer={async () => { throw Error('No dispatch') }} /></IntlProvider>
-  const mounted = render(view())
-  for(const [index, definition] of CIVILIZATION_ACTIVITIES.entries()) {
-   if(definition.retired)continue
-   const row = mounted.container.querySelector(`[data-activity-id="${definition.id}"]`)!
-   expect(row.querySelector('.civilization-job-title bdi')?.textContent?.replaceAll(',','')).toBe(String(c.activities[definition.id].workers))
-   const costs = civilizationActivityInputs(c,index)
-   const header = row.querySelector('.civilization-job-header')!
-   expect(header.querySelector('.civilization-job-title')).not.toBeNull()
-   expect(header.querySelector('.civilization-job-recipe')).not.toBeNull()
-   expect(header.querySelector('.civilization-recipe-arrow')?.textContent).toBe(Object.keys(costs).length ? '▶' : undefined)
-   expect(row.querySelectorAll('.civilization-start-cost [data-symbol]')).toHaveLength(Object.keys(costs).length)
-   for(const [id,qty] of Object.entries(costs)) expect(row.querySelector(`.civilization-start-cost [data-symbol="${id}"]`)?.parentElement?.querySelector('bdi')?.textContent).toBe(formatWholeGameNumber('en',qty!))
-   expect(row.querySelector('.civilization-start-cost')?.getAttribute('data-reserved')).toBe(String(c.activities[definition.id].active))
-   const cycle=civilizationCycle(c,index),outputs={...cycle.outputs,...(cycle.populationDelta>0n?{worker:cycle.populationDelta}:{})}
-   expect(row.querySelectorAll('.civilization-output [data-symbol]')).toHaveLength(Object.keys(outputs).length)
-   for(const [id,qty] of Object.entries(outputs)) expect(row.querySelector(`.civilization-output [data-symbol="${id}"]`)?.parentElement?.querySelector('bdi')?.textContent).toBe(formatWholeGameNumber('en',qty!))
-   expect(row.querySelector('.civilization-start-cost')?.querySelector('svg:not([data-symbol])')).toBeNull()
-  }
-  const paidId = CIVILIZATION_ACTIVITIES.find((definition,index) => index > 0 && c.activities[definition.id].active)!.id
-  const emptyStock = Object.fromEntries(Object.keys(c.resources).map(id => [id,0n])) as typeof c.resources
-  mounted.rerender(view({...snapshot.gameplay,progression:{...snapshot.gameplay.progression,civilization:{...c,resources:emptyStock}}}))
-  expect(mounted.container.querySelector(`[data-activity-id="${paidId}"] .civilization-start-cost [data-affordable="false"]`)).toBeNull()
-  const starved = {...c, resources:Object.fromEntries(Object.keys(c.resources).map(id => [id,0n])) as typeof c.resources, activities:Object.fromEntries(Object.entries(c.activities).map(([id,job]) => [id,{...job,active:false,progress:0}]))}
-  mounted.rerender(view({...snapshot.gameplay,progression:{...snapshot.gameplay.progression,civilization:starved}}))
-  expect(mounted.container.querySelector('[data-activity-id="gathering"] .civilization-start-cost [data-symbol]')).toBeNull()
-  expect(mounted.container.querySelector('[data-activity-id="campExpansion"] .civilization-start-cost [data-affordable="false"]')).not.toBeNull()
-  expect(mounted.container.querySelector('[data-activity-id="campExpansion"] .civilization-job-timer')?.textContent).toBe('∞')
-  expect(mounted.container.querySelector('[data-activity-id="campExpansion"] .civilization-job-timer')?.getAttribute('aria-label')).toContain('Waiting')
- })
 
 test.each(['forager', 'farming'] as const)('%s bars animate published work while keeping real progress accessible', async era => {
   const animate = vi.fn(() => ({ cancel: vi.fn() }) as unknown as Animation)
   const original = HTMLElement.prototype.animate
   HTMLElement.prototype.animate = animate
   try {
-    const app = factory(seed()); await app.start()
+    const app = factory(era==='farming'?matureSeed():seed()); await app.start()
     if (era === 'farming') {
       app.advanceActive(7043000)
       expect((await dispatch(app, { kind: 'civilization.enter-farming' })).accepted).toBe(true)
@@ -330,7 +259,7 @@ test('switching the mounted Forager surface to Farming cancels old fills and sta
     return animation as unknown as Animation
   }
   try {
-    const repo = seed(), app = factory(repo); await app.start(); app.advanceActive(7043000)
+    const repo = matureSeed(), app = factory(repo); await app.start(); app.advanceActive(1000)
     const view = () => {
       const snapshot = app.frontendSnapshot('simulations')
       if (snapshot.phase !== 'ready') throw Error(snapshot.phase)
@@ -339,6 +268,8 @@ test('switching the mounted Forager surface to Farming cancels old fills and sta
     const mounted = render(view())
     app.advanceActive(100); mounted.rerender(view())
     expect(animations.length).toBeGreaterThan(0)
+    expect(screen.getByRole('button', { name: 'Begin Farming era' })).toBeTruthy()
+    expect(screen.queryByRole('progressbar', { name: 'Next Catalyst' })).toBeNull()
     const oldAnimations = [...animations]
     const oldFill = mounted.container.querySelector('.civilization-cycle-fill')!
     const before = ready(app).state.gameState, commits = repo.commits
@@ -369,4 +300,37 @@ test('switching the mounted Forager surface to Farming cancels old fills and sta
   } finally {
     cleanup(); HTMLElement.prototype.animate = original
   }
+})
+
+
+test('Chieftain purchase and on-off control persist through the application; settings only show seasons',async()=>{
+ const repo=matureSeed(),app=factory(repo);await app.start();app.advanceActive(600000)
+ let refresh=()=>{}
+ const send=async(command:CanonicalPlayerCommand)=>{
+  const result=await dispatch(app,command);refresh()
+  if(!result.accepted)throw Error(result.reason)
+  return {status:'accepted' as const,kind:'transition' as const,changed:result.changed,stateRevision:result.revision,activationRevision:{session:ready(app).revision.session,state:result.revision}}
+ }
+ const mounted=render(surface(app,'simulations',send));refresh=()=>mounted.rerender(surface(app,'simulations',send))
+ const before=ready(app).state.gameState.civilization!
+ repo.failNext=true
+ await act(async()=>fireEvent.click(screen.getByRole('button',{name:'Unlock Leadership'})))
+ await waitFor(()=>expect((screen.getByRole('button',{name:'Unlock Leadership'}) as HTMLButtonElement).disabled).toBe(false))
+ expect(ready(app).state.gameState.civilization).toEqual(before)
+ await act(async()=>fireEvent.click(screen.getByRole('button',{name:'Unlock Leadership'})))
+ await waitFor(()=>expect(screen.getByRole('button',{name:'Leadership automation'}).getAttribute('aria-pressed')).toBe('true'))
+ expect(ready(app).state.gameState.civilization!.workers).toBe(before.workers)
+ expect((screen.getByRole('radio',{name:'Prioritize: Gathering'}) as HTMLInputElement).disabled).toBe(true)
+ await act(async()=>fireEvent.click(screen.getByRole('button',{name:'Leadership automation'})))
+ await waitFor(()=>expect((screen.getByRole('radio',{name:'Prioritize: Gathering'}) as HTMLInputElement).disabled).toBe(false))
+ await act(async()=>fireEvent.click(screen.getByRole('radio',{name:'Prioritize: Toolmaking'})))
+ await waitFor(()=>expect(ready(app).state.gameState.civilization!.craftPriority).toBe('toolmaking'))
+ await act(async()=>fireEvent.click(screen.getByRole('radio',{name:'Prioritize: Hideworking'})))
+ await waitFor(()=>expect(ready(app).state.gameState.civilization!.craftPriority).toBe('hideworking'))
+ await act(async()=>fireEvent.click(screen.getByRole('button',{name:'Forager details'})))
+ expect(screen.queryByRole('combobox',{name:'Food production priority'})).toBeNull()
+ expect(screen.queryByText(/Provisioning workers share their time/)).toBeNull()
+ const reopened=factory(repo);await reopened.start()
+ expect(ready(reopened).state.gameState.civilization!.chieftain?.enabled).toBe(false)
+ expect(ready(reopened).state.gameState.civilization!.craftPriority).toBe('hideworking')
 })

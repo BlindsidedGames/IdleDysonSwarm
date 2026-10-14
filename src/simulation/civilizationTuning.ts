@@ -7,7 +7,7 @@ export const CIVILIZATION_TUNING = Object.freeze({
   equipmentInterval: 60, equipmentPopulationDivisor: 4n,
   stockResumeNumerator: 3n, stockResumeDenominator: 5n, campMinimumCrew: 2n,
 })
-export const CIVILIZATION_STARTER_KIT = Object.freeze({ food: 6n, materials: 18n, hides: 2n, tools: 1n })
+export const CIVILIZATION_STARTER_KIT = Object.freeze({ shelters: 1n })
 
 /** Approved Forager focus trial. Farming and historical paid cycles keep V4 rates. */
 export const CIVILIZATION_FOCUS_TUNING = Object.freeze({
