@@ -1,0 +1,2149 @@
+import { SKILL_PRESET_COUNT } from '../game-state/skillPresetSlots'
+import { isQuantumChallengeActive } from '../simulation/infinityChallenges'
+import { markSpeedrunUsage, observeSpeedruns } from '../simulation/speedrunStatistics'
+import {
+  applyDevelopmentAction,
+  applyDevelopmentDysonBots,
+  applyDevelopmentRealityUnlock,
+  type CanonicalDevelopmentAction,
+} from './canonicalDevelopmentCommands'
+import { restartInfinityChallenge } from '../simulation/canonicalInfinityChallengeRestart'
+import { applyCanonicalOverflowReset } from '../simulation/canonicalOverflowReset'
+import { createCanonicalTinkerRuntimeState } from '../simulation/canonicalTinker'
+import { evaluateAchievements, mergeAchievementFacts } from '../achievements/evaluate'
+import {
+  isFiniteNonNegativeNumber,
+  isFinitePositiveNumber,
+} from '../core/finiteNonNegativeNumber'
+import type {
+  DeepReadonly,
+  DomainTransition,
+  SimulationEngineDefinition,
+  SimulationTransitionResult,
+} from '../core/contracts'
+import {
+  deriveBasicDysonState,
+  type DysonEntitlements,
+} from '../simulation/canonicalDysonDerivation'
+import {
+  evaluateCanonicalBotCapCheckpoint,
+  selectBotCapCheckpointToPersist,
+  type BotCapCheckpointName,
+} from '../simulation/canonicalBotCapCheckpoint'
+import {
+  CANONICAL_QUANTUM_LEAP_INPUT,
+  CanonicalEventTimeModel,
+  deriveCanonicalArtifactSkillPoints,
+  evaluateCanonicalInfinityBoundary,
+  prepareCanonicalEventTimeContext,
+  prepareCanonicalEventTimeContextVariants,
+  type CanonicalEventTimeContext,
+  type CanonicalEventTimeState,
+} from '../simulation/canonicalEventTimeModel'
+import {
+  createSimulationSummary,
+  type SimulationDisasterPresentationEvent,
+} from '../simulation/types'
+import {
+  advanceGame,
+  settleStoredTimeReplayCompletion,
+} from '../simulation/gameStep'
+import { planStoredTimePolicy } from '../simulation/storedTimePolicy'
+import {
+  normalizeCanonicalTinkerRuntimeState,
+} from '../simulation/canonicalTinker'
+import type { SaveRepository } from '../save/repository'
+import type { PreparedSave } from '../save/prepare'
+import type { StartupSaveResolver } from '../save/startupResolver'
+import {
+  routeCanonicalGameCommand,
+  type CanonicalGameCommand,
+  type CanonicalGameCommandOptions,
+  type CanonicalGameRuntimeCarriers,
+} from './canonicalGameCommands'
+import type {
+  ApplicationCommandEnvelope,
+  ApplicationListener,
+  ApplicationSnapshot,
+  CheckpointResult,
+  CommitFirstResult,
+  GameStateSessionFactory,
+  ImportSaveRequest,
+  ImportSaveResult,
+} from './contracts'
+import { TransactionalGameApplication } from './gameApplication'
+import {
+  selectFrontendApplicationSnapshot,
+  type FrontendApplicationSnapshot,
+  type FrontendGameplayPreviewDemand,
+  type FrontendQuantumLeapPreview,
+} from './frontendSnapshot'
+import type { CanonicalPlayerCommand } from './canonicalPlayerCommands'
+import {
+  cloneCanonicalRuntimeState,
+  type CanonicalRuntimePresentationEvent,
+  type CanonicalRuntimeState,
+} from './canonicalRuntimeSession'
+import {
+  summarizeStoredTimeCompletion,
+} from './storedTimeCompletionSummary'
+import type {
+  StoredTimeCompletionSummary,
+  StoredTimeFirstDisasterOccurrence,
+} from '../core/storedTimeCompletionSummary'
+import {
+  type StoredTimeJobProgress,
+  type StoredTimeJobStatus,
+} from '../workers/storedTime/storedTimeProtocol'
+import type {
+  StoredTimeJobRunner,
+} from '../workers/storedTime/storedTimeJobRunner'
+
+export const CANONICAL_GAME_APPLICATION_SCHEMA = 1 as const
+
+export interface CanonicalSaveTransferSnapshot {
+  readonly prepared: PreparedSave
+  readonly basis: 'current' | 'pre-stored-time'
+}
+
+export {
+  CANONICAL_PLAYER_COMMAND_KINDS,
+  CANONICAL_PLAYER_COMMAND_SUPPORT,
+  type CanonicalPlayerCommand,
+  type CanonicalPlayerCommandKind,
+} from './canonicalPlayerCommands'
+
+type CanonicalInternalCommand =
+  | {
+      readonly kind: 'internal.advance-active-continuous'
+      readonly milliseconds: number
+    }
+  | {
+      readonly kind: 'internal.advance-stored-time'
+      readonly seconds: number
+      readonly cancelRequested?: () => boolean
+      readonly captureFirstDisasterOccurrences?: (
+        events: readonly Readonly<StoredTimeFirstDisasterOccurrence>[],
+      ) => void
+    }
+  | {
+      readonly kind: 'internal.replace-away-state'
+      readonly state: CanonicalRuntimeState
+    }
+  | {
+      readonly kind: 'internal.replace-stored-time-state'
+      readonly state: CanonicalRuntimeState
+    }
+  | {
+      readonly kind: 'internal.bot-cap-checkpoint'
+      readonly checkpoint: BotCapCheckpointName
+    }
+  | {
+      readonly kind: 'internal.development-set-dyson-bots'
+      readonly bots: number
+    }
+  | {
+      readonly kind: 'internal.development-unlock-reality'
+    }
+  | {
+      readonly kind: 'internal.development-apply-action'
+      readonly action: CanonicalDevelopmentAction
+    }
+  | {
+      readonly kind: 'internal.replace-host-entitlements'
+      readonly entitlements: Readonly<DysonEntitlements>
+    }
+
+export type { CanonicalDevelopmentAction } from './canonicalDevelopmentCommands'
+
+type CanonicalApplicationCommand =
+  | CanonicalPlayerCommand
+  | CanonicalInternalCommand
+
+export interface CanonicalGameEngineOptions {
+  readonly retainAchievementEvidence?: boolean
+  readonly eventContext: Readonly<CanonicalEventTimeContext>
+  readonly infinityMinimumCycleSeconds?: number
+  /** Internal observation seam for authoritative active-step consumption. */
+  readonly onActiveAdvance?: (
+    result: Readonly<CanonicalActiveAdvanceMeasurement>,
+  ) => void
+}
+
+interface CanonicalActiveAdvanceMeasurement {
+  readonly requestedMilliseconds: number
+  readonly consumedMilliseconds: number
+}
+
+export type StoredTimeCancellationReason = 'user' | 'background' | 'lifecycle' | 'import'
+
+export interface CanonicalGameApplicationOptions {
+  readonly startupResolver: StartupSaveResolver
+  readonly repository: SaveRepository
+  readonly sessionFactory: GameStateSessionFactory<CanonicalRuntimeState>
+  readonly engine: Readonly<CanonicalGameEngineOptions>
+  readonly storedTimeJobRunner?: StoredTimeJobRunner
+  readonly createTransitionalRecoveryBase?: () => PreparedSave
+}
+
+export type StoredTimeJobListener = (
+  status: Readonly<StoredTimeJobStatus>,
+) => void
+
+export type CanonicalPlayerDispatchResult =
+  | {
+      readonly kind: 'transition'
+      readonly transition: SimulationTransitionResult
+    }
+  | {
+      readonly kind: 'stored-time'
+      readonly result: CanonicalStoredTimeCommitResult
+    }
+
+export type CanonicalStoredTimeCommitResult =
+  | {
+      readonly committed: true
+      readonly transition: Extract<
+        SimulationTransitionResult,
+        { accepted: true }
+      >
+      readonly durableRevision: number
+      readonly consumedSeconds: number
+      readonly remainingSeconds: number
+      readonly summary: StoredTimeCompletionSummary
+    }
+  | {
+      readonly committed: false
+      readonly transition: SimulationTransitionResult
+      readonly consumedSeconds: 0
+      readonly remainingSeconds: number
+      readonly code?: string
+      readonly reason?: string
+    }
+
+export interface CanonicalActiveAdvanceResult {
+  readonly transition: SimulationTransitionResult
+  readonly consumedMilliseconds: number
+  readonly remainingMilliseconds: number
+  readonly continuation:
+    | { readonly kind: 'complete' }
+    | {
+        readonly kind: 'bot-cap-persistence-required'
+        readonly checkpoint: BotCapCheckpointName
+      }
+}
+
+/**
+ * Concrete, presentation-free application boundary for canonical game state.
+ *
+ * All durable transitions flow through TransactionalGameApplication. The
+ * private internal commands are intentionally not part of CanonicalPlayerCommand,
+ * so a frontend cannot invoke away replacement or checkpoint candidates.
+ */
+export class CanonicalGameApplicationFacade {
+  private readonly application: TransactionalGameApplication<
+    CanonicalRuntimeState,
+    CanonicalApplicationCommand
+  >
+  private readonly eventContext: Readonly<CanonicalEventTimeContext>
+  private readonly infinityMinimumCycleSeconds: number
+  private readonly storedTimeJobRunner: StoredTimeJobRunner | undefined
+  private readonly storedTimeJobListeners = new Set<StoredTimeJobListener>()
+  private storedTimeJobStatusValue: StoredTimeJobStatus = Object.freeze({
+    kind: 'idle',
+  })
+  private activeStoredTimeJobId: string | null = null
+  private storedTimeCancellationRequested = false
+  private storedTimeCancellationReason: StoredTimeCancellationReason = 'user'
+  private storedTimeExportSnapshot: PreparedSave | null = null
+  private cachedFrontendSnapshot:
+    | DeepReadonly<FrontendApplicationSnapshot>
+    | undefined
+  private cachedFrontendPreviewDemand:
+    | FrontendGameplayPreviewDemand
+    | undefined
+  private lastActiveAdvanceMeasurement:
+    | CanonicalActiveAdvanceMeasurement
+    | undefined
+
+  constructor(options: Readonly<CanonicalGameApplicationOptions>) {
+    this.eventContext = prepareCanonicalEventTimeContext(
+      options.engine.eventContext,
+    )
+    this.infinityMinimumCycleSeconds =
+      options.engine.infinityMinimumCycleSeconds ?? 1 / 60
+    this.storedTimeJobRunner = options.storedTimeJobRunner
+    this.application = new TransactionalGameApplication({
+      startupResolver: options.startupResolver,
+      repository: options.repository,
+      sessionFactory: options.sessionFactory,
+      engineDefinition: createCanonicalGameEngineDefinition({
+        ...options.engine,
+        eventContext: this.eventContext,
+        onActiveAdvance: (measurement) => {
+          this.lastActiveAdvanceMeasurement = measurement
+        },
+      }),
+      createTransitionalRecoveryBase:
+        options.createTransitionalRecoveryBase,
+    })
+  }
+
+  snapshot(): ApplicationSnapshot<CanonicalRuntimeState> {
+    return this.application.snapshot()
+  }
+
+  previewQuantumLeap(): FrontendQuantumLeapPreview {
+    const snapshot = this.snapshot()
+    if (snapshot.phase !== 'ready') {
+      return {
+        eligible: false,
+        code: 'APP-NOT-READY',
+        branch: null,
+        artifactSkillPoints: null,
+        definitionGap: null,
+      }
+    }
+    return previewCanonicalQuantumLeap(
+      snapshot.state as CanonicalRuntimeState,
+      this.eventContext,
+    )
+  }
+
+  frontendSnapshot(
+    previewDemand: FrontendGameplayPreviewDemand = 'all',
+  ): DeepReadonly<FrontendApplicationSnapshot> {
+    const application = this.snapshot()
+    if (
+      this.cachedFrontendSnapshot !== undefined &&
+      this.cachedFrontendPreviewDemand === previewDemand &&
+      sameFrontendApplicationEnvelope(
+        this.cachedFrontendSnapshot,
+        application,
+      )
+    ) {
+      return this.cachedFrontendSnapshot
+    }
+    const mayReusePreviousGameplay =
+      application.phase === 'ready' &&
+      this.cachedFrontendSnapshot?.phase === 'ready' &&
+      this.cachedFrontendSnapshot.revision.session ===
+        application.revision.session
+    const previousPreviews =
+      mayReusePreviousGameplay &&
+      this.cachedFrontendSnapshot?.phase === 'ready'
+        ? this.cachedFrontendSnapshot.gameplay.previews
+        : undefined
+    const previousGameplay =
+      mayReusePreviousGameplay &&
+      this.cachedFrontendSnapshot?.phase === 'ready'
+        ? this.cachedFrontendSnapshot.gameplay
+        : undefined
+    const quantumLeap =
+      application.phase === 'ready'
+        ? previousPreviews === undefined ||
+          previewDemand === 'all' ||
+          previewDemand === 'quantum'
+          ? previewCanonicalQuantumLeap(
+              application.state as CanonicalRuntimeState,
+              this.eventContext,
+            )
+          : previousPreviews.quantum.leap
+        : {
+            eligible: false,
+            code: 'APP-NOT-READY',
+            branch: null,
+            artifactSkillPoints: null,
+            definitionGap: null,
+          } satisfies FrontendQuantumLeapPreview
+    this.cachedFrontendSnapshot = selectFrontendApplicationSnapshot(
+      application,
+      {
+        runtimeRequirements: {
+          'compatibility-tuning': true,
+          'quantum-leap-port': true,
+          'runtime-evaluation-port': true,
+          'selected-skill-preset-carrier': true,
+          'stored-time-commit-first-runner': true,
+          'stored-time-cheater-carrier': true,
+        },
+        quantumLeap,
+        realityWorkerTuning: this.eventContext.realityWorkerTuning,
+        dysonPresentationTuning:
+          this.eventContext.dysonPresentationTuning,
+        previewDemand,
+        previousPreviews,
+        previousGameplay,
+      },
+      'detached-frozen',
+    )
+    this.cachedFrontendPreviewDemand = previewDemand
+    return this.cachedFrontendSnapshot
+  }
+
+  start(): Promise<ApplicationSnapshot<CanonicalRuntimeState>> {
+    return this.application.start()
+  }
+
+  advanceActive(milliseconds: number): SimulationTransitionResult {
+    return this.application.advanceActive(milliseconds)
+  }
+
+  advanceActiveContinuous(milliseconds: number): SimulationTransitionResult {
+    const snapshot = this.snapshot()
+    if (snapshot.phase !== 'ready') {
+      return {
+        accepted: false,
+        code: 'APP-NOT-READY',
+        reason: 'Continuous active time requires a ready application.',
+        revision: 0,
+      }
+    }
+    return this.application.dispatch({
+      sessionRevision: snapshot.revision.session,
+      expectedStateRevision: snapshot.revision.state,
+      command: {
+        kind: 'internal.advance-active-continuous',
+        milliseconds,
+      },
+    })
+  }
+
+  /**
+   * Coordinator-facing automation-suppressed active residue which preserves
+   * the same exact bot-cap continuation contract as an ordinary active tick.
+   */
+  advanceActiveContinuousWithContinuation(
+    milliseconds: number,
+  ): CanonicalActiveAdvanceResult {
+    this.lastActiveAdvanceMeasurement = undefined
+    const transition = this.advanceActiveContinuous(milliseconds)
+    return activeAdvanceResult(
+      milliseconds,
+      transition,
+      this.snapshot(),
+      this.lastActiveAdvanceMeasurement,
+    )
+  }
+
+  /**
+   * Coordinator-facing active tick that preserves an exact resumable tail
+   * when the event model reaches a commit-first bot-cap boundary.
+   */
+  advanceActiveWithContinuation(
+    milliseconds: number,
+  ): CanonicalActiveAdvanceResult {
+    this.lastActiveAdvanceMeasurement = undefined
+    const transition = this.application.advanceActive(milliseconds)
+    return activeAdvanceResult(
+      milliseconds,
+      transition,
+      this.snapshot(),
+      this.lastActiveAdvanceMeasurement,
+    )
+  }
+
+  checkpoint(): Promise<CheckpointResult> {
+    return this.application.checkpoint()
+  }
+
+  importSave(request: ImportSaveRequest): Promise<ImportSaveResult> {
+    return this.application.importSave(request)
+  }
+
+  subscribe(
+    listener: ApplicationListener<CanonicalRuntimeState>,
+  ): () => void {
+    return this.application.subscribe(listener)
+  }
+
+  storedTimeJobStatus(): Readonly<StoredTimeJobStatus> {
+    return this.storedTimeJobStatusValue
+  }
+
+  subscribeStoredTimeJob(listener: StoredTimeJobListener): () => void {
+    this.storedTimeJobListeners.add(listener)
+    return () => this.storedTimeJobListeners.delete(listener)
+  }
+
+  cancelStoredTimeJob(reason: StoredTimeCancellationReason = 'user'): void {
+    if (
+      this.storedTimeJobStatusValue.kind === 'idle' ||
+      this.storedTimeJobStatusValue.kind === 'committing'
+    ) return
+    if (!this.storedTimeCancellationRequested) {
+      this.storedTimeCancellationReason = reason
+    }
+    this.storedTimeCancellationRequested = true
+    this.publishStoredTimeJobStatus({
+      ...this.storedTimeJobStatusValue,
+      kind: 'cancelling',
+    })
+  }
+
+  private storedTimeCancellationCode(): string {
+    switch (this.storedTimeCancellationReason) {
+      case 'background': return 'CANONICAL-STORED-TIME-BACKGROUNDED'
+      case 'import': return 'CANONICAL-STORED-TIME-IMPORT-CANCELLED'
+      case 'lifecycle': return 'CANONICAL-STORED-TIME-LIFECYCLE-CANCELLED'
+      case 'user': return 'CANONICAL-STORED-TIME-CANCELLED'
+    }
+  }
+
+  speedUpStoredTimeJob(): void {
+    if (this.storedTimeJobStatusValue.kind === 'idle') return
+    this.storedTimeJobRunner?.speedUp?.()
+  }
+
+  captureSaveTransferSnapshot(): CanonicalSaveTransferSnapshot | null {
+    if (
+      this.activeStoredTimeJobId !== null &&
+      this.storedTimeExportSnapshot !== null
+    ) {
+      return {
+        prepared: this.storedTimeExportSnapshot,
+        basis: 'pre-stored-time',
+      }
+    }
+    const prepared = this.application.capturePreparedSave()
+    return prepared === null
+      ? null
+      : { prepared, basis: 'current' }
+  }
+
+  disposeStoredTimeJobRunner(): void {
+    this.storedTimeCancellationRequested = true
+    this.storedTimeJobRunner?.dispose()
+    this.publishStoredTimeJobStatus({ kind: 'idle' })
+  }
+
+  async dispatchPlayer(
+    envelope: ApplicationCommandEnvelope<CanonicalPlayerCommand>,
+    cancelRequested?: () => boolean,
+  ): Promise<CanonicalPlayerDispatchResult> {
+    const presetPriorityChange = envelope.command.kind === 'skill.set-auto-assignment' ||
+      envelope.command.kind === 'skill.set-preset-assignment'
+    if (presetPriorityChange || envelope.command.kind === 'discovery.purchase' || envelope.command.kind === 'skill.galvanize' || envelope.command.kind === 'avocado.request-overflow-reset' ||
+        envelope.command.kind === 'challenge.enter' || envelope.command.kind === 'challenge.enter-no-science' || envelope.command.kind === 'challenge.enter-trial-and-error' || envelope.command.kind === 'challenge.enter-blank-slate' || envelope.command.kind === 'challenge.abandon') {
+      const result = await this.application.dispatchCommitFirst(envelope,
+        presetPriorityChange ? 'skill-preset' : envelope.command.kind === 'discovery.purchase' ? 'discovery-purchase' : envelope.command.kind === 'skill.galvanize' ? 'galvanization' : 'bot-cap')
+      return {
+        kind: 'transition',
+        transition: result.committed ? result.transition : {
+          accepted: false,
+          revision: result.transition.revision,
+          code: result.code ?? 'OVERFLOW_COMMIT_FAILED',
+          reason: result.reason ?? 'The change could not be saved. Your progress has been preserved.',
+        },
+      }
+    }
+    if (envelope.command.kind !== 'time.request-stored-time-spend') {
+      return {
+        kind: 'transition',
+        transition: this.application.dispatch(envelope),
+      }
+    }
+
+    const ready = this.snapshot()
+    if (ready.phase !== 'ready') {
+      return {
+        kind: 'transition',
+        transition: this.application.dispatch(envelope),
+      }
+    }
+    const routed = routeCanonicalGameCommand(
+      cloneCanonicalRuntimeState(ready.state as CanonicalRuntimeState).gameState,
+      envelope.command,
+      commandOptions(
+        ready.state as CanonicalRuntimeState,
+        this.eventContext,
+      ),
+    )
+    const intent = routed.intents[0]
+    if (!routed.accepted || intent?.kind !== 'advance-stored-time') {
+      return {
+        kind: 'transition',
+        transition: this.application.dispatch(envelope),
+      }
+    }
+    return {
+      kind: 'stored-time',
+      result: await this.commitStoredTime(
+        envelope,
+        intent.seconds,
+        cancelRequested,
+      ),
+    }
+  }
+
+  async commitStoredTime(
+    envelope: Pick<
+      ApplicationCommandEnvelope<unknown>,
+      'sessionRevision' | 'expectedStateRevision'
+    >,
+    seconds: number,
+    cancelRequested?: () => boolean,
+  ): Promise<CanonicalStoredTimeCommitResult> {
+    if (this.storedTimeJobRunner !== undefined) {
+      return this.commitStoredTimeInJob(
+        envelope,
+        seconds,
+        cancelRequested,
+      )
+    }
+    return this.commitStoredTimeSynchronously(
+      envelope,
+      seconds,
+      cancelRequested,
+    )
+  }
+
+  private async commitStoredTimeInJob(
+    envelope: Pick<
+      ApplicationCommandEnvelope<unknown>,
+      'sessionRevision' | 'expectedStateRevision'
+    >,
+    seconds: number,
+    cancelRequested?: () => boolean,
+  ): Promise<CanonicalStoredTimeCommitResult> {
+    const before = this.snapshot()
+    if (this.activeStoredTimeJobId !== null) {
+      return rejectedStoredTimeCommit(
+        before,
+        seconds,
+        'CANONICAL-STORED-TIME-JOB-ACTIVE',
+        'A Stored Time job is already active.',
+      )
+    }
+    if (before.phase !== 'ready') {
+      return rejectedStoredTimeCommit(
+        before,
+        seconds,
+        'APP-NOT-READY',
+        'Stored Time requires a ready application.',
+      )
+    }
+    const bank = before.state.gameState.timeline.storedTimeAvailableSeconds
+    if (!isFinitePositiveNumber(seconds) || seconds > bank) {
+      return rejectedStoredTimeCommit(
+        before,
+        seconds,
+        'CANONICAL-STORED-TIME-INVALID',
+        'Stored-time spend must be positive, finite, and no greater than the bank.',
+      )
+    }
+
+    const jobId = createStoredTimeJobId()
+    this.storedTimeExportSnapshot =
+      this.application.capturePreparedSave()
+    this.activeStoredTimeJobId = jobId
+    this.storedTimeCancellationRequested = false
+    this.storedTimeCancellationReason = 'user'
+    this.publishStoredTimeProgress({
+      jobId,
+      requestedSeconds: seconds,
+      computedSeconds: 0,
+      fraction: 0,
+      elapsedMilliseconds: 0,
+      estimatedRemainingMilliseconds: null,
+      maximumChunkMilliseconds: 0,
+    })
+    try {
+      const terminal = await this.storedTimeJobRunner!.run({
+        jobId,
+        state: cloneCanonicalRuntimeState(
+          before.state as CanonicalRuntimeState,
+        ),
+        requestedSeconds: seconds,
+        infinityMinimumCycleSeconds: this.infinityMinimumCycleSeconds,
+        dysonPresentationTuning:
+          this.eventContext.dysonPresentationTuning!,
+      }, {
+        cancelRequested: () =>
+          this.storedTimeCancellationRequested ||
+          cancelRequested?.() === true,
+        onProgress: (progress) => this.publishStoredTimeProgress(progress),
+      })
+      if (
+        terminal.type === 'completed' &&
+        (this.storedTimeCancellationRequested ||
+          cancelRequested?.() === true)
+      ) {
+        return rejectedStoredTimeCommit(
+          this.snapshot(),
+          seconds,
+          this.storedTimeCancellationCode(),
+          'Cancelled Stored Time work was discarded without charging the bank.',
+        )
+      }
+      if (terminal.type === 'cancelled') {
+        return rejectedStoredTimeCommit(
+          this.snapshot(),
+          seconds,
+          this.storedTimeCancellationCode(),
+          'Cancelled Stored Time work was discarded without charging the bank.',
+        )
+      }
+      if (terminal.type === 'failed') {
+        return rejectedStoredTimeCommit(
+          this.snapshot(),
+          seconds,
+          terminal.code,
+          terminal.reason,
+        )
+      }
+      const candidateIssue = validateStoredTimeJobCandidate(
+        before.state as CanonicalRuntimeState,
+        terminal.candidate,
+        seconds,
+        terminal.consumedSeconds,
+        terminal.remainingSeconds,
+      )
+      if (candidateIssue !== undefined) {
+        return rejectedStoredTimeCommit(
+          this.snapshot(),
+          seconds,
+          'STORED-TIME-WORKER-CANDIDATE-INVALID',
+          candidateIssue,
+        )
+      }
+      this.publishStoredTimeJobStatus({
+        ...terminal.progress,
+        computedSeconds: seconds,
+        fraction: 1,
+        estimatedRemainingMilliseconds: 0,
+        canSpeedUp: false,
+        kind: 'committing',
+      })
+      const result = await this.application.dispatchCommitFirst(
+        {
+          ...envelope,
+          command: {
+            kind: 'internal.replace-stored-time-state',
+            state: terminal.candidate,
+          },
+        },
+        'stored-time',
+      )
+      if (!result.committed) {
+        return {
+          ...result,
+          consumedSeconds: 0,
+          remainingSeconds: seconds,
+        }
+      }
+      return {
+        ...result,
+        consumedSeconds: seconds,
+        remainingSeconds: 0,
+        summary: summarizeStoredTimeCompletion(
+          before.state as CanonicalRuntimeState,
+          terminal.candidate,
+          storedTimeCompletionWork(
+            before.state as CanonicalRuntimeState,
+            seconds,
+            terminal.progress.completedTicks,
+          ),
+          terminal.firstDisasterOccurrences,
+        ),
+      }
+    } catch (error) {
+      return rejectedStoredTimeCommit(
+        this.snapshot(),
+        seconds,
+        'STORED-TIME-WORKER-UNAVAILABLE',
+        error instanceof Error ? error.message : String(error),
+      )
+    } finally {
+      if (this.activeStoredTimeJobId === jobId) {
+        this.activeStoredTimeJobId = null
+        this.storedTimeCancellationRequested = false
+        this.storedTimeExportSnapshot = null
+        this.publishStoredTimeJobStatus({ kind: 'idle' })
+      }
+    }
+  }
+
+  private async commitStoredTimeSynchronously(
+    envelope: Pick<
+      ApplicationCommandEnvelope<unknown>,
+      'sessionRevision' | 'expectedStateRevision'
+    >,
+    seconds: number,
+    cancelRequested?: () => boolean,
+  ): Promise<CanonicalStoredTimeCommitResult> {
+    const before = this.snapshot()
+    if (before.phase !== 'ready') {
+      return rejectedStoredTimeCommit(
+        before,
+        seconds,
+        'APP-NOT-READY',
+        'Stored Time requires a ready application.',
+      )
+    }
+    let firstDisasterOccurrences:
+      readonly Readonly<StoredTimeFirstDisasterOccurrence>[] = []
+    const result = await this.application.dispatchCommitFirst(
+      {
+        ...envelope,
+        command: {
+          kind: 'internal.advance-stored-time',
+          seconds,
+          cancelRequested,
+          captureFirstDisasterOccurrences: (events) => {
+            firstDisasterOccurrences = events
+          },
+        },
+      },
+      'stored-time',
+    )
+    if (!result.committed) {
+      return {
+        ...result,
+        consumedSeconds: 0,
+        remainingSeconds: seconds,
+      }
+    }
+
+    const after = this.snapshot()
+    if (after.phase !== 'ready') {
+      throw new Error('Committed Stored Time did not leave a ready state.')
+    }
+    return {
+      ...result,
+      consumedSeconds: seconds,
+      remainingSeconds: 0,
+      summary: summarizeStoredTimeCompletion(
+        before.state as CanonicalRuntimeState,
+        after.state as CanonicalRuntimeState,
+        storedTimeCompletionWork(
+          before.state as CanonicalRuntimeState,
+          seconds,
+        ),
+        firstDisasterOccurrences,
+      ),
+    }
+  }
+
+  private publishStoredTimeProgress(progress: StoredTimeJobProgress): void {
+    if (progress.jobId !== this.activeStoredTimeJobId) return
+    const current = this.storedTimeJobStatusValue
+    const monotonicProgress =
+      current.kind !== 'idle' &&
+      current.jobId === progress.jobId &&
+      current.computedSeconds > progress.computedSeconds
+        ? {
+            ...progress,
+            computedSeconds: current.computedSeconds,
+            fraction: current.fraction,
+          }
+        : progress
+    this.publishStoredTimeJobStatus({
+      ...monotonicProgress,
+      kind: this.storedTimeCancellationRequested
+        ? 'cancelling'
+        : 'running',
+    })
+  }
+
+  private publishStoredTimeJobStatus(status: StoredTimeJobStatus): void {
+    this.storedTimeJobStatusValue = Object.freeze(status)
+    for (const listener of this.storedTimeJobListeners) {
+      try {
+        listener(status)
+      } catch {
+        // A presentation observer cannot alter persistence or bank accounting.
+      }
+    }
+  }
+
+  commitAwayReplacement(
+    envelope: Pick<
+      ApplicationCommandEnvelope<unknown>,
+      'sessionRevision' | 'expectedStateRevision'
+    >,
+    state: Readonly<CanonicalRuntimeState>,
+  ): Promise<CommitFirstResult> {
+    return this.application.dispatchCommitFirst(
+      {
+        ...envelope,
+        command: {
+          kind: 'internal.replace-away-state',
+          state: cloneCanonicalRuntimeState(state),
+        },
+      },
+      'away-time',
+    )
+  }
+
+  commitBotCapCheckpoint(
+    envelope: Pick<
+      ApplicationCommandEnvelope<unknown>,
+      'sessionRevision' | 'expectedStateRevision'
+    >,
+    checkpoint: BotCapCheckpointName,
+  ): Promise<CommitFirstResult> {
+    return this.application.dispatchCommitFirst(
+      {
+        ...envelope,
+        command: {
+          kind: 'internal.bot-cap-checkpoint',
+          checkpoint,
+        },
+      },
+      'bot-cap',
+    )
+  }
+
+  commitDevelopmentDysonBots(
+    envelope: Pick<
+      ApplicationCommandEnvelope<unknown>,
+      'sessionRevision' | 'expectedStateRevision'
+    >,
+    bots: number,
+  ): Promise<CommitFirstResult> {
+    return this.application.dispatchCommitFirst(
+      {
+        ...envelope,
+        command: {
+          kind: 'internal.development-set-dyson-bots',
+          bots,
+        },
+      },
+      'development',
+    )
+  }
+
+  commitDevelopmentRealityUnlock(
+    envelope: Pick<
+      ApplicationCommandEnvelope<unknown>,
+      'sessionRevision' | 'expectedStateRevision'
+    >,
+  ): Promise<CommitFirstResult> {
+    return this.application.dispatchCommitFirst(
+      {
+        ...envelope,
+        command: {
+          kind: 'internal.development-unlock-reality',
+        },
+      },
+      'development',
+    )
+  }
+
+  commitDevelopmentAction(
+    envelope: Pick<
+      ApplicationCommandEnvelope<unknown>,
+      'sessionRevision' | 'expectedStateRevision'
+    >,
+    action: CanonicalDevelopmentAction,
+  ): Promise<CommitFirstResult> {
+    return this.application.dispatchCommitFirst(
+      {
+        ...envelope,
+        command: {
+          kind: 'internal.development-apply-action',
+          action,
+        },
+      },
+      'development',
+    )
+  }
+
+  commitHostEntitlements(
+    envelope: Pick<
+      ApplicationCommandEnvelope<unknown>,
+      'sessionRevision' | 'expectedStateRevision'
+    >,
+    entitlements: Readonly<DysonEntitlements>,
+  ): Promise<CommitFirstResult> {
+    return this.application.dispatchCommitFirst(
+      {
+        ...envelope,
+        command: {
+          kind: 'internal.replace-host-entitlements',
+          entitlements,
+        },
+      },
+      'development',
+    )
+  }
+}
+
+function storedTimeCompletionWork(
+  before: Readonly<CanonicalRuntimeState>,
+  requestedSeconds: number,
+  reportedUpdates?: number,
+): {
+  readonly simulationUpdates: number
+  readonly initiallyPlannedUpdates: number
+} {
+  const initiallyPlannedUpdates = planStoredTimePolicy({
+    requestedSeconds,
+    preset: before.gameState.timeline.processing.storedTimePreset,
+  }).plannedTicks
+  const simulationUpdates =
+    Number.isSafeInteger(reportedUpdates) &&
+    (reportedUpdates ?? 0) > 0 &&
+    (reportedUpdates ?? 0) <= initiallyPlannedUpdates
+      ? reportedUpdates as number
+      : initiallyPlannedUpdates
+  return { simulationUpdates, initiallyPlannedUpdates }
+}
+
+export function createCanonicalGameApplication(
+  options: Readonly<CanonicalGameApplicationOptions>,
+): CanonicalGameApplicationFacade {
+  return new CanonicalGameApplicationFacade(options)
+}
+
+function activeAdvanceResult(
+  requestedMilliseconds: number,
+  transition: SimulationTransitionResult,
+  after: ApplicationSnapshot<CanonicalRuntimeState>,
+  measurement: Readonly<CanonicalActiveAdvanceMeasurement> | undefined,
+): CanonicalActiveAdvanceResult {
+  const consumedMilliseconds = transition.accepted &&
+    measurement?.requestedMilliseconds === requestedMilliseconds
+    ? measurement.consumedMilliseconds
+    : 0
+  const remainingMilliseconds = Math.max(
+    0,
+    requestedMilliseconds - consumedMilliseconds,
+  )
+  const checkpoint =
+    after.phase === 'ready'
+      ? requiredBotCapCheckpoint(after.state.gameState)
+      : undefined
+  return {
+    transition,
+    consumedMilliseconds,
+    remainingMilliseconds,
+    continuation:
+      checkpoint === undefined
+        ? { kind: 'complete' }
+        : {
+            kind: 'bot-cap-persistence-required',
+            checkpoint,
+          },
+  }
+}
+
+export function createCanonicalGameEngineDefinition(
+  options: Readonly<CanonicalGameEngineOptions>,
+): SimulationEngineDefinition<
+  CanonicalRuntimeState,
+  CanonicalApplicationCommand
+> {
+  const minimumCycleSeconds =
+    options.infinityMinimumCycleSeconds ?? 1 / 60
+  const eventContexts = prepareCanonicalEventTimeContextVariants(
+    options.eventContext,
+  )
+  const eventContext = eventContexts.active
+  const engine: SimulationEngineDefinition<CanonicalRuntimeState, CanonicalApplicationCommand> = {
+    schema: CANONICAL_GAME_APPLICATION_SCHEMA,
+    cloneState: cloneCanonicalRuntimeState,
+    forkState: (state) => ({
+      ...state,
+      ...(options.retainAchievementEvidence && state.achievementEvidence !== undefined
+        ? { achievementEvidence: mergeAchievementFacts(state.achievementEvidence, evaluateAchievements(state.gameState, false)) }
+        : {}),
+    }),
+    publishImmutableState: true,
+    validateState: (state) =>
+      validateRuntimeState(state, eventContext),
+    validateTransitionState: (state) =>
+      validateRuntimeTransitionState(state, eventContext),
+    applyCommand: (candidate, command) => {
+      if (command.kind === 'challenge.enter' || command.kind === 'challenge.enter-no-science' || command.kind === 'challenge.enter-trial-and-error' || command.kind === 'challenge.enter-blank-slate' || command.kind === 'challenge.abandon') {
+        const artifact = deriveCanonicalArtifactSkillPoints(candidate.gameState, eventContext.realityUpgradeDefinitions)
+        if (!artifact.ok) return reject('CHALLENGE_RESET_FAILED', artifact.issue?.detail ?? 'Artifact skill points unavailable.')
+        const reset = restartInfinityChallenge(candidate.gameState,
+          command.kind === 'challenge.abandon' ? 'abandon' : 'enter', artifact.value, command.kind === 'challenge.enter' ? command.challengeId : command.kind === 'challenge.enter-no-science' ? 'no-science' : command.kind === 'challenge.enter-trial-and-error' ? 'trial-and-error' : 'blank-slate')
+        if (!reset.ok) return reject(reset.code, 'The challenge could not be started or abandoned.')
+        const derived = deriveBasicDysonState(reset.state, candidate.compatibilityTuning,
+          candidate.entitlements, candidate.evaluationSnapshot, eventContext.dysonPresentationTuning)
+        if (!derived.ok) return reject('CHALLENGE_DERIVATION_FAILED', derived.issues[0]?.detail ?? 'Challenge reset could not be derived.')
+        Object.assign(candidate, { gameState: reset.state, evaluationSnapshot: derived.value.nextEvaluationSnapshot,
+          tinker: createCanonicalTinkerRuntimeState(), lastSkillPresetApplication: null, presentationEvents: [] })
+        return { accepted: true, changed: true }
+      }
+      if (command.kind === 'avocado.request-overflow-reset') {
+        const reset = applyCanonicalOverflowReset(candidate.gameState)
+        if (!reset.ok) return reject(reset.code, 'Reach Overflow before choosing this reset.')
+        const evidence = candidate.achievementEvidence === undefined ? undefined
+          : mergeAchievementFacts(candidate.achievementEvidence, evaluateAchievements(candidate.gameState, false))
+        const derived = deriveBasicDysonState(
+          reset.state, candidate.compatibilityTuning, candidate.entitlements,
+          candidate.evaluationSnapshot, eventContext.dysonPresentationTuning,
+        )
+        if (!derived.ok) return reject('OVERFLOW_DERIVATION_FAILED', derived.issues[0]?.detail ?? 'Overflow reset could not be derived.')
+        Object.assign(candidate, {
+          gameState: reset.state,
+          evaluationSnapshot: derived.value.nextEvaluationSnapshot,
+          tinker: createCanonicalTinkerRuntimeState(),
+          lastSkillPresetApplication: null,
+          presentationEvents: [],
+          ...(evidence === undefined ? {} : { achievementEvidence: evidence }),
+        })
+        return { accepted: true, changed: true }
+      }
+      if (command.kind === 'tinker.start') {
+        return applyTinker(candidate, eventContext, (model) =>
+          model.startTinker(command.repeat))
+      }
+      if (command.kind === 'tinker.set-repeat') {
+        return applyTinker(candidate, eventContext, (model) =>
+          model.setTinkerRepeat(command.enabled))
+      }
+      if (command.kind === 'internal.replace-away-state') {
+        replaceRuntimeState(candidate, command.state)
+        return { accepted: true, changed: true }
+      }
+      if (command.kind === 'internal.advance-active-continuous') {
+        return advanceActiveContinuous(
+          candidate,
+          command.milliseconds,
+          eventContexts.active,
+          minimumCycleSeconds,
+          options.onActiveAdvance,
+        )
+      }
+      if (command.kind === 'internal.replace-stored-time-state') {
+        replaceRuntimeState(candidate, command.state)
+        return { accepted: true, changed: true }
+      }
+      if (command.kind === 'internal.bot-cap-checkpoint') {
+        return applyBotCapCheckpoint(
+          candidate,
+          command.checkpoint,
+          eventContext,
+        )
+      }
+      if (
+        command.kind ===
+        'internal.development-set-dyson-bots'
+      ) {
+        return applyDevelopmentDysonBots(
+          candidate,
+          command.bots,
+        )
+      }
+      if (
+        command.kind ===
+        'internal.development-unlock-reality'
+      ) {
+        return applyDevelopmentRealityUnlock(candidate)
+      }
+      if (
+        command.kind ===
+        'internal.development-apply-action'
+      ) {
+        return applyDevelopmentAction(
+          candidate,
+          command.action,
+          eventContext,
+        )
+      }
+      if (command.kind === 'internal.replace-host-entitlements') {
+        const entitlements = Object.freeze({
+          permanentBotBoost: command.entitlements.permanentBotBoost === true,
+          permanentDoubleIp:
+            command.entitlements.permanentDoubleIp === true,
+        })
+        const changed =
+          candidate.entitlements.permanentDoubleIp !==
+          entitlements.permanentDoubleIp || candidate.entitlements.permanentBotBoost !== entitlements.permanentBotBoost
+        if (changed) Object.assign(candidate, { entitlements })
+        return { accepted: true, changed }
+      }
+      if (command.kind === 'internal.advance-stored-time') {
+        return advanceStoredTime(
+          candidate,
+          command.seconds,
+          eventContexts.storedTime,
+          minimumCycleSeconds,
+          command.cancelRequested,
+          command.captureFirstDisasterOccurrences,
+        )
+      }
+      return applyPlayerCommand(
+        candidate,
+        command,
+        eventContext,
+        minimumCycleSeconds,
+      )
+    },
+    advance: (candidate, milliseconds) =>
+      advanceActive(
+        candidate,
+        milliseconds,
+        eventContexts.active,
+        minimumCycleSeconds,
+        options.onActiveAdvance,
+      ),
+  }
+  return { ...engine,
+    applyCommand(candidate, command) {
+      const before = candidate.gameState
+      const previousTabs = candidate.unlockAllTabs
+      const previousTinker = candidate.tinker
+      Object.assign(candidate, { gameState: observeSpeedruns(before) })
+      const debugAction = command.kind === 'internal.development-set-dyson-bots' ||
+        command.kind === 'internal.development-unlock-reality' ||
+        (command.kind === 'internal.development-apply-action' &&
+          !['purchase-debug-options', 'enable-host-debug-options', 'disable-debug-options'].includes(command.action.kind))
+      if (debugAction) Object.assign(candidate, { gameState: markSpeedrunUsage(candidate.gameState, 'debug') })
+      const result = engine.applyCommand(candidate, command)
+      if (debugAction && result.accepted && result.changed && previousTabs === candidate.unlockAllTabs &&
+        sameCapturedValue(previousTinker, candidate.tinker) &&
+        sameCapturedValue({ ...before, statistics: { ...before.statistics, speedruns: undefined } },
+          { ...candidate.gameState, statistics: { ...candidate.gameState.statistics, speedruns: undefined } })) {
+        Object.assign(candidate, { gameState: before })
+        return { accepted: true, changed: false }
+      }
+      if (result.accepted && result.changed) Object.assign(candidate, { gameState: observeSpeedruns(candidate.gameState, Date.now(), false, false, command.kind === 'avocado.request-overflow-reset') })
+      else Object.assign(candidate, { gameState: before })
+      return result
+    },
+  }
+
+}
+
+function applyPlayerCommand(
+  candidate: CanonicalRuntimeState,
+  command: CanonicalGameCommand,
+  context: Readonly<CanonicalEventTimeContext>,
+  minimumCycleSeconds: number,
+): DomainTransition {
+  const result = routeCanonicalGameCommand(
+    candidate.gameState,
+    command,
+    {
+      ...commandOptions(candidate, context),
+      quantumLeap: {
+        requestLeap: (state) => {
+          const model = CanonicalEventTimeModel.fromOwnedState(
+            { ...eventCarrier(candidate), gameState: state },
+            context,
+          )
+          model.applyQueuedInput(
+            {
+              kind: CANONICAL_QUANTUM_LEAP_INPUT,
+              timeSeconds: 0,
+            },
+            createSimulationSummary(),
+          )
+          const outcome = model.lastQueuedInputOutcome
+          if (outcome?.accepted) {
+            const afterLeap=model.takeState()
+            if(afterLeap.achievementEvidence !== undefined) Object.assign(candidate,{achievementEvidence:afterLeap.achievementEvidence})
+            return {
+              accepted: true,
+              changed: outcome.changed,
+              code: outcome.code,
+              state: afterLeap.gameState,
+            }
+          }
+          return {
+            accepted: false,
+            code:
+              outcome?.code ??
+              model.validateIncremental() ??
+              'quantum-rejected',
+          }
+        },
+      },
+      infinityReset: {
+        requestReset: (state) => {
+          const botCap = evaluateCanonicalBotCapCheckpoint(state)
+          if (botCap.action.kind === 'persist') {
+            return {
+              accepted: false,
+              code: 'CANONICAL-EVENT-BOT-CAP-PERSISTENCE-REQUIRED',
+            }
+          }
+          const resetState = botCap.candidateState
+          const carrier = {
+            ...eventCarrier(candidate),
+            gameState: resetState,
+          }
+          if (
+            evaluateCanonicalInfinityBoundary(
+              carrier,
+              minimumCycleSeconds,
+              true,
+              true,
+            ).status !== 'ready'
+          ) {
+            return {
+              accepted: false,
+              code: 'NOT_READY',
+            }
+          }
+
+          const model = CanonicalEventTimeModel.fromOwnedState(
+            carrier,
+            context,
+          )
+          model.applyInfinityReset(
+            minimumCycleSeconds,
+            createSimulationSummary(),
+            true,
+          )
+          const issue = model.issue
+          if (issue !== undefined) {
+            return {
+              accepted: false,
+              code: issue.code,
+              issues: [issue],
+            }
+          }
+          const carrierAfterReset = model.takeState()
+          if (carrierAfterReset.achievementEvidence !== undefined) Object.assign(candidate,{achievementEvidence:carrierAfterReset.achievementEvidence})
+          const next = carrierAfterReset.gameState
+          return {
+            accepted: true,
+            changed: true,
+            code: 'APPLIED',
+            state: {
+              ...next,
+              infinity: {
+                ...next.infinity,
+                automaticResetEnabled:
+                  state.infinity.automaticResetEnabled,
+              },
+            },
+          }
+        },
+      },
+    },
+  )
+  if (!result.accepted) {
+    return {
+      accepted: false,
+      code: result.code,
+      reason: result.issues[0]?.detail ?? result.code,
+    }
+  }
+  if (result.intents.length > 0) {
+    return {
+      accepted: false,
+      code: 'CANONICAL-STORED-TIME-INTENT-REQUIRES-FACADE',
+      reason: 'Stored-time intent must be dispatched through dispatchPlayer.',
+    }
+  }
+  if (
+    !result.changed &&
+    result.skillPresetApplication === undefined
+  ) {
+    return { accepted: true, changed: false }
+  }
+  const previousApplicationSequence =
+    candidate.lastSkillPresetApplication?.applicationSequence ?? 0
+  const nextSkillPresetApplication =
+    result.skillPresetApplication === undefined
+      ? undefined
+      : Object.freeze({
+          ...result.skillPresetApplication,
+          applicationSequence:
+            previousApplicationSequence >= Number.MAX_SAFE_INTEGER
+              ? 1
+              : previousApplicationSequence + 1,
+        })
+  Object.assign(candidate, {
+    gameState: result.state,
+    compatibilityTuning:
+      result.runtimeCarriers.compatibilityTuning!,
+    evaluationSnapshot:
+      result.runtimeCarriers.skillEffectEvaluationSnapshot!,
+    storedTimeCheater:
+      result.runtimeCarriers.storedTimeCheater!,
+    selectedSkillPresetSlot:
+      result.runtimeCarriers.selectedSkillPresetSlot!,
+    ...(nextSkillPresetApplication === undefined
+      ? {}
+      : {
+          lastSkillPresetApplication:
+            nextSkillPresetApplication,
+        }),
+  })
+  if (
+    nextSkillPresetApplication?.trigger === 'automatic' &&
+    nextSkillPresetApplication.blockedByRetainedSkillIds.length > 0
+  ) {
+    appendPresentationEvent(candidate, (sequence) => ({
+      kind: 'skill-preset-conflict',
+      sequence,
+      presetName:
+        result.state.skills.presets[nextSkillPresetApplication.slot - 1]
+          .name,
+      application: nextSkillPresetApplication,
+    }))
+  }
+  return { accepted: true, changed: true }
+}
+
+function commandOptions(
+  state: Readonly<CanonicalRuntimeState>,
+  context: Readonly<CanonicalEventTimeContext>,
+): CanonicalGameCommandOptions {
+  const carriers: CanonicalGameRuntimeCarriers = {
+    compatibilityTuning: state.compatibilityTuning,
+    skillEffectEvaluationSnapshot: state.evaluationSnapshot,
+    storedTimeCheater: state.storedTimeCheater,
+    selectedSkillPresetSlot: state.selectedSkillPresetSlot,
+  }
+  return {
+    runtimeCarriers: carriers,
+    permanentBotBoost: state.entitlements.permanentBotBoost === true,
+    runtimeEvaluation: {
+      evaluate: (candidate, previous) => {
+        const derived = deriveBasicDysonState(
+          candidate,
+          state.compatibilityTuning,
+          state.entitlements,
+          previous ?? state.evaluationSnapshot,
+          context.dysonPresentationTuning,
+        )
+        return derived.ok
+          ? {
+              accepted: true,
+              snapshot: derived.value.nextEvaluationSnapshot,
+              facilityModifiers: derived.value.facilityModifiers,
+              planetPricingModifier: derived.value.planetPricingModifier,
+            }
+          : {
+              accepted: false,
+              code: derived.issues[0]?.code ?? 'DYSON-DERIVATION-REJECTED',
+              issues: derived.issues,
+            }
+      },
+    },
+  }
+}
+
+function advanceActive(
+  candidate: CanonicalRuntimeState,
+  milliseconds: number,
+  context: Readonly<CanonicalEventTimeContext>,
+  minimumCycleSeconds: number,
+  onAdvance?: CanonicalGameEngineOptions['onActiveAdvance'],
+): DomainTransition {
+  if (!isFiniteNonNegativeNumber(milliseconds)) {
+    return reject('CANONICAL-ACTIVE-TIME-INVALID', 'Active time must be finite and non-negative.')
+  }
+  if (milliseconds === 0) return { accepted: true, changed: false }
+  const result = advanceGame(
+    eventCarrier(candidate),
+    {
+      source: 'active',
+      baseSeconds: milliseconds / 1000,
+      automation: 'enabled',
+    },
+    context,
+    minimumCycleSeconds,
+  )
+  onAdvance?.(activeAdvanceMeasurement(milliseconds, result.baseSecondsConsumed))
+  if (result.issue !== undefined && !result.botCapPersistenceRequired) {
+    return reject(
+      result.issue,
+      `Active game step ended as ${result.issue}.`,
+    )
+  }
+  replaceEventCarrier(candidate, result.state)
+  appendDisasterPresentationEvents(candidate, result.summary.disasterEvents)
+  return { accepted: true, changed: true }
+}
+
+function advanceActiveContinuous(
+  candidate: CanonicalRuntimeState,
+  milliseconds: number,
+  context: Readonly<CanonicalEventTimeContext>,
+  minimumCycleSeconds: number,
+  onAdvance?: CanonicalGameEngineOptions['onActiveAdvance'],
+): DomainTransition {
+  if (!isFiniteNonNegativeNumber(milliseconds)) {
+    return reject('CANONICAL-ACTIVE-TIME-INVALID', 'Active time must be finite and non-negative.')
+  }
+  if (milliseconds === 0) return { accepted: true, changed: false }
+  const result = advanceGame(
+    eventCarrier(candidate),
+    {
+      source: 'active',
+      baseSeconds: milliseconds / 1000,
+      automation: 'suppressed',
+    },
+    context,
+    minimumCycleSeconds,
+  )
+  onAdvance?.(activeAdvanceMeasurement(milliseconds, result.baseSecondsConsumed))
+  if (result.issue !== undefined && !result.botCapPersistenceRequired) {
+    return reject(result.issue, `Continuous active step ended as ${result.issue}.`)
+  }
+  replaceEventCarrier(candidate, result.state)
+  appendDisasterPresentationEvents(candidate, result.summary.disasterEvents)
+  return { accepted: true, changed: true }
+}
+
+function activeAdvanceMeasurement(
+  requestedMilliseconds: number,
+  consumedBaseSeconds: number,
+): CanonicalActiveAdvanceMeasurement {
+  const requestedBaseSeconds = requestedMilliseconds / 1000
+  return {
+    requestedMilliseconds,
+    // advanceGame returns the admitted input verbatim for a complete step.
+    // Preserve that exact request instead of reintroducing floating residue
+    // through a seconds-to-milliseconds round trip.
+    consumedMilliseconds:
+      consumedBaseSeconds === requestedBaseSeconds
+        ? requestedMilliseconds
+        : Math.min(
+            requestedMilliseconds,
+            Math.max(0, consumedBaseSeconds * 1000),
+          ),
+  }
+}
+
+function appendDisasterPresentationEvents(
+  state: CanonicalRuntimeState,
+  events: Readonly<import('../simulation/types').SimulationDisasterPresentationEvent>[],
+): void {
+  for (const event of events) {
+    appendPresentationEvent(state, (sequence) => ({
+      kind: 'automatic-dream-disaster',
+      sequence,
+      ...event,
+    }))
+  }
+}
+
+function appendPresentationEvent(
+  state: CanonicalRuntimeState,
+  create: (sequence: number) => CanonicalRuntimePresentationEvent,
+): void {
+  const previous = state.presentationEvents.at(-1)?.sequence ?? 0
+  if (previous >= Number.MAX_SAFE_INTEGER) {
+    throw new Error('Canonical presentation event sequence exhausted.')
+  }
+  const events = [...state.presentationEvents, Object.freeze(create(previous + 1))]
+  Object.assign(state, {
+    presentationEvents: Object.freeze(events),
+  })
+}
+
+function advanceStoredTime(
+  candidate: CanonicalRuntimeState,
+  requestedSeconds: number,
+  context: Readonly<CanonicalEventTimeContext>,
+  minimumCycleSeconds: number,
+  cancelRequested?: () => boolean,
+  captureFirstDisasterOccurrences?: (
+    events: readonly Readonly<StoredTimeFirstDisasterOccurrence>[],
+  ) => void,
+): DomainTransition {
+  const bank = candidate.gameState.timeline.storedTimeAvailableSeconds
+  if (
+    !isFinitePositiveNumber(requestedSeconds) ||
+    requestedSeconds > bank
+  ) {
+    return reject(
+      'CANONICAL-STORED-TIME-INVALID',
+      'Stored-time spend must be positive, finite, and no greater than the bank.',
+    )
+  }
+  const working = structuredClone(candidate)
+  const plan = planStoredTimePolicy({
+    requestedSeconds,
+    preset: working.gameState.timeline.processing.storedTimePreset,
+  })
+  let remainingSeconds = requestedSeconds
+  let remainingTicks = plan.plannedTicks
+  const firstDisasterEvents: SimulationDisasterPresentationEvent[] = []
+  while (remainingTicks > 0 && remainingSeconds > 0) {
+    if (cancelRequested?.() === true) {
+      return reject(
+        'CANONICAL-STORED-TIME-CANCELLED',
+        'Cancelled stored-time candidates are discarded without charging the bank.',
+      )
+    }
+    const stepSeconds = remainingSeconds / remainingTicks
+    const result = advanceGame(
+      eventCarrier(working),
+      {
+        source: 'stored-time',
+        baseSeconds: stepSeconds,
+        automation: 'enabled',
+      },
+      context,
+      minimumCycleSeconds,
+    )
+    replaceEventCarrier(working, result.state)
+    firstDisasterEvents.push(
+      ...result.summary.storedTimeFirstDisasterEvents,
+    )
+    if (result.botCapPersistenceRequired) {
+      return reject(
+        'CANONICAL-STORED-TIME-BOT-CAP-UNSETTLED',
+        'Detached Stored Time replay could not settle its bot-cap transition.',
+      )
+    }
+    if (result.issue !== undefined) {
+      return reject(result.issue, `Stored Time game step failed as ${result.issue}.`)
+    }
+    remainingSeconds = Math.max(0, remainingSeconds - stepSeconds)
+    remainingTicks -= 1
+  }
+  const consumedSeconds = requestedSeconds - remainingSeconds
+  if (consumedSeconds <= 0) {
+    return reject(
+      'CANONICAL-STORED-TIME-NO-PROGRESS',
+      'Stored Time replay made no durable progress.',
+    )
+  }
+  const settlement = settleStoredTimeReplayCompletion(
+    eventCarrier(working),
+    context,
+  )
+  replaceEventCarrier(working, settlement.state)
+  firstDisasterEvents.push(
+    ...settlement.summary.storedTimeFirstDisasterEvents,
+  )
+  if (settlement.issue !== undefined) {
+    return reject(
+      settlement.issue,
+      `Stored Time completion boundary failed as ${settlement.issue}.`,
+    )
+  }
+  Object.assign(working, { gameState: {
+    ...working.gameState,
+    timeline: {
+      ...working.gameState.timeline,
+      storedTimeAvailableSeconds: Math.max(
+        0,
+        bank - consumedSeconds,
+      ),
+    },
+  } })
+  captureFirstDisasterOccurrences?.(
+    Object.freeze(firstDisasterEvents.map((event) => Object.freeze({
+      cause: event.cause,
+      strangeMatterGranted: event.strangeMatterGranted,
+      resetCount: event.resetCount,
+      preResetEra: event.preResetEra,
+    }))),
+  )
+  Object.assign(candidate, working)
+  return { accepted: true, changed: true }
+}
+
+function applyBotCapCheckpoint(
+  candidate: CanonicalRuntimeState,
+  checkpoint: BotCapCheckpointName,
+  context: Readonly<CanonicalEventTimeContext>,
+): DomainTransition {
+  const result = evaluateCanonicalBotCapCheckpoint(candidate.gameState)
+  if (
+    result.action.kind !== 'persist' ||
+    result.action.checkpoint !== checkpoint
+  ) {
+    return reject(
+      'CANONICAL-BOT-CAP-CHECKPOINT-MISMATCH',
+      `Bot-cap checkpoint '${checkpoint}' is not currently required.`,
+    )
+  }
+  Object.assign(candidate, { gameState: result.candidateState })
+  const derived = deriveBasicDysonState(
+    candidate.gameState,
+    candidate.compatibilityTuning,
+    candidate.entitlements,
+    candidate.evaluationSnapshot,
+    context.dysonPresentationTuning,
+  )
+  if (!derived.ok) {
+    return reject(
+      derived.issues[0]?.code ?? 'CANONICAL-BOT-CAP-DERIVATION-REJECTED',
+      derived.issues[0]?.detail ?? 'Bot-cap checkpoint derivation rejected.',
+    )
+  }
+  Object.assign(candidate, {
+    evaluationSnapshot: derived.value.nextEvaluationSnapshot,
+  })
+  return { accepted: true, changed: true }
+}
+
+function applyTinker(
+  candidate: CanonicalRuntimeState,
+  context: Readonly<CanonicalEventTimeContext>,
+  apply: (model: CanonicalEventTimeModel) => boolean,
+): DomainTransition {
+  const model = CanonicalEventTimeModel.fromOwnedState(
+    eventCarrier(candidate),
+    context,
+  )
+  const changed = apply(model)
+  const issue = model.validateIncremental()
+  if (issue) return reject(issue, model.issue?.detail ?? issue)
+  if (changed) replaceEventCarrier(candidate, model.takeState())
+  return { accepted: true, changed }
+}
+
+function eventCarrier(state: Readonly<CanonicalRuntimeState>) {
+  return {
+    ...(state.achievementEvidence === undefined ? {} : {achievementEvidence:state.achievementEvidence}),
+    gameState: state.gameState,
+    compatibilityTuning: state.compatibilityTuning,
+    evaluationSnapshot: state.evaluationSnapshot,
+    entitlements: state.entitlements,
+    tinker: normalizeCanonicalTinkerRuntimeState(state.tinker),
+  }
+}
+
+function replaceEventCarrier(
+  target: CanonicalRuntimeState,
+  carrier: Readonly<CanonicalEventTimeState>,
+): void {
+  Object.assign(target, {
+    ...(carrier.achievementEvidence === undefined ? {} : {achievementEvidence:carrier.achievementEvidence}),
+    gameState: carrier.gameState,
+    compatibilityTuning: carrier.compatibilityTuning,
+    evaluationSnapshot: carrier.evaluationSnapshot,
+    entitlements: carrier.entitlements,
+    tinker: carrier.tinker,
+  })
+}
+
+function replaceRuntimeState(
+  target: CanonicalRuntimeState,
+  source: Readonly<CanonicalRuntimeState>,
+): void {
+  Object.assign(target, cloneCanonicalRuntimeState(source))
+}
+
+function createStoredTimeJobId(): string {
+  const randomUuid = globalThis.crypto?.randomUUID
+  return randomUuid === undefined
+    ? `stored-time-${Date.now()}-${Math.random().toString(36).slice(2)}`
+    : randomUuid.call(globalThis.crypto)
+}
+
+function rejectedStoredTimeCommit(
+  snapshot: ApplicationSnapshot<CanonicalRuntimeState>,
+  requestedSeconds: number,
+  code: string,
+  reason: string,
+): CanonicalStoredTimeCommitResult {
+  return {
+    committed: false,
+    transition: {
+      accepted: false,
+      code,
+      reason,
+      revision:
+        snapshot.phase === 'ready' ? snapshot.revision.state : 0,
+    },
+    consumedSeconds: 0,
+    remainingSeconds: Number.isFinite(requestedSeconds)
+      ? Math.max(0, requestedSeconds)
+      : 0,
+    code,
+    reason,
+  }
+}
+
+function validateStoredTimeJobCandidate(
+  before: Readonly<CanonicalRuntimeState>,
+  candidate: Readonly<CanonicalRuntimeState>,
+  requestedSeconds: number,
+  consumedSeconds: number,
+  remainingSeconds: number,
+): string | undefined {
+  if (
+    !Number.isFinite(consumedSeconds) ||
+    consumedSeconds <= 0 ||
+    consumedSeconds > requestedSeconds
+  ) {
+    return 'The worker reported an invalid consumed duration.'
+  }
+  if (
+    !Number.isFinite(remainingSeconds) ||
+    Math.abs(requestedSeconds - consumedSeconds - remainingSeconds) > 1e-8
+  ) {
+    return 'The worker reported inconsistent remaining duration.'
+  }
+  if (
+    Math.abs(requestedSeconds - consumedSeconds) > 1e-8 ||
+    remainingSeconds > 1e-8
+  ) {
+    return 'The worker did not complete the admitted Stored Time atomically.'
+  }
+  if (
+    requiredBotCapCheckpoint(
+      structuredClone(candidate.gameState) as CanonicalRuntimeState['gameState'],
+    ) !== undefined
+  ) {
+    return 'The worker candidate contains an unsettled bot-cap checkpoint.'
+  }
+  const expectedBank = Math.max(
+    0,
+    before.gameState.timeline.storedTimeAvailableSeconds - consumedSeconds,
+  )
+  if (
+    Math.abs(
+      candidate.gameState.timeline.storedTimeAvailableSeconds - expectedBank,
+    ) > 1e-8
+  ) {
+    return 'The worker candidate does not charge exactly its consumed duration.'
+  }
+  if (
+    candidate.storedTimeCheater !== before.storedTimeCheater ||
+    candidate.coldStartCheckpointAtUtc !== before.coldStartCheckpointAtUtc ||
+    candidate.selectedSkillPresetSlot !== before.selectedSkillPresetSlot ||
+    candidate.unlockAllTabs !== before.unlockAllTabs ||
+    candidate.debugOptionsEnabled !== before.debugOptionsEnabled ||
+    candidate.debugEntitlementPurchased !== before.debugEntitlementPurchased
+  ) {
+    return 'The worker candidate changed a host-owned runtime carrier.'
+  }
+  if (
+    !sameCapturedValue(candidate.tinker, before.tinker) ||
+    !sameCapturedValue(
+      candidate.lastSkillPresetApplication,
+      before.lastSkillPresetApplication,
+    ) ||
+    !sameCapturedValue(
+      candidate.presentationEvents,
+      before.presentationEvents,
+    ) ||
+    !sameCapturedValue(candidate.entitlements, before.entitlements) ||
+    !sameCapturedValue(
+      candidate.compatibilityTuning,
+      before.compatibilityTuning,
+    )
+  ) {
+    return 'The worker candidate changed a session-owned simulation carrier.'
+  }
+  if (
+    candidate.gameState.modelVersion !== before.gameState.modelVersion ||
+    candidate.gameState.meta.createdAtLegacyText !==
+      before.gameState.meta.createdAtLegacyText ||
+    !sameCapturedValue(
+      candidate.gameState.meta.navigationVisibility,
+      before.gameState.meta.navigationVisibility,
+    ) ||
+    candidate.gameState.timeline.storedTimeCapacitySeconds !==
+      before.gameState.timeline.storedTimeCapacitySeconds ||
+    candidate.gameState.timeline.lastSuspendedAtLegacyText !==
+      before.gameState.timeline.lastSuspendedAtLegacyText
+  ) {
+    return 'The worker candidate changed persistent identity or Stored Time capacity.'
+  }
+  return undefined
+}
+
+function sameCapturedValue(left: unknown, right: unknown): boolean {
+  if (Object.is(left, right)) return true
+  if (
+    left === null ||
+    right === null ||
+    typeof left !== 'object' ||
+    typeof right !== 'object'
+  ) {
+    return false
+  }
+  if (Array.isArray(left) || Array.isArray(right)) {
+    return Array.isArray(left) &&
+      Array.isArray(right) &&
+      left.length === right.length &&
+      left.every((value, index) =>
+        sameCapturedValue(value, right[index]))
+  }
+  const leftRecord = left as Record<string, unknown>
+  const rightRecord = right as Record<string, unknown>
+  const leftKeys = Object.keys(leftRecord).sort()
+  const rightKeys = Object.keys(rightRecord).sort()
+  return leftKeys.length === rightKeys.length &&
+    leftKeys.every((key, index) =>
+      key === rightKeys[index] &&
+      sameCapturedValue(leftRecord[key], rightRecord[key]))
+}
+
+function validateSkillPresetApplicationOutcome(
+  outcome: CanonicalRuntimeState['lastSkillPresetApplication'],
+): string | undefined {
+  if (outcome === null) return undefined
+  if (
+    !Number.isInteger(outcome.slot) ||
+    outcome.slot < 1 ||
+    outcome.slot > SKILL_PRESET_COUNT ||
+    !Number.isSafeInteger(outcome.applicationSequence) ||
+    outcome.applicationSequence < 1 ||
+    !['automatic', 'import', 'manual'].includes(outcome.trigger)
+  ) {
+    return 'CANONICAL-SKILL-PRESET-APPLICATION-INVALID'
+  }
+  for (const skillIds of [
+    outcome.retainedSkillIds,
+    outcome.assignedSkillIds,
+    outcome.pendingSkillIds,
+    outcome.blockedByRetainedSkillIds,
+  ]) {
+    if (
+      !Array.isArray(skillIds) ||
+      skillIds.some((skillId) => typeof skillId !== 'string')
+    ) {
+      return 'CANONICAL-SKILL-PRESET-APPLICATION-INVALID'
+    }
+  }
+  return undefined
+}
+
+function validateRuntimeState(
+  state: CanonicalRuntimeState,
+  context: Readonly<CanonicalEventTimeContext>,
+): string | undefined {
+  if (typeof state.storedTimeCheater !== 'boolean') {
+    return 'CANONICAL-STORED-TIME-CHEATER-INVALID'
+  }
+  if (
+    !Number.isInteger(state.selectedSkillPresetSlot) ||
+    state.selectedSkillPresetSlot < 1 ||
+    state.selectedSkillPresetSlot > SKILL_PRESET_COUNT
+  ) {
+    return 'CANONICAL-SKILL-PRESET-SLOT-INVALID'
+  }
+  const presetApplicationIssue = validateSkillPresetApplicationOutcome(
+    state.lastSkillPresetApplication,
+  )
+  if (presetApplicationIssue !== undefined) return presetApplicationIssue
+  const presentationIssue = validatePresentationEvents(
+    state.presentationEvents,
+  )
+  if (presentationIssue !== undefined) return presentationIssue
+  return CanonicalEventTimeModel.fromOwnedState(
+    eventCarrier(state),
+    context,
+  ).validate()
+}
+
+function sameFrontendApplicationEnvelope(
+  frontend: DeepReadonly<FrontendApplicationSnapshot>,
+  application: ApplicationSnapshot<CanonicalRuntimeState>,
+): boolean {
+  if (frontend.phase !== application.phase) return false
+  if (frontend.phase === 'idle' || frontend.phase === 'starting') {
+    return true
+  }
+  if (frontend.phase === 'blocked') {
+    return (
+      application.phase === 'blocked' &&
+      frontend.outcome === application.outcome &&
+      frontend.error === application.error
+    )
+  }
+  if (frontend.phase !== 'ready' || application.phase !== 'ready') {
+    return false
+  }
+  return (
+    frontend.source === application.source &&
+    frontend.revision.session === application.revision.session &&
+    frontend.revision.state === application.revision.state &&
+    frontend.revision.durable === application.revision.durable &&
+    sameApplicationCheckpoint(
+      frontend.checkpoint,
+      application.checkpoint,
+    ) &&
+    frontend.operation === application.operation
+  )
+}
+
+function sameApplicationCheckpoint(
+  left: Readonly<
+    Extract<FrontendApplicationSnapshot, { phase: 'ready' }>['checkpoint']
+  >,
+  right: Readonly<
+    Extract<
+      ApplicationSnapshot<CanonicalRuntimeState>,
+      { phase: 'ready' }
+    >['checkpoint']
+  >,
+): boolean {
+  if (
+    left.kind !== right.kind ||
+    left.durableRevision !== right.durableRevision
+  ) {
+    return false
+  }
+  if (left.kind === 'clean' || right.kind === 'clean') {
+    return left.kind === 'clean' && right.kind === 'clean'
+  }
+  if (left.kind === 'checkpointing' || right.kind === 'checkpointing') {
+    return (
+      left.kind === 'checkpointing' &&
+      right.kind === 'checkpointing' &&
+      left.targetStateRevision === right.targetStateRevision
+    )
+  }
+  return (
+    left.kind === 'dirty' &&
+    right.kind === 'dirty' &&
+    left.reason === right.reason &&
+    left.error === right.error
+  )
+}
+
+function validateRuntimeTransitionState(
+  state: CanonicalRuntimeState,
+  context: Readonly<CanonicalEventTimeContext>,
+): string | undefined {
+  if (typeof state.storedTimeCheater !== 'boolean') {
+    return 'CANONICAL-STORED-TIME-CHEATER-INVALID'
+  }
+  if (
+    !Number.isInteger(state.selectedSkillPresetSlot) ||
+    state.selectedSkillPresetSlot < 1 ||
+    state.selectedSkillPresetSlot > SKILL_PRESET_COUNT
+  ) {
+    return 'CANONICAL-SKILL-PRESET-SLOT-INVALID'
+  }
+  const presetApplicationIssue = validateSkillPresetApplicationOutcome(
+    state.lastSkillPresetApplication,
+  )
+  if (presetApplicationIssue !== undefined) return presetApplicationIssue
+  const presentationIssue = validatePresentationEvents(
+    state.presentationEvents,
+  )
+  if (presentationIssue !== undefined) return presentationIssue
+  const model = CanonicalEventTimeModel.fromOwnedState(
+    eventCarrier(state),
+    context,
+  )
+  const incrementalIssue = model.validateIncremental()
+  if (incrementalIssue !== undefined) return incrementalIssue
+  return import.meta.env?.DEV === false ? undefined : model.validate()
+}
+
+function validatePresentationEvents(
+  events: CanonicalRuntimeState['presentationEvents'],
+): string | undefined {
+  if (!Array.isArray(events)) {
+    return 'CANONICAL-PRESENTATION-EVENTS-INVALID'
+  }
+  let previousSequence = 0
+  for (const event of events) {
+    if (
+      !Number.isSafeInteger(event.sequence) ||
+      event.sequence <= previousSequence
+    ) {
+      return 'CANONICAL-PRESENTATION-EVENTS-INVALID'
+    }
+    previousSequence = event.sequence
+    if (event.kind === 'skill-preset-conflict') {
+      if (
+        typeof event.presetName !== 'string' ||
+        validateSkillPresetApplicationOutcome(event.application) !== undefined ||
+        event.application.trigger !== 'automatic' ||
+        event.application.blockedByRetainedSkillIds.length === 0
+      ) {
+        return 'CANONICAL-PRESENTATION-EVENTS-INVALID'
+      }
+      continue
+    }
+    if (
+      event.kind !== 'automatic-dream-disaster' ||
+      !['Meteor', 'ArtificialIntelligence', 'GlobalWarming'].includes(event.cause) ||
+      !isFiniteNonNegativeNumber(event.strangeMatterGranted) ||
+      event.resetCount < 1n ||
+      typeof event.firstLifetimeOccurrence !== 'boolean' ||
+      !['foundational', 'information', 'space-age'].includes(event.preResetEra)
+    ) {
+      return 'CANONICAL-PRESENTATION-EVENTS-INVALID'
+    }
+  }
+  return undefined
+}
+
+function requiredBotCapCheckpoint(
+  state: DeepReadonly<CanonicalRuntimeState['gameState']>,
+): BotCapCheckpointName | undefined {
+  // DeepReadonly widens persisted tuples to readonly arrays. The evaluator is
+  // itself read-only, so adapting that compile-time representation requires no
+  // defensive runtime copy.
+  const evaluated = evaluateCanonicalBotCapCheckpoint(
+    state as CanonicalRuntimeState['gameState'],
+  )
+  return selectBotCapCheckpointToPersist(evaluated.action)
+}
+
+export function previewCanonicalQuantumLeap(
+  runtime: Readonly<CanonicalRuntimeState>,
+  context: Readonly<CanonicalEventTimeContext>,
+): FrontendQuantumLeapPreview {
+  if (runtime.gameState.infinity.points < 42n) {
+    return {
+      eligible: false,
+      code: 'QUANTUM_LEAP_REQUIRES_42_TOTAL_INFINITY_POINTS',
+      branch: null,
+      artifactSkillPoints: null,
+      definitionGap: null,
+    }
+  }
+
+  const branch = runtime.gameState.quantum.unlocks.quantumEntanglement && !isQuantumChallengeActive(runtime.gameState)
+    ? 'entanglement'
+    : 'reset'
+  let artifactSkillPoints: bigint | null = null
+  if (branch === 'reset') {
+    const artifact = deriveCanonicalArtifactSkillPoints(
+      runtime.gameState,
+      context.realityUpgradeDefinitions,
+    )
+    if (!artifact.ok) {
+      return {
+        eligible: false,
+        code:
+          artifact.issue?.code ??
+          'CANONICAL_EVENT_REALITY_DEFINITION_MISSING',
+        branch,
+        artifactSkillPoints: null,
+        definitionGap:
+          artifact.issue?.detail ??
+          'Reality artifact definitions are incomplete.',
+      }
+    }
+    artifactSkillPoints = artifact.value
+  }
+
+  const model = CanonicalEventTimeModel.fromOwnedState(
+    eventCarrier(runtime),
+    context,
+  )
+  model.applyQueuedInput(
+    {
+      kind: CANONICAL_QUANTUM_LEAP_INPUT,
+      timeSeconds: 0,
+    },
+    createSimulationSummary(),
+  )
+  const outcome = model.lastQueuedInputOutcome
+  const issue = model.issue
+  return {
+    eligible: outcome?.accepted === true,
+    code:
+      outcome?.code ??
+      issue?.code ??
+      'CANONICAL_EVENT_QUANTUM_RESET_REJECTED',
+    branch,
+    artifactSkillPoints,
+    definitionGap:
+      issue?.path.startsWith('gameData.') === true
+        ? issue.detail
+        : null,
+  }
+}
+
+function reject(code: string, reason: string): DomainTransition {
+  return { accepted: false, code, reason }
+}

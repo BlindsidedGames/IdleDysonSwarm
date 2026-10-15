@@ -1,0 +1,958 @@
+@import "../../tokens/tokens.css";
+
+.basic-facility-region {
+  display: grid;
+  min-inline-size: 0;
+  container-type: inline-size;
+}
+
+.dyson-facility-flow {
+  display: grid;
+  min-inline-size: 0;
+  grid-template-columns:
+    repeat(auto-fit, minmax(min(22rem, 100%), 1fr));
+  gap: var(--game-card-grid-gap);
+  align-items: stretch;
+}
+
+.dyson-facility-flow > .basic-facility-region,
+.dyson-facility-flow > .basic-facility-region > .basic-facility-region__grid {
+  display: contents;
+}
+
+.basic-facility-region__heading {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.basic-facility-region__grid {
+  /* Facilities retain their established compact interaction footprint. */
+  --basic-facility-card-min-block-size: 5.5rem;
+  display: grid;
+  min-inline-size: 0;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--game-card-grid-gap);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.basic-facility-region__item {
+  min-inline-size: 0;
+}
+
+.basic-facility-region__teaser-surface {
+  display: grid;
+  min-block-size: var(--basic-facility-card-min-block-size);
+  place-items: center;
+  padding: 0.38rem;
+  border: var(--ui-panel-border-width) solid var(--theme-divider);
+  border-radius: var(--ui-control-radius);
+  background: var(--theme-panel);
+  box-shadow: 0 2px 0 #171018;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.12em;
+}
+
+.ui-facility-card.basic-facility-card {
+  --basic-facility-section-gap: 0.2rem;
+  --basic-facility-surface-gradient: var(--ui-action-gradient);
+  position: relative;
+  block-size: 100%;
+  min-block-size: var(--basic-facility-card-min-block-size);
+  grid-template-columns:
+    minmax(0, 1fr)
+    clamp(6.25rem, 27%, 6.75rem);
+  grid-template-rows: auto auto minmax(min-content, 1fr) auto;
+  gap: var(--basic-facility-section-gap);
+  align-items: start;
+  padding: 0.38rem;
+  border: var(--ui-panel-border-width) solid var(--theme-divider);
+  border-radius: var(--ui-control-radius);
+  background: var(--theme-panel);
+  box-shadow: 0 2px 0 #171018;
+}
+
+.basic-facility-card .ui-facility-card__header {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.basic-facility-card .ui-facility-card__production {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.basic-facility-card .ui-facility-card__description {
+  grid-column: 1;
+  grid-row: 3;
+}
+
+.basic-facility-card .ui-facility-card__progress {
+  grid-column: 1;
+  grid-row: 4;
+  inline-size: 100%;
+  align-self: end;
+  /* Use the existing space below the description rather than growing the card. */
+  margin-block-start: calc(-1 * var(--basic-facility-section-gap));
+}
+
+.basic-facility-card .ui-facility-card__feedback {
+  position: absolute;
+}
+
+.basic-facility-card .ui-facility-card__action {
+  grid-column: 2;
+  grid-row: 1 / -1;
+  align-self: stretch;
+}
+
+.basic-facility-card__identity {
+  font-weight: var(--font-weight-bold);
+}
+
+.basic-facility-card__visible-identity {
+  unicode-bidi: isolate;
+}
+
+.basic-facility-card__name {
+  margin-inline-end: 0.25em;
+}
+
+.basic-facility-card .ui-facility-card__title {
+  font-size: calc(0.9rem * var(--game-text-scale));
+  line-height: 1.12;
+}
+
+.basic-facility-card__total {
+  color: var(--color-accent-value);
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+.basic-facility-card__manual {
+  color: var(--color-positive);
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+.basic-facility-card__production {
+  margin: 0;
+  overflow: hidden;
+  color: #ffad50;
+  font-size: calc(0.8rem * var(--game-text-scale));
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.14;
+  white-space: nowrap;
+}
+
+.basic-facility-card__production-line {
+  display: inline-block;
+  min-inline-size: max-content;
+  transform-origin: left center;
+  white-space: nowrap;
+}
+
+.basic-facility-card__production-value {
+  color: #56d8ed;
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+:dir(rtl) .basic-facility-card__production-line {
+  transform-origin: right center;
+}
+
+.basic-facility-card__description {
+  margin: 0;
+  color: white;
+  font-size: calc(0.67rem * var(--game-text-scale));
+  line-height: 1.18;
+}
+
+.basic-facility-card__progress-track {
+  position: relative;
+  block-size: 0.72rem;
+  overflow: hidden;
+  /* Match the adjacent Details button's border, radius and bottom edge. */
+  border: 1px solid #0b080c;
+  border-radius: 0.2rem;
+  background: #171218;
+  background-clip: padding-box;
+}
+
+.basic-facility-card__progress-track[data-visible="false"] {
+  visibility: hidden;
+}
+
+.basic-facility-card__progress {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  border: 0;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.basic-facility-card__progress-fill {
+  position: relative;
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: hidden;
+  background: var(--theme-accent);
+  background-image: var(--basic-facility-surface-gradient);
+  transform-origin: left center;
+}
+
+.basic-facility-card__progress-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 30%,
+    color-mix(in srgb, var(--color-text-primary) 14%, transparent) 50%,
+    transparent 70%);
+  animation: facility-progress-sheen 6s ease-in-out infinite;
+}
+
+@keyframes facility-progress-sheen {
+  0%, 35% { transform: translateX(-100%); }
+  85%, 100% { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .basic-facility-card__progress-fill::after { animation: none; content: none; }
+}
+
+.basic-facility-card__feedback,
+.basic-facility-card__availability {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.basic-facility-card__actions {
+  display: grid;
+  block-size: 100%;
+  grid-template-rows:
+    minmax(var(--target-minimum), 1fr)
+    var(--basic-facility-section-gap)
+    var(--target-minimum);
+  align-content: stretch;
+}
+
+.basic-facility-card__actions > .ui-button {
+  grid-row: 1;
+}
+
+.ui-facility-card.mega-structure-card {
+  border-color: var(--theme-divider);
+  background: var(--theme-panel);
+}
+
+.mega-structure-details__list {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+}
+
+.mega-structure-details__list > div {
+  display: grid;
+  grid-template-columns: minmax(8rem, 0.8fr) minmax(0, 1.2fr);
+  gap: 0.75rem;
+}
+
+.mega-structure-details__list dt {
+  font-weight: var(--font-weight-semibold);
+}
+
+.mega-structure-details__list dd {
+  margin: 0;
+  color: var(--color-positive);
+  font-family: var(--font-family-numeric);
+  overflow-wrap: anywhere;
+}
+
+.basic-facility-card .ui-button {
+  min-inline-size: 0;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: center;
+  gap: 0.08rem;
+  border-color: #0b080c;
+  background: #d1b6d7;
+  color: #0b080c;
+  line-height: 1.08;
+  padding-block: 0.2rem;
+  padding-inline: 0.28rem;
+  font-size: calc(0.82rem * var(--game-text-scale));
+}
+
+.basic-facility-card .ui-button:not(:disabled) {
+  background-image: var(--basic-facility-surface-gradient);
+}
+
+.basic-facility-card .ui-button:not(:disabled):hover {
+  background-color: #dbc7df;
+}
+
+.basic-facility-card .ui-button:not(:disabled):active {
+  background-color: #aa9cad;
+}
+
+.basic-facility-card .ui-button:disabled {
+  border-color: #0b080c;
+  background: #82618a;
+  color: #0b080c;
+  opacity: 1;
+}
+
+.basic-facility-card__details-button {
+  grid-row: 3;
+  min-block-size: var(--target-minimum);
+  border: 1px solid #0b080c;
+  border-radius: 0.2rem;
+  background: #c695d7;
+  background-image: var(--basic-facility-surface-gradient);
+  color: #0b080c;
+  font: inherit;
+  padding-block: 0.2rem;
+  padding-inline: 0.28rem;
+  font-size: calc(0.82rem * var(--game-text-scale));
+  font-weight: var(--font-weight-bold);
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.basic-facility-card__details-button:hover {
+  background-color: #d5abe3;
+}
+
+.basic-facility-card__details-button:active {
+  background-color: #b681c8;
+}
+
+.basic-facility-card__details-button:focus-visible,
+.facility-details-dialog__close:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.facility-details-dialog__backdrop {
+  /* This dialog is portalled to document.body, outside the themed shell. */
+  --theme-page: #1d151f;
+  --theme-panel: #443148;
+  --theme-selected: #513b56;
+  --theme-divider: #694b70;
+  --theme-accent: #e59aeb;
+  position: fixed;
+  z-index: 100;
+  display: grid;
+  padding: 1rem;
+  background: rgb(11 7 12 / 72%);
+  inset: 0;
+  place-items: center;
+}
+
+.facility-details-dialog {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  inline-size: min(46rem, 100%);
+  max-block-size: min(48rem, calc(100dvh - 2rem));
+  overflow: hidden;
+  border: 1px solid #171018;
+  border-radius: 0.35rem;
+  background: #443148;
+  box-shadow: 0 1rem 3rem rgb(0 0 0 / 48%);
+  color: white;
+}
+
+.facility-details-dialog__header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem 0.75rem;
+  border-block-end: 1px solid #72567b;
+  background: #503857;
+}
+
+.facility-details-dialog__heading {
+  display: grid;
+  gap: 0.2rem;
+  min-inline-size: 0;
+}
+
+.facility-details-dialog__heading > span {
+  color: var(--color-text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.3;
+}
+
+.facility-details-dialog__header h2,
+.facility-details-dialog__content p {
+  margin: 0;
+}
+
+.facility-details-dialog__close {
+  display: grid;
+  flex: 0 0 auto;
+  inline-size: var(--target-minimum);
+  block-size: var(--target-minimum);
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--theme-accent) 70%, white);
+  border-radius: 0.25rem;
+  background: color-mix(in srgb, var(--theme-accent) 32%, var(--theme-panel));
+  box-shadow: 0 0.12rem 0.24rem rgb(0 0 0 / 42%);
+  color: white;
+  font: inherit;
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-bold);
+  place-items: center;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.facility-details-dialog__content {
+  display: grid;
+  gap: 0.85rem;
+  min-block-size: 0;
+  overflow-y: auto;
+  padding: 0.85rem 1rem 1rem;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  scrollbar-color: #9a72aa #2b1f2f;
+  scrollbar-width: thin;
+}
+
+.facility-details-dialog__content::-webkit-scrollbar {
+  inline-size: 0.7rem;
+}
+
+.facility-details-dialog__content::-webkit-scrollbar-track {
+  background: #2b1f2f;
+}
+
+.facility-details-dialog__content::-webkit-scrollbar-thumb {
+  border: 2px solid #2b1f2f;
+  border-radius: 999px;
+  background: #9a72aa;
+}
+
+.facility-details-dialog__content::-webkit-scrollbar-thumb:hover {
+  background: #bd8ed0;
+}
+
+.facility-details-dialog__safe-area {
+  display: none;
+}
+
+.facility-details-redesign {
+  display: grid;
+  gap: 1rem;
+}
+
+.facility-details-hero {
+  display: grid;
+  grid-template-columns: 4rem minmax(0, 1fr);
+  gap: 0.85rem;
+  align-items: center;
+  padding: 0.85rem;
+  border: 1px solid #72567b;
+  border-radius: 0.45rem;
+  background: linear-gradient(135deg, #38283d, #503857);
+}
+
+.facility-details-hero__icon,
+.facility-effect-row__icon {
+  display: block;
+  object-fit: contain;
+}
+
+.facility-details-hero__icon {
+  inline-size: 4rem;
+  block-size: 4rem;
+  border-radius: 0.4rem;
+}
+
+.facility-details-hero__eyebrow,
+.facility-details-hero__game-rate,
+.facility-details-pipeline h3,
+.facility-details-stage h4,
+.facility-details-stage__result,
+.facility-details-empty {
+  margin: 0;
+}
+
+.facility-details-hero__eyebrow,
+.facility-details-hero__game-rate {
+  color: var(--color-text-secondary);
+  font-size: 0.82rem;
+}
+
+.facility-details-hero__game-rate {
+  margin-block-start: 0.2rem;
+  color: var(--color-accent-value);
+}
+
+.facility-details-pipeline {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.facility-details-pipeline > h3,
+.facility-details-dialog__upstream > h3 {
+  color: white;
+  font-size: 1.05rem;
+}
+
+.facility-details-stage {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #72567b;
+  border-radius: 0.45rem;
+  background: #37283b;
+}
+
+.facility-details-stage > header {
+  display: flex;
+  gap: 0.55rem;
+  align-items: center;
+  padding: 0.55rem 0.7rem;
+  background: #503857;
+}
+
+.facility-details-stage__number {
+  display: grid;
+  flex: 0 0 auto;
+  inline-size: 1.55rem;
+  block-size: 1.55rem;
+  border-radius: 50%;
+  background: var(--color-positive);
+  color: #171018;
+  font-family: var(--font-family-numeric);
+  font-size: 0.78rem;
+  font-weight: var(--font-weight-bold);
+  place-items: center;
+}
+
+.facility-details-stage h4 {
+  font-size: 0.95rem;
+}
+
+.facility-details-stage__body {
+  display: grid;
+  padding-inline: 0.65rem;
+}
+
+.facility-details-effect-group + .facility-details-effect-group {
+  border-block-start: 1px solid #72567b;
+}
+
+.facility-details-effect-group > h5 {
+  margin: 0;
+  padding: 0.55rem 0.15rem 0.25rem;
+  color: #d5abe3;
+  font-size: 0.8rem;
+}
+
+.facility-details-effect-group > div {
+  display: grid;
+}
+
+.facility-effect-row__copy small {
+  color: var(--color-text-secondary);
+}
+
+.facility-details-stage__result,
+.facility-effect-row__value {
+  color: var(--color-positive);
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+.facility-details-stage__result {
+  padding: 0.55rem 0.15rem;
+  border-block-start: 1px solid #5d4564;
+  font-size: 0.82rem;
+  text-align: end;
+}
+
+.facility-effect-row {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr) auto;
+  gap: 0.65rem;
+  align-items: center;
+  min-block-size: 3.25rem;
+  padding: 0.55rem 0.15rem;
+}
+
+.facility-effect-row + .facility-effect-row,
+.facility-details-counts + .facility-effect-row,
+.facility-effect-row + .facility-details-stage__result,
+.facility-details-empty + .facility-details-stage__result {
+  border-block-start: 1px solid #5d4564;
+}
+
+.facility-effect-row__icon {
+  inline-size: 2.6rem;
+  block-size: 2.6rem;
+  border-radius: 0.3rem;
+}
+
+.facility-effect-row__copy {
+  display: grid;
+  min-inline-size: 0;
+}
+
+.facility-effect-row__copy strong {
+  overflow-wrap: anywhere;
+}
+
+.facility-effect-row__copy small {
+  font-size: 0.75rem;
+  line-height: 1.25;
+}
+
+.facility-effect-row__breakdown {
+  display: grid;
+  gap: 0.08rem;
+}
+
+.facility-effect-row__value {
+  color: var(--color-accent-value);
+  font-weight: var(--font-weight-bold);
+  white-space: nowrap;
+}
+
+.facility-effect-row__technical {
+  grid-column: 2 / -1;
+  margin-block-start: 0.2rem;
+  color: var(--color-text-secondary);
+  font-size: 0.7rem;
+}
+
+.facility-effect-row__technical summary {
+  cursor: pointer;
+  color: #d5abe3;
+}
+
+.facility-effect-row__technical > span {
+  display: block;
+  margin-block-start: 0.15rem;
+  overflow-wrap: anywhere;
+}
+
+.facility-effect-formula {
+  display: grid;
+  gap: 0.18rem;
+}
+
+.facility-effect-formula__line {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.55rem;
+  align-items: baseline;
+}
+
+.facility-effect-formula__line > bdi {
+  color: var(--color-accent-value);
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+.facility-effect-formula__line[data-active="false"] {
+  opacity: 0.52;
+}
+
+.facility-effect-formula__line[data-result="true"] {
+  margin-block-start: 0.15rem;
+  padding-block-start: 0.25rem;
+  border-block-start: 1px solid #5d4564;
+  color: white;
+  font-weight: var(--font-weight-bold);
+}
+
+.facility-details-empty {
+  padding: 0.4rem;
+  color: var(--color-text-secondary);
+  font-size: 0.82rem;
+}
+
+.facility-details-dialog__contributions {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.facility-details-dialog__contribution {
+  display: grid;
+  grid-template-columns:
+    minmax(9rem, 1fr)
+    minmax(4rem, auto)
+    minmax(4rem, auto)
+    minmax(4rem, auto);
+  gap: 0.4rem;
+  align-items: baseline;
+}
+
+.facility-details-dialog__operation,
+.facility-details-dialog__delta,
+.facility-details-dialog__total {
+  color: var(--color-accent-value);
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+.facility-details-dialog__tuple {
+  color: var(--color-positive);
+  white-space: nowrap;
+}
+
+.facility-details-dialog__source-id {
+  display: block;
+  margin-block-start: 0.1rem;
+  color: var(--color-text-secondary);
+  font-size: 0.7rem;
+  overflow-wrap: anywhere;
+}
+
+.facility-details-dialog__delta[data-sign="negative"] {
+  color: #ff6b6b;
+}
+
+.facility-details-dialog__delta[data-sign="positive"] {
+  color: #56d8ed;
+}
+
+.facility-details-dialog__condition {
+  grid-column: 1 / -1;
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+}
+
+.facility-details-dialog__upstream {
+  display: grid;
+  gap: 0.45rem;
+  padding-block-start: 0.2rem;
+}
+
+.facility-details-dialog__upstream h3,
+.facility-details-dialog__upstream p,
+.facility-details-dialog__legend {
+  margin: 0;
+}
+
+.facility-details-dialog__upstream h3 {
+  margin-block-start: 0.25rem;
+  font-size: 1rem;
+}
+
+.facility-details-dialog__legend {
+  display: grid;
+  grid-template-columns:
+    minmax(9rem, 1fr)
+    minmax(4rem, auto)
+    minmax(4rem, auto)
+    minmax(4rem, auto);
+  gap: 0.4rem;
+  color: white;
+  font-size: 0.8rem;
+}
+
+.facility-details-dialog__delta {
+  color: #ff6b6b;
+}
+
+.facility-details-dialog__total {
+  color: var(--color-positive);
+}
+
+.facility-details-dialog__value {
+  color: var(--color-positive);
+  font-family: var(--font-family-numeric);
+  font-size: var(--font-size-lg);
+  font-variant-numeric: tabular-nums;
+}
+
+.basic-facility-card__purchase-quantity,
+.basic-facility-card__purchase-cost {
+  max-inline-size: 100%;
+  color: #0b080c;
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-bold);
+  white-space: nowrap;
+}
+
+.basic-facility-card .ui-button:disabled
+  .basic-facility-card__purchase-quantity,
+.basic-facility-card .ui-button:disabled
+  .basic-facility-card__purchase-cost {
+  color: #0b080c;
+}
+
+.basic-facility-card__purchase-cost {
+  overflow-wrap: normal;
+}
+
+@media (max-width: 720px) {
+  .basic-facility-region__teaser-surface {
+    font-size: calc(0.95rem * var(--game-text-scale));
+  }
+
+  .basic-facility-card .ui-facility-card__header {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .basic-facility-card .ui-facility-card__production {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .basic-facility-card .ui-facility-card__description {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .basic-facility-card .ui-facility-card__progress {
+    grid-column: 1;
+    grid-row: 4;
+  }
+
+  .basic-facility-card .ui-facility-card__action {
+    grid-column: 2;
+    grid-row: 1 / span 4;
+  }
+
+  .facility-details-dialog__backdrop {
+    padding: calc(var(--safe-area-top) + 0.5rem) 0 0;
+    place-items: end stretch;
+  }
+
+  .facility-details-dialog {
+    inline-size: auto;
+    max-block-size: calc(100dvh - var(--safe-area-top) - 0.5rem);
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+  }
+
+  .facility-details-dialog__safe-area {
+    display: block;
+    min-block-size: var(--safe-area-bottom);
+    border-block-start: 1px solid #72567b;
+    background: #503857;
+  }
+
+  .facility-details-hero {
+    grid-template-columns: 3.25rem minmax(0, 1fr);
+  }
+
+  .facility-details-hero__icon {
+    inline-size: 3.25rem;
+    block-size: 3.25rem;
+  }
+
+  .facility-effect-row {
+    grid-template-columns: 2.35rem minmax(0, 1fr) auto;
+    gap: 0.5rem;
+  }
+
+  .facility-effect-row__icon {
+    inline-size: 2.35rem;
+    block-size: 2.35rem;
+  }
+}
+
+@media (max-width: 359px) {
+  .ui-facility-card.basic-facility-card {
+    grid-template-columns: minmax(0, 1fr) 6.25rem;
+    gap-inline: 0.35rem;
+  }
+
+  .basic-facility-card .ui-facility-card__title {
+    font-size: calc(0.84rem * var(--game-text-scale));
+  }
+
+  .basic-facility-card__production {
+    font-size: calc(0.76rem * var(--game-text-scale));
+  }
+
+  .basic-facility-card__description {
+    font-size: calc(0.64rem * var(--game-text-scale));
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .basic-facility-card__actions {
+    grid-template-rows:
+      minmax(var(--target-minimum), 1fr)
+      var(--basic-facility-section-gap)
+      2.25rem;
+  }
+
+  .basic-facility-card__details-button {
+    min-block-size: 2.25rem;
+  }
+}
+
+@container (min-width: 50rem) {
+  .basic-facility-region:not(.mega-structure-region)
+    > .basic-facility-region__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: auto;
+  }
+}
+
+@container (min-width: 80rem) {
+  .basic-facility-region:not(.mega-structure-region)
+    > .basic-facility-region__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (forced-colors: active) {
+  .basic-facility-region__teaser-surface,
+  .basic-facility-card__progress-track,
+  .basic-facility-card__progress,
+  .basic-facility-card__details-button,
+  .facility-details-dialog,
+  .facility-details-dialog__close {
+    forced-color-adjust: auto;
+  }
+
+  .facility-details-dialog__content {
+    scrollbar-color: ButtonText Canvas;
+  }
+
+  .basic-facility-card__progress {
+    appearance: auto;
+    accent-color: Highlight;
+  }
+
+  .basic-facility-card__details-button:focus-visible,
+  .facility-details-dialog__close:focus-visible {
+    outline-color: Highlight;
+  }
+}

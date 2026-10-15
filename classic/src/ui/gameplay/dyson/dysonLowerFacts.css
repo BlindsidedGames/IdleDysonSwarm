@@ -1,0 +1,38 @@
+@import "../../tokens/tokens.css";
+
+.dyson-lower-facts {
+  min-inline-size: 0;
+  block-size: 100%;
+  display: grid;
+  align-content: center;
+  grid-template-columns: minmax(0, 1fr);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.dyson-lower-facts p {
+  margin: 0;
+  padding: 0.25rem 0.1rem;
+  color: #f4edf5;
+  line-height: var(--line-height-body);
+  text-align: start;
+}
+
+.dyson-lower-facts__value {
+  color: #ffb16f;
+}
+
+@media (max-width: 720px) {
+  .dyson-lower-facts p {
+    font-size: calc(0.88rem * var(--game-text-scale));
+    line-height: 1.15;
+  }
+}
+
+@media (max-width: 359px) {
+  .dyson-lower-facts p {
+    font-size: calc(0.82rem * var(--game-text-scale));
+  }
+}

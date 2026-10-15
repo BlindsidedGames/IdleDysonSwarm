@@ -1,0 +1,540 @@
+@import "../../tokens/tokens.css";
+
+.research-surface {
+  display: grid;
+  block-size: 100%;
+  min-block-size: 0;
+  grid-template-rows: minmax(0, 1fr) auto;
+  background: var(--theme-page);
+  color: white;
+}
+
+.research-surface__scroll-region {
+  container-type: inline-size;
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-block: var(--game-card-content-inset);
+  padding-inline:
+    max(var(--game-card-content-inset), var(--safe-area-left))
+    max(var(--game-card-content-inset), var(--safe-area-right));
+  scrollbar-width: none;
+}
+
+.research-surface__scroll-region::-webkit-scrollbar {
+  display: none;
+  inline-size: 0;
+  block-size: 0;
+}
+
+.research-surface__grid {
+  display: grid;
+  min-inline-size: 0;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--game-card-grid-gap);
+  align-items: start;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.research-surface__item {
+  display: grid;
+  min-inline-size: 0;
+}
+
+.research-surface__item:focus-visible,
+.research-surface__empty:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: -3px;
+}
+
+.research-surface__empty {
+  max-inline-size: 32rem;
+  margin: 1rem auto;
+  color: #b7cecc;
+  text-align: center;
+}
+
+.ui-facility-card.research-card {
+  position: relative;
+  min-block-size: 0;
+  grid-template-columns: minmax(0, 1fr) clamp(6.25rem, 29%, 7rem);
+  grid-template-rows: auto auto 1fr;
+  gap: 0.02rem 0.3rem;
+  align-items: start;
+  padding: 0.3rem 0.35rem;
+  border: 1px solid var(--theme-divider);
+  border-radius: 0.25rem;
+  background: var(--theme-panel);
+}
+
+.research-card .ui-facility-card__header {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.research-card .ui-facility-card__production {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.research-card .ui-facility-card__description {
+  grid-column: 1;
+  grid-row: 3;
+}
+
+.research-card .ui-facility-card__progress {
+  display: none;
+}
+
+.research-card .ui-facility-card__feedback {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.research-card .ui-facility-card__action {
+  grid-column: 2;
+  grid-row: 1 / -1;
+  align-self: stretch;
+}
+
+.research-card .ui-facility-card__title {
+  color: white;
+  font-size: var(--ui-text-card-title);
+  line-height: 1.12;
+}
+
+.research-card .ui-facility-card__production {
+  color: white;
+  font-size: calc(0.8rem * var(--game-text-scale));
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.1;
+}
+
+.research-card__value {
+  color: #00e1ff;
+}
+
+.research-card__effect-arrow {
+  display: inline-block;
+  margin-inline: 0.08em;
+  color: white;
+  font-size: 0.8em;
+  transform: translateY(-0.04em);
+}
+
+.research-card .ui-facility-card__description {
+  color: white;
+  font-size: calc(0.67rem * var(--game-text-scale));
+  line-height: 1.12;
+}
+
+.research-card .ui-button {
+  display: flex;
+  inline-size: 100%;
+  min-block-size: 100%;
+  min-inline-size: 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.05rem;
+  padding: 0.18rem 0.25rem;
+  border-color: var(--theme-divider);
+  border-radius: 0.25rem;
+  background: var(--theme-accent);
+  color: var(--theme-page);
+  font-size: var(--ui-text-body);
+  line-height: 1.08;
+}
+
+.research-card .ui-button:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--theme-accent) 82%, white);
+}
+
+.research-card .ui-button:not(:disabled):active {
+  background-color: color-mix(in srgb, var(--theme-accent) 72%, var(--theme-page));
+}
+
+.research-card .ui-button:disabled {
+  border-color: var(--theme-divider);
+  background: var(--theme-selected);
+  color: var(--theme-page);
+  opacity: 1;
+}
+
+.research-card__purchase-quantity,
+.research-card__purchase-cost {
+  max-inline-size: 100%;
+  color: inherit;
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-bold);
+  white-space: nowrap;
+}
+
+.research-card__purchase-cost {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.12em;
+}
+
+.research-card__purchase-cost .ui-inline-image-symbol {
+  block-size: 0.825em;
+  vertical-align: 0;
+}
+
+.research-surface__footer {
+  z-index: 2;
+  min-inline-size: 0;
+  border-block-start: 1px solid var(--theme-divider);
+  background: var(--theme-panel);
+}
+
+.research-surface__control-panel .ui-progress-controls-panel__summary {
+  text-align: start;
+}
+
+.research-surface__summary-line {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  min-inline-size: 0;
+  gap: var(--ui-control-row-gap);
+}
+
+.research-surface__summary-line > p {
+  min-inline-size: 0;
+  margin: 0;
+}
+
+.research-surface__summary-line .bot-distribution--multitasking {
+  padding: 0;
+  font-size: calc(0.72rem * var(--game-text-scale));
+  text-align: start;
+  white-space: normal;
+}
+
+.research-surface__production-line {
+  white-space: nowrap;
+}
+
+.research-surface__summary-line--single-production
+  .research-surface__production-line {
+  font-size: var(--ui-text-page-title);
+  line-height: 1.15;
+}
+
+.research-surface__control-panel .ui-progress-controls-panel__body {
+  max-block-size: none;
+  overflow: visible;
+  padding: 0;
+}
+
+.research-surface__summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--target-minimum);
+  align-items: center;
+  min-block-size: 3.25rem;
+}
+
+.research-surface__summary p {
+  margin: 0;
+  padding: 0.55rem 0.75rem;
+  text-align: center;
+}
+
+.research-surface__researchers,
+.research-surface__science {
+  color: #00e1ff;
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+.research-surface__summary .ui-inline-image-symbol {
+  margin: 0;
+}
+
+.research-surface__science .ui-resource-value__content {
+  gap: 0.06em;
+}
+
+.research-surface__settings-toggle {
+  display: grid;
+  min-inline-size: var(--target-minimum);
+  min-block-size: var(--target-minimum);
+  place-items: center;
+  align-self: stretch;
+  border: 0;
+  border-inline-start: 1px solid var(--theme-divider);
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-size: 1.35rem;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.research-surface__settings-toggle:focus-visible,
+.research-surface__buy-modes button:focus-visible,
+.research-surface__rounded-bulk:has(input:focus-visible),
+.research-surface__hide-completed:has(input:focus-visible),
+.research-surface__automation input:focus-visible,
+.research-surface__automation-toggle-all:focus-visible {
+  outline: none;
+  outline-offset: 0;
+}
+
+.research-surface__settings {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.35rem 0.7rem 0.5rem;
+  border: 0;
+  background: var(--theme-panel);
+}
+
+.research-surface__settings .ui-preset-automation select {
+  border-color: var(--theme-divider);
+  background: var(--theme-page);
+}
+
+.research-surface__settings-title {
+  font-weight: var(--font-weight-semibold);
+}
+
+.research-surface__buy-modes {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.3rem;
+}
+
+.research-surface__buy-modes button {
+  min-block-size: var(--target-minimum);
+  border: 1px solid var(--theme-divider);
+  border-radius: 0.2rem;
+  background: var(--theme-selected);
+  color: white;
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.research-surface__buy-modes button[aria-pressed="true"] {
+  background: var(--theme-accent);
+  color: var(--theme-page);
+}
+
+.research-surface__buy-modes button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.research-surface__rounded-bulk,
+.research-surface__hide-completed {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-block-size: 2.35rem;
+  cursor: pointer;
+}
+
+.research-surface__rounded-bulk input,
+.research-surface__hide-completed input {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+}
+
+.research-surface__settings-failure {
+  color: #ffb7b7;
+}
+
+@media (max-width: 720px) {
+  .research-surface__production-line {
+    font-size: calc(0.88rem * var(--game-text-scale));
+    line-height: 1.15;
+  }
+
+  .research-surface__scroll-region {
+    padding-block: var(--game-card-content-inset);
+    padding-inline:
+      max(var(--game-card-content-inset), var(--safe-area-left))
+      max(var(--game-card-content-inset), var(--safe-area-right));
+  }
+
+  .research-surface__summary {
+    min-block-size: var(--target-minimum);
+  }
+
+  .research-surface__summary p {
+    padding: 0.25rem 0.1rem;
+    font-size: calc(0.88rem * var(--game-text-scale));
+    line-height: 1.15;
+  }
+
+  .research-surface__summary-line {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 460px) {
+  .research-surface__summary-line .bot-distribution--multitasking {
+    padding-inline: 0;
+    text-align: start;
+  }
+}
+
+.research-surface__automation {
+  display: grid;
+  min-inline-size: 0;
+  padding: 0;
+  margin: 0.35rem 0 0;
+  border: 0;
+}
+
+.research-surface__automation-toggle-all {
+  justify-self: end;
+  min-block-size: var(--target-minimum);
+  padding: 0.25rem 0.7rem;
+  margin-block-start: -1.55rem;
+  margin-block-end: 0.3rem;
+  border: 1px solid var(--theme-accent);
+  border-radius: 0.2rem;
+  background: var(--theme-selected);
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: var(--font-weight-semibold);
+}
+
+.research-surface__automation-toggle-all:not(:disabled):hover {
+  background: color-mix(in srgb, var(--theme-selected) 78%, var(--theme-accent));
+}
+
+.research-surface__automation-toggle-all:not(:disabled):active {
+  background: var(--theme-panel);
+}
+
+.research-surface__automation-toggle-all:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.research-surface__automation legend {
+  padding: 0;
+  margin-block-end: 0.15rem;
+  font-size: 0.86rem;
+  font-weight: var(--font-weight-semibold);
+}
+
+.research-surface__automation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  gap: 0.2rem 0.3rem;
+}
+
+.research-surface__automation-grid label {
+  display: flex;
+  min-block-size: var(--target-minimum);
+  min-inline-size: 0;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.4rem;
+  border: 1px solid var(--theme-divider);
+  border-radius: 0.2rem;
+  background: var(--theme-panel);
+  cursor: pointer;
+  font-size: 0.82rem;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.research-surface__automation-grid label:has(input:checked) {
+  border-color: var(--theme-accent);
+  background: var(--theme-selected);
+}
+
+.research-surface__automation-grid label:hover {
+  background: color-mix(in srgb, var(--theme-panel) 75%, var(--theme-selected));
+}
+
+.research-surface__automation-grid label:has(input:checked):hover {
+  background: color-mix(in srgb, var(--theme-selected) 78%, var(--theme-accent));
+}
+
+.research-surface__automation-grid label[data-save-error="true"] {
+  border-color: var(--color-negative);
+}
+
+.research-surface__automation-grid input {
+  inline-size: 1.15rem;
+  block-size: 1.15rem;
+}
+
+.research-surface__automation-grid input:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.research-surface__automation-grid span {
+  min-inline-size: 0;
+}
+
+@media (max-width: 359px) {
+  .research-card .ui-facility-card__title {
+    font-size: calc(0.76rem * var(--game-text-scale));
+  }
+
+  .research-card .ui-facility-card__production {
+    font-size: calc(0.68rem * var(--game-text-scale));
+  }
+
+  .research-card .ui-facility-card__description {
+    font-size: calc(0.62rem * var(--game-text-scale));
+  }
+}
+
+@container (min-width: 50rem) {
+  .research-surface__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
+    align-items: stretch;
+  }
+
+  .ui-facility-card.research-card {
+    block-size: 100%;
+  }
+}
+
+@container (min-width: 80rem) {
+  .research-surface__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (forced-colors: active) {
+  .research-card .ui-button,
+  .research-surface__settings-toggle,
+  .research-surface__buy-modes button {
+    forced-color-adjust: auto;
+  }
+}
+
+.research-surface__control-panel .skill-preset-quick-actions {
+  margin-block: var(--ui-related-copy-gap);
+}
+
+/* Action lighting only; selectors and navigation retain their existing surfaces. */
+@media (forced-colors: none) {
+  .research-card .ui-button:not(:disabled) {
+    background-image: var(--ui-action-gradient);
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "formatVersion": 1,
+  "source": "Lifecycle-normalized Unity prepared graph",
+  "target": "Web dehydrate(hydrate(Unity prepared graph))",
+  "expectedDifferenceCount": 941,
+  "allowedDeltas": [
+    {
+      "id": "legacy-skill-flag-compaction",
+      "reason": "The Web mapper preserves authoritative skill ownership and removes the redundant legacy integer-key false map.",
+      "expectedDifferenceCount": 104,
+      "expectedShape": "false",
+      "actualShape": "missing",
+      "normalizedPaths": [
+        "$.dysonVerseSaveData.dysonVerseInfinityData.SkillTreeSaveData.*"
+      ]
+    },
+    {
+      "id": "statistics-window-default-materialization",
+      "reason": "The Web canonical statistics model materializes zero-valued fields omitted by Odin for empty fixed windows.",
+      "expectedDifferenceCount": 828,
+      "expectedShape": "missing",
+      "actualShape": "zero-number-or-bigint",
+      "normalizedPaths": [
+        "$.simulationStatistics.dailyWindows[*].dreamResetCount",
+        "$.simulationStatistics.dailyWindows[*].infinityCount",
+        "$.simulationStatistics.dailyWindows[*].infinityPoints",
+        "$.simulationStatistics.dailyWindows[*].realityWorkers",
+        "$.simulationStatistics.dailyWindows[*].sequence",
+        "$.simulationStatistics.dailyWindows[*].simulatedSeconds",
+        "$.simulationStatistics.halfHourWindows[*].dreamResetCount",
+        "$.simulationStatistics.halfHourWindows[*].infinityCount",
+        "$.simulationStatistics.halfHourWindows[*].infinityPoints",
+        "$.simulationStatistics.halfHourWindows[*].realityWorkers",
+        "$.simulationStatistics.halfHourWindows[*].sequence",
+        "$.simulationStatistics.halfHourWindows[*].simulatedSeconds",
+        "$.simulationStatistics.minuteWindows[*].dreamResetCount",
+        "$.simulationStatistics.minuteWindows[*].infinityCount",
+        "$.simulationStatistics.minuteWindows[*].infinityPoints",
+        "$.simulationStatistics.minuteWindows[*].realityWorkers",
+        "$.simulationStatistics.minuteWindows[*].sequence",
+        "$.simulationStatistics.minuteWindows[*].simulatedSeconds"
+      ]
+    },
+    {
+      "id": "statistics-null-string-canonicalization",
+      "reason": "The Web canonical statistics model represents an unset completed-cycle cause as an empty string.",
+      "expectedDifferenceCount": 1,
+      "expectedShape": "null",
+      "actualShape": "empty-string",
+      "normalizedPaths": [
+        "$.simulationStatistics.lastCompletedCycle.dreamCause"
+      ]
+    },
+    {
+      "id": "break-infinity-target-minimum",
+      "reason": "The Web canonical Infinity model repairs the legacy zero Break target to the minimum valid reward of one IP.",
+      "expectedDifferenceCount": 1,
+      "expectedShape": "zero-number-or-bigint",
+      "actualShape": "one-number-or-bigint",
+      "normalizedPaths": [
+        "$.infinityPointsToBreakFor"
+      ]
+    },
+    {
+      "id": "processing-rewrite-migration-marker",
+      "reason": "The Web processing rewrite records its one-time legacy Double Time bank migration.",
+      "expectedDifferenceCount": 1,
+      "expectedShape": "missing",
+      "actualShape": "boolean",
+      "normalizedPaths": [
+        "$.processingRewriteMigrated"
+      ]
+    },
+    {
+      "id": "processing-active-interval-default",
+      "reason": "The Web processing rewrite materializes its default active update interval.",
+      "expectedDifferenceCount": 1,
+      "expectedShape": "missing",
+      "actualShape": "number",
+      "normalizedPaths": [
+        "$.processingActiveIntervalMilliseconds"
+      ]
+    },
+    {
+      "id": "processing-stored-time-preset-default",
+      "reason": "The Web processing rewrite materializes its default Stored Time accuracy preset.",
+      "expectedDifferenceCount": 1,
+      "expectedShape": "missing",
+      "actualShape": "string",
+      "normalizedPaths": [
+        "$.processingStoredTimePreset"
+      ]
+    },
+    {
+      "id": "manual-infinity-calibration-default",
+      "reason": "The Web Infinity guidance materializes durable zero-valued manual calibration fields for Unity saves which predate that presentation state.",
+      "expectedDifferenceCount": 3,
+      "expectedShape": "missing",
+      "actualShape": "zero-number-or-bigint",
+      "normalizedPaths": [
+        "$.simulationInfinityManualPeakIpPerMinute",
+        "$.simulationInfinityManualPeakReward",
+        "$.simulationInfinityManualObservedActiveSeconds"
+      ]
+    },
+    {
+      "id": "active-infinity-throughput-cycle-default",
+      "reason": "The Web Infinity guidance starts legacy saves with no trusted active automatic cycle in progress.",
+      "expectedDifferenceCount": 1,
+      "expectedShape": "missing",
+      "actualShape": "false",
+      "normalizedPaths": [
+        "$.simulationInfinityActiveAutomaticThroughputCycleEligible"
+      ]
+    }
+  ]
+}

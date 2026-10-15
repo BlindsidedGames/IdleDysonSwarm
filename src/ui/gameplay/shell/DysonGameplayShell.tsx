@@ -1,5 +1,6 @@
 import {
   useCallback,
+  useContext,
   useEffect,
   useId,
   useLayoutEffect,
@@ -7,6 +8,8 @@ import {
   useState,
   type CSSProperties,
 } from 'react'
+import { HostGameModeSwitch } from './GameModeSwitch'
+import { GameModeControllerContext } from './GameModeControllerContext'
 import { DesktopTooltips } from '../../components/DesktopTooltips'
 import { useDesktopInterfaceScale } from '../../desktopPresentation'
 import { useMediaQuery } from '../../accessibility/useMediaQuery'
@@ -59,6 +62,7 @@ export function DysonGameplayShell({
   routeContent,
   routeContentEdgeToEdge = false,
 }: DysonGameplayShellProps) {
+  const modeController = useContext(GameModeControllerContext)
   useDesktopInterfaceScale()
   const mainId = `dyson-gameplay-main-${useId().replaceAll(':', '')}`
   const menuId = `dyson-menu-${useId().replaceAll(':', '')}`
@@ -254,14 +258,17 @@ export function DysonGameplayShell({
             {sidePanelSupplement}
           </div>
         )}
-        {releaseFooter !== undefined && (
-          <footer
-            className="dyson-shell__release-footer dyson-shell__release-footer--side"
-            aria-hidden={!wideLayout || undefined}
-            dir="ltr"
-          >
-            {releaseFooter}
-          </footer>
+        {modeController !== null ? (
+          <div className="dyson-shell__side-bottom">
+            <HostGameModeSwitch />
+            {releaseFooter !== undefined && (
+              <footer className="dyson-shell__release-footer dyson-shell__release-footer--side"
+                aria-hidden={!wideLayout || undefined} dir="ltr">{releaseFooter}</footer>
+            )}
+          </div>
+        ) : releaseFooter !== undefined && (
+          <footer className="dyson-shell__release-footer dyson-shell__release-footer--side"
+            aria-hidden={!wideLayout || undefined} dir="ltr">{releaseFooter}</footer>
         )}
       </aside>
 

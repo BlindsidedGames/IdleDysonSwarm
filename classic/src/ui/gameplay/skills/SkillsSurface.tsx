@@ -1,0 +1,3315 @@
+import { useExtendedSkillPresets } from '../../useExtendedSkillPresets'
+import { SkillPresetQuickActions } from './SkillPresetQuickActions'
+import { useSkillPresetSelection, type PresetSelectionCommand } from './useSkillPresetSelection'
+import { AffectedSkillList, SkillPresetSelectionDialog } from './SkillPresetSelectionDialog'
+import { presentation, iconByFileName, useSkillPresentationNodes, type SkillPresentationNode } from './skillPresentation'
+import { NonRefundableSkillConfirmationProvider } from './NonRefundableSkillConfirmation'
+import { useSharedNonRefundableSkillConfirmation } from './nonRefundableSkillConfirmationContext'
+import { discoveryFracturedEffects } from '../discovery/skillMessages'
+import { galvanizedEffectMessages } from './galvanizedEffectMessages'
+import { discoveryMessages } from '../discovery/messages'
+import type { SkillProductionPreview } from '../../../simulation/skillProductionPreview'
+import { basicFacilityMessages as facilityMessages } from '../facilities/messages'
+import { skillAugments } from '../../../simulation/skillSubskills'
+import galvanizerIcon from '../../assets/currency-galvanizer.png'
+import { InlineImageSymbol, InlineResourceAmount } from '../../components'
+import { challengeMessages } from '../infinity/challengeMessages'
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+  type PointerEvent as ReactPointerEvent,
+  type WheelEvent as ReactWheelEvent,
+} from 'react'
+import { useIntl, type MessageDescriptor } from 'react-intl'
+import type {
+  CanonicalSkillPresetApplicationOutcome,
+  CanonicalSkillPresetSlot,
+} from '../../../application/canonicalGameCommands'
+import type { CanonicalPlayerCommand } from '../../../application/canonicalPlayerCommands'
+import type { SkillPresetState } from '../../../game-state/types'
+import {
+  defaultSkillPresetColorId,
+  SKILL_PRESET_COLOR_IDS,
+  type SkillPresetColorId,
+} from '../../../game-state/skillPresetColors'
+import {
+  includesNewNonRefundableSkillAssignment,
+  type CanonicalSkillAvailabilityPreview,
+  type CanonicalSkillCatalogPreview,
+} from '../../../simulation/canonicalSkillTransactions'
+import {
+  Button,
+  ProgressControlsPanel,
+  StatusFeedback,
+  StableSingleLineText,
+} from '../../components'
+import {
+  formatGameNumber,
+  formatWholeGameNumber,
+} from '../../i18n/formatters'
+import type { EnabledLocale } from '../../i18n/localeRegistry'
+import type { UiRuntimePlayerCommandResult } from '../../runtime'
+import {
+  SkillDetailsDialog,
+  type SkillDetailsPalette,
+} from './SkillDetailsDialog'
+import skillsNavigationIcon from '../../assets/nav-skills.png'
+import { skillMessages as messages } from './messages'
+import {
+  skillPresetColorStyle,
+} from './presetColors'
+import {
+  buildSolidSkillConnectorPath,
+  buildTaperedSkillConnectorPath,
+  layoutSkillConnector,
+} from './skillConnectorGeometry'
+import { rankSkillSearchResults } from './skillSearch'
+import './skills.css'
+
+type SkillCommand = Extract<
+  CanonicalPlayerCommand,
+  { readonly kind: `skill.${string}` }
+>
+
+interface PendingExpectation {
+  readonly beforeSignature: string
+  readonly skillId?: string
+  readonly expectedOwned?: boolean
+  readonly closeDetails?: boolean
+  readonly expectedPresetSlot?: CanonicalSkillPresetSlot
+}
+
+
+export interface SkillCommandAvailability {
+  readonly purchase: boolean
+  readonly refund: boolean
+  readonly selectPreset: boolean
+  readonly setPresetColor: boolean
+  readonly setAutoAssignNonRefundable: boolean
+  readonly reset: boolean
+}
+
+export interface SkillPresetQueueChangeRequest {
+  readonly slot: CanonicalSkillPresetSlot
+  readonly skillId: string
+  readonly included: boolean
+}
+
+export interface SkillPresetQueueChangePreview {
+  readonly affectedSkillIds: readonly string[]
+  readonly confirmationRequired: boolean
+}
+
+export interface SkillPresetImportPreview {
+  readonly name: string
+  readonly queuedSkillCount: number
+  readonly queuedSkillIds: readonly string[]
+  readonly workerPercent: number
+  readonly colorId: SkillPresetColorId
+  readonly lockedQueuedSkillCount?: number
+  readonly retainedSkillIds?: readonly string[]
+  readonly blockedByRetainedSkillIds?: readonly string[]
+}
+
+export interface SkillPresetSelectionPreview {
+  readonly retainedSkillIds: readonly string[]
+  readonly pendingSkillIds: readonly string[]
+  readonly blockedByRetainedSkillIds: readonly string[]
+}
+
+/**
+ * Canonical preset operations consumed by the Skills UI. Implementations own
+ * dependency closure, cascading removals, transfer validation and atomic
+ * replacement; this surface only presents published previews and outcomes.
+ */
+export interface SkillPresetActions {
+  readonly previewNonRefundableAssignment?: (skillIds: readonly string[]) => boolean
+  readonly previewProduction?: (skillId: string, kind: 'purchase' | 'refund') => SkillProductionPreview
+  readonly previewSelection: (
+    slot: CanonicalSkillPresetSlot,
+  ) => Promise<SkillPresetSelectionPreview>
+  readonly previewQueueChange: (
+    request: SkillPresetQueueChangeRequest,
+  ) => Promise<SkillPresetQueueChangePreview>
+  readonly applyQueueChange: (
+    request: SkillPresetQueueChangeRequest,
+  ) => Promise<boolean>
+  readonly exportPreset: (
+    slot: CanonicalSkillPresetSlot,
+  ) => Promise<string>
+  readonly previewImportPreset: (
+    slot: CanonicalSkillPresetSlot,
+    text: string,
+  ) => Promise<SkillPresetImportPreview>
+  readonly importPreset: (
+    slot: CanonicalSkillPresetSlot,
+    text: string,
+    retainedConflict?: {
+      readonly retainedSkillIds: readonly string[]
+      readonly blockedSkillIds: readonly string[]
+    },
+  ) => Promise<boolean>
+}
+
+export interface SkillsSurfaceProps {
+  readonly discoveryUnlocked?: boolean
+  readonly galvanizers?: bigint
+  readonly hasEarnedGalvanizer?: boolean
+  readonly skillsDisabled?: boolean
+  readonly locale: EnabledLocale
+  readonly points: bigint
+  readonly fragments: bigint
+  readonly catalog: CanonicalSkillCatalogPreview
+  readonly presets: readonly SkillPresetState[]
+  readonly selectedPresetSlot: CanonicalSkillPresetSlot
+  readonly botDistribution: number
+  readonly autoAssignNonRefundable: boolean
+  readonly commandAvailability: SkillCommandAvailability
+  readonly presetApplication?:
+    Readonly<CanonicalSkillPresetApplicationOutcome>
+  readonly onDismissPresetApplication?: () => void
+  readonly showPresetApplicationNotifications: boolean
+  readonly onShowPresetApplicationNotificationsChange: (
+    show: boolean,
+  ) => void
+  readonly presetActions?: SkillPresetActions
+  readonly dispatchPlayer: (
+    command: SkillCommand,
+  ) => Promise<UiRuntimePlayerCommandResult>
+  readonly initialTreeView?: SkillTreeViewState | null
+  readonly onTreeViewChange?: (view: SkillTreeViewState) => void
+}
+
+export interface SkillTreeViewState {
+  readonly centerX: number
+  readonly centerY: number
+  readonly scale: number
+}
+
+const PRESET_COLOR_MESSAGES = {
+  cyan: messages.presetColorCyan,
+  orange: messages.presetColorOrange,
+  gold: messages.presetColorGold,
+  rose: messages.presetColorRose,
+  pink: messages.presetColorPink,
+  green: messages.presetColorGreen,
+  blue: messages.presetColorBlue,
+  violet: messages.presetColorViolet,
+  red: messages.presetColorRed,
+  white: messages.presetColorWhite,
+} as const
+const NODE_SIZE = 76
+const GRAPH_PADDING = 180
+const MIN_SCALE = 0.4
+const MAX_SCALE = 1.5
+const DEFAULT_SCALE = 0.8
+const SKILL_DRAG_THRESHOLD_PX = 6
+const SKILL_DOUBLE_ACTIVATION_MILLISECONDS = 360
+const SKILL_DOUBLE_CLICK_STORAGE_KEY =
+  'idle-dyson-swarm:skill-double-click-assignment'
+
+const SKILL_LABELS_STORAGE_KEY = 'idle-dyson-swarm:show-skill-labels'
+
+const SKILL_COMPARISONS_STORAGE_KEY = 'idle-dyson-swarm:show-skill-production-comparisons'
+
+function readSkillComparisonsPreference(): boolean {
+  try {
+    return typeof window === 'undefined' ||
+      window.localStorage.getItem(SKILL_COMPARISONS_STORAGE_KEY) !== 'false'
+  } catch {
+    return true
+  }
+}
+
+function readSkillLabelsPreference(): boolean {
+  try {
+    return typeof window === 'undefined' ||
+      window.localStorage.getItem(SKILL_LABELS_STORAGE_KEY) !== 'false'
+  } catch {
+    return true
+  }
+}
+
+function writeSkillLabelsPreference(enabled: boolean): void {
+  try {
+    window.localStorage.setItem(SKILL_LABELS_STORAGE_KEY, String(enabled))
+  } catch {
+    // Labels remain usable when preference storage is unavailable.
+  }
+}
+
+function readDoubleClickAssignmentPreference(): boolean {
+  try {
+    return typeof window !== 'undefined' &&
+      window.localStorage.getItem(SKILL_DOUBLE_CLICK_STORAGE_KEY) === 'true'
+  } catch {
+    return false
+  }
+}
+
+function writeDoubleClickAssignmentPreference(enabled: boolean): void {
+  try {
+    window.localStorage.setItem(
+      SKILL_DOUBLE_CLICK_STORAGE_KEY,
+      String(enabled),
+    )
+  } catch {
+    // A presentation preference should not block the Skill Tree.
+  }
+}
+
+const minX =
+  Math.min(...presentation.nodes.map((node) => node.x)) -
+  GRAPH_PADDING
+const maxX =
+  Math.max(...presentation.nodes.map((node) => node.x)) +
+  GRAPH_PADDING
+const minY =
+  Math.min(...presentation.nodes.map((node) => node.y)) -
+  GRAPH_PADDING
+const maxY =
+  Math.max(...presentation.nodes.map((node) => node.y)) +
+  GRAPH_PADDING
+const graphWidth = maxX - minX
+const graphHeight = maxY - minY
+
+const graphPositionBySkillId = new Map(
+  presentation.nodes.map((node) => [
+    node.skillId,
+    Object.freeze({
+      x: node.x - minX,
+      y: maxY - node.y,
+    }),
+  ]),
+)
+
+function graphPosition(node: SkillPresentationNode) {
+  return graphPositionBySkillId.get(node.skillId) ?? {
+    x: node.x - minX,
+    y: maxY - node.y,
+  }
+}
+
+/**
+ * Presents the authored Unity skill graph and dispatches only canonical Skill
+ * commands. Layout, copy and icons are presentation exports; rule state comes
+ * exclusively from the supplied canonical catalog.
+ */
+export function SkillsSurface(props: SkillsSurfaceProps) {
+  const sharedConfirmation = useSharedNonRefundableSkillConfirmation()
+  return sharedConfirmation === null
+    ? <NonRefundableSkillConfirmationProvider><SkillsSurfaceContent {...props} /></NonRefundableSkillConfirmationProvider>
+    : <SkillsSurfaceContent {...props} />
+}
+
+function SkillsSurfaceContent({
+  discoveryUnlocked = false,
+  galvanizers = 0n,
+  hasEarnedGalvanizer = false,
+  skillsDisabled = false,
+  locale,
+  points,
+  fragments,
+  catalog,
+  presets,
+  selectedPresetSlot,
+  botDistribution,
+  autoAssignNonRefundable,
+  commandAvailability: suppliedCommandAvailability,
+  presetApplication,
+  onDismissPresetApplication,
+  showPresetApplicationNotifications,
+  onShowPresetApplicationNotificationsChange,
+  presetActions,
+  dispatchPlayer,
+  initialTreeView,
+  onTreeViewChange,
+}: SkillsSurfaceProps) {
+  const intl = useIntl()
+  const [showGalvanizerHelp, setShowGalvanizerHelp] = useState(false)
+  const commandAvailability = skillsDisabled
+    ? Object.fromEntries(Object.keys(suppliedCommandAvailability).map(key => [key, false])) as unknown as SkillCommandAvailability
+    : suppliedCommandAvailability
+  const searchId = useId()
+  const searchStatusId = useId()
+  const settingsId = useId()
+  const searchInputRef = useRef<HTMLInputElement>(null)
+  const [query, setQuery] = useState('')
+  const [selectedSkillId, setSelectedSkillId] = useState<string | null>(
+    null,
+  )
+  const [augmentRootId, setAugmentRootId] = useState<string | null>(null)
+  const [quickPurchaseSkillId, setQuickPurchaseSkillId] =
+    useState<string | null>(null)
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const [showProductionComparisons, setShowProductionComparisons] = useState(readSkillComparisonsPreference)
+  const [showSkillLabels, setShowSkillLabels] = useState(readSkillLabelsPreference)
+  const [doubleClickToAssign, setDoubleClickToAssign] = useState(
+    readDoubleClickAssignmentPreference,
+  )
+  const [presetsOpen, setPresetsOpen] = useState(false)
+  const [resetOpen, setResetOpen] = useState(false)
+  const [pendingKind, setPendingKind] = useState<string | null>(null)
+  const [pendingExpectation, setPendingExpectation] =
+    useState<PendingExpectation | null>(null)
+  const [failed, setFailed] = useState(false)
+  const requestNonRefundableConfirmation = useSharedNonRefundableSkillConfirmation()!
+  const pendingRef = useRef(false)
+  const focusNodeRef = useRef<(skillId: string) => void>(() => undefined)
+  const registerTreeFocus = useCallback(
+    (focus: (skillId: string) => void) => {
+      focusNodeRef.current = focus
+    },
+    [],
+  )
+  const previewById = useMemo(
+    () => new Map(catalog.skills.map((skill) => [skill.skillId, skill])),
+    [catalog.skills],
+  )
+  const { localizedNodes, nodeById } = useSkillPresentationNodes(discoveryUnlocked)
+  const visibleNodes = useMemo(
+    () =>
+      localizedNodes.filter(
+        (node) => previewById.get(node.skillId)?.visible === true,
+      ),
+    [localizedNodes, previewById],
+  )
+  const normalizedQuery = query.trim().toLocaleLowerCase(locale)
+  const searchableNodes = useMemo(
+    () => [...visibleNodes, ...(augmentRootId && previewById.get(augmentRootId)?.galvanized
+      ? skillAugments(augmentRootId).flatMap(({ id }) => {
+        const node = nodeById.get(id)
+        return node ? [node] : []
+      }) : [])].map((node) => ({
+      ...node,
+      augmentSearchText: previewById.get(node.skillId)?.galvanized
+        ? skillAugments(node.skillId)
+          .map(({ id }) => {
+            const augment = nodeById.get(id)
+            return augment ? [augment.displayName, augment.description, augment.technicalDescription].join(' ') : ''
+          })
+          .join(' ')
+        : '',
+    })),
+    [augmentRootId, nodeById, previewById, visibleNodes],
+  )
+  const rankedMatchingIds = useMemo(
+    () =>
+      rankSkillSearchResults(searchableNodes, query, locale).map(
+        (node) => node.skillId,
+      ),
+    [locale, query, searchableNodes],
+  )
+  const matchingIds = useMemo(() => {
+    return new Set(rankedMatchingIds)
+  }, [rankedMatchingIds])
+  const augmentRoot = augmentRootId !== null && previewById.get(augmentRootId)?.galvanized
+    ? nodeById.get(augmentRootId) : undefined
+  const selectedNode =
+    selectedSkillId === null ? undefined : nodeById.get(selectedSkillId)
+  const selectedPreview =
+    selectedSkillId === null ? undefined : previewById.get(selectedSkillId)
+  const skillSignature = [
+    String(points),
+    String(fragments),
+    String(botDistribution),
+    String(autoAssignNonRefundable),
+    String(selectedPresetSlot),
+    catalog.skills
+      .map(
+        (skill) =>
+          `${skill.skillId}:${Number(skill.owned)}:${Number(skill.queued)}:${Number(skill.galvanized)}`,
+      )
+      .join('|'),
+    presets
+      .map(
+        (preset) =>
+          `${preset.name}:${preset.colorId}:${preset.botDistribution}:${preset.skillIds.join(',')}`,
+      )
+      .join('|'),
+  ].join('::')
+
+  const releasePendingLock = useCallback(() => {
+    pendingRef.current = false
+    setPendingKind(null)
+  }, [])
+
+  const clearPending = useCallback(() => {
+    releasePendingLock()
+    setPendingExpectation(null)
+  }, [releasePendingLock])
+
+  const dispatch = useCallback(
+    async (
+      command: SkillCommand,
+      expectation: Omit<PendingExpectation, 'beforeSignature'> = {},
+    ): Promise<boolean> => {
+      if (pendingRef.current) return false
+      const purchase = command.kind === 'skill.purchase'
+        ? previewById.get(command.skillId)?.purchase
+        : undefined
+      const requiresNonRefundableConfirmation =
+        (purchase?.eligible === true && includesNewNonRefundableSkillAssignment(purchase.affectedSkillIds, previewById)) ||
+        (command.kind === 'skill.set-auto-assign-non-refundable' && command.enabled && !autoAssignNonRefundable) ||
+        (command.kind === 'skill.select-preset' && autoAssignNonRefundable &&
+          includesNewNonRefundableSkillAssignment(presets[command.slot - 1]?.skillIds ?? [], previewById))
+      if (requiresNonRefundableConfirmation &&
+        !await requestNonRefundableConfirmation()) return false
+      pendingRef.current = true
+      setPendingKind(command.kind)
+      setPendingExpectation({
+        beforeSignature: skillSignature,
+        ...expectation,
+      })
+      setFailed(false)
+      try {
+        const result = await dispatchPlayer(command)
+        const accepted =
+          result.status === 'accepted' &&
+          result.kind === 'transition'
+        setFailed(!accepted)
+        if (accepted && result.changed && command.kind === 'skill.galvanize' &&
+          skillAugments(command.skillId).length > 0) {
+          setAugmentRootId(command.skillId)
+          setSelectedSkillId(null)
+          setQuickPurchaseSkillId(null)
+        }
+        if (!accepted || !result.changed) {
+          clearPending()
+        } else {
+          releasePendingLock()
+          if (!expectation.closeDetails) {
+            setPendingExpectation(null)
+          }
+        }
+        return accepted
+      } catch {
+        setFailed(true)
+        clearPending()
+        return false
+      }
+    },
+    [
+      clearPending,
+      dispatchPlayer,
+      releasePendingLock,
+      skillSignature,
+      autoAssignNonRefundable,
+      previewById,
+      presets,
+      requestNonRefundableConfirmation,
+    ],
+  )
+
+  const beforeAutoAssignment = useCallback(async (skillIds: readonly string[]) =>
+    !autoAssignNonRefundable || !includesNewNonRefundableSkillAssignment(skillIds, previewById) ||
+      await requestNonRefundableConfirmation(),
+  [autoAssignNonRefundable, previewById, requestNonRefundableConfirmation])
+
+  const selectPreset = useCallback((command: PresetSelectionCommand) => dispatch(
+    command, selectedPresetSlot === command.slot ? {} : { expectedPresetSlot: command.slot },
+  ), [dispatch, selectedPresetSlot])
+  const { pending: presetSelectionPending, preview: presetSelectionPreview,
+    request: requestPresetSelection, dismiss: dismissPresetSelection, confirm: confirmPresetSelection,
+  } = useSkillPresetSelection({ presetActions, select: selectPreset,
+    onFailure: () => setFailed(true), onConflict: () => setPresetsOpen(false) })
+
+  useEffect(() => {
+    if (pendingExpectation === null) return
+    if (
+      pendingExpectation.skillId !== undefined &&
+      pendingExpectation.expectedOwned !== undefined
+    ) {
+      const skill = previewById.get(pendingExpectation.skillId)
+      if (skill?.owned !== pendingExpectation.expectedOwned) return
+      if (pendingExpectation.closeDetails) setSelectedSkillId(null)
+      clearPending()
+      return
+    }
+    if (pendingExpectation.expectedPresetSlot !== undefined) {
+      if (
+        selectedPresetSlot !==
+        pendingExpectation.expectedPresetSlot
+      ) {
+        return
+      }
+      clearPending()
+      return
+    }
+    if (skillSignature !== pendingExpectation.beforeSignature) {
+      clearPending()
+    }
+  }, [
+    clearPending,
+    pendingExpectation,
+    previewById,
+    selectedPresetSlot,
+    skillSignature,
+  ])
+
+  const selectSkill = useCallback((skillId: string) => {
+    setQuickPurchaseSkillId(null)
+    if (skillId !== augmentRootId && previewById.get(skillId)?.galvanized && skillAugments(skillId).length > 0) {
+      setAugmentRootId(skillId)
+      setSelectedSkillId(null)
+    } else {
+      if (augmentRootId && skillId !== augmentRootId &&
+        !skillAugments(augmentRootId).some(({ id }) => id === skillId)) {
+        setAugmentRootId(null)
+      }
+      setSelectedSkillId(skillId)
+    }
+  }, [augmentRootId, previewById])
+
+  const quickAssignSkill = useCallback((skillId: string) => {
+    const preview = previewById.get(skillId)
+    if (
+      preview === undefined ||
+      preview.owned ||
+      !commandAvailability.purchase ||
+      !preview.purchase.eligible
+    ) {
+      selectSkill(skillId)
+      return
+    }
+    // Enabling double-click assignment is an explicit opt-in to purchase the
+    // clicked skill immediately. Purity skills always include a production
+    // projection, so treating that projection as a confirmation requirement
+    // made the shortcut silently fall back to the details dialog for the
+    // entire Purity branch. Keep confirmation for purchases that would alter
+    // other assigned skills, but allow an impact projection on the skill being
+    // assigned to use the shortcut as advertised.
+    const requiresConfirmation =
+      preview.purchase.affectedSkillIds.some(
+        (affectedSkillId) => affectedSkillId !== skillId,
+      )
+    if (requiresConfirmation) {
+      setQuickPurchaseSkillId(skillId)
+      setSelectedSkillId(skillId)
+      return
+    }
+    void dispatch(
+      { kind: 'skill.purchase', skillId },
+      { skillId, expectedOwned: true },
+    )
+  }, [
+    commandAvailability.purchase,
+    dispatch,
+    previewById,
+    selectSkill,
+  ])
+
+  if (!catalog.complete) {
+    return (
+      <StatusFeedback tone="error">
+        {catalog.definitionGap ?? intl.formatMessage(messages.unavailable)}
+      </StatusFeedback>
+    )
+  }
+
+  return (
+    <section
+      className="skills-surface"
+      aria-label={intl.formatMessage(messages.region)}
+    >
+      {presetApplication !== undefined &&
+        presetApplication.blockedByRetainedSkillIds.length > 0 && (
+          <SkillPresetApplicationNotice
+            presetName={
+              presets[presetApplication.slot - 1]?.name ??
+              `Preset ${presetApplication.slot}`
+            }
+            blockedSkillIds={
+              presetApplication.blockedByRetainedSkillIds
+            }
+            nodeById={nodeById}
+            onDismiss={onDismissPresetApplication}
+          />
+        )}
+      <SkillTreeViewport
+        skillsDisabled={skillsDisabled}
+        nodes={visibleNodes}
+        augmentRootId={augmentRoot?.skillId ?? null}
+        onExitAugments={() => { setSelectedSkillId(null); setAugmentRootId(null) }}
+        previews={previewById}
+        nodeById={nodeById}
+        selectedSkillId={selectedSkillId}
+        matchingIds={matchingIds}
+        searchActive={normalizedQuery.length > 0}
+        presetColorId={presets[selectedPresetSlot - 1]?.colorId ?? defaultSkillPresetColorId(selectedPresetSlot)}
+        onSelect={selectSkill}
+        onDoubleActivate={quickAssignSkill}
+        doubleClickToAssign={doubleClickToAssign}
+        showSkillLabels={showSkillLabels}
+        registerFocus={registerTreeFocus}
+        initialView={initialTreeView}
+        onViewChange={onTreeViewChange}
+        controlsStart={(
+          <div className="skills-surface__viewport-controls">
+            <SkillPresetQuickActions presets={presets} selectedSlot={selectedPresetSlot}
+              disabled={!commandAvailability.selectPreset || pendingKind === 'skill.select-preset' || presetSelectionPending}
+              onSelect={requestPresetSelection} />
+            <div
+              className="skills-surface__search"
+              data-has-clear={query.length > 0 || undefined}
+            >
+          <label
+            htmlFor={searchId}
+            className="skills-surface__visually-hidden"
+          >
+            {intl.formatMessage(messages.search)}
+          </label>
+          <input
+            ref={searchInputRef}
+            id={searchId}
+            type="search"
+            value={query}
+            placeholder={intl.formatMessage(messages.searchPlaceholder)}
+            aria-describedby={
+              normalizedQuery.length > 0 ? searchStatusId : undefined
+            }
+            onChange={(event) => setQuery(event.currentTarget.value)}
+            onKeyDown={(event) => {
+              if (event.key !== 'Enter') return
+              // Opening a dialog moves focus to its Back/Close button. Do not
+              // let this same Enter gesture activate that button.
+              event.preventDefault()
+              const first = rankedMatchingIds[0]
+              if (typeof first === 'string') {
+                focusNodeRef.current(first)
+                selectSkill(first)
+              }
+            }}
+          />
+          {query.length > 0 && (
+            <button
+              type="button"
+              className="skills-surface__search-clear"
+              aria-label={intl.formatMessage(messages.clearSearch)}
+              onClick={() => {
+                setQuery('')
+                searchInputRef.current?.focus({ preventScroll: true })
+              }}
+            >
+              <span aria-hidden="true">×</span>
+            </button>
+          )}
+          {normalizedQuery.length > 0 && (
+            <span
+              id={searchStatusId}
+              className="skills-surface__search-status"
+              aria-live="polite"
+            >
+              {intl.formatMessage(messages.matches, {
+                count: matchingIds.size,
+              })}
+            </span>
+          )}
+            </div>
+          </div>
+        )}
+      />
+
+      <ProgressControlsPanel
+        ariaLabel={intl.formatMessage(messages.settings)}
+        className="skills-surface__control-panel"
+        expanded={settingsOpen}
+        controlsId={settingsId}
+        settingsLabel={intl.formatMessage(messages.settings)}
+        onExpandedChange={setSettingsOpen}
+        summary={(
+          <div className="skills-surface__resources">
+            <img src={skillsNavigationIcon} alt="" />
+            <span className="skills-surface__visually-hidden">
+              {intl.formatMessage(messages.pointsLabel)}
+            </span>
+            <strong>{formatWholeGameNumber(locale, points)}</strong>
+            {hasEarnedGalvanizer && <button type="button"
+              className="skills-surface__currency" aria-haspopup="dialog"
+              aria-label={intl.formatMessage(challengeMessages.galvanizers, { value: formatWholeGameNumber(locale, galvanizers) })}
+              title={intl.formatMessage(challengeMessages.galvanizers, { value: formatWholeGameNumber(locale, galvanizers) })}
+              onClick={() => setShowGalvanizerHelp(true)}>
+              <InlineResourceAmount leadingSymbol={<InlineImageSymbol src={galvanizerIcon} tint maskMode="luminance" />}
+                value={formatWholeGameNumber(locale, galvanizers)} />
+            </button>}
+          </div>
+        )}
+      >
+        <SkillSettings
+          id={`${settingsId}-content`}
+          autoAssignNonRefundable={autoAssignNonRefundable}
+          doubleClickToAssign={doubleClickToAssign}
+          showProductionComparisons={showProductionComparisons}
+          onShowProductionComparisonsChange={(enabled) => {
+            setShowProductionComparisons(enabled)
+            try {
+              window.localStorage.setItem(SKILL_COMPARISONS_STORAGE_KEY, String(enabled))
+            } catch { /* Keep the toggle usable without persistence. */ }
+          }}
+          showSkillLabels={showSkillLabels}
+          onShowSkillLabelsChange={(enabled) => {
+            setShowSkillLabels(enabled)
+            writeSkillLabelsPreference(enabled)
+          }}
+          onDoubleClickToAssignChange={(enabled) => {
+            setDoubleClickToAssign(enabled)
+            writeDoubleClickAssignmentPreference(enabled)
+          }}
+          showPresetApplicationNotifications={
+            showPresetApplicationNotifications
+          }
+          onShowPresetApplicationNotificationsChange={
+            onShowPresetApplicationNotificationsChange
+          }
+          commandAvailability={commandAvailability}
+          pendingKind={pendingKind}
+          dispatch={dispatch}
+          onOpenReset={() => setResetOpen(true)}
+          onOpenPresets={() => {
+            setPresetsOpen(true)
+          }}
+        />
+      </ProgressControlsPanel>
+
+      {hasEarnedGalvanizer && showGalvanizerHelp && (
+        <SkillDetailsDialog
+          title={intl.formatMessage(challengeMessages.galvanizers, { value: formatWholeGameNumber(locale, galvanizers) })}
+          closeLabel={intl.formatMessage(messages.close)}
+          palette="normal"
+          onClose={() => setShowGalvanizerHelp(false)}
+        >
+          <p>{intl.formatMessage(challengeMessages.future)}</p>
+        </SkillDetailsDialog>
+      )}
+
+      {presetsOpen && (
+        <SkillPresetsDialog
+          discoveryUnlocked={discoveryUnlocked}
+          presets={presets}
+          previews={previewById}
+          selectedPresetSlot={selectedPresetSlot}
+          commandAvailability={commandAvailability}
+          presetActions={skillsDisabled ? undefined : presetActions}
+          beforeAutoAssignment={beforeAutoAssignment}
+          pendingKind={pendingKind}
+          selectionPending={presetSelectionPending}
+          nodeById={nodeById}
+          onSelectPreset={requestPresetSelection}
+          dispatch={dispatch}
+          onClose={() => setPresetsOpen(false)}
+        />
+      )}
+
+      {presetSelectionPreview !== null && (
+        <SkillPresetSelectionDialog
+          presetName={
+            presets[presetSelectionPreview.slot - 1]?.name ??
+            `Preset ${presetSelectionPreview.slot}`
+          }
+          retainedSkillIds={presetSelectionPreview.retainedSkillIds}
+          blockedSkillIds={
+            presetSelectionPreview.blockedByRetainedSkillIds
+          }
+          nodeById={nodeById}
+          pending={presetSelectionPending || pendingKind === 'skill.select-preset'}
+          onCancel={dismissPresetSelection}
+          onConfirm={confirmPresetSelection}
+        />
+      )}
+
+      {resetOpen && (
+        <SkillResetDialog
+          refundableSkillIds={catalog.reset.refundableSkillIds}
+          retainedSkillIds={catalog.reset.retainedSkillIds}
+          queuedSkillIds={catalog.reset.queuedSkillIds}
+          nodeById={nodeById}
+          canReset={commandAvailability.reset}
+          pending={pendingKind === 'skill.reset'}
+          dispatch={dispatch}
+          onClose={() => setResetOpen(false)}
+        />
+      )}
+
+      {failed && (
+        <StatusFeedback
+          tone="error"
+          className="skills-surface__feedback"
+        >
+          {intl.formatMessage(messages.actionFailed)}
+        </StatusFeedback>
+      )}
+
+      {selectedNode && selectedPreview && (
+        <SkillDetails
+          locale={locale}
+          fragments={fragments}
+          node={selectedNode}
+          showProductionComparisons={showProductionComparisons}
+          galvanizers={galvanizers}
+          preview={selectedPreview}
+          previews={previewById}
+          nodeById={nodeById}
+          commandAvailability={commandAvailability}
+          selectedPresetSlot={selectedPresetSlot}
+          selectedPresetName={
+            presets[selectedPresetSlot - 1]?.name ??
+            `Preset ${selectedPresetSlot}`
+          }
+          presetActions={skillsDisabled ? undefined : presetActions}
+          beforeAutoAssignment={beforeAutoAssignment}
+          pendingKind={pendingKind}
+          initialPurchaseConfirmation={
+            quickPurchaseSkillId === selectedSkillId
+          }
+          onBack={augmentRoot ? () => setSelectedSkillId(null) : undefined}
+          onClose={() => {
+            setQuickPurchaseSkillId(null)
+            setSelectedSkillId(null)
+          }}
+          dispatch={dispatch}
+        />
+      )}
+    </section>
+  )
+}
+
+interface SkillTreeViewportProps {
+  readonly augmentRootId: string | null
+  readonly onExitAugments: () => void
+  readonly skillsDisabled: boolean
+  readonly nodes: readonly SkillPresentationNode[]
+  readonly previews: ReadonlyMap<string, CanonicalSkillAvailabilityPreview>
+  readonly nodeById: ReadonlyMap<string, SkillPresentationNode>
+  readonly selectedSkillId: string | null
+  readonly matchingIds: ReadonlySet<string>
+  readonly searchActive: boolean
+  readonly presetColorId: SkillPresetColorId
+  readonly controlsStart?: ReactNode
+  readonly onSelect: (skillId: string) => void
+  readonly onDoubleActivate: (skillId: string) => void
+  readonly doubleClickToAssign: boolean
+  readonly showSkillLabels: boolean
+  readonly registerFocus: (focus: (skillId: string) => void) => void
+  readonly initialView?: SkillTreeViewState | null
+  readonly onViewChange?: (view: SkillTreeViewState) => void
+}
+
+const SkillTreeViewport = memo(function SkillTreeViewport({
+  augmentRootId,
+  onExitAugments,
+  skillsDisabled,
+  nodes,
+  previews,
+  nodeById,
+  selectedSkillId,
+  matchingIds,
+  searchActive,
+  presetColorId,
+  controlsStart,
+  onSelect,
+  onDoubleActivate,
+  doubleClickToAssign,
+  showSkillLabels,
+  registerFocus,
+  initialView,
+  onViewChange,
+}: SkillTreeViewportProps) {
+  const intl = useIntl()
+  const instructionsId = useId()
+  const viewportRef = useRef<HTMLDivElement>(null)
+  const nodeRefs = useRef(new Map<string, HTMLButtonElement>())
+  const pointers = useRef(
+    new Map<
+      number,
+      {
+        x: number
+        y: number
+        startX: number
+        startY: number
+        skillId: string | null
+        pointerType: string
+        dragged: boolean
+      }
+    >(),
+  )
+  const suppressedSkillClick = useRef<string | null>(null)
+  const activationTimer = useRef<number | null>(null)
+  const lastActivation = useRef<{
+    readonly skillId: string
+    readonly at: number
+  } | null>(null)
+  const gesture = useRef({
+    startDistance: 0,
+    startScale: DEFAULT_SCALE,
+  })
+  const [transform, setTransform] = useState({
+    x: 0,
+    y: 0,
+    scale: DEFAULT_SCALE,
+  })
+  const effectiveTransform = useRef<SkillTreeTransform>({
+    x: 0,
+    y: 0,
+    scale: DEFAULT_SCALE,
+  })
+  const transformFrame = useRef<number | null>(null)
+  const initialized = useRef(false)
+  const viewportSize = useRef({ width: 0, height: 0 })
+  const startNode =
+    nodeById.get('startHereTree') ?? presentation.nodes[0]
+
+  const rememberTransform = useCallback(
+    (current: SkillTreeTransform) => {
+      const size = viewportSize.current
+      if (size.width <= 0 || size.height <= 0) return
+      onViewChange?.({
+        centerX: (size.width / 2 - current.x) / current.scale,
+        centerY: (size.height / 2 - current.y) / current.scale,
+        scale: current.scale,
+      })
+    },
+    [onViewChange],
+  )
+
+  const scheduleTransformUpdate = useCallback(
+    (update: (current: SkillTreeTransform) => SkillTreeTransform) => {
+      effectiveTransform.current = update(effectiveTransform.current)
+      rememberTransform(effectiveTransform.current)
+      if (transformFrame.current !== null) return
+      const scheduledFrame = requestAnimationFrame(() => {
+        if (transformFrame.current !== scheduledFrame) return
+        transformFrame.current = null
+        setTransform(effectiveTransform.current)
+      })
+      transformFrame.current = scheduledFrame
+    },
+    [rememberTransform],
+  )
+
+  const applyTransformUpdateImmediately = useCallback(
+    (update: (current: SkillTreeTransform) => SkillTreeTransform) => {
+      if (transformFrame.current !== null) {
+        cancelAnimationFrame(transformFrame.current)
+        transformFrame.current = null
+      }
+      effectiveTransform.current = update(effectiveTransform.current)
+      rememberTransform(effectiveTransform.current)
+      setTransform(effectiveTransform.current)
+    },
+    [rememberTransform],
+  )
+
+  useEffect(
+    () => () => {
+      if (transformFrame.current !== null) {
+        cancelAnimationFrame(transformFrame.current)
+        transformFrame.current = null
+      }
+      if (activationTimer.current !== null) {
+        window.clearTimeout(activationTimer.current)
+      }
+    },
+    [],
+  )
+
+  useEffect(() => {
+    if (doubleClickToAssign) return
+    if (activationTimer.current !== null) {
+      window.clearTimeout(activationTimer.current)
+      activationTimer.current = null
+    }
+    lastActivation.current = null
+  }, [doubleClickToAssign])
+
+  const centreOn = useCallback(
+    (skillId: string, focus = true) => {
+      const viewport = viewportRef.current
+      const node = nodeById.get(skillId)
+      if (!viewport || !node) return
+      const position = graphPosition(node)
+      const bounds = viewport.getBoundingClientRect()
+      applyTransformUpdateImmediately((current) => ({
+        ...current,
+        x: bounds.width / 2 - position.x * current.scale,
+        y: bounds.height / 2 - position.y * current.scale,
+      }))
+      if (focus) {
+        requestAnimationFrame(() =>
+          nodeRefs.current.get(skillId)?.focus({ preventScroll: true }),
+        )
+      }
+    },
+    [applyTransformUpdateImmediately, nodeById],
+  )
+
+  useLayoutEffect(() => {
+    if (initialized.current || !startNode) return
+    initialized.current = true
+    const bounds = viewportRef.current?.getBoundingClientRect()
+    if (bounds) {
+      viewportSize.current = {
+        width: bounds.width,
+        height: bounds.height,
+      }
+    }
+    if (initialView && bounds) {
+      const scale = Math.min(
+        MAX_SCALE,
+        Math.max(MIN_SCALE, initialView.scale),
+      )
+      applyTransformUpdateImmediately(() => ({
+        scale,
+        x: bounds.width / 2 - initialView.centerX * scale,
+        y: bounds.height / 2 - initialView.centerY * scale,
+      }))
+      return
+    }
+    centreOn(startNode.skillId, false)
+  }, [
+    applyTransformUpdateImmediately,
+    centreOn,
+    initialView,
+    startNode,
+  ])
+
+  useEffect(() => {
+    const viewport = viewportRef.current
+    if (!viewport || typeof ResizeObserver === 'undefined') return
+    const initial = viewport.getBoundingClientRect()
+    viewportSize.current = {
+      width: initial.width,
+      height: initial.height,
+    }
+    const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return
+      const previous = viewportSize.current
+      const next = {
+        width: entry.contentRect.width,
+        height: entry.contentRect.height,
+      }
+      viewportSize.current = next
+      if (previous.width === 0 || previous.height === 0) return
+      applyTransformUpdateImmediately((current) => ({
+        ...current,
+        x: current.x + (next.width - previous.width) / 2,
+        y: current.y + (next.height - previous.height) / 2,
+      }))
+    })
+    observer.observe(viewport)
+    return () => observer.disconnect()
+  }, [applyTransformUpdateImmediately])
+
+  useEffect(() => {
+    registerFocus((skillId) => centreOn(skillId))
+  }, [centreOn, registerFocus])
+
+  const zoomAt = useCallback(
+    (
+      selectScale: (currentScale: number) => number,
+      clientX?: number,
+      clientY?: number,
+    ) => {
+      const viewport = viewportRef.current
+      if (!viewport) return
+      const bounds = viewport.getBoundingClientRect()
+      const anchorX =
+        clientX === undefined ? bounds.width / 2 : clientX - bounds.left
+      const anchorY =
+        clientY === undefined ? bounds.height / 2 : clientY - bounds.top
+      applyTransformUpdateImmediately((current) =>
+        transformAtScale(
+          current,
+          selectScale(current.scale),
+          anchorX,
+          anchorY,
+        ),
+      )
+    },
+    [applyTransformUpdateImmediately],
+  )
+
+  const scheduleZoomAt = useCallback(
+    (nextScale: number, clientX: number, clientY: number) => {
+      const viewport = viewportRef.current
+      if (!viewport) return
+      const bounds = viewport.getBoundingClientRect()
+      const anchorX = clientX - bounds.left
+      const anchorY = clientY - bounds.top
+      scheduleTransformUpdate((current) =>
+        transformAtScale(current, nextScale, anchorX, anchorY),
+      )
+    },
+    [scheduleTransformUpdate],
+  )
+
+  const onPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const target = event.target instanceof Element ? event.target : null
+    const skillNode = target?.closest<HTMLButtonElement>(
+      '.skill-tree-node',
+    )
+    if (
+      target?.closest(
+        'button, input, select, textarea, a, [role="button"]',
+      ) && !skillNode
+    ) {
+      return
+    }
+    if (skillNode) suppressedSkillClick.current = null
+    if (!skillNode) {
+      event.currentTarget.setPointerCapture?.(event.pointerId)
+    }
+    pointers.current.set(event.pointerId, {
+      x: event.clientX,
+      y: event.clientY,
+      startX: event.clientX,
+      startY: event.clientY,
+      skillId: skillNode?.dataset.skillId ?? null,
+      pointerType: event.pointerType,
+      dragged: false,
+    })
+    if (pointers.current.size === 2) {
+      for (const pointerId of pointers.current.keys()) {
+        event.currentTarget.setPointerCapture?.(pointerId)
+      }
+      const [first, second] = [...pointers.current.values()]
+      gesture.current.startDistance = Math.hypot(
+        second.x - first.x,
+        second.y - first.y,
+      )
+      gesture.current.startScale = effectiveTransform.current.scale
+    }
+  }
+
+  const onPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const previous = pointers.current.get(event.pointerId)
+    if (!previous) return
+    const next = {
+      x: event.clientX,
+      y: event.clientY,
+      startX: previous.startX,
+      startY: previous.startY,
+      skillId: previous.skillId,
+      pointerType: previous.pointerType,
+      dragged: previous.dragged,
+    }
+    if (pointers.current.size === 1) {
+      const crossedThreshold =
+        previous.skillId !== null &&
+        !previous.dragged &&
+        Math.hypot(
+          event.clientX - previous.startX,
+          event.clientY - previous.startY,
+        ) >= SKILL_DRAG_THRESHOLD_PX
+      if (
+        previous.skillId !== null &&
+        !previous.dragged &&
+        !crossedThreshold
+      ) {
+        pointers.current.set(event.pointerId, next)
+        return
+      }
+      next.dragged = true
+      pointers.current.set(event.pointerId, next)
+      if (crossedThreshold) {
+        event.currentTarget.setPointerCapture?.(event.pointerId)
+      }
+      scheduleTransformUpdate((current) => ({
+        ...current,
+        x:
+          current.x + event.clientX -
+          (crossedThreshold ? previous.startX : previous.x),
+        y:
+          current.y + event.clientY -
+          (crossedThreshold ? previous.startY : previous.y),
+      }))
+      return
+    }
+    next.dragged = true
+    pointers.current.set(event.pointerId, next)
+    for (const [pointerId, pointer] of pointers.current) {
+      if (!pointer.dragged) {
+        pointers.current.set(pointerId, { ...pointer, dragged: true })
+      }
+    }
+    const [first, second] = [...pointers.current.values()]
+    const distance = Math.hypot(
+      second.x - first.x,
+      second.y - first.y,
+    )
+    if (gesture.current.startDistance > 0) {
+      scheduleZoomAt(
+        gesture.current.startScale *
+          (distance / gesture.current.startDistance),
+        (first.x + second.x) / 2,
+        (first.y + second.y) / 2,
+      )
+    }
+  }
+
+  const completeNodeActivation = (skillId: string) => {
+    const now = Date.now()
+    const previous = lastActivation.current
+    if (
+      previous?.skillId === skillId &&
+      now - previous.at <= SKILL_DOUBLE_ACTIVATION_MILLISECONDS
+    ) {
+      if (activationTimer.current !== null) {
+        window.clearTimeout(activationTimer.current)
+        activationTimer.current = null
+      }
+      lastActivation.current = null
+      onDoubleActivate(skillId)
+      return
+    }
+    lastActivation.current = { skillId, at: now }
+    if (activationTimer.current !== null) {
+      window.clearTimeout(activationTimer.current)
+    }
+    activationTimer.current = window.setTimeout(() => {
+      activationTimer.current = null
+      lastActivation.current = null
+      onSelect(skillId)
+    }, SKILL_DOUBLE_ACTIVATION_MILLISECONDS)
+  }
+
+  const releasePointer = (
+    event: ReactPointerEvent<HTMLDivElement>,
+    activate: boolean,
+  ) => {
+    const pointer = pointers.current.get(event.pointerId)
+    if (pointer?.skillId && pointer.dragged) {
+      suppressedSkillClick.current = pointer.skillId
+    } else if (activate && pointer?.skillId) {
+      if (doubleClickToAssign && pointer.pointerType === 'touch') {
+        suppressedSkillClick.current = pointer.skillId
+        completeNodeActivation(pointer.skillId)
+      }
+    }
+    pointers.current.delete(event.pointerId)
+    if (pointers.current.size < 2) gesture.current.startDistance = 0
+  }
+
+  const losePointerCapture = (
+    event: ReactPointerEvent<HTMLDivElement>,
+  ) => {
+    if (event.target !== event.currentTarget) return
+    releasePointer(event, false)
+  }
+
+  const augmentIds = useMemo(() => new Set(augmentRootId === null
+    ? [] : skillAugments(augmentRootId).map(({ id }) => id)), [augmentRootId])
+  const displayedNodes = useMemo(() => [
+    ...nodes,
+    ...[...augmentIds].flatMap(id => {
+      const node = nodeById.get(id)
+      return node ? [node] : []
+    }),
+  ], [augmentIds, nodeById, nodes])
+  const connectors = useMemo(
+    () => prepareSkillConnectors(displayedNodes, previews, nodeById),
+    [nodeById, displayedNodes, previews],
+  )
+  const selectedPreview =
+    selectedSkillId === null ? undefined : previews.get(selectedSkillId)
+  const selectedRequiredIds = new Set(
+    selectedPreview?.requiredSkillIds ?? [],
+  )
+  const hasSelection = selectedPreview !== undefined
+  const exitAugments = () => {
+    onExitAugments()
+    if (augmentRootId) nodeRefs.current.get(augmentRootId)?.focus({ preventScroll: true })
+  }
+
+  return (
+    <div
+      ref={viewportRef}
+      className="skill-tree-viewport"
+      data-augment-root={augmentRootId ?? undefined}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape' && augmentRootId !== null && selectedSkillId === null) {
+          event.preventDefault()
+          exitAugments()
+        }
+      }}
+      role="region"
+      aria-label={intl.formatMessage(messages.tree)}
+      aria-describedby={instructionsId}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={(event) => releasePointer(event, true)}
+      onPointerCancel={(event) => releasePointer(event, false)}
+      onLostPointerCapture={losePointerCapture}
+      onWheel={(event: ReactWheelEvent<HTMLDivElement>) => {
+        event.preventDefault()
+        zoomAt(
+          (scale) => scale * (event.deltaY < 0 ? 1.1 : 0.9),
+          event.clientX,
+          event.clientY,
+        )
+      }}
+    >
+      <p
+        id={instructionsId}
+        className="skills-surface__visually-hidden"
+      >
+        {intl.formatMessage(messages.treeInstructions)}
+      </p>
+      <div
+        className="skill-tree-viewport__canvas"
+        style={{
+          width: graphWidth,
+          height: graphHeight,
+          transform: `translate3d(${transform.x}px, ${transform.y}px, 0) scale(${transform.scale})`,
+          ...skillPresetColorStyle(presetColorId),
+        }}
+      >
+        <svg
+          className="skill-tree-viewport__connections"
+          width={graphWidth}
+          height={graphHeight}
+          aria-hidden="true"
+        >
+          {connectors.map((connector) => {
+            const { from, to } = connector
+            const sourcePreview = previews.get(from.skillId)
+            const targetPreview = previews.get(to.skillId)
+            const sourceOwned = sourcePreview?.owned === true
+            const targetOwned = targetPreview?.owned === true
+            const paths = sourceOwned
+              ? connector.ownedSourcePaths
+              : connector.unownedSourcePaths
+            const selectedPath = to.skillId === selectedSkillId
+            const sharedAttributes = {
+              'data-augment-background': augmentRootId !== null && !augmentIds.has(to.skillId) || undefined,
+              'data-owned': sourceOwned && targetOwned,
+              'data-source-owned': sourceOwned || undefined,
+              'data-state': targetPreview?.visualState,
+              'data-queued':
+                (targetPreview?.queued && !targetOwned) || undefined,
+              'data-available':
+                targetPreview?.purchase.eligible || undefined,
+              'data-selected-path': selectedPath || undefined,
+              'data-selection-dimmed':
+                hasSelection && !selectedPath ? true : undefined,
+            } as const
+            if (targetPreview?.galvanized) {
+              const { body, x, y } = connector.galvanizedLine
+              return <g key={`${from.skillId}-${to.skillId}`}
+                className="skill-tree-connection skill-tree-connection--galvanized"
+                {...sharedAttributes}>
+                <path d={body} fill="currentColor" opacity={0.38} />
+                <path transform={`translate(${x} ${y})`}
+                  d="M 2 -10 L -7 2 H -1 L -3 10 L 7 -2 H 1 Z"
+                  fill="#83ff52" />
+              </g>
+            }
+            if (sourceOwned) {
+              return (
+                <path
+                  key={`${from.skillId}-${to.skillId}`}
+                  className="skill-tree-connection skill-tree-connection--met"
+                  d={selectedPath ? paths.selectedBody : paths.body}
+                  {...sharedAttributes}
+                />
+              )
+            }
+            return (
+              <g key={`${from.skillId}-${to.skillId}`}>
+                <path
+                  className="skill-tree-connection skill-tree-connection--unmet"
+                  d={selectedPath ? paths.selectedBody : paths.body}
+                  {...sharedAttributes}
+                />
+                <path
+                  className="skill-tree-connection skill-tree-connection-arrow"
+                  d={paths.arrow}
+                  {...sharedAttributes}
+                />
+              </g>
+            )
+          })}
+        </svg>
+        {displayedNodes.map((node) => {
+          const background = augmentRootId !== null && node.skillId !== augmentRootId && !augmentIds.has(node.skillId)
+          const isAugment = augmentIds.has(node.skillId)
+          const preview = previews.get(node.skillId)
+          if (!preview) return null
+          const position = graphPosition(node)
+          const matched = matchingIds.has(node.skillId)
+          const requiredCount = preview.requiredSkillIds.length
+          const childIds = preview.galvanized
+            ? skillAugments(node.skillId).map(({ id }) => id) : []
+          const assignedAugments = childIds.filter(id => previews.get(id)?.owned).length
+          const augmentLabel = childIds.length > 0
+            ? intl.formatMessage(messages.augmentsAssigned, { complete: assignedAugments, total: childIds.length })
+            : null
+          const completedRequirementCount =
+            preview.requiredSkillIds.filter(
+              (requiredId) => previews.get(requiredId)?.owned,
+            ).length
+          const selected = node.skillId === selectedSkillId
+          const selectionRelated =
+            selected || selectedRequiredIds.has(node.skillId)
+          return (
+            <button
+              key={node.skillId}
+              ref={(element) => {
+                if (element) nodeRefs.current.set(node.skillId, element)
+                else nodeRefs.current.delete(node.skillId)
+              }}
+              type="button"
+              className="skill-tree-node"
+              data-augment-background={background || undefined}
+              data-augment-node={isAugment || undefined}
+              aria-hidden={background || undefined}
+              tabIndex={background ? -1 : 0}
+              data-state={preview.visualState}
+              data-affordable={(!skillsDisabled && preview.purchase.eligible) || undefined}
+              data-galvanized={preview.galvanized || undefined}
+              data-owned={preview.owned || undefined}
+              data-queued={preview.queued || undefined}
+              data-match={matched || undefined}
+              data-dimmed={searchActive && !matched ? true : undefined}
+              data-selected={selected || undefined}
+              data-skill-id={node.skillId}
+              data-selection-related={selectionRelated || undefined}
+              data-selection-dimmed={
+                hasSelection && !selectionRelated ? true : undefined
+              }
+              aria-label={[
+                node.displayName,
+                preview.galvanized ? intl.formatMessage(messages.galvanized) : null,
+                augmentLabel,
+                preview.owned
+                  ? intl.formatMessage(messages.owned)
+                  : intl.formatMessage(messages.cost, {
+                      value: node.cost,
+                    }),
+                preview.queued && !preview.galvanized
+                  ? intl.formatMessage(messages.queued)
+                  : null,
+                !preview.owned && (skillsDisabled || !preview.purchase.eligible)
+                  ? intl.formatMessage(messages.unavailable)
+                  : null,
+              ]
+                .filter(Boolean)
+                .join('. ')}
+              style={{
+                left: position.x,
+                top: position.y,
+              }}
+              onClick={(event) => {
+                if (background) return
+                event.currentTarget.focus({ preventScroll: true })
+                if (
+                  event.detail > 0 &&
+                  suppressedSkillClick.current === node.skillId
+                ) {
+                  suppressedSkillClick.current = null
+                  return
+                }
+                suppressedSkillClick.current = null
+                if (!doubleClickToAssign) {
+                  onSelect(node.skillId)
+                  return
+                }
+                if (event.detail >= 2) {
+                  if (activationTimer.current !== null) {
+                    window.clearTimeout(activationTimer.current)
+                    activationTimer.current = null
+                  }
+                  lastActivation.current = null
+                  onDoubleActivate(node.skillId)
+                  return
+                }
+                if (event.detail === 1) {
+                  completeNodeActivation(node.skillId)
+                  return
+                }
+                onSelect(node.skillId)
+              }}
+            >
+              <img
+                src={iconByFileName.get(node.icon.fileName)}
+                alt=""
+                draggable="false"
+              />
+              {!preview.galvanized && <span className="skill-tree-node__cost">{node.cost}</span>}
+              {showSkillLabels && !background && <span className="skill-tree-node__label" aria-hidden="true">{node.displayName}</span>}
+              {childIds.length > 0 && <span
+                className="skill-tree-node__requirements skill-tree-node__augments"
+                data-progress={assignedAugments === childIds.length ? 'complete' : assignedAugments > 0 ? 'partial' : 'none'}
+                aria-label={augmentLabel ?? undefined}
+              >
+                <InlineImageSymbol className="skill-tree-node__augment-currency" src={galvanizerIcon} tint maskMode="luminance" />
+                <span>{assignedAugments}/{childIds.length}</span>
+              </span>}
+              {preview.queued && !preview.galvanized && (
+                <i
+                  className="skill-tree-node__queue"
+                  aria-label={intl.formatMessage(messages.queued)}
+                  title={intl.formatMessage(messages.queued)}
+                >
+                  +
+                </i>
+              )}
+              {!preview.owned && requiredCount > 1 && (
+                <span
+                  className="skill-tree-node__requirements"
+                  data-progress={
+                    completedRequirementCount === requiredCount
+                      ? 'complete'
+                      : completedRequirementCount > 0
+                        ? 'partial'
+                        : 'none'
+                  }
+                  aria-label={intl.formatMessage(
+                    messages.requirementsProgress,
+                    {
+                      complete: completedRequirementCount,
+                      total: requiredCount,
+                    },
+                  )}
+                >
+                  {completedRequirementCount}/{requiredCount}
+                </span>
+              )}
+            </button>
+          )
+        })}
+      </div>
+      {augmentRootId !== null && (
+        <div className="skill-tree-viewport__augment-controls">
+          <span>{nodeById.get(augmentRootId)?.displayName} · {intl.formatMessage(messages.subskills)}</span>
+          <button type="button" onClick={exitAugments}>
+            <span aria-hidden="true">← </span>{intl.formatMessage(messages.backToTree)}
+          </button>
+        </div>
+      )}
+      <div className="skill-tree-viewport__controls">
+        {controlsStart}
+        <button
+          type="button"
+          aria-label={intl.formatMessage(messages.zoomOut)}
+          onClick={() => zoomAt((scale) => scale - 0.1)}
+        >
+          −
+        </button>
+        <button
+          type="button"
+          aria-label={intl.formatMessage(messages.centreTree)}
+          onClick={() => centreOn(augmentRootId ?? startNode.skillId, false)}
+        >
+          ◎
+        </button>
+        <button
+          type="button"
+          aria-label={intl.formatMessage(messages.zoomIn)}
+          onClick={() => zoomAt((scale) => scale + 0.1)}
+        >
+          +
+        </button>
+      </div>
+    </div>
+  )
+})
+
+interface SkillTreeTransform {
+  readonly x: number
+  readonly y: number
+  readonly scale: number
+}
+
+function transformAtScale(
+  current: SkillTreeTransform,
+  nextScale: number,
+  anchorX: number,
+  anchorY: number,
+): SkillTreeTransform {
+  const scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, nextScale))
+  const graphX = (anchorX - current.x) / current.scale
+  const graphY = (anchorY - current.y) / current.scale
+  return {
+    scale,
+    x: anchorX - graphX * scale,
+    y: anchorY - graphY * scale,
+  }
+}
+
+interface PreparedSkillConnectorPaths {
+  readonly body: string
+  readonly selectedBody: string
+  readonly arrow: string
+}
+
+interface PreparedSkillConnector {
+  readonly from: SkillPresentationNode
+  readonly to: SkillPresentationNode
+  readonly galvanizedLine: { readonly body: string; readonly x: number; readonly y: number }
+  readonly ownedSourcePaths: PreparedSkillConnectorPaths
+  readonly unownedSourcePaths: PreparedSkillConnectorPaths
+}
+
+function prepareSkillConnectors(
+  nodes: readonly SkillPresentationNode[],
+  previews: ReadonlyMap<string, CanonicalSkillAvailabilityPreview>,
+  nodeById: ReadonlyMap<string, SkillPresentationNode>,
+): readonly PreparedSkillConnector[] {
+  return nodes.flatMap((node) => {
+    const preview = previews.get(node.skillId)
+    if (!preview) return []
+    return (preview.authoredRequiredSkillIds ?? preview.requiredSkillIds).flatMap((requiredId) => {
+      const required = nodeById.get(requiredId)
+      const requiredPreview = previews.get(requiredId)
+      if (!required || requiredPreview?.visible !== true) return []
+      const start = graphPosition(required)
+      const end = graphPosition(node)
+      const ownedLayout = layoutSkillConnector(start, end, {
+        nodeSize: NODE_SIZE,
+        startClearance: 10,
+      })
+      const unownedLayout = layoutSkillConnector(start, end, {
+        nodeSize: NODE_SIZE,
+        startClearance: 7,
+      })
+      if (ownedLayout === null || unownedLayout === null) return []
+      const lineStart = unownedLayout.start, lineEnd = unownedLayout.arrowTip
+      const x = (lineStart.x + lineEnd.x) / 2, y = (lineStart.y + lineEnd.y) / 2
+      const length = Math.hypot(lineEnd.x - lineStart.x, lineEnd.y - lineStart.y)
+      const gap = Math.min(16, length / 4)
+      const dx = length > 0 ? (lineEnd.x - lineStart.x) / length * gap : 0
+      const dy = length > 0 ? (lineEnd.y - lineStart.y) / length * gap : 0
+      return [{
+        from: required,
+        to: node,
+        galvanizedLine: {
+          x, y,
+          body: preview.galvanized
+            ? buildTaperedSkillConnectorPath(lineStart, { x: x - dx, y: y - dy })
+              + buildTaperedSkillConnectorPath({ x: x + dx, y: y + dy }, lineEnd)
+            : '',
+        },
+        ownedSourcePaths: {
+          body: buildSolidSkillConnectorPath(
+            ownedLayout.start,
+            ownedLayout.arrowTip,
+            { width: 6 },
+          ),
+          selectedBody: buildSolidSkillConnectorPath(
+            ownedLayout.start,
+            ownedLayout.arrowTip,
+            { width: 7 },
+          ),
+          arrow: ownedLayout.arrowPath,
+        },
+        unownedSourcePaths: {
+          body: buildTaperedSkillConnectorPath(
+            unownedLayout.start,
+            unownedLayout.bodyEnd,
+            { width: 6 },
+          ),
+          selectedBody: buildTaperedSkillConnectorPath(
+            unownedLayout.start,
+            unownedLayout.bodyEnd,
+            { width: 7 },
+          ),
+          arrow: unownedLayout.arrowPath,
+        },
+      }]
+    })
+  })
+}
+
+interface SkillDetailsProps {
+  readonly showProductionComparisons: boolean
+  readonly galvanizers: bigint
+  readonly locale: EnabledLocale
+  readonly fragments: bigint
+  readonly node: SkillPresentationNode
+  readonly preview: CanonicalSkillAvailabilityPreview
+  readonly previews: ReadonlyMap<string, CanonicalSkillAvailabilityPreview>
+  readonly nodeById: ReadonlyMap<string, SkillPresentationNode>
+  readonly commandAvailability: SkillCommandAvailability
+  readonly selectedPresetSlot: CanonicalSkillPresetSlot
+  readonly selectedPresetName: string
+  readonly presetActions?: SkillPresetActions
+  readonly beforeAutoAssignment: (skillIds: readonly string[]) => Promise<boolean>
+  readonly pendingKind: string | null
+  readonly initialPurchaseConfirmation: boolean
+  readonly onBack?: () => void
+  readonly onClose: () => void
+  readonly dispatch: (
+    command: SkillCommand,
+    expectation?: Omit<PendingExpectation, 'beforeSignature'>,
+  ) => Promise<boolean>
+}
+
+
+function SkillDetails({
+  showProductionComparisons,
+  galvanizers,
+  locale,
+  fragments,
+  node,
+  preview,
+  previews,
+  nodeById,
+  commandAvailability,
+  selectedPresetSlot,
+  selectedPresetName,
+  presetActions,
+  beforeAutoAssignment,
+  pendingKind,
+  initialPurchaseConfirmation,
+  onBack,
+  onClose,
+  dispatch,
+}: SkillDetailsProps) {
+  const intl = useIntl()
+  const [queuePreview, setQueuePreview] = useState<{
+    readonly request: SkillPresetQueueChangeRequest
+    readonly affectedSkillIds: readonly string[]
+  } | null>(null)
+  const [actionPreview, setActionPreview] = useState<{
+    readonly kind: 'purchase' | 'refund'
+    readonly affectedSkillIds: readonly string[]
+  } | null>(() => initialPurchaseConfirmation
+    ? {
+        kind: 'purchase',
+        affectedSkillIds: preview.purchase.affectedSkillIds,
+      }
+    : null)
+  const [liveProduction, setLiveProduction] = useState<SkillProductionPreview | null>(null)
+  const queryProduction = showProductionComparisons ? presetActions?.previewProduction : undefined
+  const actionKind = actionPreview?.kind
+  useEffect(() => {
+    if (!actionKind || !queryProduction) return
+    const refresh = () => {
+      try {
+        const next = queryProduction(node.skillId, actionKind)
+        // Retain the open row layout even if a bonus temporarily becomes neutral.
+        setLiveProduction((previous) => ({ ...next, rows: previous
+          ? Array.from(new Set([...previous.rows, ...next.rows.filter((row) => row.changed)].map((row) => row.id)))
+            .map((id) => next.rows.find((row) => row.id === id)!)
+          : next.rows.filter((row) => row.changed) }))
+        setQueueFailed(false)
+      } catch {
+        setLiveProduction(null)
+        setQueueFailed(true)
+      }
+    }
+    refresh()
+    const timer = window.setInterval(refresh, 1000)
+    return () => window.clearInterval(timer)
+  }, [actionKind, node.skillId, queryProduction])
+  const [galvanizeConfirmation, setGalvanizeConfirmation] = useState(false)
+  const confirmationRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    // Bring the dependency review into view without focusing its commit button.
+    confirmationRef.current?.focus()
+  }, [queuePreview, actionPreview])
+  const [queuePending, setQueuePending] = useState(false)
+  const [queueFailed, setQueueFailed] = useState(false)
+  const names = (ids: readonly string[]) =>
+    ids
+      .map((id) => nodeById.get(id)?.displayName ?? id)
+      .join(', ')
+  const canPurchase =
+    commandAvailability.purchase && preview.purchase.eligible
+  const canRefund = commandAvailability.refund && preview.refund.eligible
+  const palette: SkillDetailsPalette =
+    preview.visualState.startsWith('non-refundable')
+      ? 'non-refundable'
+      : preview.fragment
+        ? 'fragment'
+        : 'normal'
+  const fragmentDelta = preview.owned ? -1 : 1
+  const completedRequirementIds = preview.requiredSkillIds.filter(
+    (skillId) => previews.get(skillId)?.owned,
+  )
+  const applyQueueChange = async (
+    request: SkillPresetQueueChangeRequest,
+  ) => {
+    if (presetActions === undefined || queuePending) return
+    if (request.included && !await beforeAutoAssignment([request.skillId])) return
+    setQueuePending(true)
+    setQueueFailed(false)
+    try {
+      const changed = await presetActions.applyQueueChange(request)
+      setQueueFailed(!changed)
+      if (changed) setQueuePreview(null)
+    } catch {
+      setQueueFailed(true)
+    } finally {
+      setQueuePending(false)
+    }
+  }
+  const requestQueueChange = async (included: boolean) => {
+    if (presetActions === undefined || queuePending) return
+    setActionPreview(null)
+    const request = {
+      slot: selectedPresetSlot,
+      skillId: node.skillId,
+      included,
+    } satisfies SkillPresetQueueChangeRequest
+    setQueuePending(true)
+    setQueueFailed(false)
+    try {
+      const result = await presetActions.previewQueueChange(request)
+      if (result.confirmationRequired) {
+        setQueuePreview({
+          request,
+          affectedSkillIds: result.affectedSkillIds,
+        })
+      } else {
+        setQueuePending(false)
+        await applyQueueChange(request)
+        return
+      }
+    } catch {
+      setQueueFailed(true)
+    } finally {
+      setQueuePending(false)
+    }
+  }
+  const applySkillAction = async (kind: 'purchase' | 'refund') => {
+    const changed = await dispatch(
+      {
+        kind: kind === 'purchase' ? 'skill.purchase' : 'skill.refund',
+        skillId: node.skillId,
+      },
+      {
+        skillId: node.skillId,
+        expectedOwned: kind === 'purchase',
+        closeDetails: true,
+      },
+    )
+    if (changed) setActionPreview(null)
+  }
+  const requestSkillAction = (kind: 'purchase' | 'refund') => {
+    const affectedSkillIds =
+      kind === 'purchase'
+        ? preview.purchase.affectedSkillIds
+        : preview.refund.affectedSkillIds
+    const additionalSkillIds = affectedSkillIds.filter(
+      (skillId) => skillId !== node.skillId,
+    )
+    const productionImpact = kind === 'purchase'
+      ? preview.purchase.productionImpact
+      : preview.refund.productionImpact
+    setQueuePreview(null)
+    let live: SkillProductionPreview | null = null
+    try {
+      live = queryProduction?.(node.skillId, kind) ?? null
+    } catch {
+      setQueueFailed(true)
+      return
+    }
+    setLiveProduction(live ? { ...live, rows: live.rows.filter((row) => row.changed) } : null)
+    if (additionalSkillIds.length > 0 || (showProductionComparisons && productionImpact !== undefined) || live?.rows.some((row) => row.changed)) {
+      setActionPreview({ kind, affectedSkillIds })
+      return
+    }
+    void applySkillAction(kind)
+  }
+
+  const fracturedDescriptor = node.discoveryTechnical
+    ? discoveryFracturedEffects[node.skillId as keyof typeof discoveryFracturedEffects]
+    : galvanizedEffectMessages[node.skillId]
+  const fracturedTechnical = fracturedDescriptor ? intl.formatMessage(fracturedDescriptor) : node.technicalDescription
+  const technical = preview.galvanized ? fracturedTechnical : node.skillId === 'shouldersOfTheEnlightened' && !node.discoveryTechnical ? intl.formatMessage(messages.galvEnlightened) : node.technicalDescription
+
+  return (
+    <SkillDetailsDialog
+      title={<><span className="skill-details__icon" data-state={preview.visualState} data-galvanized={preview.galvanized || undefined}>
+        <img src={iconByFileName.get(node.icon.fileName)} alt="" />
+      </span><span>{node.displayName}</span></>}
+      description={preview.galvanized && galvanizedEffectMessages[node.skillId] ? intl.formatMessage(messages.galvanizedPermanent) : node.description}
+      closeLabel={intl.formatMessage(messages.close)}
+      palette={palette}
+      onClose={onClose}
+      onBack={onBack}
+      backLabel={intl.formatMessage(messages.backToAugments)}
+    >
+      <div
+        className="skill-details"
+        data-state={preview.visualState}
+      >
+        <p className="skill-details__technical">
+          <strong>{intl.formatMessage(messages.effect)}</strong>{' '}
+          {technical}
+        </p>
+        {preview.galvanizationUnlocked && galvanizers > 0n && !preview.galvanized && (
+          <div className="skill-details__galvanization">
+            <Button disabled={!preview.canGalvanize || pendingKind !== null}
+              aria-label={intl.formatMessage(messages.galvanizeAction, { currency: intl.formatMessage(challengeMessages.galvanizers, { value: '1' }) })}
+              onClick={() => setGalvanizeConfirmation(true)}>
+              {intl.formatMessage(messages.galvanizeAction, { currency: <InlineResourceAmount leadingSymbol={<InlineImageSymbol className="skill-details__galvanizer-currency" src={galvanizerIcon} tint maskMode="luminance" />} value="1" /> })}
+            </Button>
+            {galvanizeConfirmation && (
+              <div className="skill-confirmation">
+                <p><strong>{intl.formatMessage(messages.effect)}</strong> {fracturedTechnical}</p>
+                <p>{intl.formatMessage(messages.galvanizeWarning, { name: node.displayName })}</p>
+                <Button variant="primary" disabled={!preview.canGalvanize || pendingKind !== null}
+                  onClick={async () => {
+                    if (await dispatch({ kind: 'skill.galvanize', skillId: node.skillId })) setGalvanizeConfirmation(false)
+                  }}>{intl.formatMessage(messages.confirmGalvanize)}</Button>
+                <Button disabled={pendingKind !== null} onClick={() => setGalvanizeConfirmation(false)}>{intl.formatMessage(messages.cancel)}</Button>
+              </div>
+            )}
+          </div>
+        )}
+        {preview.galvanized && <p className="skill-details__permanent">{intl.formatMessage(messages.galvanizedHelp)}</p>}
+        {!preview.galvanized && <div className="skill-details__metadata">
+          <strong>
+            {preview.galvanized ? intl.formatMessage(messages.galvanizedPermanent) : intl.formatMessage(messages.cost, {
+              value: formatWholeGameNumber(locale, preview.cost),
+            })}
+          </strong>
+          {preview.requiredSkillIds.length > 0 && (
+            <p className="skill-details__requirements">
+              <strong>
+                {intl.formatMessage(messages.requirementsProgress, {
+                  complete: completedRequirementIds.length,
+                  total: preview.requiredSkillIds.length,
+                })}
+              </strong>
+            </p>
+          )}
+          {preview.fragment && (
+            <p className="skill-details__fragments">
+              {intl.formatMessage(messages.fragmentsContext, {
+                value: formatGameNumber(locale, fragments),
+                delta:
+                  fragmentDelta > 0
+                    ? `+${fragmentDelta}`
+                    : String(fragmentDelta),
+              })}
+            </p>
+          )}
+          {preview.owned && <p>{intl.formatMessage(messages.owned)}</p>}
+          {preview.queued && !preview.galvanized && <p>{intl.formatMessage(messages.queued)}</p>}
+          {preview.exclusiveWithSkillIds.length > 0 && (
+            <p>
+              {intl.formatMessage(messages.exclusive, {
+                names: names(preview.exclusiveWithSkillIds),
+              })}
+            </p>
+          )}
+        </div>}
+        <div className="skill-details__actions">
+          {!preview.galvanized && <label className="skill-details__preset-toggle">
+            <input
+              type="checkbox"
+              checked={preview.queued}
+              disabled={presetActions === undefined || queuePending}
+              onChange={(event) =>
+                void requestQueueChange(event.currentTarget.checked)
+              }
+            />
+            <span>
+              {intl.formatMessage(messages.includedInPreset, {
+                name: selectedPresetName,
+              })}
+            </span>
+          </label>}
+          {!preview.galvanized && (
+            <Button
+              variant={preview.owned ? 'danger' : 'primary'}
+              className="skill-details__point-action"
+              aria-label={intl.formatMessage(
+                preview.owned ? messages.refundPointAction : messages.purchasePointAction,
+                { value: formatWholeGameNumber(locale, preview.owned ? preview.refund.pointsReturned : preview.purchase.pointsRequired) },
+              )}
+              state={pendingKind === (preview.owned ? 'skill.refund' : 'skill.purchase') ? 'pending' : 'idle'}
+              disabled={preview.owned ? !canRefund : !canPurchase}
+              onClick={() => requestSkillAction(preview.owned ? 'refund' : 'purchase')}
+            >
+              {/* Both labels reserve space so changing ownership cannot resize the action. */}
+              <span className="skill-details__point-action-label" aria-hidden={preview.owned} data-active={!preview.owned}>
+                <span>{intl.formatMessage(messages.purchase)}</span>
+                <small>{intl.formatMessage(messages.purchasePointImpact, {
+                  value: formatWholeGameNumber(locale, preview.purchase.pointsRequired),
+                })}</small>
+              </span>
+              <span className="skill-details__point-action-label" aria-hidden={!preview.owned} data-active={preview.owned}>
+                <span>{intl.formatMessage(messages.refund)}</span>
+                <small>{intl.formatMessage(messages.refundPointImpact, {
+                  value: formatWholeGameNumber(locale, preview.refund.pointsReturned),
+                })}</small>
+              </span>
+            </Button>
+          )}
+          {queuePreview && (
+            <div
+              ref={confirmationRef}
+              tabIndex={-1}
+              className="skill-confirmation skill-details__queue-confirmation"
+              role="group"
+              aria-label={intl.formatMessage(
+                messages.confirmPresetChange,
+              )}
+            >
+              <p>
+                {intl.formatMessage(
+                  queuePreview.request.included
+                    ? messages.includeDependencies
+                    : messages.removeDependants,
+                )}
+              </p>
+              <AffectedSkillList
+                skillIds={queuePreview.affectedSkillIds.filter(
+                  (skillId) => skillId !== node.skillId,
+                )}
+                nodeById={nodeById}
+                label={intl.formatMessage(messages.affectedSkills)}
+              />
+              <Button
+                variant="primary"
+                state={queuePending ? 'pending' : 'idle'}
+                onClick={() =>
+                  void applyQueueChange(queuePreview.request)
+                }
+              >
+                {intl.formatMessage(messages.confirm)}
+              </Button>
+              <Button
+                disabled={queuePending}
+                onClick={() => setQueuePreview(null)}
+              >
+                {intl.formatMessage(messages.cancel)}
+              </Button>
+            </div>
+          )}
+          {actionPreview && (
+            <div
+              ref={confirmationRef}
+              tabIndex={-1}
+              className="skill-confirmation skill-details__action-confirmation"
+              role="group"
+              aria-label={intl.formatMessage(
+                messages.confirmSkillChange,
+              )}
+            >
+              {actionPreview.affectedSkillIds.some((id) => id !== node.skillId) && <p>
+                {intl.formatMessage(
+                  actionPreview.kind === 'purchase'
+                    ? messages.assignDependencies
+                    : messages.unassignDependants,
+                )}
+              </p>}
+              <AffectedSkillList
+                skillIds={actionPreview.affectedSkillIds.filter(
+                  (skillId) => skillId !== node.skillId,
+                )}
+                nodeById={nodeById}
+                label={intl.formatMessage(messages.affectedSkills)}
+              />
+              {(() => {
+                if (!showProductionComparisons) return null
+                const impact = actionPreview.kind === 'purchase'
+                  ? preview.purchase.productionImpact
+                  : preview.refund.productionImpact
+                if (impact === undefined && liveProduction === null) return null
+                return (
+                  <div className="skill-details__production-impact">
+                    {liveProduction && liveProduction.rows.map((row) => (
+                      <ProductionImpactRow key={row.id}
+                        label={intl.formatMessage(productionMetrics[row.id].label)}
+                        before={`${formatGameNumber(locale, row.before)}${productionMetrics[row.id].unit}`}
+                        after={`${formatGameNumber(locale, row.after)}${productionMetrics[row.id].unit}${liveProduction.projected ? ` (${liveProduction.projectedSeconds < 60 ? `${liveProduction.projectedSeconds}s` : `${liveProduction.projectedSeconds / 60}m`})` : ''}`}
+                        afterTone={row.after >= row.before ? 'gain' : 'loss'}
+                        toLabel={intl.formatMessage(messages.impactTo)} />
+                    ))}
+                    {impact?.purity && (
+                      <>
+                        <ProductionImpactRow
+                          label={intl.formatMessage(messages.impactSkillPoints)}
+                          before={formatWholeGameNumber(
+                            locale,
+                            impact.pointsBefore,
+                          )}
+                          after={formatWholeGameNumber(
+                            locale,
+                            impact.pointsAfter,
+                          )}
+                          afterTone={impact.pointsAfter > impact.pointsBefore
+                            ? 'gain'
+                            : 'loss'}
+                          toLabel={intl.formatMessage(messages.impactTo)}
+                        />
+                        {!liveProduction && <>
+                        <ProductionImpactRow
+                          label={intl.formatMessage(messages.impactCashScience)}
+                          before={`×${formatGameNumber(locale, impact.purity.cashScienceBefore)}`}
+                          after={`×${formatGameNumber(locale, impact.purity.cashScienceAfter)}`}
+                          afterTone={impact.purity.cashScienceAfter >= impact.purity.cashScienceBefore
+                            ? 'gain'
+                            : 'loss'}
+                          toLabel={intl.formatMessage(messages.impactTo)}
+                        />
+                        <ProductionImpactRow
+                          label={intl.formatMessage(messages.impactBots)}
+                          before={`×${formatGameNumber(locale, impact.purity.botsBefore)}`}
+                          after={`×${formatGameNumber(locale, impact.purity.botsAfter)}`}
+                          afterTone={impact.purity.botsAfter >= impact.purity.botsBefore
+                            ? 'gain'
+                            : 'loss'}
+                          toLabel={intl.formatMessage(messages.impactTo)}
+                        />
+                        <ProductionImpactRow
+                          label={intl.formatMessage(messages.impactEverything)}
+                          before={`×${formatGameNumber(locale, impact.purity.everythingBefore)}`}
+                          after={`×${formatGameNumber(locale, impact.purity.everythingAfter)}`}
+                          afterTone={impact.purity.everythingAfter >= impact.purity.everythingBefore
+                            ? 'gain'
+                            : 'loss'}
+                          toLabel={intl.formatMessage(messages.impactTo)}
+                        />
+                        </>}
+                      </>
+                    )}
+                    {impact?.manualPurchase && (
+                      <>
+                        <p>
+                          {intl.formatMessage(
+                            actionPreview.kind === 'purchase'
+                              ? messages.supernovaSuppressionQuote
+                              : messages.supernovaRestorationQuote,
+                          )}
+                        </p>
+                        <ul>
+                          {impact.manualPurchase.map((entry) => (
+                            <li key={entry.facilityId} className="skill-details__impact-list-item">
+                              <ProductionImpactRow
+                                label={entry.facilityId}
+                                before={`×${formatGameNumber(locale, entry.beforeMultiplier)}`}
+                                after={`×${formatGameNumber(locale, entry.afterMultiplier)}`}
+                                afterTone={entry.afterMultiplier >= entry.beforeMultiplier
+                                  ? 'gain'
+                                  : 'loss'}
+                                toLabel={intl.formatMessage(messages.impactTo)}
+                              />
+                            </li>
+                          ))}
+                        </ul>
+                      </>
+                    )}
+                  </div>
+                )
+              })()}
+              <Button
+                variant={
+                  actionPreview.kind === 'purchase'
+                    ? 'primary'
+                    : 'danger'
+                }
+                state={
+                  pendingKind ===
+                  `skill.${actionPreview.kind === 'purchase' ? 'purchase' : 'refund'}`
+                    ? 'pending'
+                    : 'idle'
+                }
+                onClick={() =>
+                  void applySkillAction(actionPreview.kind)
+                }
+              >
+                {intl.formatMessage(messages.confirm)}
+              </Button>
+              <Button
+                disabled={pendingKind !== null}
+                onClick={() => setActionPreview(null)}
+              >
+                {intl.formatMessage(messages.cancel)}
+              </Button>
+            </div>
+          )}
+          {queueFailed && (
+            <StatusFeedback tone="error">
+              {intl.formatMessage(messages.presetChangeFailed)}
+            </StatusFeedback>
+          )}
+        </div>
+      </div>
+    </SkillDetailsDialog>
+  )
+}
+
+const productionMetrics = {
+  hunterCommunity: { label: messages.hunterCommunity, unit: '/s' },
+  gathererCommunity: { label: messages.gathererCommunity, unit: '/s' },
+  launchedPanelEnergy: { label: messages.launchedPanelEnergy, unit: '/s' },
+  manualBots: { label: messages.manualBots, unit: '' },
+  manualManagers: { label: messages.manualManagers, unit: '' },
+  manualServers: { label: messages.manualServers, unit: '' },
+  manualDataCenters: { label: messages.manualDataCenters, unit: '' },
+  manualPlanets: { label: messages.manualPlanets, unit: '' },
+  manualMatrioshka: { label: messages.manualMatrioshka, unit: '' },
+  manualBirch: { label: messages.manualBirch, unit: '' },
+  manualGalactic: { label: messages.manualGalactic, unit: '' },
+  manualAssemblyLines: { label: messages.manualAssemblyLines, unit: '' },
+  money: { label: messages.productionCash, unit: '/s' },
+  science: { label: messages.productionScience, unit: '/s' },
+  bots: { label: messages.impactBots, unit: '/s' },
+  panels: { label: messages.productionPanels, unit: '/s' },
+  assembly_lines: { label: facilityMessages.assemblyLinesName, unit: '/s' },
+  ai_managers: { label: facilityMessages.aiManagersName, unit: '/s' },
+  servers: { label: facilityMessages.serversName, unit: '/s' },
+  data_centers: { label: facilityMessages.dataCentersName, unit: '/s' },
+  planets: { label: facilityMessages.planetsName, unit: '/s' },
+  matrioshka_brains: { label: facilityMessages.matrioshkaBrainsName, unit: '/s' },
+  birch_planets: { label: facilityMessages.birchPlanetsName, unit: '/s' },
+  galactic_brains: { label: facilityMessages.galacticBrainsName, unit: '/s' },
+  panelLifetime: { label: facilityMessages.panelLifetime, unit: 's' },
+  discoverySpeed: { label: discoveryMessages.speed, unit: '×' },
+  elevationSpeed: { label: discoveryMessages.elevation, unit: '×' },
+  enlightenmentSpeed: { label: discoveryMessages.enlightenment, unit: '×' },
+  cashBotsMultiplier: { label: discoveryMessages.cashBots, unit: '×' },
+  discoveryMultiplier: { label: discoveryMessages.name, unit: '×' },
+} satisfies Record<SkillProductionPreview['rows'][number]['id'], { label: MessageDescriptor; unit: string }>
+
+function ProductionImpactRow({
+  label,
+  before,
+  after,
+  afterTone,
+  toLabel,
+}: {
+  readonly label: string
+  readonly before: string
+  readonly after: string
+  readonly afterTone: 'gain' | 'loss'
+  readonly toLabel: string
+}) {
+  return (
+    <div className="skill-details__impact-row">
+      <span className="skill-details__impact-label">{label}</span>
+      <span className="skill-details__impact-value">{before}</span>
+      <span className="ui-visually-hidden">{toLabel}</span>
+      <span
+        className="skill-details__impact-arrow"
+        aria-hidden="true"
+      >
+        {'\u25b6'}
+      </span>
+      <span
+        className={`skill-details__impact-value skill-details__impact-value--${afterTone}`}
+      >
+        {after}
+      </span>
+    </div>
+  )
+}
+
+interface SkillSettingsProps {
+  readonly showProductionComparisons: boolean
+  readonly onShowProductionComparisonsChange: (enabled: boolean) => void
+  readonly id: string
+  readonly autoAssignNonRefundable: boolean
+  readonly doubleClickToAssign: boolean
+  readonly showSkillLabels: boolean
+  readonly onShowSkillLabelsChange: (enabled: boolean) => void
+  readonly onDoubleClickToAssignChange: (enabled: boolean) => void
+  readonly showPresetApplicationNotifications: boolean
+  readonly onShowPresetApplicationNotificationsChange: (
+    show: boolean,
+  ) => void
+  readonly commandAvailability: SkillCommandAvailability
+  readonly pendingKind: string | null
+  readonly dispatch: (
+    command: SkillCommand,
+    expectation?: Omit<PendingExpectation, 'beforeSignature'>,
+  ) => Promise<boolean>
+  readonly onOpenReset: () => void
+  readonly onOpenPresets: () => void
+}
+
+function SkillSettings({
+  showProductionComparisons,
+  onShowProductionComparisonsChange,
+  id,
+  autoAssignNonRefundable,
+  doubleClickToAssign,
+  showSkillLabels,
+  onShowSkillLabelsChange,
+  onDoubleClickToAssignChange,
+  showPresetApplicationNotifications,
+  onShowPresetApplicationNotificationsChange,
+  commandAvailability,
+  pendingKind,
+  dispatch,
+  onOpenReset,
+  onOpenPresets,
+}: SkillSettingsProps) {
+  const intl = useIntl()
+  const extendedPresets = useExtendedSkillPresets()
+
+  return (
+    <div id={id} className="skill-settings">
+      <label className="skill-settings__toggle">
+        <input type="checkbox" checked={extendedPresets.enabled} onChange={(event) => extendedPresets.setEnabled(event.currentTarget.checked)} />
+        <span>{intl.formatMessage(messages.showExtendedPresets)}</span>
+      </label>
+      <label className="skill-settings__toggle">
+        <input type="checkbox" checked={showProductionComparisons}
+          onChange={(event) => onShowProductionComparisonsChange(event.currentTarget.checked)} />
+        <span>{intl.formatMessage(messages.showProductionComparisons)}</span>
+      </label>
+      <label className="skill-settings__toggle">
+        <input
+          type="checkbox"
+          checked={autoAssignNonRefundable}
+          disabled={
+            !commandAvailability.setAutoAssignNonRefundable ||
+            pendingKind ===
+              'skill.set-auto-assign-non-refundable'
+          }
+          onChange={(event) =>
+            void dispatch({
+              kind: 'skill.set-auto-assign-non-refundable',
+              enabled: event.currentTarget.checked,
+            })
+          }
+        />
+        <span>{intl.formatMessage(messages.nonRefundable)}</span>
+      </label>
+      <label className="skill-settings__toggle">
+        <input type="checkbox" checked={showSkillLabels}
+          onChange={(event) => onShowSkillLabelsChange(event.currentTarget.checked)} />
+        <span>{intl.formatMessage(messages.showSkillLabels)}</span>
+      </label>
+      <label className="skill-settings__toggle">
+        <input
+          type="checkbox"
+          checked={doubleClickToAssign}
+          onChange={(event) =>
+            onDoubleClickToAssignChange(event.currentTarget.checked)
+          }
+        />
+        <span>{intl.formatMessage(messages.doubleClickToAssign)}</span>
+      </label>
+      <label className="skill-settings__toggle">
+        <input
+          type="checkbox"
+          checked={showPresetApplicationNotifications}
+          onChange={(event) =>
+            onShowPresetApplicationNotificationsChange(
+              event.currentTarget.checked,
+            )
+          }
+        />
+        <span>
+          {intl.formatMessage(
+            messages.showPresetApplicationNotifications,
+          )}
+        </span>
+      </label>
+      <div className="skill-settings__actions">
+        <button
+          type="button"
+          className="skill-settings__reset"
+          disabled={
+            !commandAvailability.reset || pendingKind === 'skill.reset'
+          }
+          onClick={onOpenReset}
+        >
+          {intl.formatMessage(messages.reset)}
+        </button>
+        <button
+          type="button"
+          className="skill-settings__open-presets"
+          onClick={onOpenPresets}
+        >
+          {intl.formatMessage(messages.presets)}
+        </button>
+      </div>
+    </div>
+  )
+}
+
+interface SkillResetDialogProps {
+  readonly refundableSkillIds: readonly string[]
+  readonly retainedSkillIds: readonly string[]
+  readonly queuedSkillIds: readonly string[]
+  readonly nodeById: ReadonlyMap<string, SkillPresentationNode>
+  readonly canReset: boolean
+  readonly pending: boolean
+  readonly dispatch: SkillSettingsProps['dispatch']
+  readonly onClose: () => void
+}
+
+function SkillResetDialog({
+  refundableSkillIds,
+  retainedSkillIds,
+  queuedSkillIds,
+  nodeById,
+  canReset,
+  pending,
+  dispatch,
+  onClose,
+}: SkillResetDialogProps) {
+  const intl = useIntl()
+
+  return (
+    <SkillDetailsDialog
+      title={intl.formatMessage(messages.reset)}
+      closeLabel={intl.formatMessage(messages.close)}
+      palette="normal"
+      className="skill-reset-dialog"
+      onClose={onClose}
+    >
+      <p className="skill-reset-dialog__description">
+        {intl.formatMessage(messages.resetWarning)}
+      </p>
+      <section className="skill-reset-dialog__group">
+        <h3>{intl.formatMessage(messages.resetRefundedHeading)}</h3>
+        {refundableSkillIds.length > 0 ? (
+          <AffectedSkillList
+            skillIds={refundableSkillIds}
+            nodeById={nodeById}
+            label={intl.formatMessage(messages.resetRefundedHeading)}
+          />
+        ) : (
+          <p className="skill-reset-dialog__empty">
+            {intl.formatMessage(messages.none)}
+          </p>
+        )}
+      </section>
+      <section className="skill-reset-dialog__group">
+        <h3>{intl.formatMessage(messages.resetRetainedHeading)}</h3>
+        {retainedSkillIds.length > 0 ? (
+          <AffectedSkillList
+            skillIds={retainedSkillIds}
+            nodeById={nodeById}
+            label={intl.formatMessage(messages.resetRetainedHeading)}
+          />
+        ) : (
+          <p className="skill-reset-dialog__empty">
+            {intl.formatMessage(messages.none)}
+          </p>
+        )}
+      </section>
+      {queuedSkillIds.length > 0 ? (
+        <section className="skill-reset-dialog__group">
+          <h3>{intl.formatMessage(messages.resetQueuedHeading)}</h3>
+          <AffectedSkillList
+            skillIds={queuedSkillIds}
+            nodeById={nodeById}
+            label={intl.formatMessage(messages.resetQueuedHeading)}
+          />
+        </section>
+      ) : null}
+      <div className="skill-reset-dialog__actions">
+        <Button className="skill-reset-dialog__cancel" onClick={onClose}>
+          {intl.formatMessage(messages.cancel)}
+        </Button>
+        <Button
+          variant="primary"
+          disabled={
+            !canReset ||
+            (refundableSkillIds.length === 0 && queuedSkillIds.length === 0)
+          }
+          state={pending ? 'pending' : 'idle'}
+          onClick={async () => {
+            if (await dispatch({ kind: 'skill.reset' })) onClose()
+          }}
+        >
+          {intl.formatMessage(messages.reset)}
+        </Button>
+      </div>
+    </SkillDetailsDialog>
+  )
+}
+
+
+function SkillPresetApplicationNotice({
+  presetName,
+  blockedSkillIds,
+  nodeById,
+  onDismiss,
+}: {
+  readonly presetName: string
+  readonly blockedSkillIds: readonly string[]
+  readonly nodeById: ReadonlyMap<string, SkillPresentationNode>
+  readonly onDismiss?: () => void
+}) {
+  const intl = useIntl()
+  if (onDismiss === undefined) return null
+
+  return (
+    <SkillDetailsDialog
+      title={intl.formatMessage(
+        messages.presetPartiallyAppliedTitle,
+        { name: presetName },
+      )}
+      closeLabel={intl.formatMessage(messages.dismiss)}
+      palette="normal"
+      className="skill-preset-application-dialog"
+      onClose={onDismiss}
+    >
+      <p className="skills-surface__preset-application-details">
+        {intl.formatMessage(messages.presetPartiallyAppliedDetails)}
+      </p>
+      <section className="skill-reset-dialog__group">
+        <h3>{intl.formatMessage(messages.blockedSkillsHeading)}</h3>
+        <AffectedSkillList
+          skillIds={blockedSkillIds}
+          nodeById={nodeById}
+          label={intl.formatMessage(messages.blockedSkillsHeading)}
+        />
+      </section>
+    </SkillDetailsDialog>
+  )
+}
+
+
+interface SkillPresetsDialogProps {
+  readonly discoveryUnlocked?: boolean
+  readonly previews: ReadonlyMap<string, CanonicalSkillAvailabilityPreview>
+  readonly presets: SkillsSurfaceProps['presets']
+  readonly selectedPresetSlot: CanonicalSkillPresetSlot
+  readonly commandAvailability: SkillCommandAvailability
+  readonly presetActions?: SkillPresetActions
+  readonly beforeAutoAssignment: (skillIds: readonly string[]) => Promise<boolean>
+  readonly pendingKind: string | null
+  readonly selectionPending: boolean
+  readonly nodeById: ReadonlyMap<string, SkillPresentationNode>
+  readonly onSelectPreset: (slot: CanonicalSkillPresetSlot) => void
+  readonly dispatch: SkillSettingsProps['dispatch']
+  readonly onClose: () => void
+}
+
+function SkillPresetsDialog({
+  discoveryUnlocked = false,
+  presets,
+  previews,
+  selectedPresetSlot,
+  commandAvailability,
+  presetActions,
+  beforeAutoAssignment,
+  pendingKind,
+  selectionPending,
+  nodeById,
+  onSelectPreset,
+  dispatch,
+  onClose,
+}: SkillPresetsDialogProps) {
+  const intl = useIntl()
+  const { visibleCount } = useExtendedSkillPresets()
+  const [managedSlot, setManagedSlot] =
+    useState<CanonicalSkillPresetSlot | null>(null)
+  const [prioritySlot, setPrioritySlot] = useState<CanonicalSkillPresetSlot | null>(null)
+  const priorityButtonRefs = useRef(new Map<number, HTMLButtonElement>())
+  const managedPreset = managedSlot === null
+    ? undefined
+    : presets[managedSlot - 1]
+
+  return (
+    <>
+      <SkillDetailsDialog
+        title={prioritySlot === null ? intl.formatMessage(messages.presets) : intl.formatMessage(messages.priorityTitle, { name: presets[prioritySlot - 1].name })}
+        closeLabel={intl.formatMessage(messages.close)}
+        palette="normal"
+        className={`skill-presets-dialog${prioritySlot === null ? "" : " skill-presets-dialog--priority"}`}
+        onBack={prioritySlot === null ? undefined : () => {
+          const slot = prioritySlot
+          setPrioritySlot(null)
+          requestAnimationFrame(() => priorityButtonRefs.current.get(slot)?.focus())
+        }}
+        backLabel={intl.formatMessage(messages.backToPresets)}
+        onClose={onClose}
+      >
+        {prioritySlot !== null ? <>
+          <SkillPresetPriority preset={presets[prioritySlot - 1]} nodeById={nodeById} previews={previews}
+            presetActions={presetActions} slot={prioritySlot}
+            pending={pendingKind !== null || selectionPending || !commandAvailability.selectPreset}
+            onReorder={(skillIds) => dispatch(selectedPresetSlot === prioritySlot
+              ? { kind: 'skill.set-auto-assignment', skillIds }
+              : { kind: 'skill.set-preset-assignment', slot: prioritySlot, skillIds })} />
+        </> : <div className="skill-settings__presets">
+          {presets.slice(0, visibleCount).map((preset, index) => {
+          const slot = (index + 1) as CanonicalSkillPresetSlot
+          const workers = Math.round((1 - preset.botDistribution) * 100)
+          return (
+            <div
+              key={slot}
+              className="skill-settings__preset-row"
+              data-current={selectedPresetSlot === slot || undefined}
+              style={skillPresetColorStyle(preset.colorId)}
+            >
+              <button
+                type="button"
+                className="skill-settings__preset-load"
+                disabled={
+                  !commandAvailability.selectPreset ||
+                  pendingKind === 'skill.select-preset' ||
+                  selectionPending
+                }
+                aria-pressed={selectedPresetSlot === slot}
+                onClick={() => onSelectPreset(slot)}
+              >
+                <strong>
+                  <span className="skill-preset-color-swatch" aria-hidden="true" />
+                  {intl.formatMessage(messages.loadPreset, { name: preset.name })}
+                </strong>
+                {selectedPresetSlot === slot && (
+                  <em className="skill-settings__current">{intl.formatMessage(messages.currentPreset)}</em>
+                )}
+                <PresetSummary count={preset.skillIds.filter(id => !previews.get(id)?.galvanized).length} workers={workers} hideAllocation={discoveryUnlocked} />
+              </button>
+              <div className="skill-settings__preset-icon-actions">
+                <button type="button" className="skill-settings__preset-priority"
+                  ref={(element) => { if (element) priorityButtonRefs.current.set(slot, element); else priorityButtonRefs.current.delete(slot) }}
+                  aria-label={`${intl.formatMessage(messages.editPriority)}: ${preset.name}`}
+                  title={intl.formatMessage(messages.editPriority)} onClick={() => setPrioritySlot(slot)}>
+                  <span aria-hidden="true">⇅</span>
+                </button>
+              <button
+                type="button"
+                className="skill-settings__preset-manage"
+                aria-label={intl.formatMessage(messages.managePreset, { name: preset.name })}
+                onClick={() => setManagedSlot(slot)}
+              ><span aria-hidden="true">⋯</span></button>
+              </div>
+            </div>
+          )
+          })}
+        </div>}
+      </SkillDetailsDialog>
+      {managedSlot !== null && managedPreset !== undefined ? (
+        <PresetManagementDialog
+          discoveryUnlocked={discoveryUnlocked}
+          key={managedSlot}
+          slot={managedSlot}
+          preset={managedPreset}
+          canSetColor={commandAvailability.setPresetColor}
+          presetActions={presetActions}
+          beforeAutoAssignment={slotSkillIds => managedSlot !== selectedPresetSlot || beforeAutoAssignment(slotSkillIds)}
+          nodeById={nodeById}
+          pendingKind={pendingKind}
+          dispatch={dispatch}
+          onClose={() => setManagedSlot(null)}
+        />
+      ) : null}
+    </>
+  )
+}
+
+function SkillPresetPriority({ preset, nodeById, previews, pending, onReorder, presetActions, slot }: {
+  readonly presetActions?: SkillPresetActions
+  readonly slot: CanonicalSkillPresetSlot
+  readonly preset: SkillPresetState
+  readonly nodeById: ReadonlyMap<string, SkillPresentationNode>
+  readonly previews: ReadonlyMap<string, CanonicalSkillAvailabilityPreview>
+  readonly pending: boolean
+  readonly onReorder: (skillIds: readonly string[]) => Promise<boolean>
+}) {
+  const intl = useIntl()
+  const [dragged, setDragged] = useState<string | null>(null)
+  const [dropIndex, setDropIndex] = useState<number | null>(null)
+  const [reorderFailed, setReorderFailed] = useState(false)
+  const [removalPending, setRemovalPending] = useState(false)
+  const [removal, setRemoval] = useState<{ skillId: string; affectedSkillIds: readonly string[] } | null>(null)
+  const controlsDisabled = pending || removalPending || removal !== null
+  const applyRemoval = async (skillId: string) => {
+    if (!presetActions || pending || removalPending) return
+    setRemovalPending(true); setReorderFailed(false)
+    try {
+      const preview = await presetActions.previewQueueChange({ slot, skillId, included: false })
+      const affected = new Set(preview.affectedSkillIds)
+      const changed = await onReorder(preset.skillIds.filter(id => !affected.has(id)))
+      setReorderFailed(!changed)
+      if (changed) setRemoval(null)
+    } catch { setReorderFailed(true) }
+    finally { setRemovalPending(false) }
+  }
+  const requestRemoval = async (skillId: string) => {
+    if (!presetActions || controlsDisabled) return
+    setRemovalPending(true); setReorderFailed(false)
+    try {
+      const preview = await presetActions.previewQueueChange({ slot, skillId, included: false })
+      if (preview.confirmationRequired) setRemoval({ skillId, affectedSkillIds: preview.affectedSkillIds })
+      else {
+        const affected = new Set(preview.affectedSkillIds)
+        setReorderFailed(!await onReorder(preset.skillIds.filter(id => !affected.has(id))))
+      }
+    } catch { setReorderFailed(true) }
+    finally { setRemovalPending(false) }
+  }
+  const priorityListRef = useRef<HTMLOListElement>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const pointerY = useRef(0)
+  const spendingIds = preset.skillIds.filter(id => !previews.get(id)?.galvanized)
+  const permanentIds = [...previews.values()].filter(preview => preview.galvanized).map(preview => preview.skillId)
+  const targetIndex = (clientY: number) => {
+    const rows = Array.from(priorityListRef.current?.children ?? [])
+    const index = rows.findIndex((row) => clientY < row.getBoundingClientRect().bottom)
+    return index < 0 ? rows.length - 1 : index
+  }
+  useEffect(() => {
+    if (dragged === null) return
+    let frame: number
+    const tick = () => {
+      const scroller = scrollRef.current
+      if (scroller) {
+        const rect = scroller.getBoundingClientRect()
+        const y = pointerY.current
+        const speed = y < rect.top + 48 ? -Math.min(12, (rect.top + 48 - y) / 4)
+          : y > rect.bottom - 48 ? Math.min(12, (y - rect.bottom + 48) / 4) : 0
+        if (speed) { scroller.scrollTop += speed; setDropIndex(targetIndex(y)) }
+      }
+      frame = requestAnimationFrame(tick)
+    }
+    frame = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frame)
+  }, [dragged])
+  const move = async (from: number, to: number) => {
+    if (controlsDisabled || from === to || from < 0 || to < 0 || to >= spendingIds.length) return
+    const next = [...spendingIds]
+    const [id] = next.splice(from, 1)
+    next.splice(to, 0, id)
+    // Keep permanent entries in the saved preset, outside its spending order.
+    setReorderFailed(false)
+    const changed = await onReorder([...next, ...preset.skillIds.filter(id => previews.get(id)?.galvanized)])
+    setReorderFailed(!changed)
+  }
+  return <section className="skill-preset-priority">
+    <p>{intl.formatMessage(messages.spendingPriorityHelp)}</p>
+    {reorderFailed && <StatusFeedback tone="error">{intl.formatMessage(messages.presetChangeFailed)}</StatusFeedback>}
+    <div ref={scrollRef} className="skill-preset-priority__scroll">
+      <ol ref={priorityListRef}>
+        {spendingIds.map((id, index) => {
+          const node = nodeById.get(id)
+          const name = node?.displayName ?? id
+          const nonRefundable = previews.get(id)?.visualState.startsWith('non-refundable') === true
+          return <li key={id} data-non-refundable={nonRefundable || undefined}
+            data-dragging={dragged === id || undefined}
+            data-drop-target={dragged !== null && dropIndex === index || undefined}>
+            <span className="skill-preset-priority__handle" aria-hidden="true"
+              onPointerDown={(event) => {
+                if (controlsDisabled || event.button !== 0) return
+                event.preventDefault()
+                pointerY.current = event.clientY
+                event.currentTarget.setPointerCapture(event.pointerId)
+                setDragged(id); setDropIndex(index)
+              }}
+              onPointerMove={(event) => {
+                if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+                  pointerY.current = event.clientY; setDropIndex(targetIndex(event.clientY))
+                }
+              }}
+              onPointerUp={(event) => {
+                if (!event.currentTarget.hasPointerCapture(event.pointerId)) return
+                event.currentTarget.releasePointerCapture(event.pointerId)
+                move(index, targetIndex(event.clientY)); setDragged(null); setDropIndex(null)
+              }}
+              onLostPointerCapture={() => { setDragged(null); setDropIndex(null) }}
+              onPointerCancel={() => { setDragged(null); setDropIndex(null) }}>⠿</span>
+            <span className="skill-preset-priority__number">{index + 1}</span>
+            {node && (nonRefundable
+              ? <span className="skill-preset-priority__non-refundable-icon" aria-hidden="true"
+                  style={{ maskImage: `url("${iconByFileName.get(node.icon.fileName)}")`, WebkitMaskImage: `url("${iconByFileName.get(node.icon.fileName)}")` }} />
+              : <img src={iconByFileName.get(node.icon.fileName)} alt="" />)}
+            <span className="skill-preset-priority__name">{name}
+              {nonRefundable && <small>{intl.formatMessage(messages.priorityNonRefundable)}</small>}
+            </span>
+            <button type="button" disabled={controlsDisabled || index === 0}
+              aria-label={intl.formatMessage(messages.priorityMoveUp, { name })}
+              onClick={() => move(index, index - 1)}>↑</button>
+            <button type="button" disabled={controlsDisabled || index === spendingIds.length - 1}
+              aria-label={intl.formatMessage(messages.priorityMoveDown, { name })}
+              onClick={() => move(index, index + 1)}>↓</button>
+            <button type="button" disabled={controlsDisabled || !presetActions}
+              aria-label={intl.formatMessage(messages.priorityRemove, { name })}
+              onClick={() => void requestRemoval(id)}>−</button>
+            {removal?.skillId === id && <div className="skill-priority-removal" role="group"
+              aria-label={intl.formatMessage(messages.confirmPresetChange)}>
+              <p>{intl.formatMessage(messages.removeDependants)}</p>
+              <AffectedSkillList skillIds={removal.affectedSkillIds.filter(affected => affected !== id)}
+                nodeById={nodeById} label={intl.formatMessage(messages.affectedSkills)} />
+              <Button disabled={pending || removalPending} onClick={() => void applyRemoval(id)}>{intl.formatMessage(messages.confirm)}</Button>
+              <Button disabled={removalPending} onClick={() => setRemoval(null)}>{intl.formatMessage(messages.cancel)}</Button>
+            </div>}
+          </li>
+        })}
+      </ol>
+      {spendingIds.length === 0 && <p>{intl.formatMessage(messages.priorityEmpty)}</p>}
+      {permanentIds.length > 0 && <section className="skill-preset-priority__permanent">
+        <h3>{intl.formatMessage(messages.galvanized)}</h3>
+        <p>{intl.formatMessage(messages.permanentPresetHelp)}</p>
+        <ul>{permanentIds.map(id => {
+          const node = nodeById.get(id)
+          return <li key={id}>
+            {node && <span className="skill-priority-permanent-icon"><img src={iconByFileName.get(node.icon.fileName)} alt="" /></span>}
+            <span>{node?.displayName ?? id}</span>
+          </li>
+        })}</ul>
+      </section>}
+    </div>
+  </section>
+}
+
+interface PresetManagementDialogProps {
+  readonly discoveryUnlocked: boolean
+  readonly slot: CanonicalSkillPresetSlot
+  readonly preset: SkillPresetState
+  readonly canSetColor: boolean
+  readonly presetActions?: SkillPresetActions
+  readonly beforeAutoAssignment: (skillIds: readonly string[]) => boolean | Promise<boolean>
+  readonly nodeById: ReadonlyMap<string, SkillPresentationNode>
+  readonly pendingKind: string | null
+  readonly dispatch: (
+    command: SkillCommand,
+    expectation?: Omit<PendingExpectation, 'beforeSignature'>,
+  ) => Promise<boolean>
+  readonly onClose: () => void
+}
+
+function PresetManagementDialog({
+  discoveryUnlocked,
+  slot,
+  preset,
+  canSetColor,
+  presetActions,
+  beforeAutoAssignment,
+  nodeById,
+  pendingKind,
+  dispatch,
+  onClose,
+}: PresetManagementDialogProps) {
+  const intl = useIntl()
+  const [name, setName] = useState(preset.name)
+  const [exportText, setExportText] = useState('')
+  const [copyComplete, setCopyComplete] = useState(false)
+  const [importText, setImportText] = useState('')
+  const [importPreview, setImportPreview] =
+    useState<SkillPresetImportPreview | null>(null)
+  const [transferPending, setTransferPending] = useState<
+    'export' | 'preview' | 'import' | null
+  >(null)
+  const [transferFailed, setTransferFailed] = useState(false)
+  const exportAreaRef = useRef<HTMLTextAreaElement>(null)
+  const colorPickerRef = useRef<HTMLDetailsElement>(null)
+  const trimmedName = name.trim()
+  const colorName = (colorId: SkillPresetColorId) =>
+    intl.formatMessage(PRESET_COLOR_MESSAGES[colorId])
+
+  const exportPreset = async () => {
+    if (presetActions === undefined || transferPending !== null) return
+    setTransferPending('export')
+    setTransferFailed(false)
+    setCopyComplete(false)
+    try {
+      setExportText(await presetActions.exportPreset(slot))
+    } catch {
+      setTransferFailed(true)
+    } finally {
+      setTransferPending(null)
+    }
+  }
+
+  const copyExport = async () => {
+    if (exportText.length === 0) return
+    setCopyComplete(false)
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(exportText)
+      } else {
+        exportAreaRef.current?.select()
+        if (!document.execCommand('copy')) throw new Error('copy failed')
+      }
+      setCopyComplete(true)
+    } catch {
+      setTransferFailed(true)
+    }
+  }
+
+  const previewImport = async () => {
+    if (
+      presetActions === undefined ||
+      transferPending !== null ||
+      importText.trim().length === 0
+    ) {
+      return
+    }
+    setTransferPending('preview')
+    setTransferFailed(false)
+    setImportPreview(null)
+    try {
+      setImportPreview(
+        await presetActions.previewImportPreset(slot, importText),
+      )
+    } catch {
+      setTransferFailed(true)
+    } finally {
+      setTransferPending(null)
+    }
+  }
+
+  const pasteImport = async () => {
+    if (!navigator.clipboard?.readText || transferPending !== null) {
+      return
+    }
+    setTransferFailed(false)
+    try {
+      const text = await navigator.clipboard.readText()
+      setImportText(text)
+      setImportPreview(null)
+    } catch {
+      setTransferFailed(true)
+    }
+  }
+
+  const importPreset = async () => {
+    if (
+      presetActions === undefined ||
+      importPreview === null ||
+      transferPending !== null
+    ) {
+      return
+    }
+    if (!await beforeAutoAssignment(importPreview.queuedSkillIds)) return
+    setTransferPending('import')
+    setTransferFailed(false)
+    try {
+      const retainedSkillIds = importPreview.retainedSkillIds ?? []
+      const blockedSkillIds =
+        importPreview.blockedByRetainedSkillIds ?? []
+      if (
+        await presetActions.importPreset(
+          slot,
+          importText,
+          blockedSkillIds.length > 0
+            ? { retainedSkillIds, blockedSkillIds }
+            : undefined,
+        )
+      ) {
+        onClose()
+      } else {
+        setTransferFailed(true)
+      }
+    } catch {
+      setTransferFailed(true)
+    } finally {
+      setTransferPending(null)
+    }
+  }
+
+  return (
+    <SkillDetailsDialog
+      title={intl.formatMessage(messages.managePresetTitle, {
+        name: preset.name,
+      })}
+      closeLabel={intl.formatMessage(messages.close)}
+      palette="normal"
+      className="skill-preset-management-dialog"
+      onClose={onClose}
+    >
+      <div className="skill-preset-management">
+        <form
+          className="skill-preset-management__rename"
+          onSubmit={(event) => {
+            event.preventDefault()
+            if (trimmedName.length === 0 || trimmedName === preset.name) {
+              return
+            }
+            void dispatch({
+              kind: 'skill.rename-preset',
+              slot,
+              name: trimmedName,
+            })
+          }}
+        >
+          <label>
+            <span>{intl.formatMessage(messages.presetName)}</span>
+            <input
+              value={name}
+              autoComplete="off"
+              onChange={(event) => setName(event.currentTarget.value)}
+            />
+          </label>
+          <Button
+            variant="primary"
+            state={
+              pendingKind === 'skill.rename-preset'
+                ? 'pending'
+                : 'idle'
+            }
+            disabled={
+              trimmedName.length === 0 || trimmedName === preset.name
+            }
+            type="submit"
+          >
+            {intl.formatMessage(messages.rename)}
+          </Button>
+        </form>
+
+        <section
+          className="skill-preset-management__color"
+          style={skillPresetColorStyle(preset.colorId)}
+        >
+          <h3>{intl.formatMessage(messages.presetColor)}</h3>
+          <details
+            ref={colorPickerRef}
+            className="skill-preset-color-picker"
+          >
+            <summary>
+              <span
+                className="skill-preset-color-swatch"
+                aria-hidden="true"
+              />
+              <span>{colorName(preset.colorId)}</span>
+            </summary>
+            <div className="skill-preset-color-picker__options">
+              {SKILL_PRESET_COLOR_IDS.map((colorId) => (
+                <button
+                  key={colorId}
+                  type="button"
+                  aria-pressed={preset.colorId === colorId}
+                  style={skillPresetColorStyle(colorId)}
+                  disabled={
+                    !canSetColor ||
+                    pendingKind === 'skill.set-preset-color'
+                  }
+                  onClick={async () => {
+                    const accepted = await dispatch({
+                      kind: 'skill.set-preset-color',
+                      slot,
+                      colorId,
+                    })
+                    if (accepted) {
+                      colorPickerRef.current?.removeAttribute('open')
+                    }
+                  }}
+                >
+                  <span
+                    className="skill-preset-color-swatch"
+                    aria-hidden="true"
+                  />
+                  <span>{colorName(colorId)}</span>
+                </button>
+              ))}
+            </div>
+          </details>
+        </section>
+
+        <section className="skill-preset-management__export">
+          <h3>{intl.formatMessage(messages.exportPreset)}</h3>
+          <p>{intl.formatMessage(messages.exportPresetHelp)}</p>
+          <Button
+            disabled={presetActions === undefined}
+            state={transferPending === 'export' ? 'pending' : 'idle'}
+            onClick={() => void exportPreset()}
+          >
+            {intl.formatMessage(messages.createExport)}
+          </Button>
+          {exportText.length > 0 && (
+            <>
+              <label>
+                <span className="skills-surface__visually-hidden">
+                  {intl.formatMessage(messages.exportText)}
+                </span>
+                <textarea
+                  ref={exportAreaRef}
+                  readOnly
+                  rows={4}
+                  value={exportText}
+                  onFocus={(event) => event.currentTarget.select()}
+                />
+              </label>
+              <Button onClick={() => void copyExport()}>
+                {intl.formatMessage(messages.copy)}
+              </Button>
+              {copyComplete && (
+                <span role="status">
+                  {intl.formatMessage(messages.copied)}
+                </span>
+              )}
+            </>
+          )}
+        </section>
+
+        <section className="skill-preset-management__import">
+          <h3>{intl.formatMessage(messages.importPreset)}</h3>
+          <p>{intl.formatMessage(messages.importPresetHelp)}</p>
+          <label>
+            <span className="skills-surface__visually-hidden">
+              {intl.formatMessage(messages.importText)}
+            </span>
+            <textarea
+              rows={4}
+              value={importText}
+              placeholder={intl.formatMessage(
+                messages.importPlaceholder,
+              )}
+              onChange={(event) => {
+                setImportText(event.currentTarget.value)
+                setImportPreview(null)
+                setTransferFailed(false)
+              }}
+            />
+          </label>
+          <Button
+            disabled={!navigator.clipboard?.readText}
+            onClick={() => void pasteImport()}
+          >
+            {intl.formatMessage(messages.paste)}
+          </Button>
+          <Button
+            disabled={
+              presetActions === undefined ||
+              importText.trim().length === 0
+            }
+            state={transferPending === 'preview' ? 'pending' : 'idle'}
+            onClick={() => void previewImport()}
+          >
+            {intl.formatMessage(messages.previewImport)}
+          </Button>
+          {importPreview && (
+            <div className="skill-confirmation skill-preset-management__preview">
+              <strong>{importPreview.name}</strong>
+              <PresetSummary
+                count={importPreview.queuedSkillCount}
+                hideAllocation={discoveryUnlocked}
+                workers={importPreview.workerPercent}
+              />
+              <span
+                className="skill-preset-management__import-color"
+                style={skillPresetColorStyle(importPreview.colorId)}
+              >
+                <span
+                  className="skill-preset-color-swatch"
+                  aria-hidden="true"
+                />
+                {colorName(importPreview.colorId)}
+              </span>
+              <p>
+                {intl.formatMessage(messages.replacePreset, {
+                  name: preset.name,
+                })}
+              </p>
+              {(importPreview.lockedQueuedSkillCount ?? 0) > 0 && (
+                <p>
+                  {intl.formatMessage(messages.importLockedQueued, {
+                    count: importPreview.lockedQueuedSkillCount,
+                  })}
+                </p>
+              )}
+              {(importPreview.blockedByRetainedSkillIds?.length ?? 0) > 0 && (
+                <>
+                  <p>
+                    {intl.formatMessage(messages.importRetainedConflict, {
+                      blockedCount:
+                        importPreview.blockedByRetainedSkillIds?.length ?? 0,
+                      retainedCount:
+                        importPreview.retainedSkillIds?.length ?? 0,
+                    })}
+                  </p>
+                  <section className="skill-reset-dialog__group">
+                    <h3>
+                      {intl.formatMessage(messages.retainedSkillsHeading)}
+                    </h3>
+                    <AffectedSkillList
+                      skillIds={importPreview.retainedSkillIds ?? []}
+                      nodeById={nodeById}
+                      label={intl.formatMessage(
+                        messages.retainedSkillsHeading,
+                      )}
+                    />
+                  </section>
+                  <section className="skill-reset-dialog__group">
+                    <h3>
+                      {intl.formatMessage(messages.blockedSkillsHeading)}
+                    </h3>
+                    <AffectedSkillList
+                      skillIds={
+                        importPreview.blockedByRetainedSkillIds ?? []
+                      }
+                      nodeById={nodeById}
+                      label={intl.formatMessage(
+                        messages.blockedSkillsHeading,
+                      )}
+                    />
+                  </section>
+                </>
+              )}
+              <Button
+                variant="primary"
+                state={
+                  transferPending === 'import' ? 'pending' : 'idle'
+                }
+                onClick={() => void importPreset()}
+              >
+                {intl.formatMessage(
+                  (importPreview.blockedByRetainedSkillIds?.length ?? 0) > 0
+                    ? messages.switchAnyway
+                    : messages.confirmImport,
+                )}
+              </Button>
+              <Button
+                disabled={transferPending !== null}
+                onClick={() => setImportPreview(null)}
+              >
+                {intl.formatMessage(messages.cancel)}
+              </Button>
+            </div>
+          )}
+        </section>
+        {transferFailed && (
+          <StatusFeedback tone="error">
+            {intl.formatMessage(messages.presetTransferFailed)}
+          </StatusFeedback>
+        )}
+      </div>
+    </SkillDetailsDialog>
+  )
+}
+
+function PresetSummary({
+  hideAllocation = false,
+  count,
+  workers,
+}: {
+  readonly hideAllocation?: boolean
+  readonly count: number
+  readonly workers: number
+}) {
+  const intl = useIntl()
+  if (hideAllocation) return <span className="skill-preset-summary">{intl.formatMessage(messages.presetSummary, { count })}</span>
+  const workerPercent = Math.max(0, Math.min(100, Math.round(workers)))
+  const scientistPercent = 100 - workerPercent
+
+  return (
+    <span className="skill-preset-summary">
+      <span className="skill-preset-summary__queued">
+        {intl.formatMessage(messages.presetSummary, { count })}
+      </span>
+      <span className="skills-surface__visually-hidden"> · </span>
+      <span className="skill-preset-summary__distribution">
+        <StableSingleLineText minimumScale={1}>
+          {intl.formatMessage(messages.presetDistribution, {
+            workers: workerPercent,
+            scientists: scientistPercent,
+            workerValue: (chunks: ReactNode) => (
+              <span className="skill-preset-summary__workers">
+                {chunks}
+              </span>
+            ),
+            scientistValue: (chunks: ReactNode) => (
+              <span className="skill-preset-summary__scientists">
+                {chunks}
+              </span>
+            ),
+          })}
+        </StableSingleLineText>
+      </span>
+    </span>
+  )
+}

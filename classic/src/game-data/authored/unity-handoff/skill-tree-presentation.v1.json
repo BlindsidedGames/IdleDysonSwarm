@@ -1,0 +1,2203 @@
+{
+  "formatVersion": 1,
+  "nodeCount": 104,
+  "sources": {
+    "graphPrefab": {
+      "path": "Assets/Prefabs/Panel.prefab",
+      "sourceHash": "a9ba135c9bad1b1a18185a37844d39971c8a412ee1c7dbb0fd8179d007f18290"
+    },
+    "iconDirectory": "Assets/Sprites/SkillIcons",
+    "nodePrefab": {
+      "guid": "63def614896650346ad3eab31ba9e48b",
+      "path": "Assets/Prefabs/SkillButtonPrefab.prefab",
+      "sourceHash": "07ef6b88ddd317c2f52612c02ee14174bf8df97f9e0b000e073002c4ac0ccebf"
+    },
+    "skillDefinitions": "Assets/Data/Skills/*.asset"
+  },
+  "nodes": [
+    {
+      "skillId": "addictionToPower",
+      "legacySkillKey": 33,
+      "x": -334.00003,
+      "y": -324.99982,
+      "displayName": "Addiction to Power",
+      "description": "Unable to help yourself you claim all of the unknown power.",
+      "technicalDescription": "200% stronger Assembly Lines, AI Managers, Servers, Data Centers, and Planets. 10% less Cash and Science.\n\nBuff stacks Multiplicatively. Debuff stacks Additively for a total of 50% less.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.addictionToPower.name",
+        "description": "skills.node.addictionToPower.description",
+        "technicalDescription": "skills.node.addictionToPower.technical"
+      },
+      "icon": {
+        "fileName": "addictionToPower.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Addiction to Power.png",
+        "sourceGuid": "c9de6009384494dedb26357e71bfc3c5",
+        "sourceHash": "f33b65988ebdae43d109e9399226127b46c87e8b645b73b9973d51801b19c5d5"
+      }
+    },
+    {
+      "skillId": "agressiveAlgorithms",
+      "legacySkillKey": 102,
+      "x": -976,
+      "y": 1261,
+      "displayName": "Aggressive Algorithms",
+      "description": "Go faster, innovate harder, and take some prisoners.",
+      "technicalDescription": "Servers, AI Managers, and Assembly Lines are 3x stronger. Planets and Data Centers are 3x weaker.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.agressiveAlgorithms.name",
+        "description": "skills.node.agressiveAlgorithms.description",
+        "technicalDescription": "skills.node.agressiveAlgorithms.technical"
+      },
+      "icon": {
+        "fileName": "agressiveAlgorithms.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Aggressive Algorithms.png",
+        "sourceGuid": "19259291a4f574f21be5eb2ba9ff9720",
+        "sourceHash": "be0ec03a1d07169df71484b4d280c348a795a7e0bb0065124b0ce3bc91c7e9f0"
+      }
+    },
+    {
+      "skillId": "aiManagerTree",
+      "legacySkillKey": 3,
+      "x": -748,
+      "y": 703.00006,
+      "displayName": "AI Managers",
+      "description": "This breakthrough technology halves the resources required for your AI Managers to run, giving them twice the yield.",
+      "technicalDescription": "Multiplies AI Managers Assembly Line production by 2.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.aiManagerTree.name",
+        "description": "skills.node.aiManagerTree.description",
+        "technicalDescription": "skills.node.aiManagerTree.technical"
+      },
+      "icon": {
+        "fileName": "aiManagerTree.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_AI Managers.png",
+        "sourceGuid": "4fcc50f98fd7744aba30e5233bb52654",
+        "sourceHash": "3f0382b4469bc4dd0b2e4d7e7a9d03e0abcfb22082d2027d6b3caf0494612e25"
+      }
+    },
+    {
+      "skillId": "androids",
+      "legacySkillKey": 20,
+      "x": -158,
+      "y": 223,
+      "displayName": "Androids",
+      "description": "Androids actively repair panels while in orbit, greatly improving panel lifetime.",
+      "technicalDescription": "While purchased Androids scales from 0 to 200 seconds of Panel Lifetime over a 10 minute span.\nThis resets on Infinity/Quantum Leap.",
+      "cost": 2,
+      "messageIds": {
+        "displayName": "skills.node.androids.name",
+        "description": "skills.node.androids.description",
+        "technicalDescription": "skills.node.androids.technical"
+      },
+      "icon": {
+        "fileName": "androids.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Androids.png",
+        "sourceGuid": "d15d5366436154a33a0f8b5c28981749",
+        "sourceHash": "da2b826348c184c3d58696640106c05c2ce6bb394768443ed90c60350324fd0e"
+      }
+    },
+    {
+      "skillId": "artificiallyEnhancedPanels",
+      "legacySkillKey": 17,
+      "x": 57.999996,
+      "y": 223.00003,
+      "displayName": "Artificially Enhanced Panels",
+      "description": "Utilizing wasted resources you boost your panels lifetime using your AI Managers to process better designs.",
+      "technicalDescription": "Increase Panel Lifetime by 5 * log10(AI Managers).",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.artificiallyEnhancedPanels.name",
+        "description": "skills.node.artificiallyEnhancedPanels.description",
+        "technicalDescription": "skills.node.artificiallyEnhancedPanels.technical"
+      },
+      "icon": {
+        "fileName": "artificiallyEnhancedPanels.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Artificially Enhanced Panels.png",
+        "sourceGuid": "6ce5f1220ae0a437d841b5a48db39175",
+        "sourceHash": "9f76c5e92466879a57c2394c44d1dd208e3db6f51efc1d47b3e670569dd70cd5"
+      }
+    },
+    {
+      "skillId": "assemblyLineTree",
+      "legacySkillKey": 2,
+      "x": -748,
+      "y": 863.0001,
+      "displayName": "Assembly Lines",
+      "description": "Overclocking capabilities allow your Assembly Lines to produce twice as many Bots.",
+      "technicalDescription": "Multiplies Assembly Lines Bot production by 2.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.assemblyLineTree.name",
+        "description": "skills.node.assemblyLineTree.description",
+        "technicalDescription": "skills.node.assemblyLineTree.technical"
+      },
+      "icon": {
+        "fileName": "assemblyLineTree.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Assembly Lines.png",
+        "sourceGuid": "25060be4c29124769af2dc04de31bcdb",
+        "sourceHash": "9ed53737c989572972a9a4b6050c011324cdcd54130683ffb9464a4e2ab605ca"
+      }
+    },
+    {
+      "skillId": "assemblyMegaLines",
+      "legacySkillKey": 42,
+      "x": -547,
+      "y": 863,
+      "displayName": "Assembly Megalines",
+      "description": "More Planets allow for larger Assembly Lines. Mega-Assembly Lines that is. Probably a good idea to let the bots handle this.",
+      "technicalDescription": "The Cost of Assembly Lines is divided by the current amount of Planets.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.assemblyMegaLines.name",
+        "description": "skills.node.assemblyMegaLines.description",
+        "technicalDescription": "skills.node.assemblyMegaLines.technical"
+      },
+      "icon": {
+        "fileName": "assemblyMegaLines.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Assembly Megalines.png",
+        "sourceGuid": "0b43db52c6c2648ce80a76656ee27ddd",
+        "sourceHash": "6333f7e35df2144e581c60277e0536c9f667fd88e557f39aad4a0efc4364870b"
+      }
+    },
+    {
+      "skillId": "avocados",
+      "legacySkillKey": 34,
+      "x": 1687,
+      "y": 1717,
+      "displayName": "Avocados",
+      "description": "Avocados are cool, and so are you. If you found this well done.",
+      "technicalDescription": "Building production is multiplied by 2 at 69 purchases.",
+      "cost": 2,
+      "messageIds": {
+        "displayName": "skills.node.avocados.name",
+        "description": "skills.node.avocados.description",
+        "technicalDescription": "skills.node.avocados.technical"
+      },
+      "icon": {
+        "fileName": "avocados.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Avocados.png",
+        "sourceGuid": "d0ad3bcf08bf448a59c4b317918d27b1",
+        "sourceHash": "68794bb04fb7d96a64632ee92d06738b3fa5e7c03734399a18467100e457da16"
+      }
+    },
+    {
+      "skillId": "banking",
+      "legacySkillKey": 11,
+      "x": -389,
+      "y": -559.9999,
+      "displayName": "Banking",
+      "description": "After much thought, you decide the multiverse is real and focus on sending some of your knowledge to the next universe.",
+      "technicalDescription": "Set one Skill Point aside for your next infinity.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.banking.name",
+        "description": "skills.node.banking.description",
+        "technicalDescription": "skills.node.banking.technical"
+      },
+      "icon": {
+        "fileName": "banking.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Banking.png",
+        "sourceGuid": "bfe64bca14fc14670b143050ba35f1f0",
+        "sourceHash": "dfa8b35664ca19ece1554c4e6650c62586e914cb3e6f44a77ff73369dcaf47d0"
+      }
+    },
+    {
+      "skillId": "burnOut",
+      "legacySkillKey": 16,
+      "x": 574.3999,
+      "y": -1046.9995,
+      "displayName": "Burnout",
+      "description": "You experiment with lower orbits. The heat of the sun degrades your panels faster but the energy output is greatly improved!",
+      "technicalDescription": "Shorten Panel Lifetime by 5s, and triple panel production.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.burnOut.name",
+        "description": "skills.node.burnOut.description",
+        "technicalDescription": "skills.node.burnOut.technical"
+      },
+      "icon": {
+        "fileName": "burnOut.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Burnout.png",
+        "sourceGuid": "bc6241dbdf29b45bb886dae4fd7c3d90",
+        "sourceHash": "154356b1c8e64ac2c4fa0591872f356e364ad6210ea6e49d9c133da639dcd719"
+      }
+    },
+    {
+      "skillId": "citadelCouncil",
+      "legacySkillKey": 88,
+      "x": 1484,
+      "y": -1098.3994,
+      "displayName": "Citadel Council",
+      "description": "All spacefaring civilizations eventually come to realize that cooperation is the only way forward. Thus, the best of the best represent each species in the citadel council, responsible for guiding the universe towards a safe future.",
+      "technicalDescription": "Panel Lifetime is multiplied by log1.2(Panels Decayed).",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.citadelCouncil.name",
+        "description": "skills.node.citadelCouncil.description",
+        "technicalDescription": "skills.node.citadelCouncil.technical"
+      },
+      "icon": {
+        "fileName": "citadelCouncil.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Citadel Council.png",
+        "sourceGuid": "adbdbe983a3d349b68b04c433edacd0b",
+        "sourceHash": "0c092acb751e05b33187a8e66d0fa53c410292ae3bf03cfb8c38f4ffde4ab731"
+      }
+    },
+    {
+      "skillId": "clusterNetworking",
+      "legacySkillKey": 103,
+      "x": -1146,
+      "y": 1081,
+      "displayName": "Cluster Networking",
+      "description": "Create dedicated server 'clusters' for your own benefit.",
+      "technicalDescription": "For every log10(Servers), Servers are 5% better, and Server Production from Rudimentary Singularity is 5% stronger.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.clusterNetworking.name",
+        "description": "skills.node.clusterNetworking.description",
+        "technicalDescription": "skills.node.clusterNetworking.technical"
+      },
+      "icon": {
+        "fileName": "clusterNetworking.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Cluster Networking.png",
+        "sourceGuid": "c555bf87f9ff746799f04b111dac60dd",
+        "sourceHash": "755125465e2637e2af5235b29d3719320f8d864d02c8ee9c7fbb7835fd8b41d9"
+      }
+    },
+    {
+      "skillId": "coldFusion",
+      "legacySkillKey": 67,
+      "x": 783.3994,
+      "y": -1442.9995,
+      "displayName": "Cold Fusion",
+      "description": "Theoretical made fact. Your army of scientists manage to solve cold fusion. What more lays in front of you? The future is a bright one.",
+      "technicalDescription": "Reduces Cash income by 50%, increases Science by 10x",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.coldFusion.name",
+        "description": "skills.node.coldFusion.description",
+        "technicalDescription": "skills.node.coldFusion.technical"
+      },
+      "icon": {
+        "fileName": "coldFusion.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Cold Fusion.png",
+        "sourceGuid": "e5014995c9e514a538ceec1b3a6a7bb7",
+        "sourceHash": "f3a931d688bfeb59e2897d300f81553092d5d6b9964d1772f55a46e92b007fed"
+      }
+    },
+    {
+      "skillId": "dataCenterTree",
+      "legacySkillKey": 22,
+      "x": -748,
+      "y": 383.00006,
+      "displayName": "Data Centers",
+      "description": "Advanced Data Center infrastructure allows for more complex Server designs",
+      "technicalDescription": "Multiplies Data Center Server production by 2.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.dataCenterTree.name",
+        "description": "skills.node.dataCenterTree.description",
+        "technicalDescription": "skills.node.dataCenterTree.technical"
+      },
+      "icon": {
+        "fileName": "dataCenterTree.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Data Centers.png",
+        "sourceGuid": "56781f60867bb4a7f8135c0eb38d1885",
+        "sourceHash": "df0ad995b546a39d231ad58fe4cfebc79d06e62dc8f22bdaf03d7edb1699953d"
+      }
+    },
+    {
+      "skillId": "dimensionalCatCables",
+      "legacySkillKey": 74,
+      "x": -1200.2,
+      "y": 452.99997,
+      "displayName": "Dimensional CAT cables",
+      "description": "Meow. Linking up your fancy dimensional Data Centers with your regular old boring Data Centers makes them far more capable. The resources needed do make your Planets slightly worse, however.",
+      "technicalDescription": "5x as many Data Centers from Pocket Dimensions. 25% less Data Center production from Planets.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.dimensionalCatCables.name",
+        "description": "skills.node.dimensionalCatCables.description",
+        "technicalDescription": "skills.node.dimensionalCatCables.technical"
+      },
+      "icon": {
+        "fileName": "dimensionalCatCables.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Dimensional CAT Cables.png",
+        "sourceGuid": "32102846e7fcd410da9d5389e45f1ac7",
+        "sourceHash": "1f90aaf291489bb2ff1061bbb26f6466c883027db8e7394fb5098dbcff65a027"
+      }
+    },
+    {
+      "skillId": "doubleScienceTree",
+      "legacySkillKey": 9,
+      "x": -158,
+      "y": 658,
+      "displayName": "Science *2",
+      "description": "Breakthroughs in CPU manufacturing allow your science bots to calculate twice as much data.",
+      "technicalDescription": "Multiplies Science production by 2.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.doubleScienceTree.name",
+        "description": "skills.node.doubleScienceTree.description",
+        "technicalDescription": "skills.node.doubleScienceTree.technical"
+      },
+      "icon": {
+        "fileName": "doubleScienceTree.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Double Science.png",
+        "sourceGuid": "a3e3b741e70344ddf924eece3adc2b27",
+        "sourceHash": "00e1bd1086521ec58db513663c6f161389a37952628f91655930c58536c8a80e"
+      }
+    },
+    {
+      "skillId": "dysonSubsidies",
+      "legacySkillKey": 50,
+      "x": 392.3994,
+      "y": -880.9995,
+      "displayName": "Dyson Subsidies",
+      "description": "Unlock the full potential of your space empire with Dyson Subsidies. Get a big boost in Cash flow before you surround a star and enjoy increased Bot production after. Take your game to the next level and conquer the galaxy with Dyson Subsidies.",
+      "technicalDescription": "Before you surround a star you gain 3x Cash, after a star is surrounded this becomes 2x Bot production.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.dysonSubsidies.name",
+        "description": "skills.node.dysonSubsidies.description",
+        "technicalDescription": "skills.node.dysonSubsidies.technical"
+      },
+      "icon": {
+        "fileName": "dysonSubsidies.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Dyson Subsidies.png",
+        "sourceGuid": "bcb05961f99624077b0b85d0c09cc374",
+        "sourceHash": "d6f85585ee48e48ebf137b31e6ce92d0e7a785f3b2bffee011f61d78ab8da4dd"
+      }
+    },
+    {
+      "skillId": "economicDominance",
+      "legacySkillKey": 69,
+      "x": -334.00006,
+      "y": -171.99994,
+      "displayName": "Economic Dominance",
+      "description": "Shift your goals to economic growth with singular focus.",
+      "technicalDescription": "20x Cash, 0.25x Science",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.economicDominance.name",
+        "description": "skills.node.economicDominance.description",
+        "technicalDescription": "skills.node.economicDominance.technical"
+      },
+      "icon": {
+        "fileName": "economicDominance.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Economic Dominance.png",
+        "sourceGuid": "2053f0f995547406085a7fdbabd08e3b",
+        "sourceHash": "8b19abcdbe6c3e4d3797794b22b546a807cbef9c55734f6f7d82d63100be1f79"
+      }
+    },
+    {
+      "skillId": "economicRevolution",
+      "legacySkillKey": 14,
+      "x": -334.00006,
+      "y": 12,
+      "displayName": "Economic Revolution",
+      "description": "Self improving bots create a surge in economic progress.",
+      "technicalDescription": "Multiplies Cash by 5 while you have at least 50% of bots assigned to Panel Production.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.economicRevolution.name",
+        "description": "skills.node.economicRevolution.description",
+        "technicalDescription": "skills.node.economicRevolution.technical"
+      },
+      "icon": {
+        "fileName": "economicRevolution.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Economic Revolution.png",
+        "sourceGuid": "d9bd3fdec8a5141d0b441827f98fc61e",
+        "sourceHash": "4613a83e98f298012684dae0bb936197cde4d1fe6e68624d4dacb2c99a3a12c1"
+      }
+    },
+    {
+      "skillId": "endOfTheLine",
+      "legacySkillKey": 55,
+      "x": 203.3999,
+      "y": -1209.9995,
+      "displayName": "End of the Line",
+      "description": "Imagine a future where Assembly Lines stretch far into the horizon, bustling with the hum of robots tirelessly working. While this may sound like a productivity paradise, it also comes with a hefty price tag. Longer Assembly Lines mean an increased number of Bots, but as a result, they gobble up valuable real estate, chipping away at the already dwindling power of our planets.",
+      "technicalDescription": "5x Bot production. Planets are 50% weaker.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.endOfTheLine.name",
+        "description": "skills.node.endOfTheLine.description",
+        "technicalDescription": "skills.node.endOfTheLine.technical"
+      },
+      "icon": {
+        "fileName": "endOfTheLine.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_End of the Line.png",
+        "sourceGuid": "68448cf0cafad48ccae1f0832579ae5f",
+        "sourceHash": "b1a0a2a30191f0f1e2f891183370437562cf6e33ac0767c61551d2e9519b2113"
+      }
+    },
+    {
+      "skillId": "fragmentAssembly",
+      "legacySkillKey": 41,
+      "x": 259,
+      "y": -94,
+      "displayName": "Fragment Assembly",
+      "description": "As you begin to piece the fragments together, you manage to decipher ways to improve all of your buildings.",
+      "technicalDescription": "If you have at least 4 other Fragment Skills purchased, Triple the production of all Buildings.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.fragmentAssembly.name",
+        "description": "skills.node.fragmentAssembly.description",
+        "technicalDescription": "skills.node.fragmentAssembly.technical"
+      },
+      "icon": {
+        "fileName": "fragmentAssembly.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Fragment Assembly.png",
+        "sourceGuid": "3ee197daaac214261897bae3fe9dc2c8",
+        "sourceHash": "70966825b91c3cd35c3976c864d5ef4b1000586e9aa54e9ef27854818bb01602"
+      }
+    },
+    {
+      "skillId": "fusionReactors",
+      "legacySkillKey": 66,
+      "x": 783.3994,
+      "y": -1270.9995,
+      "displayName": "Fusion Reactors",
+      "description": "Fission just won't cut it, Fusion is the way forward. Fusion lets you create miniature suns.",
+      "technicalDescription": "Boost Panel Production by 5x, reduce Cash income by 25%",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.fusionReactors.name",
+        "description": "skills.node.fusionReactors.description",
+        "technicalDescription": "skills.node.fusionReactors.technical"
+      },
+      "icon": {
+        "fileName": "fusionReactors.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Fusion Reactors.png",
+        "sourceGuid": "54e0263c17b14402db61fa7c3901b46a",
+        "sourceHash": "1009d5362ee732002fd46d86c802f50a4f9739ce04365d53524e6ad0afa6e512"
+      }
+    },
+    {
+      "skillId": "galacticPradigmShift",
+      "legacySkillKey": 52,
+      "x": 203.3999,
+      "y": -880.9995,
+      "displayName": "Galactic Paradigm Shift",
+      "description": "The Galactic Paradigm Shift is a significant increase in Planet production within a galaxy. The effects of this change impact intergalactic civilizations and the galaxy as a whole, presenting both opportunities and challenges. The cause of the shift is still unknown.",
+      "technicalDescription": "Planets produce 1.5x as much before you Engulf a Galaxy. They produce 3x as much afterwards.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.galacticPradigmShift.name",
+        "description": "skills.node.galacticPradigmShift.description",
+        "technicalDescription": "skills.node.galacticPradigmShift.technical"
+      },
+      "icon": {
+        "fileName": "galacticPradigmShift.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Galactic Paradigm Shift.png",
+        "sourceGuid": "1dc5e6729f5bc4cee840f27cf20fcd3d",
+        "sourceHash": "b1cc5ffc63e2f32095d04840e7bbb564dc16a2cc46d9e1a1b759b7cc3dc375c6"
+      }
+    },
+    {
+      "skillId": "higgsBoson",
+      "legacySkillKey": 19,
+      "x": -334.00006,
+      "y": 658,
+      "displayName": "Higgs Boson",
+      "description": "Surrounding black holes is unheard of, but you manage it after years of research!",
+      "technicalDescription": "Boosts Cash gain by 10% for every Galaxy engulfed.",
+      "cost": 2,
+      "messageIds": {
+        "displayName": "skills.node.higgsBoson.name",
+        "description": "skills.node.higgsBoson.description",
+        "technicalDescription": "skills.node.higgsBoson.technical"
+      },
+      "icon": {
+        "fileName": "higgsBoson.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Higgs Boson.png",
+        "sourceGuid": "246dae6d038cc48aa847dcfdcb03f3da",
+        "sourceHash": "4b6a299f9916c498cdec283c8bbe1fd3ae0f7ab15d1dbc1e919e7581f0c40210"
+      }
+    },
+    {
+      "skillId": "hubbleTelescope",
+      "legacySkillKey": 72,
+      "x": -748,
+      "y": 12.000008,
+      "displayName": "Hubble Telescope",
+      "description": "A space telescope that was launched into low Earth orbit in 1990 and remains in operation to this day.",
+      "technicalDescription": "Double the effect of Scientific Planets.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.hubbleTelescope.name",
+        "description": "skills.node.hubbleTelescope.description",
+        "technicalDescription": "skills.node.hubbleTelescope.technical"
+      },
+      "icon": {
+        "fileName": "hubbleTelescope.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Hubble Telescope.png",
+        "sourceGuid": "aecc890a486a64c93b23acc49f2b12fb",
+        "sourceHash": "16e8c1a673f6f45abdf8ba964ea138f5d6b266294f9fba27dec15c46688ee980"
+      }
+    },
+    {
+      "skillId": "hypercubeNetworks",
+      "legacySkillKey": 98,
+      "x": -1346,
+      "y": 1081,
+      "displayName": "Hypercube Networks",
+      "description": "Fancy name for a fancy boost. You always excelled in geometry, time to apply the knowledge to your dyson swarm empire.",
+      "technicalDescription": "Data Centers gain a 10% production for every log10(Servers).",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.hypercubeNetworks.name",
+        "description": "skills.node.hypercubeNetworks.description",
+        "technicalDescription": "skills.node.hypercubeNetworks.technical"
+      },
+      "icon": {
+        "fileName": "hypercubeNetworks.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Hypercube Networks.png",
+        "sourceGuid": "66549a18149194521901c6b49ccba0bb",
+        "sourceHash": "d8c5e4ce24117e500a5b262b0b59279a074b37443c48b951d133cd0b19732a1b"
+      }
+    },
+    {
+      "skillId": "idleElectricSheep",
+      "legacySkillKey": 43,
+      "x": -90,
+      "y": -225,
+      "displayName": "Idle Electric Sheep",
+      "description": "Counting sheep is such a breeze, Helps me fall asleep with ease, One by one they jump the fence, Takes me to dreamland in suspense.\nWhite and fluffy, soft and neat, Lead me to slumber so sweet, Close my eyes, take a deep breath, Counting sheep, I meet my rest.\nOver the hills and far away, Sheep are counting every day, A bedtime ritual, tried and true, Helping me and maybe you.",
+      "technicalDescription": "Doubles the effect running offline time has.",
+      "cost": 2,
+      "messageIds": {
+        "displayName": "skills.node.idleElectricSheep.name",
+        "description": "skills.node.idleElectricSheep.description",
+        "technicalDescription": "skills.node.idleElectricSheep.technical"
+      },
+      "icon": {
+        "fileName": "idleElectricSheep.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Idle Electric Sheep.png",
+        "sourceGuid": "0a8c597c496874c63ac8764246addabd",
+        "sourceHash": "62c9eb630527a639b6bd058fbb402f25e5a9ee35ec248248a4a98e82d8dc879e"
+      }
+    },
+    {
+      "skillId": "idleSpaceFlight",
+      "legacySkillKey": 65,
+      "x": 228,
+      "y": 658,
+      "displayName": "Idle Spaceflight",
+      "description": "Collect matter, build buildings and fly your shuttle between the stars.",
+      "technicalDescription": "Increase Science production by 1% for every 100 million active Panels additively.",
+      "cost": 3,
+      "messageIds": {
+        "displayName": "skills.node.idleSpaceFlight.name",
+        "description": "skills.node.idleSpaceFlight.description",
+        "technicalDescription": "skills.node.idleSpaceFlight.technical"
+      },
+      "icon": {
+        "fileName": "idleSpaceFlight.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Idle Spaceflight.png",
+        "sourceGuid": "abc74073233654be5961e40136e7035a",
+        "sourceHash": "84ebc490c9f8d56144e5d42c413a141c97f4815de823475dbb66d4397607dd56"
+      }
+    },
+    {
+      "skillId": "indulgingInPower",
+      "legacySkillKey": 32,
+      "x": -497,
+      "y": -324.99982,
+      "displayName": "Indulging in Power",
+      "description": "Where is all this power coming from? You decide to take it anyway.",
+      "technicalDescription": "100% stronger Assembly Lines, AI Managers, Servers, Data Centers, and Planets. 15% less Cash and Science.\n\nBuff stacks Multiplicatively. Debuff stacks Additively for a total of 40% less.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.indulgingInPower.name",
+        "description": "skills.node.indulgingInPower.description",
+        "technicalDescription": "skills.node.indulgingInPower.technical"
+      },
+      "icon": {
+        "fileName": "indulgingInPower.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Indulging in Power.png",
+        "sourceGuid": "90c48bdd712a043498daf517d03123a7",
+        "sourceHash": "3d9766700828b926db0fdf9de92f884db6380fa521ef95c75737f4562c12b035"
+      }
+    },
+    {
+      "skillId": "investmentPortfolio",
+      "legacySkillKey": 12,
+      "x": -216,
+      "y": -560,
+      "displayName": "Investment",
+      "description": "Having successfully recieved data from another universe you decide to pay it forward.",
+      "technicalDescription": "Set one Skill Point aside for your next infinity.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.investmentPortfolio.name",
+        "description": "skills.node.investmentPortfolio.description",
+        "technicalDescription": "skills.node.investmentPortfolio.technical"
+      },
+      "icon": {
+        "fileName": "investmentPortfolio.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Investment.png",
+        "sourceGuid": "fad12964a0d1e4d35b81a9b429032409",
+        "sourceHash": "d10750fc1ecc151ddec78e0f8a56bbfda0a1bd37a304d6e156cfbed93dc7a838"
+      }
+    },
+    {
+      "skillId": "jamesWebbTelescope",
+      "legacySkillKey": 73,
+      "x": -748,
+      "y": -172,
+      "displayName": "James Webb Telescope",
+      "description": "Equipped with high-resolution and high-sensitivity instruments, allowing it to view objects too old, distant, or faint for the Hubble Space Telescope. Launched on 25 December 2021.",
+      "technicalDescription": "Quadruple the effect of Scientific Planets.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.jamesWebbTelescope.name",
+        "description": "skills.node.jamesWebbTelescope.description",
+        "technicalDescription": "skills.node.jamesWebbTelescope.technical"
+      },
+      "icon": {
+        "fileName": "jamesWebbTelescope.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_James Webb Telescope.png",
+        "sourceGuid": "af19b8413c11149698a69c2f8659d4db",
+        "sourceHash": "787e820db1a3c945e2f3da188e94f693e32cdbf80960b9bb17553c88b63635e1"
+      }
+    },
+    {
+      "skillId": "manualLabour",
+      "legacySkillKey": 56,
+      "x": 743.3999,
+      "y": -880.9995,
+      "displayName": "Manual Labour",
+      "description": "You like to get your hands dirty, so you set to work setting up Assembly Lines yourself.",
+      "technicalDescription": "Bring back the Manual bot building button and make it produce Assembly Lines. 2% of total Assembly Lines per completion capping at 20x your AI Manager production] Also reduces the manual creation time to 0.2s",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.manualLabour.name",
+        "description": "skills.node.manualLabour.description",
+        "technicalDescription": "skills.node.manualLabour.technical"
+      },
+      "icon": {
+        "fileName": "manualLabour.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Manual Labour.png",
+        "sourceGuid": "d8af9dd3762814ccebba8a2c7dfe219a",
+        "sourceHash": "5c44941546c2cc016684543478e17b59ed3ed8c16c79da40d8843a8d6219b532"
+      }
+    },
+    {
+      "skillId": "megaSwarm",
+      "legacySkillKey": 45,
+      "x": 1107.6997,
+      "y": -745.9995,
+      "displayName": "Mega Swarm",
+      "description": "Lets push that a little further, it seemed to work well.",
+      "technicalDescription": "Increase the production multiplier from 2% to 3%",
+      "cost": 2,
+      "messageIds": {
+        "displayName": "skills.node.megaSwarm.name",
+        "description": "skills.node.megaSwarm.description",
+        "technicalDescription": "skills.node.megaSwarm.technical"
+      },
+      "icon": {
+        "fileName": "megaSwarm.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Mega Swarm.png",
+        "sourceGuid": "7f584815c121d4a55a9cc9576d041dfd",
+        "sourceHash": "d78cf85c68cc1918436b99e949fa9c05ba7e2e3e3ae1acc1af215fa46412ab4e"
+      }
+    },
+    {
+      "skillId": "monetaryPolicy",
+      "legacySkillKey": 38,
+      "x": -497,
+      "y": 222.99998,
+      "displayName": "Monetary Policy",
+      "description": "You find a fragment of another universe. You use this knowledge to improve your Cash gain, I wonder what other parts of this universe you can find?",
+      "technicalDescription": "Increase cash gain by 1.75x Increase this bonus by 0.75x for every other purchased Fragment Skill.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.monetaryPolicy.name",
+        "description": "skills.node.monetaryPolicy.description",
+        "technicalDescription": "skills.node.monetaryPolicy.technical"
+      },
+      "icon": {
+        "fileName": "monetaryPolicy.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Monetary Policy.png",
+        "sourceGuid": "182f1f59f8c234020aeb1a1485a70d57",
+        "sourceHash": "b3001135f52b0b1b8afc26e9970ab79c21d812befd797535fc972586fc17e141"
+      }
+    },
+    {
+      "skillId": "oneMinutePlan",
+      "legacySkillKey": 51,
+      "x": 392.3999,
+      "y": -1046.999,
+      "displayName": "One Minute Plan",
+      "description": "Harness the ancient power of the One Minute Plan for boosted production. This timeless strategy offers increased efficiency and solidifies your place as a master of the universe.",
+      "technicalDescription": "If Panel Lifetime is below a minute, 1.5x Assembly Line production. Otherwise, 5x Assembly Line Production",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.oneMinutePlan.name",
+        "description": "skills.node.oneMinutePlan.description",
+        "technicalDescription": "skills.node.oneMinutePlan.technical"
+      },
+      "icon": {
+        "fileName": "oneMinutePlan.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_One Minute Plan.png",
+        "sourceGuid": "4fe1eb720f46542639ecbc6067c021e8",
+        "sourceHash": "402b0a17f720f88fe1d93df1d5c226f224792532a54f4c6fc0dc81949cde86da"
+      }
+    },
+    {
+      "skillId": "panelLifetime20Tree",
+      "legacySkillKey": 8,
+      "x": -158,
+      "y": 453,
+      "displayName": "20s Lifetime",
+      "description": "One of your ships discovers a new material orbiting a black hole, you manage to find a way to drastically increase panel lifetime.",
+      "technicalDescription": "Increases the duration of Panels by 20 seconds.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.panelLifetime20Tree.name",
+        "description": "skills.node.panelLifetime20Tree.description",
+        "technicalDescription": "skills.node.panelLifetime20Tree.technical"
+      },
+      "icon": {
+        "fileName": "panelLifetime20Tree.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_20s Panel Lifetime.png",
+        "sourceGuid": "c16bff96990ad45f0af61abcc540720e",
+        "sourceHash": "0908886a49eeb20b238ca8227c767bc67d40c9776d76a1240fb92882c2b41451"
+      }
+    },
+    {
+      "skillId": "panelMaintenance",
+      "legacySkillKey": 53,
+      "x": 917.3999,
+      "y": -1021.9995,
+      "displayName": "Panel Maintenance",
+      "description": "Panel Maintenance increases the lifespan of panels by dedicating robotic resources to its upkeep. The more maintenance efforts, the longer the panels will last and function effectively. This process extends the life of panels and ensures optimal performance, reducing the risk of failures and improving system reliability.",
+      "technicalDescription": "Add 1 second of Panel Lifetime for every % of Workers.",
+      "cost": 3,
+      "messageIds": {
+        "displayName": "skills.node.panelMaintenance.name",
+        "description": "skills.node.panelMaintenance.description",
+        "technicalDescription": "skills.node.panelMaintenance.technical"
+      },
+      "icon": {
+        "fileName": "panelMaintenance.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Panel Maintenance.png",
+        "sourceGuid": "0880d97929a8140f181b72e1eae48a87",
+        "sourceHash": "6400f93a4c5d5a87b24183d48de12970d2826d7263175139646bafc67695217a"
+      }
+    },
+    {
+      "skillId": "panelWarranty",
+      "legacySkillKey": 37,
+      "x": 58,
+      "y": 450,
+      "displayName": "Panel Warranty",
+      "description": "You find a fragment of another universe. You use this knowledge to improve your Solar Panels, I wonder what other parts of this universe you can find?",
+      "technicalDescription": "+5s of Panel Lifetime. Double this bonus for every other purchased Fragment Skill. (5s for 1, 20s for 3)",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.panelWarranty.name",
+        "description": "skills.node.panelWarranty.description",
+        "technicalDescription": "skills.node.panelWarranty.technical"
+      },
+      "icon": {
+        "fileName": "panelWarranty.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Panel Warranty.png",
+        "sourceGuid": "e1a1ce3a717f54496b8144deb8a7410c",
+        "sourceHash": "0cdbec1996a95aa67b4ce62aa4ef85161641504bd5cdd3a31c582db4dc9f2c7a"
+      }
+    },
+    {
+      "skillId": "paragon",
+      "legacySkillKey": 86,
+      "x": 1107.6992,
+      "y": -1098.3994,
+      "displayName": "Paragon",
+      "description": "What is more soothing than the blue color of the sky? But of course solar panels emitting blue light. All your population now works with far less stress, increasing the scientific production.",
+      "technicalDescription": "Boost Science production by 5000%.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.paragon.name",
+        "description": "skills.node.paragon.description",
+        "technicalDescription": "skills.node.paragon.technical"
+      },
+      "icon": {
+        "fileName": "paragon.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Paragon.png",
+        "sourceGuid": "2f8d8d473699e40c49c750942753d908",
+        "sourceHash": "1a5f6379e84ad8c114f2f7e154f4955ed3cd9d1eab4b19b5cf16ce6ba8b843a5"
+      }
+    },
+    {
+      "skillId": "parallelComputation",
+      "legacySkillKey": 99,
+      "x": -1246,
+      "y": 1255.1,
+      "displayName": "Parallel Computation",
+      "description": "Why spend multiple threads computing multiple things, when you can instead use all threads to compute all things, in a parallel fashion. Your Servers become much more efficient this way, boosting your Data Centers.",
+      "technicalDescription": "Data Centers gain a 10% production for every log2(Servers).",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.parallelComputation.name",
+        "description": "skills.node.parallelComputation.description",
+        "technicalDescription": "skills.node.parallelComputation.technical"
+      },
+      "icon": {
+        "fileName": "parallelComputation.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Parallel Computation.png",
+        "sourceGuid": "defdae9113f4e4384ba31227363c153c",
+        "sourceHash": "bdfadc0fc79a6207d0edc04723d2c77afb594f694b1cc4e2dd167b51618a7882"
+      }
+    },
+    {
+      "skillId": "parallelProcessing",
+      "legacySkillKey": 70,
+      "x": -976.0001,
+      "y": 650.0001,
+      "displayName": "Parallel Processing",
+      "description": "One fine day in the middle of the night, 2 dead men got up to fight, back to back they faced each other, drew their swords and shot each other. Oh wait this is about processing.",
+      "technicalDescription": "Increase Server effectiveness by 5% for every log2(Servers).",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.parallelProcessing.name",
+        "description": "skills.node.parallelProcessing.description",
+        "technicalDescription": "skills.node.parallelProcessing.technical"
+      },
+      "icon": {
+        "fileName": "parallelProcessing.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Parallel Processing.png",
+        "sourceGuid": "839faecd936874f0ca3e7cbcf62686a6",
+        "sourceHash": "6b2802286989d8bf52cdb17d60f55afd54a7f0f3112c055854e909cddb633bf9"
+      }
+    },
+    {
+      "skillId": "planetAssembly",
+      "legacySkillKey": 92,
+      "x": -3.5996094,
+      "y": -880.9995,
+      "displayName": "Planet Assembly",
+      "description": "So, planets are made out of matter, right? Well, so are Assembly Lines! Getting enough assembly lines together should create more planets. Don't ask why robots don't do the same.",
+      "technicalDescription": "Gain Planets equal to log10(Assembly Lines).",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.planetAssembly.name",
+        "description": "skills.node.planetAssembly.description",
+        "technicalDescription": "skills.node.planetAssembly.technical"
+      },
+      "icon": {
+        "fileName": "planetAssembly.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Planet Assembly.png",
+        "sourceGuid": "cf81ec9aa8ce645bba4e307362b9b52c",
+        "sourceHash": "3bb74dd0469dd88d6868c0827470228e60d47623502acabdc47b7e969bed905a"
+      }
+    },
+    {
+      "skillId": "planetsTree",
+      "legacySkillKey": 5,
+      "x": -748,
+      "y": 223.00006,
+      "displayName": "Planets",
+      "description": "Through more efficient use of space and construction equipment, Data Center build time is halved.",
+      "technicalDescription": "Multiplies Planet Data Center production by 2.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.planetsTree.name",
+        "description": "skills.node.planetsTree.description",
+        "technicalDescription": "skills.node.planetsTree.technical"
+      },
+      "icon": {
+        "fileName": "planetsTree.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Planets.png",
+        "sourceGuid": "06830f15e73d34846bb0b4f10351b433",
+        "sourceHash": "d8836ac1e8c30affe80e54d38b87fa93db11fa1d84949dbe42cdc3d92b7aa7e6"
+      }
+    },
+    {
+      "skillId": "pocketAndroids",
+      "legacySkillKey": 97,
+      "x": -1487.2001,
+      "y": 802.99994,
+      "displayName": "Pocket Androids",
+      "description": "It was only a matter of time before your most trusted workers entered your pocket dimensions. The results are quite astonishing, be it they take time to be noticeable.",
+      "technicalDescription": "Over the course of an hour, Pocket Dimensions gain a production boost with the cap of 100x.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.pocketAndroids.name",
+        "description": "skills.node.pocketAndroids.description",
+        "technicalDescription": "skills.node.pocketAndroids.technical"
+      },
+      "icon": {
+        "fileName": "pocketAndroids.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Pocket Androids.png",
+        "sourceGuid": "7e722c1e4245948be84a2ffbf6552114",
+        "sourceHash": "aed3d28e65d8f17b9a16d493e75e69d3a19d6d604f8e61d0675b652b940686b6"
+      }
+    },
+    {
+      "skillId": "pocketDimensions",
+      "legacySkillKey": 30,
+      "x": -976.0001,
+      "y": 453.00012,
+      "displayName": "Pocket Dimensions",
+      "description": "Discovery of pocket dimensions allow multiple Data Centers to be placed in layers. Ya know, like Onions. Or is it more like a TARDIS?",
+      "technicalDescription": "Produces Data Centers based on Log10(Worker Bots)\n\nStarting at 10 Worker Bots, you gain 1 Data Center per second, this increases by 1 each time you multiply your Workers by 10.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.pocketDimensions.name",
+        "description": "skills.node.pocketDimensions.description",
+        "technicalDescription": "skills.node.pocketDimensions.technical"
+      },
+      "icon": {
+        "fileName": "pocketDimensions.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Pocket Dimensions.png",
+        "sourceGuid": "1f4a955b79a754e469371a32ad973cc1",
+        "sourceHash": "2263fef1ca57de0ced1bb92a8165978317443cc3c680d5dc50e05b62450adb6b"
+      }
+    },
+    {
+      "skillId": "pocketMultiverse",
+      "legacySkillKey": 76,
+      "x": -1200.2,
+      "y": 802.99994,
+      "displayName": "Pocket Multiverse",
+      "description": "Breakthroughs in Pocket technology allow ludicrous improvements.",
+      "technicalDescription": "Pocket Protectors instead multiplies your Data Center production by log10(Scientists).",
+      "cost": 2,
+      "messageIds": {
+        "displayName": "skills.node.pocketMultiverse.name",
+        "description": "skills.node.pocketMultiverse.description",
+        "technicalDescription": "skills.node.pocketMultiverse.technical"
+      },
+      "icon": {
+        "fileName": "pocketMultiverse.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Pocket Multiverse.png",
+        "sourceGuid": "75da9643b88ed4c50ba78d3464f71789",
+        "sourceHash": "ec23b398ab43ecff83592a4e6393a50f4452cffe16213e7036562ff8d6711d0f"
+      }
+    },
+    {
+      "skillId": "pocketProtectors",
+      "legacySkillKey": 75,
+      "x": -1200.2,
+      "y": 646,
+      "displayName": "Pocket Protectors",
+      "description": "Your scientists want in on this as well.",
+      "technicalDescription": "Increase Data Center production by log10(Scientists).",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.pocketProtectors.name",
+        "description": "skills.node.pocketProtectors.description",
+        "technicalDescription": "skills.node.pocketProtectors.technical"
+      },
+      "icon": {
+        "fileName": "pocketProtectors.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Pocket Protectors.png",
+        "sourceGuid": "836c55cabb6f040b9954ff66fb15748d",
+        "sourceHash": "920e8d7ceab760df542fd1481425d04a5c016807cb815dd9755e2908347a164f"
+      }
+    },
+    {
+      "skillId": "powerOverwhelming",
+      "legacySkillKey": 29,
+      "x": 449.3994,
+      "y": -1442.9995,
+      "displayName": "Power Overwhelming",
+      "description": "Use Cash to boost Cash, is economic manipulation still frowned upon?",
+      "technicalDescription": "Cash production ^1.03.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.powerOverwhelming.name",
+        "description": "skills.node.powerOverwhelming.description",
+        "technicalDescription": "skills.node.powerOverwhelming.technical"
+      },
+      "icon": {
+        "fileName": "powerOverwhelming.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Power Overwhelming.png",
+        "sourceGuid": "ff715c3f618ba4329af25b6022531d00",
+        "sourceHash": "29735cc77db72d72673ac865142b3bf1c30e73934e3370e5c4a214c43bbdcdaf"
+      }
+    },
+    {
+      "skillId": "powerUnderwhelming",
+      "legacySkillKey": 28,
+      "x": 614.3994,
+      "y": -1442.9995,
+      "displayName": "Power Underwhelming",
+      "description": "Use Science to boost Science, how? We will never know.",
+      "technicalDescription": "Science production ^1.05.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.powerUnderwhelming.name",
+        "description": "skills.node.powerUnderwhelming.description",
+        "technicalDescription": "skills.node.powerUnderwhelming.technical"
+      },
+      "icon": {
+        "fileName": "powerUnderwhelming.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Power Underwhelming.png",
+        "sourceGuid": "b3006fc6789d546f0a1f7ecd4cabee63",
+        "sourceHash": "736a10695328c2082f74e6749794452de7bd16c32e4d9f59d4154677cc623a9d"
+      }
+    },
+    {
+      "skillId": "producedAsScienceTree",
+      "legacySkillKey": 10,
+      "x": 10,
+      "y": 658,
+      "displayName": "Science Boost",
+      "description": "Improved networking protocols increase your Scientists ability to work closely together, improving science yield greatly.",
+      "technicalDescription": "For every 1% of bots invested in science gain, +100% science production. Multiplicative with other upgrades, but not with itself.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.producedAsScienceTree.name",
+        "description": "skills.node.producedAsScienceTree.description",
+        "technicalDescription": "skills.node.producedAsScienceTree.technical"
+      },
+      "icon": {
+        "fileName": "producedAsScienceTree.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Science Boost.png",
+        "sourceGuid": "031165676b81d4c54a4cc1e1538fabe5",
+        "sourceHash": "5f956a85cb6e3372629dca0b1780ae0bcd6c682910c0567a72041fb31d8fae2f"
+      }
+    },
+    {
+      "skillId": "productionScaling",
+      "legacySkillKey": 40,
+      "x": 917.3999,
+      "y": -569.1997,
+      "displayName": "Production Scaling",
+      "description": "You find a fragment of another universe. You use this knowledge to improve your entire production line, I wonder what other parts of this universe you can find?",
+      "technicalDescription": "Start the 1% bonus with the first bought building after 90. Reduce that threshold by another 5 for every other purchased Fragment Skill.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.productionScaling.name",
+        "description": "skills.node.productionScaling.description",
+        "technicalDescription": "skills.node.productionScaling.technical"
+      },
+      "icon": {
+        "fileName": "productionScaling.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Production Scaling.png",
+        "sourceGuid": "667e287419510429995bfc63dca9730b",
+        "sourceHash": "53cafcdc5f207243d1af5672dd0784263a40d504adf328573bb183cd89f4a70d"
+      }
+    },
+    {
+      "skillId": "progressiveAssembly",
+      "legacySkillKey": 35,
+      "x": -547,
+      "y": 1032,
+      "displayName": "Progressive Assembly",
+      "description": "You find a fragment of another universe. You use this knowledge to improve your Assembly Lines, I wonder what other parts of this universe you can find?",
+      "technicalDescription": "Assembly Lines produce 1.5x as much. Increase this bonus by 0.5x for every other purchased Fragment Skill.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.progressiveAssembly.name",
+        "description": "skills.node.progressiveAssembly.description",
+        "technicalDescription": "skills.node.progressiveAssembly.technical"
+      },
+      "icon": {
+        "fileName": "progressiveAssembly.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Progressive Assembly.png",
+        "sourceGuid": "40a7919e963a742d5b4d4ed09ef30708",
+        "sourceHash": "f1b315c2de928e8816fd25b50f4d329b9ef1dc9625729c7d44c71ef87e49e105"
+      }
+    },
+    {
+      "skillId": "purityOfBody",
+      "legacySkillKey": 48,
+      "x": 743.3999,
+      "y": -518.9995,
+      "displayName": "Purity of Body",
+      "description": "You become one with your Bots, perfection on this scale never before seen.",
+      "technicalDescription": "Multiply Bots by 1.25x for each unspent Skill Point, compounding exponentially.",
+      "cost": 2,
+      "messageIds": {
+        "displayName": "skills.node.purityOfBody.name",
+        "description": "skills.node.purityOfBody.description",
+        "technicalDescription": "skills.node.purityOfBody.technical"
+      },
+      "icon": {
+        "fileName": "purityOfBody.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Purity of Body.png",
+        "sourceGuid": "3c5fa78210fee4b9badd1d591661dbf8",
+        "sourceHash": "5900731a5aa54eba852affd4bd7f59d72bafc4d9c65cd65afef2c87b9d379e71"
+      }
+    },
+    {
+      "skillId": "purityOfMind",
+      "legacySkillKey": 47,
+      "x": 743.3999,
+      "y": -696.999,
+      "displayName": "Purity of Mind",
+      "description": "WIth singular focus you clear your mind of all thoughts that don't include Cash or Science.",
+      "technicalDescription": "Multiply Cash/Science by 1.5x for each unspent Skill Point, compounding exponentially.",
+      "cost": 2,
+      "messageIds": {
+        "displayName": "skills.node.purityOfMind.name",
+        "description": "skills.node.purityOfMind.description",
+        "technicalDescription": "skills.node.purityOfMind.technical"
+      },
+      "icon": {
+        "fileName": "purityOfMind.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Purity of Mind.png",
+        "sourceGuid": "9923c2eb456a34592b3f38245cabab7e",
+        "sourceHash": "15ffe552e9d758db7895a7a8d89938932f1219c13b23ae5cb412094414e6c143"
+      }
+    },
+    {
+      "skillId": "purityOfSEssence",
+      "legacySkillKey": 49,
+      "x": 743.3999,
+      "y": -341.99902,
+      "displayName": "Purity of Essence",
+      "description": "You transcend beyond reality, consuming everything in your path you become one with the Universe.",
+      "technicalDescription": "Multiply Everything by 1.42x for each unspent Skill Point, compounding exponentially.",
+      "cost": 3,
+      "messageIds": {
+        "displayName": "skills.node.purityOfSEssence.name",
+        "description": "skills.node.purityOfSEssence.description",
+        "technicalDescription": "skills.node.purityOfSEssence.technical"
+      },
+      "icon": {
+        "fileName": "purityOfSEssence.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Purity of Essence.png",
+        "sourceGuid": "f0ab110b5e93c40b1af2d61a3a026b0c",
+        "sourceHash": "90b39ad66658a18f5d39b6cf06bc2cbc8aeaac84c5069325c07d5826a632772d"
+      }
+    },
+    {
+      "skillId": "quantumComputing",
+      "legacySkillKey": 100,
+      "x": -1246,
+      "y": 1427,
+      "displayName": "Quantum Computing",
+      "description": "Using the same old server line-up seriously dampers with your progress. By utilizing quantum mechanics, you can now have servers that are simultaneously on, off, and both, boosting their efficiency in ways you don't quite understand.",
+      "technicalDescription": "Production of Data Centers from Pocket Dimensions is boosted by Log2(Rudimentry Singularity Production).",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.quantumComputing.name",
+        "description": "skills.node.quantumComputing.description",
+        "technicalDescription": "skills.node.quantumComputing.technical"
+      },
+      "icon": {
+        "fileName": "quantumComputing.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Quantum Computing.png",
+        "sourceGuid": "c442d2c607cde442fbe8ada8251fb834",
+        "sourceHash": "a564120b1b34cba9b610521320c7414156ed5c1e8f5aa25474ca94d2230f28c2"
+      }
+    },
+    {
+      "skillId": "reapers",
+      "legacySkillKey": 91,
+      "x": 1484,
+      "y": -946.999,
+      "displayName": "Reapers",
+      "description": "Turn the filthy xeno scum into useful \"voluntary\" colonization and enslaving units.",
+      "technicalDescription": "Panel production multiplied by log2(Panels Decayed) / 10.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.reapers.name",
+        "description": "skills.node.reapers.description",
+        "technicalDescription": "skills.node.reapers.technical"
+      },
+      "icon": {
+        "fileName": "reapers.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Reapers.png",
+        "sourceGuid": "16c9b039f7f4c438189f9bb18cbf4de5",
+        "sourceHash": "4006fa166855a0da96d8d4667896b165d68e9954ea24185135c5f18381aaf107"
+      }
+    },
+    {
+      "skillId": "regulatedAcademia",
+      "legacySkillKey": 36,
+      "x": 957.3999,
+      "y": -1442.9995,
+      "displayName": "Regulated Academia",
+      "description": "You find a fragment of another universe. You use this knowledge to improve your Bots, I wonder what other parts of this universe you can find?",
+      "technicalDescription": "Science and Cash Boost base is increased by 20%. Increase the base of this by 10% for every other purchased Fragment Skill.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.regulatedAcademia.name",
+        "description": "skills.node.regulatedAcademia.description",
+        "technicalDescription": "skills.node.regulatedAcademia.technical"
+      },
+      "icon": {
+        "fileName": "regulatedAcademia.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Regulated Academia.png",
+        "sourceGuid": "785b8b23a6dd646a7a04be802d6c5cdc",
+        "sourceHash": "11324306461c979714d3275218f4d7ca104c66ed7a9ea46632fad2c90d59d026"
+      }
+    },
+    {
+      "skillId": "renegade",
+      "legacySkillKey": 89,
+      "x": 1107.6992,
+      "y": -946.999,
+      "displayName": "Renegade",
+      "description": "Fear is but a tool for the strong to make the weak be more productive. Red solar panels spread fear across your galaxies, forcing your population to pay more subsidies to you.",
+      "technicalDescription": "Multiply Cash production by 5000%.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.renegade.name",
+        "description": "skills.node.renegade.description",
+        "technicalDescription": "skills.node.renegade.technical"
+      },
+      "icon": {
+        "fileName": "renegade.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Renegade.png",
+        "sourceGuid": "36fd82f9265ac408c81724a15f7e1d66",
+        "sourceHash": "78f670006572221ca137849ae33904d50a56c787a8a13709c47be1f59a629e2e"
+      }
+    },
+    {
+      "skillId": "renewableEnergy",
+      "legacySkillKey": 15,
+      "x": 58,
+      "y": 12,
+      "displayName": "Renewable Energy",
+      "description": "Renewables surge in popularity leading you to focus on panel lifetime improvements.",
+      "technicalDescription": "Starting at 10 million worker bots, panel lifetime increases by 10%. This increases by 10% each time you multiply your workers by 10.\n\nlifetime *= 1 + 0.1 * log10(Workers / 1e6)",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.renewableEnergy.name",
+        "description": "skills.node.renewableEnergy.description",
+        "technicalDescription": "skills.node.renewableEnergy.technical"
+      },
+      "icon": {
+        "fileName": "renewableEnergy.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Renewable Energy.png",
+        "sourceGuid": "08905642f712c4d508962e805550181b",
+        "sourceHash": "79f216d88c2609b81442b4b05258580b490d7a20ba58e2a48be676f1e1a3d4db"
+      }
+    },
+    {
+      "skillId": "repeatableResearch",
+      "legacySkillKey": 58,
+      "x": 10.000007,
+      "y": 850,
+      "displayName": "Repeatable Research",
+      "description": "Repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat.",
+      "technicalDescription": "Every research also reduces the cost of the research by the listed value (so Science Boost 300% and Cash Boost 250% means Science Boost costs 4x less and Cash Boost costs 3.5x less).",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.repeatableResearch.name",
+        "description": "skills.node.repeatableResearch.description",
+        "technicalDescription": "skills.node.repeatableResearch.technical"
+      },
+      "icon": {
+        "fileName": "repeatableResearch.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Repeatable Research.png",
+        "sourceGuid": "9cd74c0bdcbf04cad987acb3887aa398",
+        "sourceHash": "95ffe95e76a0dcedf29e05e7525b72e4e0bdd8f9d83eb168e4fe90b49171fa7f"
+      }
+    },
+    {
+      "skillId": "rocketMania",
+      "legacySkillKey": 64,
+      "x": 203.3999,
+      "y": -1381.9995,
+      "displayName": "Rocket Mania",
+      "description": "Fly your Rocket from pad to pad and try not to crash!",
+      "technicalDescription": "Panels per second is multiplied by Log20(Panels Per Second)",
+      "cost": 3,
+      "messageIds": {
+        "displayName": "skills.node.rocketMania.name",
+        "description": "skills.node.rocketMania.description",
+        "technicalDescription": "skills.node.rocketMania.technical"
+      },
+      "icon": {
+        "fileName": "rocketMania.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Rocket Mania.png",
+        "sourceGuid": "2f4672738207942638384fba8da6715b",
+        "sourceHash": "d41d4d3bb2a821b14f4bf0e82833a4939ec0c6ae973d91f98b6c1de185e99233"
+      }
+    },
+    {
+      "skillId": "rudimentarySingularity",
+      "legacySkillKey": 71,
+      "x": -976.0001,
+      "y": 1081,
+      "displayName": "Rudimentary Singularity",
+      "description": "Folding particles back in on themselves allow you to form the universes first singularities. Perhaps this technology could benefit your Data Centers somehow?",
+      "technicalDescription": "Data Centers produce Servers based on Log2(Assembly Line Production) ^ Log10(Assembly Line Production).\n\nRequires at least 1 production from AI Managers.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.rudimentarySingularity.name",
+        "description": "skills.node.rudimentarySingularity.description",
+        "technicalDescription": "skills.node.rudimentarySingularity.technical"
+      },
+      "icon": {
+        "fileName": "rudimentarySingularity.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Rudimentary Singularity.png",
+        "sourceGuid": "63211096da11a40f5876ad03f8a46068",
+        "sourceHash": "1afd8d10793c322ee3591b000d82a44c5d450febf5b6cb57cc83ad933cd10062"
+      }
+    },
+    {
+      "skillId": "saren",
+      "legacySkillKey": 90,
+      "x": 1297,
+      "y": -947,
+      "displayName": "Saren",
+      "description": "Utilize your overwhelming firepower (Daka daka) to enslave other spacefaring races. Humanity first!",
+      "technicalDescription": "40x Panel production.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.saren.name",
+        "description": "skills.node.saren.description",
+        "technicalDescription": "skills.node.saren.technical"
+      },
+      "icon": {
+        "fileName": "saren.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Saren.png",
+        "sourceGuid": "92d1e726a2d0d4de9bf652f1eca06637",
+        "sourceHash": "90b7c028d225c838b2f2a6474e9d9e0a62e36fd286486efe6831f45e712e7e47"
+      }
+    },
+    {
+      "skillId": "scientificDominance",
+      "legacySkillKey": 68,
+      "x": -158,
+      "y": 1032,
+      "displayName": "Scientific Dominance",
+      "description": "Shift your goals into the research sector with singular focus.",
+      "technicalDescription": "20x Science, 0.25x Cash",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.scientificDominance.name",
+        "description": "skills.node.scientificDominance.description",
+        "technicalDescription": "skills.node.scientificDominance.technical"
+      },
+      "icon": {
+        "fileName": "scientificDominance.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Scientific Dominance.png",
+        "sourceGuid": "720d16a7006254a3791ec7e6220bce3a",
+        "sourceHash": "863c136dabccea6fc6292000b4bf26fc77c351832ddf34ad364d54bb27ee57eb"
+      }
+    },
+    {
+      "skillId": "scientificPlanets",
+      "legacySkillKey": 6,
+      "x": -976.0001,
+      "y": 283.00003,
+      "displayName": "Scientific Planets",
+      "description": "Teach some of your Scientists to discover planets for you.",
+      "technicalDescription": "Produces Planets based on Log10(Science Bots)\n\nStarting at 10 Science Bots, you gain 1 Planet per second, this increases by 1 each time you multiply your Scientists by 10.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.scientificPlanets.name",
+        "description": "skills.node.scientificPlanets.description",
+        "technicalDescription": "skills.node.scientificPlanets.technical"
+      },
+      "icon": {
+        "fileName": "scientificPlanets.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Automatic Planet Discovery.png",
+        "sourceGuid": "55e9c989dadf74414a7fbc3f667c9ae0",
+        "sourceHash": "7848908e714a94aac8e4c98b766ceb96f3c74e64f76b5058dd515506710a49b6"
+      }
+    },
+    {
+      "skillId": "scientificRevolution",
+      "legacySkillKey": 13,
+      "x": -158,
+      "y": 849.99994,
+      "displayName": "Scientific Revolution",
+      "description": "Self improving bots create a surge in scientific progress.",
+      "technicalDescription": "Multiplies Science by 5 while you have at least 50% of bots assigned to Science.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.scientificRevolution.name",
+        "description": "skills.node.scientificRevolution.description",
+        "technicalDescription": "skills.node.scientificRevolution.technical"
+      },
+      "icon": {
+        "fileName": "scientificRevolution.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Scientific Revolution.png",
+        "sourceGuid": "8d22ceaadbf38490aacbb1b6bf7a009a",
+        "sourceHash": "464c42464f86020094c0ec4fd0f7ae259af71ee4ae6a202780ee1d03a0d71f03"
+      }
+    },
+    {
+      "skillId": "serverTree",
+      "legacySkillKey": 4,
+      "x": -748,
+      "y": 533.00006,
+      "displayName": "Servers",
+      "description": "Learn to build taller server racks and better cooling. Servers can run twice as many managers.",
+      "technicalDescription": "Multiplies Servers AI Manager production by 2.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.serverTree.name",
+        "description": "skills.node.serverTree.description",
+        "technicalDescription": "skills.node.serverTree.technical"
+      },
+      "icon": {
+        "fileName": "serverTree.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Servers.png",
+        "sourceGuid": "367555f1bb82e49ae80d450e5a153510",
+        "sourceHash": "73ad295e52f2f3c36ae5f31e25e1434983377fc4cc3198fe2a333b6cf40016be"
+      }
+    },
+    {
+      "skillId": "shellWorlds",
+      "legacySkillKey": 93,
+      "x": -3.5996094,
+      "y": -696.999,
+      "displayName": "Shell Worlds",
+      "description": "Have you heard of matrioshka worlds? Basically worlds layered into worlds layered into worlds. This technique, other than extremely space efficient, allows planets to give birth to more planets based on how many planets exist.",
+      "technicalDescription": "Gain Planets based on log2(Planets).",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.shellWorlds.name",
+        "description": "skills.node.shellWorlds.description",
+        "technicalDescription": "skills.node.shellWorlds.technical"
+      },
+      "icon": {
+        "fileName": "shellWorlds.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Shell Worlds.png",
+        "sourceGuid": "613762fd31c3f48618da662aca200d4f",
+        "sourceHash": "a93ccd2f5a65f8724661ec9e93d4328ffd975716c51ae68d03ef1f3298340c28"
+      }
+    },
+    {
+      "skillId": "shepherd",
+      "legacySkillKey": 87,
+      "x": 1297,
+      "y": -1098.3994,
+      "displayName": "Shepherd",
+      "description": "You are not alone, in the endless expanse of space. Others share the same goal as you, and together you will act as a protector and guidance to all not yet spacefaring forms of life.",
+      "technicalDescription": "+600 seconds of Panel Lifetime.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.shepherd.name",
+        "description": "skills.node.shepherd.description",
+        "technicalDescription": "skills.node.shepherd.technical"
+      },
+      "icon": {
+        "fileName": "shepherd.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Sheperds.png",
+        "sourceGuid": "ce2600f00bc2b43e789546b6b4e72a50",
+        "sourceHash": "18d4b22634c955e5c79f68b253b6cdcf2d138cba2af7ac75fa30dcf562053f5e"
+      }
+    },
+    {
+      "skillId": "shoulderSurgery",
+      "legacySkillKey": 78,
+      "x": -1487.2001,
+      "y": 452.99997,
+      "displayName": "Shoulder Surgery",
+      "description": "Transplanting these weird looking shoulders should be fine, right?",
+      "technicalDescription": "Shoulders of the Fallen now also affect Pocket Dimensions.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.shoulderSurgery.name",
+        "description": "skills.node.shoulderSurgery.description",
+        "technicalDescription": "skills.node.shoulderSurgery.technical"
+      },
+      "icon": {
+        "fileName": "shoulderSurgery.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Shoulder Surgery.png",
+        "sourceGuid": "92b3c086fc2534f288f961df1c747aba",
+        "sourceHash": "212a8477a406949c5e1868f49257d9f80ee4867f28a05f0d41a5684bce09650a"
+      }
+    },
+    {
+      "skillId": "shouldersOfGiants",
+      "legacySkillKey": 59,
+      "x": -1200.2,
+      "y": 282.99997,
+      "displayName": "Shoulders of Giants",
+      "description": "You find an extinct civilization and learn from their mistakes.",
+      "technicalDescription": "Scientific Planets also produce Science Boosts.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.shouldersOfGiants.name",
+        "description": "skills.node.shouldersOfGiants.description",
+        "technicalDescription": "skills.node.shouldersOfGiants.technical"
+      },
+      "icon": {
+        "fileName": "shouldersOfGiants.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Shoulders of Giants.png",
+        "sourceGuid": "eb87d6cfc072b42ff9b8afd44cc0e616",
+        "sourceHash": "d5d01cdeb537c5603b98d2414173a33cdddd200525cfb62e5f5f0d9c269c3e32"
+      }
+    },
+    {
+      "skillId": "shouldersOfPrecursors",
+      "legacySkillKey": 60,
+      "x": -1346,
+      "y": 112,
+      "displayName": "Shoulders of Precursors",
+      "description": "The Shoulders of Precursors is a powerful artifact with the ability to multiply wealth and knowledge. It negates the effects of other wealth multipliers and also affects cash. This mysterious relic from a lost civilization is highly valuable and sought after. Its true potential remains unknown.",
+      "technicalDescription": "Disable Cash Multipliers, Science Multipliers additionally affect Cash.\n\nMutually exclusive with Shoulders of the Enlightened.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.shouldersOfPrecursors.name",
+        "description": "skills.node.shouldersOfPrecursors.description",
+        "technicalDescription": "skills.node.shouldersOfPrecursors.technical"
+      },
+      "icon": {
+        "fileName": "shouldersOfPrecursors.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Shoulders of Precursors.png",
+        "sourceGuid": "9fdbbfe1e633e4cf3b5805e5783be760",
+        "sourceHash": "d9e33188cbadb451e0b1fbc8e47b3d57203aa52f84d7ef0561304e5dc808c129"
+      }
+    },
+    {
+      "skillId": "shouldersOfTheEnlightened",
+      "legacySkillKey": 62,
+      "x": -1346,
+      "y": 283.00003,
+      "displayName": "Shoulders of the Enlightened",
+      "description": "The \"Shoulders of the Enlightened\" are a pair of mysterious and powerful artifacts that grant immense knowledge and understanding to their bearer, along with the ability to generate great wealth.",
+      "technicalDescription": "Scientific Planets also produces Cash Boosts. Mutually Exclusive with Shoulders of the Precursors.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.shouldersOfTheEnlightened.name",
+        "description": "skills.node.shouldersOfTheEnlightened.description",
+        "technicalDescription": "skills.node.shouldersOfTheEnlightened.technical"
+      },
+      "icon": {
+        "fileName": "shouldersOfTheEnlightened.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Shoulders of the Enlightened.png",
+        "sourceGuid": "aa3ee1d06f1e141a893e3edad59b3ee9",
+        "sourceHash": "49bd00f016a96ae049f3e42a0eda4d928f10fe20790c60dc005305d442e1e085"
+      }
+    },
+    {
+      "skillId": "shouldersOfTheFallen",
+      "legacySkillKey": 61,
+      "x": -1487.2001,
+      "y": 112,
+      "displayName": "Shoulders of the Fallen",
+      "description": "The Shoulders of the Fallen are a revered artifact said to have belonged to great leaders of a lost civilization. They possess the power to enhance Planet production, the extent of which is determined by the number of science boosts acquired. This makes the Shoulders a valuable addition to any empire seeking to increase its production and growth. The true nature and history of this powerful relic remains a mystery, but those who possess it are rumored to have an edge in their quest for expansion and prosperity.",
+      "technicalDescription": "Scientific Planets create additional Planets based on Log2(Science Boosts)",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.shouldersOfTheFallen.name",
+        "description": "skills.node.shouldersOfTheFallen.description",
+        "technicalDescription": "skills.node.shouldersOfTheFallen.technical"
+      },
+      "icon": {
+        "fileName": "shouldersOfTheFallen.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Shoulders of the Fallen.png",
+        "sourceGuid": "4ec044480052840da9e522bb26beafca",
+        "sourceHash": "26c969100c84a79095f866f369f71ea10abb783a441a76f1bb2d2cf017a23303"
+      }
+    },
+    {
+      "skillId": "shouldersOfTheRevolution",
+      "legacySkillKey": 63,
+      "x": -1487.2001,
+      "y": 282.99994,
+      "displayName": "Shoulders of the Revolution",
+      "description": "The \"Shoulders of the Revolution\" is a phrase that refers to a powerful financial system that harnesses the latest advancements in science to dramatically increase wealth. It is said to be built upon the innovations and insights of previous generations of thinkers, and it represents a new era of prosperity and progress for those who use it.",
+      "technicalDescription": "Gain 1% additional Cash per Science Boost.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.shouldersOfTheRevolution.name",
+        "description": "skills.node.shouldersOfTheRevolution.description",
+        "technicalDescription": "skills.node.shouldersOfTheRevolution.technical"
+      },
+      "icon": {
+        "fileName": "shouldersOfTheRevolution.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Shoulders of the Revolution.png",
+        "sourceGuid": "42cefde34c2a44f3fa9e0f26f857672b",
+        "sourceHash": "f94d33569e0c7466c056f96816ddfa88a6cc28a87294310ff8bfc1156ff20857"
+      }
+    },
+    {
+      "skillId": "solarBubbles",
+      "legacySkillKey": 96,
+      "x": -1487.2001,
+      "y": 646,
+      "displayName": "Solar Bubbles",
+      "description": "You noticed a significant efficiency potential. By introducing tiny condensed spheres (nicknamed bubbles) of solar energy, your panels in the pocket dimensions have something to do, resulting in a significant boost to production.",
+      "technicalDescription": "Pocket Dimensions gain 1% production boost for every second of Panel Lifetime.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.solarBubbles.name",
+        "description": "skills.node.solarBubbles.description",
+        "technicalDescription": "skills.node.solarBubbles.technical"
+      },
+      "icon": {
+        "fileName": "solarBubbles.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Solar Bubbles.png",
+        "sourceGuid": "6eed61837b9f542cc91df844bf867698",
+        "sourceHash": "c9413858ed7d9da2834ce0ed516ef4ab56d2c63be1341340eddd9d2513162f8a"
+      }
+    },
+    {
+      "skillId": "startHereTree",
+      "legacySkillKey": 1,
+      "x": -334.00006,
+      "y": 453,
+      "displayName": "Cash & Science",
+      "description": "Through improvements to core algorithms you improve the efficiency of your bots.",
+      "technicalDescription": "Increase Cash and Science by 20%",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.startHereTree.name",
+        "description": "skills.node.startHereTree.description",
+        "technicalDescription": "skills.node.startHereTree.technical"
+      },
+      "icon": {
+        "fileName": "startHereTree.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Cash & Science.png",
+        "sourceGuid": "2b8866f94d73e440ba801a334858e1a2",
+        "sourceHash": "17a6a1328b20f028b9ae3ba6113ac40d13b7e6a87db09d0f67165ca9a08746b9"
+      }
+    },
+    {
+      "skillId": "stayingPower",
+      "legacySkillKey": 18,
+      "x": 250.0001,
+      "y": 223.00003,
+      "displayName": "Staying Power",
+      "description": "Spending some extra time in a system lets you improve the efficiency of things.",
+      "technicalDescription": "Increase Assembly Line Bot production by 1% per second of Panel Lifetime",
+      "cost": 2,
+      "messageIds": {
+        "displayName": "skills.node.stayingPower.name",
+        "description": "skills.node.stayingPower.description",
+        "technicalDescription": "skills.node.stayingPower.technical"
+      },
+      "icon": {
+        "fileName": "stayingPower.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Staying Power.png",
+        "sourceGuid": "f3182bcef7ac441e28f79625b1dca3b3",
+        "sourceHash": "49cd595f5cc36a454dd09f8b3bcd22d9b827ec01063ab20915ba63c190d7cf69"
+      }
+    },
+    {
+      "skillId": "stellarDominance",
+      "legacySkillKey": 104,
+      "x": 33,
+      "y": 1586,
+      "displayName": "Stellar Dominance",
+      "description": "A price must be paid for greater profits.",
+      "technicalDescription": "All Panel Lifetime x10. Cash / 100. Bots Sacrificed x100. May the stars have mercy.",
+      "cost": 3,
+      "messageIds": {
+        "displayName": "skills.node.stellarDominance.name",
+        "description": "skills.node.stellarDominance.description",
+        "technicalDescription": "skills.node.stellarDominance.technical"
+      },
+      "icon": {
+        "fileName": "stellarDominance.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Scientific Dominance.png",
+        "sourceGuid": "720d16a7006254a3791ec7e6220bce3a",
+        "sourceHash": "863c136dabccea6fc6292000b4bf26fc77c351832ddf34ad364d54bb27ee57eb"
+      }
+    },
+    {
+      "skillId": "stellarImprovements",
+      "legacySkillKey": 27,
+      "x": -145.29987,
+      "y": 1585.9998,
+      "displayName": "Stellar Improvements",
+      "description": "You use AI to improve construction processes. New molecular structures allow you to use less materials in the process.",
+      "technicalDescription": "Divide Bots required for Stellar Sacrifices by 1000.",
+      "cost": 3,
+      "messageIds": {
+        "displayName": "skills.node.stellarImprovements.name",
+        "description": "skills.node.stellarImprovements.description",
+        "technicalDescription": "skills.node.stellarImprovements.technical"
+      },
+      "icon": {
+        "fileName": "stellarImprovements.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Stellar Improvements.png",
+        "sourceGuid": "585236a24a902407481ca7ada6abd72f",
+        "sourceHash": "1f484c2ab0604587531a6f7ae252fc05ecefb2bde5044321bb0ff625f75bde32"
+      }
+    },
+    {
+      "skillId": "stellarObliteration",
+      "legacySkillKey": 25,
+      "x": -235.99982,
+      "y": 1403.9998,
+      "displayName": "Stellar Obliteration",
+      "description": "Obliterating even more Bots greatly improve the rate at which you generate artificial Planets, however this is costly.",
+      "technicalDescription": "Stellar Sacrifices Galaxies are 1000x better, however you divide your Cash, and Science by Stellar Galaxies.",
+      "cost": 2,
+      "messageIds": {
+        "displayName": "skills.node.stellarObliteration.name",
+        "description": "skills.node.stellarObliteration.description",
+        "technicalDescription": "skills.node.stellarObliteration.technical"
+      },
+      "icon": {
+        "fileName": "stellarObliteration.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Stellar Obliteration.png",
+        "sourceGuid": "64842518360054d11a9fbca1255ac463",
+        "sourceHash": "c745a91cae59b946595d4314df96224ccf47f3693388bd2cbc8a74e6b48bcb01"
+      }
+    },
+    {
+      "skillId": "stellarSacrifices",
+      "legacySkillKey": 24,
+      "x": -54.999817,
+      "y": 1403.9998,
+      "displayName": "Stellar Sacrifices",
+      "description": "You decide to start utilizing the materials in your own bots to create additional planet sized structures for your empire.",
+      "technicalDescription": "Every second destroy Bots equal to Stars Surrounded and gain Planets equal to Log10(Stellar Galaxies Engulfed) ^ 2.\n\nA stellar galaxy is just a normal galaxy with stellar modifiers added.",
+      "cost": 2,
+      "messageIds": {
+        "displayName": "skills.node.stellarSacrifices.name",
+        "description": "skills.node.stellarSacrifices.description",
+        "technicalDescription": "skills.node.stellarSacrifices.technical"
+      },
+      "icon": {
+        "fileName": "stellarSacrifices.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Stellar Sacrifices.png",
+        "sourceGuid": "b131aa2a7cf154582a3402ae05189458",
+        "sourceHash": "f5818368abc347409bdf6b8c88b9c5ca6c0b7900dcf0bfb33076e0b8237306a9"
+      }
+    },
+    {
+      "skillId": "superRadiantScattering",
+      "legacySkillKey": 57,
+      "x": -1200.2,
+      "y": 12,
+      "displayName": "Super-Radiant Scattering",
+      "description": "Scattering... Something... Causes a perpetually increasing value to affect everything you touch.",
+      "technicalDescription": "For each second this skill is assigned and the app is running, all production increases by 1% this scales additively, and resets on Infinity/Quantum Leap.",
+      "cost": 3,
+      "messageIds": {
+        "displayName": "skills.node.superRadiantScattering.name",
+        "description": "skills.node.superRadiantScattering.description",
+        "technicalDescription": "skills.node.superRadiantScattering.technical"
+      },
+      "icon": {
+        "fileName": "superRadiantScattering.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Super Radiant Scattering.png",
+        "sourceGuid": "2ba931f8de5d244e6af33cb38923ff36",
+        "sourceHash": "a30efe1ae467d75aa61899154d7cd4b20ab7bce96f35b1ad18b88ec9d175822b"
+      }
+    },
+    {
+      "skillId": "superSwarm",
+      "legacySkillKey": 44,
+      "x": 917.3999,
+      "y": -745.9995,
+      "displayName": "Super Swarm",
+      "description": "Why not double the amount of panels per swarm?",
+      "technicalDescription": "Increase the 1% production gain after 100 purchases to 2%",
+      "cost": 2,
+      "messageIds": {
+        "displayName": "skills.node.superSwarm.name",
+        "description": "skills.node.superSwarm.description",
+        "technicalDescription": "skills.node.superSwarm.technical"
+      },
+      "icon": {
+        "fileName": "superSwarm.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Super Swarm.png",
+        "sourceGuid": "ad65bf2ef7e65443bbfb210de61e0eec",
+        "sourceHash": "8d7b76af9f51fc282a862b9582c06260c4cfbc3254a462a9012d28d1c25551af"
+      }
+    },
+    {
+      "skillId": "superchargedPower",
+      "legacySkillKey": 21,
+      "x": -497,
+      "y": 12.000061,
+      "displayName": "Supercharged Power",
+      "description": "Supercharge your power grid, drastically improving the performance of your empire!",
+      "technicalDescription": "Boosts all Buildings, Cash, and Science by 50%",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.superchargedPower.name",
+        "description": "skills.node.superchargedPower.description",
+        "technicalDescription": "skills.node.superchargedPower.technical"
+      },
+      "icon": {
+        "fileName": "superchargedPower.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Supercharged Power.png",
+        "sourceGuid": "c81fcdf3adcb54cb5ad0478bb703b91b",
+        "sourceHash": "669065d033a3df956a07cedd22b06bf077b3f1b2cc915be258279aa1a1186b72"
+      }
+    },
+    {
+      "skillId": "supernova",
+      "legacySkillKey": 26,
+      "x": -411,
+      "y": 1404,
+      "displayName": "Supernova",
+      "description": "You discover a way to utilize supernovas to melt bots faster.",
+      "technicalDescription": "Stellar Sacrifices Galaxies are 1000x better. While owned, manually purchased buildings lose every production bonus including Avocados, the 50/100 milestones, Production Scaling, and all Swarm rates. Refunding Supernova restores the complete manual-purchase layer.",
+      "cost": 4,
+      "messageIds": {
+        "displayName": "skills.node.supernova.name",
+        "description": "skills.node.supernova.description",
+        "technicalDescription": "skills.node.supernova.technical"
+      },
+      "icon": {
+        "fileName": "supernova.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Supernova.png",
+        "sourceGuid": "bb1de96fafb2849519230ef499dd4d01",
+        "sourceHash": "fa9162ff863c387314689e89c9f405791bdba418b139f7b5221ce8b859301eaa"
+      }
+    },
+    {
+      "skillId": "tasteOfPower",
+      "legacySkillKey": 31,
+      "x": -497,
+      "y": -171.99994,
+      "displayName": "Taste of Power",
+      "description": "After getting your first taste of real power you crave more. Seek it out.",
+      "technicalDescription": "50% stronger Assembly Lines, AI Managers, Servers, Data Centers, and Planets. 25% less Cash and Science.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.tasteOfPower.name",
+        "description": "skills.node.tasteOfPower.description",
+        "technicalDescription": "skills.node.tasteOfPower.technical"
+      },
+      "icon": {
+        "fileName": "tasteOfPower.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Taste of Power.png",
+        "sourceGuid": "7f8a75691ba214fa5a01739b3dfa3927",
+        "sourceHash": "297c2e460c2b441c7d670ef63d5fe8c1fa6c639d1bc717a920fb7f8c0ac4b620"
+      }
+    },
+    {
+      "skillId": "terraEculeo",
+      "legacySkillKey": 80,
+      "x": 203.3999,
+      "y": -518.9995,
+      "displayName": "Terra Eculeo",
+      "description": "Your planets are the biggest wheel of progress. They spin around and make more servers, they sure look like a spring in Denver.",
+      "technicalDescription": "Bought Planets also count towards bought Servers.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.terraEculeo.name",
+        "description": "skills.node.terraEculeo.description",
+        "technicalDescription": "skills.node.terraEculeo.technical"
+      },
+      "icon": {
+        "fileName": "terraEculeo.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Terra Eculeo.png",
+        "sourceGuid": "5fdd3d88928854a4aa8b1318bff7179f",
+        "sourceHash": "1c2c6d2d2b2ab8cdb5b97d918c6b4c4b02894986c6252da99f6172f6ec46ca30"
+      }
+    },
+    {
+      "skillId": "terraFirma",
+      "legacySkillKey": 79,
+      "x": 203.3999,
+      "y": -669.1997,
+      "displayName": "Terra Firma",
+      "description": "Focusing on more earthlike planets allows humanity to thrive, increasing the rate of progression.",
+      "technicalDescription": "Bought Planets also count towards Bought Data Centers.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.terraFirma.name",
+        "description": "skills.node.terraFirma.description",
+        "technicalDescription": "skills.node.terraFirma.technical"
+      },
+      "icon": {
+        "fileName": "terraFirma.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Terra Firma.png",
+        "sourceGuid": "389d45a2270684f0a9370b30821ed403",
+        "sourceHash": "6be6d1909b05d463db78cb89d1cf609b72c6533a6ba3890ad749002412a14059"
+      }
+    },
+    {
+      "skillId": "terraGloriae",
+      "legacySkillKey": 84,
+      "x": 517.3999,
+      "y": -669.1997,
+      "displayName": "Terra Gloriae",
+      "description": "\"Glory to your planets\". The new galactic mega corporation motto, that surprisingly reduces the cost of getting more planets. Maybe you should come out with more of them.",
+      "technicalDescription": "Total Planets reduce the cost of bought Planets.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.terraGloriae.name",
+        "description": "skills.node.terraGloriae.description",
+        "technicalDescription": "skills.node.terraGloriae.technical"
+      },
+      "icon": {
+        "fileName": "terraGloriae.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Terra Gloriae.png",
+        "sourceGuid": "0226a6ae849da4c10bba0ac81d648178",
+        "sourceHash": "159585115a4fba2a5202b6d6b09a9bb04febf476e32ebda42f6f71c961834fdf"
+      }
+    },
+    {
+      "skillId": "terraInfirma",
+      "legacySkillKey": 81,
+      "x": 361.3994,
+      "y": -518.9995,
+      "displayName": "Terra Infirma",
+      "description": "Okay, the description is a bit misleading. Your planets aren't weak nor crippled, they are just sanctuaries for the smaller and weaker members of your empire (your AI Managers, in this case).",
+      "technicalDescription": "Bought Planets also count towards bought AI Managers.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.terraInfirma.name",
+        "description": "skills.node.terraInfirma.description",
+        "technicalDescription": "skills.node.terraInfirma.technical"
+      },
+      "icon": {
+        "fileName": "terraInfirma.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Terra Infirma.png",
+        "sourceGuid": "b12323c35e92e4ee78ac80f1e7dc0379",
+        "sourceHash": "6ee4086c318c643e556a656b20121eec7a36c92fa2f0a858d2b8079fadf2b91f"
+      }
+    },
+    {
+      "skillId": "terraIrradiant",
+      "legacySkillKey": 85,
+      "x": 517.3999,
+      "y": -373.60156,
+      "displayName": "Terra Irradient",
+      "description": "You aren't quite sure why, but every planet you manually spend resources to get shines bright like a diamond. It might have to do with bombing the planet afterwards with metric tons of diamonds.",
+      "technicalDescription": "Bought Planets now count Twelve Times.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.terraIrradiant.name",
+        "description": "skills.node.terraIrradiant.description",
+        "technicalDescription": "skills.node.terraIrradiant.technical"
+      },
+      "icon": {
+        "fileName": "terraIrradiant.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Terra Irradiant.png",
+        "sourceGuid": "4c5c0fda0f7294b218c5a9f7391d2690",
+        "sourceHash": "0695fb0d3d3102d2afe19419ac9e5d081810d20b01a7e58f205e9f172dc3b0d1"
+      }
+    },
+    {
+      "skillId": "terraNova",
+      "legacySkillKey": 83,
+      "x": 361.3999,
+      "y": -669.1997,
+      "displayName": "Terra Nova",
+      "description": "Earth is threatened with extinction in the year 2149. The Shannon family transport themselves back a million years, where colonies of humans have a second chance to build a civilisation.",
+      "technicalDescription": "Planet Boost effect also reduces the Cost of new Planets.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.terraNova.name",
+        "description": "skills.node.terraNova.description",
+        "technicalDescription": "skills.node.terraNova.technical"
+      },
+      "icon": {
+        "fileName": "terraNova.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Terra Nove.png",
+        "sourceGuid": "0dd8d936ee468444689923a5a6e3beff",
+        "sourceHash": "369aec225506da2f4f48b1b4909ab1b0e0b209263e765dbc29ee12dd37a3369c"
+      }
+    },
+    {
+      "skillId": "terraNullius",
+      "legacySkillKey": 82,
+      "x": 361.3999,
+      "y": -373.60156,
+      "displayName": "Terra Nullius",
+      "description": "There aren't any planets like yours. And that's because you are amazing! Also because each planet is filled to the brim with Assembly Lines, Managers, Servers and Data Centers.",
+      "technicalDescription": "Bought Planets also count towards bought Assembly Lines.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.terraNullius.name",
+        "description": "skills.node.terraNullius.description",
+        "technicalDescription": "skills.node.terraNullius.technical"
+      },
+      "icon": {
+        "fileName": "terraNullius.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Terra Nullius.png",
+        "sourceGuid": "73c42c066f24343ff8a47e97284f8877",
+        "sourceHash": "b9b8fb345fd705890b6b00039baf745c1455ff1f6e2436efa86c378ac8142e06"
+      }
+    },
+    {
+      "skillId": "terraformingProtocols",
+      "legacySkillKey": 39,
+      "x": -976,
+      "y": 12,
+      "displayName": "Terraforming Protocols",
+      "description": "You find a fragment of another universe. You use this knowledge to discover new Planets, I wonder what other parts of this universe you can find?",
+      "technicalDescription": "Assemble an additional Planet per second. Get an additional Planet for every other purchased Fragment Skill.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.terraformingProtocols.name",
+        "description": "skills.node.terraformingProtocols.description",
+        "technicalDescription": "skills.node.terraformingProtocols.technical"
+      },
+      "icon": {
+        "fileName": "terraformingProtocols.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Terraforming Protocols.png",
+        "sourceGuid": "7f11383cc79d249548544209c46f0a40",
+        "sourceHash": "75d4dfbe4acc5306e155e947fd7e3df2f90b1ea1f0e3a985b3bc7fad72607307"
+      }
+    },
+    {
+      "skillId": "ultimateSwarm",
+      "legacySkillKey": 46,
+      "x": 1107.6997,
+      "y": -569.1997,
+      "displayName": "Ultimate Swarm",
+      "description": "Pushing the limits is what you do best.",
+      "technicalDescription": "Increase the production multiplier from 3% to 5%",
+      "cost": 3,
+      "messageIds": {
+        "displayName": "skills.node.ultimateSwarm.name",
+        "description": "skills.node.ultimateSwarm.description",
+        "technicalDescription": "skills.node.ultimateSwarm.technical"
+      },
+      "icon": {
+        "fileName": "ultimateSwarm.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Ultimate Swarm.png",
+        "sourceGuid": "08f6c050081764cceb1f2c440649e579",
+        "sourceHash": "d158cf2fba58fc1f97c29f5d9a2c6b24c781a30e339548184bcb46030626ad55"
+      }
+    },
+    {
+      "skillId": "unsuspiciousAlgorithms",
+      "legacySkillKey": 101,
+      "x": -789,
+      "y": 1081,
+      "displayName": "Unsuspicious Algorithms",
+      "description": "Lowering Suspicion allows... wait, wrong game.",
+      "technicalDescription": "Get 10x as many Servers from Rudimentary Singularity.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.unsuspiciousAlgorithms.name",
+        "description": "skills.node.unsuspiciousAlgorithms.description",
+        "technicalDescription": "skills.node.unsuspiciousAlgorithms.technical"
+      },
+      "icon": {
+        "fileName": "unsuspiciousAlgorithms.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Unsuspicious Algorithms.png",
+        "sourceGuid": "7cd922a601f8d423f938c029b1aba6b9",
+        "sourceHash": "883df308bdcaee1288485e1e4dda87523083db74bb519ecbf9d5642ea9462eb2"
+      }
+    },
+    {
+      "skillId": "versatileProductionTactics",
+      "legacySkillKey": 94,
+      "x": -3.6000977,
+      "y": -1046.9995,
+      "displayName": "Versatile Production Tactics",
+      "description": "Stuff happens, and your production layout is prepared for everything and anything. This allows for a flexible production boost, boosting the highest and the lowest layer of the dyson swarm.",
+      "technicalDescription": "You now produce 50% more AI Managers. Additionally, after 100 Planets, Planets production boosted by 50%",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.versatileProductionTactics.name",
+        "description": "skills.node.versatileProductionTactics.description",
+        "technicalDescription": "skills.node.versatileProductionTactics.technical"
+      },
+      "icon": {
+        "fileName": "versatileProductionTactics.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Versatile Production Tactics.png",
+        "sourceGuid": "660c79124ddc2454e981a288e37e7b05",
+        "sourceHash": "33c0f233291653318d248da69b0bd48c181f17f5e881546c443485b973f529e2"
+      }
+    },
+    {
+      "skillId": "whatCouldHaveBeen",
+      "legacySkillKey": 77,
+      "x": -1346,
+      "y": 453,
+      "displayName": "What could’ve been",
+      "description": "Sick of imagining what could have been you decide to put your imagination into action.",
+      "technicalDescription": "Shoulders of Giants now additionally work off Pocket Dimensions.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.whatCouldHaveBeen.name",
+        "description": "skills.node.whatCouldHaveBeen.description",
+        "technicalDescription": "skills.node.whatCouldHaveBeen.technical"
+      },
+      "icon": {
+        "fileName": "whatCouldHaveBeen.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_What Could've Been.png",
+        "sourceGuid": "450187a73b62544da98bee2dd7c4a9a7",
+        "sourceHash": "2f228f83959378ac924f82208518f6f413bb8f0320dee4ffc748c0807c8786a4"
+      }
+    },
+    {
+      "skillId": "whatWillComeToPass",
+      "legacySkillKey": 95,
+      "x": -1346,
+      "y": 646,
+      "displayName": "What Will Come to Pass",
+      "description": "Death, life, death, life. An eternal loop of what will come to pass. Being prepared not only helps your psychology, but also your pocket dimensions.",
+      "technicalDescription": "Every bought Data Center gives a 1% boost to production of Data Centers.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.whatWillComeToPass.name",
+        "description": "skills.node.whatWillComeToPass.description",
+        "technicalDescription": "skills.node.whatWillComeToPass.technical"
+      },
+      "icon": {
+        "fileName": "whatWillComeToPass.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_What Will Come to Pass.png",
+        "sourceGuid": "92c94e82f4dca465c9bf6ff9d11872c6",
+        "sourceHash": "6365306a11164e20857a2f4b0fbe2f8382a9c765a93b4b88fe0712b9336e01be"
+      }
+    },
+    {
+      "skillId": "workerBoost",
+      "legacySkillKey": 23,
+      "x": -170.00006,
+      "y": 12.000061,
+      "displayName": "Worker Boost",
+      "description": "Additional worker bots can now be used as home assistants... At a cost of course!",
+      "technicalDescription": "For every 1% invested in Workers, +100% Cash production.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.workerBoost.name",
+        "description": "skills.node.workerBoost.description",
+        "technicalDescription": "skills.node.workerBoost.technical"
+      },
+      "icon": {
+        "fileName": "workerBoost.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Workers Boost.png",
+        "sourceGuid": "9444f197e1dc74ff8b1e564914ca3c4c",
+        "sourceHash": "f6ad732f44d6360c37724746b2650e55a445e688900e74f552f273c1e38be488"
+      }
+    },
+    {
+      "skillId": "workerEfficiencyTree",
+      "legacySkillKey": 7,
+      "x": -334.00012,
+      "y": 223.00003,
+      "displayName": "Worker Efficiency",
+      "description": "CPU upgrades allow your workers to operate additional arms, making them twice as effective.",
+      "technicalDescription": "Multiplies Panel production by 2.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.workerEfficiencyTree.name",
+        "description": "skills.node.workerEfficiencyTree.description",
+        "technicalDescription": "skills.node.workerEfficiencyTree.technical"
+      },
+      "icon": {
+        "fileName": "workerEfficiencyTree.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Worker Efficiency.png",
+        "sourceGuid": "a0c6bf1c6b4064cee9c7a7d47d40a909",
+        "sourceHash": "bf07ee06290f73a970fc842063d2f114cdc7b0e6ab487c28a27134bd714ec004"
+      }
+    },
+    {
+      "skillId": "worthySacrifice",
+      "legacySkillKey": 54,
+      "x": 392.3994,
+      "y": -1209.9995,
+      "displayName": "Worthy Sacrifice",
+      "description": "Worthy Sacrifice is a legendary trade-off, balancing panel longevity for efficient assembly. It requires bold leadership and a deep understanding of organizational values. A symbol of determination and strategic thinking, it is remembered as a tale of calculated risk-taking.",
+      "technicalDescription": "Panel Lifetime will be reduced by 50%, but Assembly Lines will be 5x as effective.",
+      "cost": 1,
+      "messageIds": {
+        "displayName": "skills.node.worthySacrifice.name",
+        "description": "skills.node.worthySacrifice.description",
+        "technicalDescription": "skills.node.worthySacrifice.technical"
+      },
+      "icon": {
+        "fileName": "worthySacrifice.webp",
+        "sourcePath": "Assets/Sprites/SkillIcons/icons_Worthy Sacrifice.png",
+        "sourceGuid": "da584849591df4c8194eab3ea09bcae4",
+        "sourceHash": "338c7dddb2bb3b4bc3d5af10e0439b33551443873c48c60dd51d75c1da8c222a"
+      }
+    }
+  ]
+}

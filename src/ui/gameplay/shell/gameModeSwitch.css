@@ -1,0 +1,34 @@
+@import "../../tokens/tokens.css";
+
+.game-mode-switch {
+  display: grid;
+  gap: var(--space-control-gap, .25rem);
+  text-align: start;
+  color: var(--color-text-primary);
+  margin-block: .4rem;
+}
+.game-mode-switch__options,
+.game-mode-switch__confirmation {
+  display: grid;
+  gap: .25rem;
+}
+.game-mode-switch__options {
+  padding: .6rem;
+  border: 1px solid var(--theme-divider);
+  border-radius: var(--radius-small, .2rem);
+  background: var(--theme-panel);
+}
+.game-mode-switch p {
+  margin: 0;
+  font-size: var(--font-size-body, .82rem);
+  line-height: 1.4;
+}
+.game-mode-switch .ui-button {
+  min-block-size: max(44px, 2.75rem);
+  min-inline-size: 44px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+@media (pointer: coarse) {
+  .game-mode-switch .ui-button { min-block-size: max(48px, 3rem); }
+}

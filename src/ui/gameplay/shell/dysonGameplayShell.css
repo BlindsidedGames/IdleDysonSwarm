@@ -2020,3 +2020,6 @@
 
 /* Research needs the deeper foreground for its fine magnifying-glass strokes. */
 .dyson-shell[data-route-theme="research"] .dyson-navigation--drawer .dyson-navigation__link[aria-current="page"] .dyson-navigation__icon { color: var(--theme-page); }
+
+/* The mode control shares the existing bottom drawer row with version metadata. */
+.dyson-shell__side-bottom { grid-row: 4; align-self: end; min-inline-size: 0; }

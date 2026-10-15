@@ -1,0 +1,223 @@
+.gameplay-notification-host {
+  min-inline-size: 0;
+}
+
+.gameplay-timed-notification__positioner {
+  padding-block-end: var(--ui-section-gap);
+}
+
+.gameplay-timed-notification {
+  position: relative;
+  display: block;
+  inline-size: min(100%, 52rem);
+  min-block-size: var(--target-minimum);
+  margin-inline: auto;
+  padding: 0.6rem 0.75rem 0.72rem;
+  overflow: hidden;
+  border: 1px solid var(--theme-divider);
+  border-radius: 0.32rem;
+  background: var(--theme-panel);
+  box-shadow: 0 0.3rem 0.7rem rgb(0 0 0 / 32%);
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-size: calc(0.82rem * var(--game-text-scale));
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.25;
+  text-align: start;
+  touch-action: manipulation;
+  animation: gameplay-notification-fade 0.35s ease 5.65s forwards;
+}
+
+.gameplay-timed-notification:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 0.12rem;
+  background: var(--theme-selected);
+}
+
+.gameplay-timed-notification__message,
+.gameplay-timed-notification__message strong {
+  font-weight: var(--font-weight-semibold);
+}
+
+.gameplay-timed-notification__accent {
+  color: var(--theme-accent);
+}
+
+.gameplay-timed-notification__warning {
+  color: #ffb8dc;
+}
+
+.gameplay-timed-notification__announcement {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.gameplay-timed-notification__progress {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline: 0;
+  block-size: 0.2rem;
+  background: var(--theme-accent);
+  transform-origin: left;
+  animation: gameplay-notification-progress 6s linear forwards;
+}
+
+[dir="rtl"] .gameplay-timed-notification__progress {
+  transform-origin: right;
+}
+
+.gameplay-disaster-dialog__backdrop {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding:
+    max(1rem, var(--safe-area-top))
+    max(1rem, var(--safe-area-right))
+    max(1rem, var(--safe-area-bottom))
+    max(1rem, var(--safe-area-left));
+  overflow: auto;
+  background: rgb(3 5 9 / 72%);
+  backdrop-filter: blur(0.2rem);
+}
+
+.gameplay-disaster-dialog {
+  --disaster-page: var(--simulation-foundational-page);
+  --disaster-panel: var(--simulation-foundational-panel);
+  --disaster-selected: var(--simulation-foundational-selected);
+  --disaster-divider: var(--simulation-foundational-divider);
+  --disaster-accent: var(--simulation-foundational-accent);
+  position: relative;
+  isolation: isolate;
+  inline-size: min(100%, 38rem);
+  max-block-size: 100%;
+  padding: clamp(1.15rem, 4vw, 2rem);
+  overflow: auto;
+  border: 1px solid var(--disaster-divider);
+  border-radius: 0.65rem;
+  background: var(--disaster-page);
+  box-shadow:
+    0 1.2rem 3.5rem rgb(0 0 0 / 52%),
+    inset 0 0 0 1px color-mix(in srgb, var(--disaster-accent) 16%, transparent);
+  color: white;
+}
+
+.gameplay-disaster-dialog[data-simulation-era="information"] {
+  --disaster-page: var(--simulation-information-page);
+  --disaster-panel: var(--simulation-information-panel);
+  --disaster-selected: var(--simulation-information-selected);
+  --disaster-divider: var(--simulation-information-divider);
+  --disaster-accent: var(--simulation-information-accent);
+}
+
+.gameplay-disaster-dialog[data-simulation-era="space-age"] {
+  --disaster-page: var(--simulation-space-age-page);
+  --disaster-panel: var(--simulation-space-age-panel);
+  --disaster-selected: var(--simulation-space-age-selected);
+  --disaster-divider: var(--simulation-space-age-divider);
+  --disaster-accent: var(--simulation-space-age-accent);
+}
+
+.gameplay-disaster-dialog__era-glow {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--disaster-accent) 22%, transparent), transparent 65%),
+    linear-gradient(145deg, transparent, color-mix(in srgb, var(--disaster-panel) 52%, transparent));
+}
+
+.gameplay-disaster-dialog h2 {
+  margin: 0;
+  color: var(--disaster-accent);
+  font-family: var(--font-family-heading);
+  font-size: calc(clamp(1.45rem, 5vw, 2rem) * var(--game-text-scale));
+  line-height: 1.1;
+}
+
+.gameplay-disaster-dialog p {
+  margin: 1rem 0 0;
+  font-size: calc(1rem * var(--game-text-scale));
+  line-height: 1.55;
+}
+
+.gameplay-disaster-dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  margin-block-start: 1.5rem;
+}
+
+.gameplay-disaster-dialog__actions button {
+  min-block-size: var(--target-minimum);
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--disaster-divider);
+  border-radius: 0.35rem;
+  background: var(--disaster-selected);
+  color: white;
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+
+.gameplay-disaster-dialog__actions button:first-child {
+  background: var(--disaster-accent);
+  color: var(--disaster-page);
+}
+
+.gameplay-disaster-dialog__actions button:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 0.15rem;
+}
+
+@keyframes gameplay-notification-progress {
+  to { transform: scaleX(0); }
+}
+
+@keyframes gameplay-notification-fade {
+  to { opacity: 0; }
+}
+
+@media (orientation: landscape) and (max-height: 34rem) {
+  .gameplay-disaster-dialog__backdrop {
+    place-items: start center;
+  }
+
+  .gameplay-disaster-dialog {
+    inline-size: min(100%, 46rem);
+    padding: 1rem 1.25rem;
+  }
+
+  .gameplay-disaster-dialog__actions {
+    margin-block-start: 1rem;
+  }
+}
+
+@media (max-width: 32rem) {
+  .gameplay-disaster-dialog__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gameplay-timed-notification,
+  .gameplay-timed-notification__progress {
+    animation: none;
+  }
+
+  .gameplay-timed-notification__progress {
+    display: none;
+  }
+}

@@ -1,0 +1,249 @@
+@import "../../tokens/tokens.css";
+
+.store-boost { display: grid; gap: 0.4rem; }
+.store-boost__status { font-variant-numeric: tabular-nums; }
+.store-boost__browse { justify-self: end; border: 0; padding: 0.25rem; background: none; color: var(--theme-accent); cursor: pointer; font: inherit; font-size: calc(0.78rem * var(--game-text-scale)); text-decoration: underline; }
+.store-promo { display: grid; gap: 1rem; }
+.store-promo article { display: grid; gap: 0.65rem; }
+.store-promo h3 { margin: 0; }
+.store-promo__label { opacity: 0.65; font-size: 0.8em; }
+.store-promo__actions { display: flex; flex-wrap: wrap; gap: 0.65rem; }
+.store-promo button { flex: 1; white-space: normal; }
+.store-promo .store-surface__secondary-action { padding: 0.6rem; }
+
+.store-surface {
+  block-size: 100%;
+  min-block-size: 0;
+  overflow: hidden;
+  background: var(--theme-page);
+  color: white;
+}
+
+.store-surface__content {
+  display: grid;
+  align-content: start;
+  inline-size: min(100%, var(--ui-content-max));
+  block-size: 100%;
+  min-block-size: 0;
+  box-sizing: border-box;
+  gap: var(--ui-section-gap);
+  padding-block:
+    calc(var(--ui-page-gutter) + var(--safe-area-top))
+    var(--ui-page-gutter);
+  padding-inline:
+    max(var(--ui-page-gutter), var(--safe-area-left))
+    max(var(--ui-page-gutter), var(--safe-area-right));
+  margin-inline: auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.store-surface__content::-webkit-scrollbar {
+  display: none;
+}
+
+.store-surface h2,
+.store-surface h3,
+.store-surface p,
+.store-surface ul {
+  margin: 0;
+}
+
+.store-surface__summary,
+.store-gallery-panel,
+.store-restore,
+.store-surface__feedback,
+.store-surface__loading {
+  border: var(--ui-panel-border-width) solid var(--theme-divider);
+  border-radius: var(--ui-panel-radius);
+  background: var(--theme-panel);
+  box-shadow: 0 0.16rem 0.35rem rgb(0 0 0 / 25%);
+}
+
+.store-surface__summary,
+.store-gallery-panel,
+.store-restore {
+  padding: var(--ui-panel-inset-roomy);
+}
+
+.store-product-section {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.store-product-section__header {
+  padding-inline: 0.15rem;
+}
+
+.store-surface__summary h2,
+.store-gallery-panel h2,
+.store-product-section h2,
+.store-restore h2 {
+  font-size: calc(1.05rem * var(--game-text-scale));
+}
+
+.store-surface__summary p,
+.store-gallery-panel p,
+.store-product-section header p,
+.store-restore p,
+.store-product-card p {
+  margin-block-start: 0.2rem;
+  color: #e9e1f6;
+  font-size: calc(0.78rem * var(--game-text-scale));
+  line-height: 1.3;
+}
+
+.store-gallery-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(12rem, auto);
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.store-gallery-panel .store-surface__secondary-action {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  text-decoration: none;
+}
+
+.store-product-section ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 23rem), 1fr));
+  gap: 0.55rem;
+  padding: 0;
+  list-style: none;
+}
+
+.store-product-section li {
+  display: grid;
+}
+
+.store-product-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  block-size: 100%;
+  box-sizing: border-box;
+  gap: 0.4rem;
+  padding: 0.45rem;
+  border: 1px solid var(--theme-divider);
+  border-radius: 0.3rem;
+  background: var(--theme-panel);
+}
+
+.store-product-card h3 {
+  color: var(--theme-accent);
+  font-size: calc(0.98rem * var(--game-text-scale));
+}
+
+.store-surface__purchase-action,
+.store-surface__secondary-action {
+  --store-action-background: color-mix(in srgb, var(--theme-accent) 80%, var(--theme-selected));
+  min-block-size: 3.4rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--theme-divider);
+  border-radius: 0.25rem;
+  background: var(--store-action-background);
+  color: var(--theme-page);
+  font: inherit;
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+}
+
+.store-surface__purchase-action:disabled,
+.store-surface__secondary-action:disabled {
+  background: var(--theme-selected);
+  color: #c7bbd7;
+  cursor: default;
+}
+
+.store-surface__purchase-action:focus-visible,
+.store-surface__secondary-action:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.store-surface__purchase-action {
+  inline-size: 6.5rem;
+  min-inline-size: 0;
+  box-sizing: border-box;
+  text-align: center;
+  min-block-size: 2.75rem;
+  justify-self: end;
+  padding: 0.45rem 0.65rem;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.store-surface__purchase-action--effect-disabled:not(:disabled) {
+  border-color: var(--theme-accent);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--theme-accent);
+  color: var(--theme-accent);
+}
+
+.store-surface__purchase-action--effect-updating:disabled {
+  background: var(--store-action-background);
+  color: var(--theme-page);
+  cursor: wait;
+  opacity: 1;
+}
+
+.store-surface__purchase-action--effect-disabled.store-surface__purchase-action--effect-updating:disabled {
+  border-color: var(--theme-accent);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--theme-accent);
+  color: var(--theme-accent);
+}
+
+.store-surface__purchase-action--effect-disabled:not(:disabled):hover {
+  background-color: var(--store-action-background);
+  color: var(--theme-page);
+}
+
+.store-restore {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(10rem, auto);
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.store-surface__feedback,
+.store-surface__loading {
+  padding: 0.65rem 0.75rem;
+  color: #9be79c;
+}
+
+@media (max-width: 560px) {
+  .store-gallery-panel,
+  .store-restore {
+    grid-template-columns: 1fr;
+  }
+
+  .store-product-card {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.55rem;
+    padding: 0.6rem;
+  }
+
+  .store-surface__purchase-action {
+    inline-size: 100%;
+    justify-self: stretch;
+  }
+}
+
+.store-promo__banner { aspect-ratio: 16 / 9; width: 100%; overflow: hidden; border-radius: 0.65rem; background: var(--color-surface, #171b22); }
+.store-promo__banner img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.store-promo article + article { margin-top: 1.5rem; }
+
+/* Action lighting only; selectors and navigation retain their existing surfaces. */
+@media (forced-colors: none) {
+  .store-surface__purchase-action:not(.store-surface__purchase-action--effect-disabled):not(:disabled),
+  .store-surface__secondary-action:not(:disabled) {
+    background-image: linear-gradient(to bottom right,
+      color-mix(in srgb, var(--color-text-primary) 28%, transparent),
+      transparent 55%, rgb(11 8 12 / 10%));
+  }
+}

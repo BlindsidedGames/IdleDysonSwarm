@@ -78,7 +78,9 @@
     "native:steam:package:macos": "VITE_IDS_DESKTOP_DISTRIBUTION=steam npm run build:native && node scripts/package-steam-platform.mjs macos",
     "promotions:sync": "tsx scripts/sync-promotion-catalog.ts",
     "promotions:check": "tsx scripts/check-promotion-catalog.ts",
-    "verify:promotions:browser": "tsx scripts/verify-promotion-cache.ts"
+    "verify:promotions:browser": "tsx scripts/verify-promotion-cache.ts",
+    "modes:check": "node --import tsx scripts/check-classic-source.ts && tsc -p tsconfig.classic.json && vitest run src/modes src/ui/gameplay/shell/GameModeSwitch.test.tsx",
+    "modes:ui": "node --import tsx scripts/verify-mode-switch-ui.ts"
   },
   "dependencies": {
     "@capacitor/android": "8.5.0",

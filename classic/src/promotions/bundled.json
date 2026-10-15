@@ -1,0 +1,298 @@
+{
+  "schemaVersion": 1,
+  "revision": "2026-09-20.3",
+  "games": [
+    {
+      "id": "pulse",
+      "enabled": true,
+      "copy": {
+        "en": {
+          "title": "Pulse Citadel",
+          "description": "Bring a dormant machine fully online. Choose a research node, launch a combat simulation, and turn destroyed enemies into Charge for the grid. Unlock weapons, abilities, and new research branches."
+        },
+        "de": {
+          "title": "Pulse Citadel",
+          "description": "Bringe eine stillgelegte Maschine wieder vollständig in Betrieb. Wähle einen Forschungsknoten, starte eine Kampfsimulation und wandle zerstörte Gegner in Ladung für das Netz um. Schalte Waffen, Fähigkeiten und neue Forschungszweige frei."
+        },
+        "es-419": {
+          "title": "Pulse Citadel",
+          "description": "Vuelve a poner en marcha una máquina inactiva. Elige un nodo de investigación, inicia una simulación de combate y convierte a los enemigos destruidos en Carga para la red. Desbloquea armas, habilidades y nuevas ramas de investigación."
+        },
+        "fr": {
+          "title": "Pulse Citadel",
+          "description": "Remettez une machine endormie en marche. Choisissez un nœud de recherche, lancez une simulation de combat et transformez les ennemis détruits en Charge pour la grille. Débloquez armes, capacités et nouvelles branches de recherche."
+        },
+        "ja": {
+          "title": "Pulse Citadel",
+          "description": "休眠中のマシンを完全稼働させよう。研究ノードを選び、戦闘シミュレーションを開始。倒した敵をグリッド用のチャージに変え、武器やアビリティ、新たな研究ルートを解放しよう。"
+        },
+        "pt-BR": {
+          "title": "Pulse Citadel",
+          "description": "Coloque uma máquina adormecida de volta em funcionamento. Escolha um nó de pesquisa, inicie uma simulação de combate e transforme inimigos destruídos em Carga para a rede. Desbloqueie armas, habilidades e novos ramos de pesquisa."
+        },
+        "ru": {
+          "title": "Pulse Citadel",
+          "description": "Верните спящую машину в строй. Выберите узел исследований, запустите боевую симуляцию и превращайте уничтоженных врагов в Заряд для сети. Открывайте оружие, способности и новые ветви исследований."
+        },
+        "zh-CN": {
+          "title": "Pulse Citadel",
+          "description": "让一台休眠的机器全面运转。选择研究节点，启动战斗模拟，将摧毁的敌人转化为网格所需的电荷。解锁武器、主动技能和新的研究分支。"
+        }
+      },
+      "links": {
+        "ios": "https://apps.apple.com/app/id6779441554",
+        "android": "https://play.google.com/store/apps/details?id=com.blindsidedgames.pulsecitadel"
+      },
+      "banner": "/promotions/images/pulse.cecef4f8979a.webp"
+    },
+    {
+      "id": "daily-quiz",
+      "enabled": true,
+      "copy": {
+        "en": {
+          "title": "The Daily Quiz",
+          "description": "A fresh set of quiz questions every day, covering general knowledge, geography, entertainment, and more. Choose from different difficulties and learn as you play with explanations for each answer."
+        }
+      },
+      "links": {
+        "ios": "https://apps.apple.com/app/id6760318282"
+      },
+      "banner": "/promotions/images/daily-quiz.44b61487702c.webp"
+    },
+    {
+      "id": "echoes",
+      "enabled": true,
+      "copy": {
+        "en": {
+          "title": "Echoes of Vasteria",
+          "description": "An idle RPG built around gear, cards, and alchemy. Roll and refine equipment in the Forge, brew synergies in the Cauldron, and unlock permanent upgrades for your next run."
+        },
+        "de": {
+          "title": "Echoes of Vasteria",
+          "description": "Ein Idle-RPG rund um Ausrüstung, Karten und Alchemie. Erzeuge und verfeinere Ausrüstung in der Schmiede, kombiniere Effekte im Kessel und schalte dauerhafte Verbesserungen für deinen nächsten Durchlauf frei."
+        },
+        "es-419": {
+          "title": "Echoes of Vasteria",
+          "description": "Un RPG incremental basado en equipo, cartas y alquimia. Crea y mejora equipo en la Forja, combina efectos en el Caldero y desbloquea mejoras permanentes para tu siguiente partida."
+        },
+        "fr": {
+          "title": "Echoes of Vasteria",
+          "description": "Un RPG idle basé sur l’équipement, les cartes et l’alchimie. Créez et améliorez votre équipement à la Forge, combinez les effets dans le Chaudron et débloquez des améliorations permanentes pour votre prochaine partie."
+        },
+        "ja": {
+          "title": "Echoes of Vasteria",
+          "description": "装備、カード、錬金術を組み合わせる放置系RPG。鍛冶場で装備を生成・改良し、大釜で効果を組み合わせ、次の周回に引き継ぐ永続強化を解放しよう。"
+        },
+        "pt-BR": {
+          "title": "Echoes of Vasteria",
+          "description": "Um RPG idle baseado em equipamentos, cartas e alquimia. Crie e aprimore equipamentos na Forja, combine efeitos no Caldeirão e desbloqueie melhorias permanentes para sua próxima partida."
+        },
+        "ru": {
+          "title": "Echoes of Vasteria",
+          "description": "Idle-RPG, построенная на снаряжении, картах и алхимии. Создавайте и улучшайте снаряжение в Кузнице, сочетайте эффекты в Котле и открывайте постоянные улучшения для следующего забега."
+        },
+        "zh-CN": {
+          "title": "Echoes of Vasteria",
+          "description": "一款围绕装备、卡牌和炼金术展开的放置RPG。在锻造炉中生成和精炼装备，在坩埚中组合效果，并解锁下一轮可用的永久升级。"
+        }
+      },
+      "links": {
+        "ios": "https://apps.apple.com/app/id6749265146",
+        "android": "https://play.google.com/store/apps/details?id=com.blindsidedgames.echoesofvasteria",
+        "web": "https://store.steampowered.com/app/2940000/",
+        "desktop": "https://store.steampowered.com/app/2940000/"
+      },
+      "banner": "/promotions/images/echoes.ebb79f357a2a.webp"
+    },
+    {
+      "id": "eternum",
+      "enabled": true,
+      "copy": {
+        "en": {
+          "title": "Eternum Inc",
+          "description": "Push time forward, rewind, and prestige through several reset systems. Combine cards, buffs, and upgrades, with mini-events for instant boosts and offline earnings while you are away."
+        },
+        "de": {
+          "title": "Eternum Inc",
+          "description": "Lass die Zeit voranschreiten, spule zurück und nutze mehrere Prestige-Systeme. Kombiniere Karten, Boni und Verbesserungen, mit Mini-Events für sofortige Schübe und Offline-Einnahmen während deiner Abwesenheit."
+        },
+        "es-419": {
+          "title": "Eternum Inc",
+          "description": "Haz avanzar el tiempo, retrocede y usa varios sistemas de prestigio. Combina cartas, bonificaciones y mejoras, con minieventos para obtener impulsos inmediatos y ganancias sin conexión mientras no estás."
+        },
+        "fr": {
+          "title": "Eternum Inc",
+          "description": "Faites avancer le temps, rembobinez et progressez grâce à plusieurs systèmes de prestige. Combinez cartes, bonus et améliorations, avec des mini-événements pour des boosts immédiats et des gains hors ligne pendant votre absence."
+        },
+        "ja": {
+          "title": "Eternum Inc",
+          "description": "時間を進め、巻き戻し、複数のプレステージシステムを活用しよう。カード、バフ、強化を組み合わせ、ミニイベントで即時ブーストを獲得。離れている間もオフライン収益が得られる。"
+        },
+        "pt-BR": {
+          "title": "Eternum Inc",
+          "description": "Avance o tempo, retroceda e use vários sistemas de prestígio. Combine cartas, bônus e melhorias, com minieventos para impulsos imediatos e ganhos offline enquanto você estiver fora."
+        },
+        "ru": {
+          "title": "Eternum Inc",
+          "description": "Двигайте время вперёд, отматывайте назад и используйте несколько систем престижа. Сочетайте карты, усиления и улучшения, получайте мгновенные бонусы в мини-событиях и доход, пока вы офлайн."
+        },
+        "zh-CN": {
+          "title": "Eternum Inc",
+          "description": "推进时间、倒转时间，利用多种转生系统不断进步。组合卡牌、增益和升级，通过小游戏事件获得即时加成，离线期间也能获得收益。"
+        }
+      },
+      "links": {
+        "ios": "https://apps.apple.com/app/id6741140312",
+        "android": "https://play.google.com/store/apps/details?id=com.blindsidedgames.idleeternum"
+      },
+      "banner": "/promotions/images/eternum.f69bdc1f8e1d.webp"
+    },
+    {
+      "id": "nanite",
+      "enabled": true,
+      "copy": {
+        "en": {
+          "title": "Idle Dyson Swarm: Nanite",
+          "description": "Manage replicators and duplicators, research upgrades, and prestige using temporal data protocols. Earn currency while offline, then spend it to boost your progress when you return."
+        },
+        "de": {
+          "title": "Idle Dyson Swarm: Nanite",
+          "description": "Verwalte Replikatoren und Duplikatoren, erforsche Verbesserungen und nutze temporale Datenprotokolle für Prestige. Verdiene offline eine Währung und gib sie nach deiner Rückkehr aus, um schneller voranzukommen."
+        },
+        "es-419": {
+          "title": "Idle Dyson Swarm: Nanite",
+          "description": "Administra replicadores y duplicadores, investiga mejoras y usa protocolos de datos temporales para obtener prestigio. Gana una moneda sin conexión y gástala al volver para acelerar tu progreso."
+        },
+        "fr": {
+          "title": "Idle Dyson Swarm: Nanite",
+          "description": "Gérez réplicateurs et duplicateurs, recherchez des améliorations et effectuez des prestiges avec les protocoles de données temporelles. Gagnez une monnaie hors ligne, puis dépensez-la pour accélérer votre progression à votre retour."
+        },
+        "ja": {
+          "title": "Idle Dyson Swarm: Nanite",
+          "description": "レプリケーターとデュプリケーターを管理し、強化を研究。時間データプロトコルでプレステージしよう。オフライン中に通貨を獲得し、戻ったら消費して進行を加速できる。"
+        },
+        "pt-BR": {
+          "title": "Idle Dyson Swarm: Nanite",
+          "description": "Gerencie replicadores e duplicadores, pesquise melhorias e use protocolos de dados temporais para obter prestígio. Ganhe uma moeda offline e gaste-a ao voltar para acelerar seu progresso."
+        },
+        "ru": {
+          "title": "Idle Dyson Swarm: Nanite",
+          "description": "Управляйте репликаторами и дупликаторами, исследуйте улучшения и используйте протоколы временных данных для престижа. Зарабатывайте особую валюту офлайн, а по возвращении тратьте её на ускорение прогресса."
+        },
+        "zh-CN": {
+          "title": "Idle Dyson Swarm: Nanite",
+          "description": "管理复制器和倍增器，研究升级，并通过时间数据协议转生。离线时赚取专用货币，回来后花费它来加快进度。"
+        }
+      },
+      "links": {
+        "ios": "https://apps.apple.com/app/id6526468962",
+        "android": "https://play.google.com/store/apps/details?id=com.blindsidedgames.idledysonswarmnanite"
+      },
+      "banner": "/promotions/images/nanite.57b2ab96d03a.webp"
+    },
+    {
+      "id": "nebula",
+      "enabled": true,
+      "copy": {
+        "en": {
+          "title": "Nebula Navigator",
+          "description": "From the creators of Idle Dyson Swarm. Battle the corporation in an effort to stop them from wiping out entire galaxies!"
+        }
+      },
+      "links": {
+        "ios": "https://apps.apple.com/app/id6477858262"
+      },
+      "banner": "/promotions/images/nebula.18c432ac59c9.webp"
+    },
+    {
+      "id": "skrimp",
+      "enabled": true,
+      "copy": {
+        "en": {
+          "title": "Skrimp Fall",
+          "description": "Watch Skrimp fall endlessly through portals in a real-time physics simulation. Feel like moving the portal? You can!"
+        }
+      },
+      "links": {
+        "ios": "https://apps.apple.com/app/id6447680173"
+      },
+      "banner": "/promotions/images/skrimp.69717e25387b.webp"
+    },
+    {
+      "id": "sheep",
+      "enabled": true,
+      "copy": {
+        "en": {
+          "title": "Idle Sheep Counter",
+          "description": "Shear sheep, collect Golden Fleece, help your doggos dig for bones. Collect all the bones!"
+        }
+      },
+      "links": {
+        "ios": "https://apps.apple.com/app/id1639432790"
+      },
+      "banner": "/promotions/images/sheep.6c6975ef6ede.webp"
+    },
+    {
+      "id": "idle-dyson-swarm",
+      "enabled": true,
+      "copy": {
+        "en": {
+          "title": "Idle Dyson Swarm",
+          "description": "Create bots, manufacture solar panels, harness stars for energy, and reinvest your profits. Unlock Research, Skills, Facilities, and Mega-Structures, then break through Infinity and beyond."
+        }
+      },
+      "links": {
+        "ios": "https://apps.apple.com/app/id1631060225",
+        "android": "https://play.google.com/store/apps/details?id=com.blindsidedgames.idledysonswarm",
+        "web": "https://store.steampowered.com/app/4348570/",
+        "desktop": "https://store.steampowered.com/app/4348570/"
+      },
+      "banner": "/promotions/images/idle-dyson-swarm.5d6fafed7bc0.webp"
+    },
+    {
+      "id": "spaceflight",
+      "enabled": true,
+      "copy": {
+        "en": {
+          "title": "Idle SpaceFlight",
+          "description": "Collect Matter, build modules with your Matter, modules produce Matter, did I already say Matter?? Prestige to gain modifiers that produce even more, you guessed it MATTER."
+        }
+      },
+      "links": {
+        "ios": "https://apps.apple.com/app/id1538856127"
+      },
+      "banner": "/promotions/images/spaceflight.76d23e2d76fb.webp"
+    },
+    {
+      "id": "rocket-mania",
+      "enabled": true,
+      "copy": {
+        "en": {
+          "title": "RocketMania",
+          "description": "Fly your rocket from launch pad to landing pad across 30 levels. Avoid obstacles as you travel across the Earth, over the Moon, and beyond!"
+        }
+      },
+      "links": {
+        "ios": "https://apps.apple.com/app/id1622522530",
+        "web": "https://store.steampowered.com/app/1949810/",
+        "desktop": "https://store.steampowered.com/app/1949810/"
+      },
+      "banner": "/promotions/images/rocket-mania.6aae9a5fec9b.webp"
+    },
+    {
+      "id": "space-shooter",
+      "enabled": true,
+      "copy": {
+        "en": {
+          "title": "Stupid Space Shooter",
+          "description": "A top-down survival shooter with enemy ships, bosses, and roguelike upgrades. Survive longer to earn more Quantum Shards, then spend them on permanent ship upgrades and new weapons."
+        }
+      },
+      "links": {
+        "web": "https://store.steampowered.com/app/2954150/",
+        "desktop": "https://store.steampowered.com/app/2954150/"
+      },
+      "banner": "/promotions/images/space-shooter.72c4bfad7e95.webp"
+    }
+  ]
+}

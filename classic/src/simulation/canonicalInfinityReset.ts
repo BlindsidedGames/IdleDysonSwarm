@@ -1,0 +1,896 @@
+import { AVOCADO_MEDITATION_SKILL_POINT_REWARD } from './avocadoMeditation'
+import { initializeSwarmGrants, swarmGrantsAfterInfinity } from './swarmAugments'
+import { challengeFacilities, effectiveDivisions, infinityChallenges, isInfinityChallengeActive, isBlankSlateActive, isQuantumChallengeActive } from './infinityChallenges'
+import { hasCompletedQuantum } from './quantumMilestone'
+import { resetSrsAugments } from './srsAugments'
+import { MANUAL_LABOUR_AUGMENTS, SUBSKILL_ASSETS, isSubskill, isSubskillUnlocked } from './skillSubskills'
+import { isGalvanized, permanentSkillRuntime, permanentFragmentCount, galvanizedSkillIds } from './galvanization'
+import { resolveSkillPurchaseOrder } from './canonicalSkillPresetTransactions'
+import { ordinaryInfinityBotThreshold } from './infinityCycle'
+import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
+import { getGameAsset } from '../game-data/catalog'
+import {
+  SKILL_DATABASE_ASSET_ID,
+  SKILL_DATABASE_ASSET_KIND,
+  SKILL_DEFINITION_ASSET_KIND,
+} from '../game-data/runtimeAssetKinds'
+import {
+  readStringArray,
+  readUnityBoolean,
+} from '../game-data/runtimeValueGuards'
+import type { RuntimeGameAsset } from '../game-data/types'
+import type {
+  CanonicalGameStateV1,
+  CanonicalFacilityId,
+  InfinityCycleHistoryEntry,
+  ProcessingSource,
+  SimulationStatisticsState,
+  SimulationTotalsState,
+  SkillRuntimeState,
+  StatisticsWindowState,
+} from '../game-state/types'
+import { updateStatisticsEventWindow } from './canonicalStatistics'
+import {
+  addDiscrete,
+  clampContinuous,
+  DISCRETE_MAXIMUM,
+} from './numeric'
+
+const INT32_MAXIMUM = 2_147_483_647n
+
+export interface CanonicalInfinityResetRequest {
+  /** Challenge entry/abandonment restarts the run without a prestige reward. */
+  readonly restartOnly?: boolean
+  readonly breakInfinity: boolean
+  readonly requestedReward: bigint
+  /** Full Reality and Avotation contribution; challenge restrictions apply here. */
+  readonly artifactSkillPoints: bigint
+  /** True only when the event model initiated the reset automatically. */
+  readonly automatic?: boolean
+  /** Processing lane which produced this reset. */
+  readonly processingSource?: ProcessingSource
+  /** Active processing cadence in force when this reset completed. */
+  readonly activeIntervalMilliseconds?: number
+}
+
+export type CanonicalInfinityResetIssueCode =
+  | 'INFINITY_RESET_REQUEST_INVALID'
+  | 'INFINITY_RESET_STATE_INVALID'
+  | 'INFINITY_RESET_AUTO_ASSIGNMENT_INVALID'
+  | 'INFINITY_RESET_SKILL_DATABASE_MISSING'
+  | 'INFINITY_RESET_SKILL_DATABASE_INVALID'
+  | 'INFINITY_RESET_SKILL_DEFINITION_MISSING'
+  | 'INFINITY_RESET_SKILL_DEFINITION_INVALID'
+
+export interface CanonicalInfinityResetIssue {
+  readonly code: CanonicalInfinityResetIssueCode
+  readonly path: string
+  readonly detail: string
+}
+
+export type CanonicalInfinityResetResult =
+  | {
+      readonly ok: true
+      readonly state: CanonicalGameStateV1
+      readonly rewardGranted: bigint
+      readonly bankedSkillPoints: bigint
+      readonly autoAssignedSkillIds: readonly string[]
+    }
+  | {
+      readonly ok: false
+      readonly state: CanonicalGameStateV1
+      readonly issues: readonly CanonicalInfinityResetIssue[]
+    }
+
+export type CanonicalInfinityResetAssetLookup = (
+  kind: string,
+  id: string,
+) => RuntimeGameAsset | undefined
+
+interface SkillAutoAssignmentRule {
+  readonly id: string
+  readonly cost: bigint
+  readonly refundable: boolean
+  readonly isFragment: boolean
+  readonly requiredSkillIds: readonly string[]
+  readonly shadowRequirementIds: readonly string[]
+  readonly exclusiveWithIds: readonly string[]
+  readonly unlock:
+    | 'always'
+    | 'first-infinity'
+    | 'fragments'
+    | 'purity'
+    | 'terra'
+    | 'power'
+    | 'paragade'
+    | 'stellar'
+  readonly valid: boolean
+}
+
+interface AutoAssignmentOutcome {
+  readonly points: bigint
+  readonly fragments: bigint
+  readonly byId: Readonly<Record<string, SkillRuntimeState>>
+  readonly assignedIds: readonly string[]
+}
+
+interface InfinityStatisticsEvent {
+  readonly ordinaryCount: bigint
+  readonly breakCount: bigint
+  readonly ordinaryPoints: bigint
+  readonly breakPoints: bigint
+}
+
+const EMPTY_FACILITIES: Readonly<
+  Record<CanonicalFacilityId, readonly [number, number]>
+> = Object.freeze({
+  assembly_lines: Object.freeze([0, 0] as const),
+  ai_managers: Object.freeze([0, 0] as const),
+  servers: Object.freeze([0, 0] as const),
+  data_centers: Object.freeze([0, 0] as const),
+  planets: Object.freeze([0, 0] as const),
+  matrioshka_brains: Object.freeze([0, 0] as const),
+  birch_planets: Object.freeze([0, 0] as const),
+  galactic_brains: Object.freeze([0, 0] as const),
+})
+
+/**
+ * Applies Unity's durable Infinity transition without presentation,
+ * persistence, derived-state rebuilding, or event-time phase changes.
+ *
+ * Reward calculation remains a caller responsibility. The explicit requested
+ * reward is saturated into the canonical point balance, and statistics record
+ * only the amount that was actually granted.
+ */
+export function applyCanonicalInfinityReset(
+  state: Readonly<CanonicalGameStateV1>,
+  request: Readonly<CanonicalInfinityResetRequest>,
+  lookup: CanonicalInfinityResetAssetLookup = getGameAsset,
+): CanonicalInfinityResetResult {
+  const issues = validateResetInputs(state, request)
+  if (issues.length > 0) return failed(state, issues)
+
+  const rulesResult = captureAutoAssignmentRules(
+    state.skills.activeAutoAssignment,
+    lookup,
+    state,
+  )
+  if (!rulesResult.ok) return failed(state, rulesResult.issues)
+
+  const challenge = infinityChallenges(state)
+  const completionKey = challenge.active === 'trial-and-error' ? 'trialAndErrorCompleted' : 'blankSlateCompleted'
+  const challengeWon = !request.restartOnly && isInfinityChallengeActive(state) &&
+    !request.breakInfinity && state.dyson.bots >= ordinaryInfinityBotThreshold(effectiveDivisions(state))
+  if (!request.restartOnly && isInfinityChallengeActive(state) && !challengeWon) {
+    return failed(state, [{ code: 'INFINITY_RESET_REQUEST_INVALID', path: 'request', detail: 'The challenge requires the ordinary Infinity boundary.' }])
+  }
+  if (challengeWon && !challenge[completionKey] && challenge.galvanizers >= DISCRETE_MAXIMUM) {
+    return failed(state, [{ code: 'INFINITY_RESET_STATE_INVALID', path: 'challenges.galvanizers', detail: 'Galvanizer balance is full.' }])
+  }
+  const nextChallenges = request.restartOnly ? challenge : {
+    ...challenge, unlocked: true,
+    ...(challengeWon ? {
+      active: null,
+      [completionKey]: true,
+      completionSeconds: {
+        ...challenge.completionSeconds,
+        [challenge.active!]: Math.min(challenge.completionSeconds?.[challenge.active!] ?? Infinity, state.infinity.lastCycleDurationSeconds),
+      },
+      hasEarnedGalvanizer: true,
+      galvanizers: challenge[completionKey] ? challenge.galvanizers : addDiscrete(challenge.galvanizers, 1n),
+    } : {}),
+  }
+  const previousPoints = state.infinity.points
+  const nextPoints = addDiscrete(
+    previousPoints,
+    request.requestedReward,
+  )
+  const rewardGranted = nextPoints - previousPoints
+  const bankedSkillPoints = request.restartOnly ? 0n :
+    owned(state.skills.byId, 'banking') +
+    owned(state.skills.byId, 'investmentPortfolio')
+  // Reality ownership survives challenges, but only the separate Avotation
+  // reward contributes to their starting points. Keep the supplied total raw
+  // so abandoning/completing a challenge can restore the full contribution.
+  const artifactSkillPoints = isQuantumChallengeActive(state)
+    ? (state.secretProgress.completed
+      ? (request.artifactSkillPoints < AVOCADO_MEDITATION_SKILL_POINT_REWARD
+        ? request.artifactSkillPoints : AVOCADO_MEDITATION_SKILL_POINT_REWARD)
+      : 0n)
+    : request.artifactSkillPoints
+  const initialSkillPoints = addDiscrete(
+    addDiscrete(
+      state.infinity.permanentSkillPoints,
+      bankedSkillPoints,
+    ),
+    artifactSkillPoints,
+  )
+  const assignment = applyAutoAssignment(
+    initialSkillPoints,
+    state.skills.autoAssignNonRefundable,
+    request.restartOnly && isBlankSlateActive(state) ? [] : rulesResult.rules,
+    state,
+  )
+  const resetSkillStates = materializeResetSkillStates(
+    state.skills.byId,
+    assignment.byId,
+  )
+  const facilities = challengeFacilities(state, retainedFacilities(state))
+  const statistics = request.restartOnly ? state.statistics : recordInfinityCycle(
+    state.statistics,
+    request.breakInfinity,
+    rewardGranted,
+    state.infinity.lastCycleDurationSeconds,
+    request.automatic ?? false,
+    request.breakInfinity
+      ? state.infinity.breakTarget
+      : rewardGranted,
+    request.processingSource,
+    request.activeIntervalMilliseconds,
+    state.infinity.activeAutomaticThroughputCycleEligible === true,
+  )
+
+  return {
+    ok: true,
+    state: initializeSwarmGrants({
+      ...state,
+      challenges: nextChallenges,
+      meta: {
+        ...state.meta,
+        tutorialComplete: true,
+        firstInfinityComplete: request.restartOnly ? state.meta.firstInfinityComplete : true,
+      },
+      dyson: {
+        ...state.dyson,
+        money: 0,
+        science: 0,
+        bots: state.infinity.retainedFacilities.assembly_lines
+          ? 10
+          : 1,
+        workers: 0,
+        researchers: 0,
+        facilities,
+        totalPanelsDecayed: 0,
+        goalStage: 0n,
+        ...(state.dyson.completedTinkers === undefined ? {} : { completedTinkers: 0 }),
+      },
+      infinity: {
+        ...state.infinity,
+        points: nextPoints,
+        inProgress: false,
+        botCapTransitionPending: false,
+        botCapRewardsGranted: false,
+        lastPointsGained: Number(
+          rewardGranted > INT32_MAXIMUM
+            ? INT32_MAXIMUM
+            : rewardGranted,
+        ),
+        currentCyclePeakIpPerMinute: 0,
+        currentCyclePeakReward: 0n,
+        manualPeakIpPerMinute:
+          request.automatic || (state.infinity.currentCyclePeakReward ?? 0n) <= 0n
+            ? state.infinity.manualPeakIpPerMinute ?? 0
+            : state.infinity.currentCyclePeakIpPerMinute ?? 0,
+        manualPeakReward:
+          request.automatic || (state.infinity.currentCyclePeakReward ?? 0n) <= 0n
+            ? state.infinity.manualPeakReward ?? 0n
+            : state.infinity.currentCyclePeakReward ?? 0n,
+        manualCalibrationObservedActiveSeconds: 0,
+        activeAutomaticThroughputCycleEligible:
+          request.automatic === true && request.processingSource === 'active',
+        storedTimeUsedThisCycleSeconds: 0,
+        storedTimeUsedPreviousCycleSeconds: clampContinuous(
+          state.infinity.storedTimeUsedThisCycleSeconds,
+        ),
+      },
+      skills: resetSrsAugments(state, {
+        ...state.skills,
+        swarmGrants: swarmGrantsAfterInfinity(state, request.restartOnly === true),
+        points: assignment.points,
+        fragments: assignment.fragments,
+        byId: resetSkillStates,
+      }, request.restartOnly === true),
+      research: {
+        ...state.research,
+        levelsById: {},
+        progressById: {},
+      },
+      statistics,
+    }),
+    rewardGranted,
+    bankedSkillPoints,
+    autoAssignedSkillIds: assignment.assignedIds,
+  }
+}
+
+function materializeResetSkillStates(
+  previous: Readonly<Record<string, SkillRuntimeState>>,
+  assigned: Readonly<Record<string, SkillRuntimeState>>,
+): Record<string, SkillRuntimeState> {
+  const ids = new Set([
+    ...Object.keys(previous),
+    ...Object.keys(assigned),
+  ])
+  return Object.fromEntries(
+    [...ids].map((id) => [
+      id,
+      assigned[id] ?? {
+        owned: false,
+        level: 0,
+        timerSeconds: 0,
+        secondaryTimerSeconds: 0,
+      },
+    ]),
+  )
+}
+
+function validateResetInputs(
+  state: Readonly<CanonicalGameStateV1>,
+  request: Readonly<CanonicalInfinityResetRequest>,
+): CanonicalInfinityResetIssue[] {
+  const issues: CanonicalInfinityResetIssue[] = []
+  if (
+    typeof request.breakInfinity !== 'boolean' ||
+    typeof request.requestedReward !== 'bigint' ||
+    request.requestedReward < 0n ||
+    request.requestedReward > DISCRETE_MAXIMUM ||
+    typeof request.artifactSkillPoints !== 'bigint' ||
+    request.artifactSkillPoints < 0n ||
+    request.artifactSkillPoints > DISCRETE_MAXIMUM
+  ) {
+    issues.push({
+      code: 'INFINITY_RESET_REQUEST_INVALID',
+      path: 'request',
+      detail:
+        'Infinity reset mode, reward, and artifact skill points must be valid non-negative Int64 values.',
+    })
+  }
+  if (
+    typeof state.infinity.points !== 'bigint' ||
+    state.infinity.points < 0n ||
+    state.infinity.points > DISCRETE_MAXIMUM
+  ) {
+    issues.push({
+      code: 'INFINITY_RESET_STATE_INVALID',
+      path: 'infinity.points',
+      detail: 'Infinity points must be a non-negative Int64 value.',
+    })
+  }
+  if (
+    typeof state.infinity.permanentSkillPoints !== 'bigint' ||
+    state.infinity.permanentSkillPoints < 0n ||
+    state.infinity.permanentSkillPoints > DISCRETE_MAXIMUM
+  ) {
+    issues.push({
+      code: 'INFINITY_RESET_STATE_INVALID',
+      path: 'infinity.permanentSkillPoints',
+      detail: 'Permanent skill points must be a non-negative Int64 value.',
+    })
+  }
+  if (
+    !Array.isArray(state.skills.activeAutoAssignment) ||
+    state.skills.activeAutoAssignment.some(
+      (id) => typeof id !== 'string',
+    )
+  ) {
+    issues.push({
+      code: 'INFINITY_RESET_AUTO_ASSIGNMENT_INVALID',
+      path: 'skills.activeAutoAssignment',
+      detail: 'Active skill auto-assignment must be a string ID list.',
+    })
+  }
+  return issues
+}
+
+function retainedFacilities(
+  state: Readonly<CanonicalGameStateV1>,
+): CanonicalGameStateV1['dyson']['facilities'] {
+  if (state.challenges?.active === 'hands-off') return { ...EMPTY_FACILITIES, assembly_lines: [1, 0] }
+  return {
+    ...EMPTY_FACILITIES,
+    assembly_lines: [
+      hasCompletedQuantum(state) && !state.infinity.retainedFacilities.assembly_lines ? 1 : 0,
+      state.infinity.retainedFacilities.assembly_lines ? 10 : 0,
+    ],
+    ai_managers: [
+      0,
+      state.infinity.retainedFacilities.ai_managers ? 10 : 0,
+    ],
+    servers: [
+      0,
+      state.infinity.retainedFacilities.servers ? 10 : 0,
+    ],
+    data_centers: [
+      0,
+      state.infinity.retainedFacilities.data_centers ? 10 : 0,
+    ],
+    planets: [
+      0,
+      state.infinity.retainedFacilities.planets ? 10 : 0,
+    ],
+  }
+}
+
+function owned(
+  byId: Readonly<Record<string, SkillRuntimeState>>,
+  id: string,
+): bigint {
+  return byId[id]?.owned === true ? 1n : 0n
+}
+
+function captureAutoAssignmentRules(
+  ids: readonly string[],
+  lookup: CanonicalInfinityResetAssetLookup,
+  state: Readonly<CanonicalGameStateV1>,
+):
+  | {
+      readonly ok: true
+      readonly rules: readonly SkillAutoAssignmentRule[]
+    }
+  | {
+      readonly ok: false
+      readonly issues: readonly CanonicalInfinityResetIssue[]
+    } {
+  if (ids.length === 0) return { ok: true, rules: Object.freeze([]) }
+
+  const database = lookup(
+    SKILL_DATABASE_ASSET_KIND,
+    SKILL_DATABASE_ASSET_ID,
+  )
+  if (database === undefined) {
+    return {
+      ok: false,
+      issues: Object.freeze([
+        {
+          code: 'INFINITY_RESET_SKILL_DATABASE_MISSING',
+          path: 'gameData.SkillDatabase',
+          detail:
+            'Skill auto-assignment cannot be proven without the exported SkillDatabase.',
+        },
+      ]),
+    }
+  }
+  const databaseIds = readSkillDatabaseIds(database)
+  if (!databaseIds.ok) return databaseIds
+
+  const rules: SkillAutoAssignmentRule[] = []
+  const issues: CanonicalInfinityResetIssue[] = []
+  const pending = [...ids]
+  const visited = new Set<string>()
+  for (const id of pending) {
+    if (visited.has(id)) continue
+    visited.add(id)
+    if (id.length === 0 || (!databaseIds.ids.has(id) && !isSubskill(id))) {
+      rules.push(invalidRule(id))
+      continue
+    }
+    const asset = SUBSKILL_ASSETS.find((asset) => asset.id === id) ?? lookup(SKILL_DEFINITION_ASSET_KIND, id)
+    if (asset === undefined) {
+      issues.push({
+        code: 'INFINITY_RESET_SKILL_DEFINITION_MISSING',
+        path: `gameData.skills.${id}`,
+        detail: `SkillDatabase references missing skill '${id}'.`,
+      })
+      continue
+    }
+    const parsed = readSkillRule(asset, id)
+    if (!parsed.ok) {
+      issues.push(parsed.issue)
+      continue
+    }
+    const permanent = isGalvanized(state, id)
+    const rule = { ...parsed.rule,
+      requiredSkillIds: permanent ? [] : parsed.rule.requiredSkillIds,
+      shadowRequirementIds: permanent ? [] : parsed.rule.shadowRequirementIds,
+      exclusiveWithIds: permanent ? [] : parsed.rule.exclusiveWithIds.filter((other) => !isGalvanized(state, other)),
+    }
+    rules.push(rule)
+    pending.push(...rule.requiredSkillIds, ...rule.shadowRequirementIds)
+  }
+  return issues.length > 0
+    ? { ok: false, issues: Object.freeze(issues) }
+    : { ok: true, rules: Object.freeze(rules) }
+}
+
+function readSkillDatabaseIds(
+  database: RuntimeGameAsset,
+):
+  | {
+      readonly ok: true
+      readonly ids: ReadonlySet<string>
+    }
+  | {
+      readonly ok: false
+      readonly issues: readonly CanonicalInfinityResetIssue[]
+    } {
+  const references = database.data.skills
+  if (
+    database.kind !== SKILL_DATABASE_ASSET_KIND ||
+    database.id !== SKILL_DATABASE_ASSET_ID ||
+    !Array.isArray(references)
+  ) {
+    return invalidSkillDatabase()
+  }
+  const ids = new Set<string>()
+  for (const reference of references) {
+    if (!isRecord(reference)) return invalidSkillDatabase()
+    if (reference.id === null) continue
+    if (
+      typeof reference.id !== 'string' ||
+      reference.id.length === 0
+    ) {
+      return invalidSkillDatabase()
+    }
+    ids.add(reference.id)
+  }
+  return { ok: true, ids }
+}
+
+function invalidSkillDatabase(): {
+  readonly ok: false
+  readonly issues: readonly CanonicalInfinityResetIssue[]
+} {
+  return {
+    ok: false,
+    issues: Object.freeze([
+      {
+        code: 'INFINITY_RESET_SKILL_DATABASE_INVALID',
+        path: 'gameData.SkillDatabase.skills',
+        detail:
+          'The exported SkillDatabase must contain valid skill references.',
+      },
+    ]),
+  }
+}
+
+function readSkillRule(
+  asset: RuntimeGameAsset,
+  id: string,
+):
+  | { readonly ok: true; readonly rule: SkillAutoAssignmentRule }
+  | { readonly ok: false; readonly issue: CanonicalInfinityResetIssue } {
+  const data = asset.data
+  const cost = data.cost
+  const refundable = readUnityBoolean(data.refundable)
+  const isFragment = readUnityBoolean(data.isFragment)
+  const requiredSkillIds = readStringArray(data.requiredSkillIds)
+  const shadowRequirementIds = readStringArray(
+    data.shadowRequirementIds,
+  )
+  const exclusiveWithIds = readStringArray(data.exclusiveWithIds)
+  const unlock = readSkillUnlock(data)
+  if (
+    asset.kind !== SKILL_DEFINITION_ASSET_KIND ||
+    asset.id !== id ||
+    !isSafeNonNegativeInteger(cost) ||
+    cost > 2_147_483_647 ||
+    refundable === undefined ||
+    isFragment === undefined ||
+    requiredSkillIds === undefined ||
+    shadowRequirementIds === undefined ||
+    exclusiveWithIds === undefined ||
+    unlock === undefined
+  ) {
+    return {
+      ok: false,
+      issue: {
+        code: 'INFINITY_RESET_SKILL_DEFINITION_INVALID',
+        path: `gameData.skills.${id}`,
+        detail: `Skill '${id}' does not match the exported auto-assignment contract.`,
+      },
+    }
+  }
+  return {
+    ok: true,
+    rule: {
+      id,
+      cost: BigInt(cost),
+      refundable,
+      isFragment,
+      requiredSkillIds,
+      shadowRequirementIds,
+      exclusiveWithIds,
+      unlock,
+      valid: true,
+    },
+  }
+}
+
+function invalidRule(id: string): SkillAutoAssignmentRule {
+  return {
+    id,
+    cost: 0n,
+    refundable: true,
+    isFragment: false,
+    requiredSkillIds: Object.freeze([]),
+    shadowRequirementIds: Object.freeze([]),
+    exclusiveWithIds: Object.freeze([]),
+    unlock: 'always',
+    valid: false,
+  }
+}
+
+function applyAutoAssignment(
+  initialPoints: bigint,
+  assignNonRefundable: boolean,
+  rules: readonly SkillAutoAssignmentRule[],
+  state: Readonly<CanonicalGameStateV1>,
+): AutoAssignmentOutcome {
+  let points = initialPoints
+  let fragments = permanentFragmentCount(state)
+  const byId: Record<string, SkillRuntimeState> = permanentSkillRuntime(state)
+  const assignedIds: string[] = []
+  const rulesById = new Map(rules.map((rule) => [rule.id, rule]))
+  const dependencies = new Map(rules.map((rule) => [rule.id, {
+    required: rule.requiredSkillIds,
+    shadowRequired: rule.shadowRequirementIds,
+  }]))
+  for (const id of resolveSkillPurchaseOrder(state.skills.activeAutoAssignment, new Set(galvanizedSkillIds(state)), dependencies)) {
+    const rule = rulesById.get(id)
+    if (rule === undefined || !rule.valid || !isRuleUnlocked(rule, state) ||
+      (isSubskill(id) && !isSubskillUnlocked(state, id)) ||
+      rule.id.length === 0 || isOwned(byId, rule.id) ||
+      anyOwned(byId, rule.exclusiveWithIds) ||
+      (!assignNonRefundable && !rule.refundable)) continue
+    // Match live assignment: skip targets whose prerequisites were unavailable,
+    // but preserve priority when the next eligible target needs more points.
+    if (!allOwned(byId, rule.requiredSkillIds) ||
+      !allOwned(byId, rule.shadowRequirementIds)) continue
+    if (points < rule.cost) break
+    points -= rule.cost
+    byId[rule.id] = {
+      owned: true,
+      // These levels count completed work, rather than an assigned skill level.
+      level: rule.id === MANUAL_LABOUR_AUGMENTS.handAssembly ||
+        rule.id === MANUAL_LABOUR_AUGMENTS.practice ? 0 : 1,
+      timerSeconds: 0,
+      secondaryTimerSeconds: 0,
+    }
+    if (rule.isFragment) fragments = addDiscrete(fragments, 1n)
+    assignedIds.push(rule.id)
+  }
+
+  return {
+    points,
+    fragments,
+    byId,
+    assignedIds: Object.freeze(assignedIds),
+  }
+}
+
+function readSkillUnlock(
+  data: Readonly<Record<string, unknown>>,
+): SkillAutoAssignmentRule['unlock'] | undefined {
+  const candidates = [
+    ['firstRunBlocked', 'first-infinity'],
+    ['isFragment', 'fragments'],
+    ['purityLine', 'purity'],
+    ['terraLine', 'terra'],
+    ['powerLine', 'power'],
+    ['paragadeLine', 'paragade'],
+    ['stellarLine', 'stellar'],
+  ] as const
+  for (const [field, unlock] of candidates) {
+    const value = readUnityBoolean(data[field])
+    if (value === undefined) return undefined
+    if (value) return unlock
+  }
+  return 'always'
+}
+
+function isRuleUnlocked(
+  rule: Readonly<SkillAutoAssignmentRule>,
+  state: Readonly<CanonicalGameStateV1>,
+): boolean {
+  switch (rule.unlock) {
+    case 'always':
+    case 'first-infinity':
+      return true
+    case 'fragments':
+      return state.quantum.unlocks.fragments
+    case 'purity':
+      return state.quantum.unlocks.purity
+    case 'terra':
+      return state.quantum.unlocks.terra
+    case 'power':
+      return state.quantum.unlocks.power
+    case 'paragade':
+      return state.quantum.unlocks.paragade
+    case 'stellar':
+      return state.quantum.unlocks.stellar
+  }
+}
+
+function allOwned(
+  byId: Readonly<Record<string, SkillRuntimeState>>,
+  ids: readonly string[],
+): boolean {
+  return ids.every((id) => isOwned(byId, id))
+}
+
+function anyOwned(
+  byId: Readonly<Record<string, SkillRuntimeState>>,
+  ids: readonly string[],
+): boolean {
+  return ids.some((id) => isOwned(byId, id))
+}
+
+function isOwned(
+  byId: Readonly<Record<string, SkillRuntimeState>>,
+  id: string,
+): boolean {
+  return byId[id]?.owned === true
+}
+
+function recordInfinityCycle(
+  statistics: Readonly<SimulationStatisticsState>,
+  breakInfinity: boolean,
+  reward: bigint,
+  durationSeconds: number,
+  automatic: boolean,
+  configuredTarget: bigint,
+  processingSource?: ProcessingSource,
+  activeIntervalMilliseconds?: number,
+  activeAutomaticThroughputCycleEligible = false,
+): SimulationStatisticsState {
+  const event: InfinityStatisticsEvent = {
+    ordinaryCount: breakInfinity ? 0n : 1n,
+    breakCount: breakInfinity ? 1n : 0n,
+    ordinaryPoints: breakInfinity ? 0n : reward,
+    breakPoints: breakInfinity ? reward : 0n,
+  }
+  const combinedPoints = addDiscrete(
+    event.ordinaryPoints,
+    event.breakPoints,
+  )
+  const combinedCount = addDiscrete(
+    event.ordinaryCount,
+    event.breakCount,
+  )
+  const historyEntry: InfinityCycleHistoryEntry = {
+    breakInfinity,
+    automatic,
+    configuredTarget,
+    reward,
+    durationSeconds: clampContinuous(durationSeconds),
+    ...(processingSource === undefined ? {} : { processingSource }),
+    ...(activeIntervalMilliseconds === undefined
+      ? {}
+      : { activeIntervalMilliseconds }),
+  }
+  const recentInfinityCycles =
+    reward > 0n && durationSeconds > 0
+      ? [historyEntry, ...(statistics.recentInfinityCycles ?? [])].slice(0, 10)
+      : statistics.recentInfinityCycles ?? []
+  const recentActiveAutomaticInfinityCycles =
+    activeAutomaticThroughputCycleEligible &&
+    breakInfinity &&
+    automatic &&
+    processingSource === 'active' &&
+    activeIntervalMilliseconds !== undefined &&
+    reward > 0n &&
+    durationSeconds > 0
+      ? [
+          historyEntry,
+          ...(statistics.recentActiveAutomaticInfinityCycles ?? []),
+        ].slice(0, 10)
+      : statistics.recentActiveAutomaticInfinityCycles ?? []
+  return {
+    ...statistics,
+    trackedSinceUpdate: true,
+    trackingStartedMarker: statistics.trackedSinceUpdate
+      ? statistics.trackingStartedMarker
+      : 'tracked-since-update',
+    lifetime: addStatisticsEvent(statistics.lifetime, event),
+    currentQuantumRun: addStatisticsEvent(
+      statistics.currentQuantumRun,
+      event,
+    ),
+    recentProcessedSegment: addStatisticsEvent(
+      statistics.recentProcessedSegment,
+      event,
+    ),
+    lastCompletedCycle: {
+      valid: true,
+      breakInfinity,
+      durationSeconds: clampContinuous(durationSeconds),
+      reward,
+      dreamCause: null,
+    },
+    recentInfinityCycles,
+    recentActiveAutomaticInfinityCycles,
+    minuteWindows: recordWindowEvent(
+      statistics.minuteWindows,
+      60,
+      60,
+      statistics.trackedSimulatedSeconds,
+      combinedCount,
+      combinedPoints,
+    ),
+    halfHourWindows: recordWindowEvent(
+      statistics.halfHourWindows,
+      48,
+      1_800,
+      statistics.trackedSimulatedSeconds,
+      combinedCount,
+      combinedPoints,
+    ),
+    dailyWindows: recordWindowEvent(
+      statistics.dailyWindows,
+      30,
+      86_400,
+      statistics.trackedSimulatedSeconds,
+      combinedCount,
+      combinedPoints,
+    ),
+  }
+}
+
+function addStatisticsEvent(
+  totals: Readonly<SimulationTotalsState>,
+  event: Readonly<InfinityStatisticsEvent>,
+): SimulationTotalsState {
+  return {
+    ...totals,
+    ordinaryInfinityCount: addDiscrete(
+      totals.ordinaryInfinityCount,
+      event.ordinaryCount,
+    ),
+    breakInfinityCount: addDiscrete(
+      totals.breakInfinityCount,
+      event.breakCount,
+    ),
+    ordinaryInfinityPoints: addDiscrete(
+      totals.ordinaryInfinityPoints,
+      event.ordinaryPoints,
+    ),
+    breakInfinityPoints: addDiscrete(
+      totals.breakInfinityPoints,
+      event.breakPoints,
+    ),
+  }
+}
+
+function recordWindowEvent(
+  source: readonly StatisticsWindowState[],
+  expectedLength: number,
+  widthSeconds: number,
+  trackedSimulatedSeconds: number,
+  infinityCount: bigint,
+  infinityPoints: bigint,
+): readonly StatisticsWindowState[] {
+  return updateStatisticsEventWindow(
+    source,
+    expectedLength,
+    widthSeconds,
+    trackedSimulatedSeconds,
+    (bucket) => ({
+      ...bucket,
+      infinityCount: addDiscrete(
+        bucket.infinityCount,
+        infinityCount,
+      ),
+      infinityPoints: addDiscrete(
+        bucket.infinityPoints,
+        infinityPoints,
+      ),
+    }),
+  )
+}
+
+function isRecord(
+  value: unknown,
+): value is Readonly<Record<string, unknown>> {
+  return value !== null && typeof value === 'object'
+}
+
+function failed(
+  state: Readonly<CanonicalGameStateV1>,
+  issues: readonly CanonicalInfinityResetIssue[],
+): CanonicalInfinityResetResult {
+  return {
+    ok: false,
+    state,
+    issues: Object.freeze([...issues]),
+  }
+}

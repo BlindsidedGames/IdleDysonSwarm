@@ -1,0 +1,72 @@
+.ui-collapsible-section {
+  min-inline-size: 0;
+}
+
+.ui-collapsible-section__heading {
+  margin: 0;
+}
+
+.ui-collapsible-section__trigger {
+  display: flex;
+  inline-size: 100%;
+  min-block-size: 2.75rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0.7rem;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: var(--font-weight-bold, 700);
+  text-align: start;
+  touch-action: manipulation;
+  user-select: none;
+  cursor: pointer;
+}
+
+.ui-collapsible-section__trigger:focus-visible {
+  outline: 0.16rem solid currentColor;
+  outline-offset: -0.2rem;
+}
+
+.ui-collapsible-section__title {
+  min-inline-size: 0;
+}
+
+.ui-collapsible-section__chevron {
+  flex: 0 0 auto;
+  line-height: 1;
+  transform: rotate(
+    var(--ui-collapsible-section-collapsed-rotation, -90deg)
+  );
+  transition: transform 140ms ease-out;
+}
+
+.ui-collapsible-section__chevron::before {
+  content: "\25BE";
+}
+
+.ui-collapsible-section[data-expanded='true']
+  > .ui-collapsible-section__heading
+  > .ui-collapsible-section__trigger
+  > .ui-collapsible-section__chevron {
+  transform: rotate(0deg);
+}
+
+.ui-collapsible-section__content {
+  min-inline-size: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-collapsible-section__chevron {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .ui-collapsible-section__trigger {
+    forced-color-adjust: auto;
+  }
+}
