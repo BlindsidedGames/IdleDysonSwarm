@@ -553,7 +553,8 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCen
         perform(call) {
             // Beta requires explicit import; do not read public Unity save files.
             if Self.webSaveRootName == "idleds-rework-beta-v1" {
-                return ["candidates": []]
+                call.resolve(["candidates": []])
+                return
             }
             let documents = try self.documentsDirectory()
             let unitySave = documents.appendingPathComponent(
