@@ -1,6 +1,7 @@
+import { getPresentationStorage } from '../../../src/ui/presentationStorage'
 export function readPresentationPreference(key: string): string | null {
   try {
-    return localStorage.getItem(key)
+    return getPresentationStorage()?.getItem(key) ?? null
   } catch {
     return null
   }
@@ -11,7 +12,7 @@ export function writePresentationPreference(
   value: string,
 ): void {
   try {
-    localStorage.setItem(key, value)
+    getPresentationStorage()?.setItem(key, value)
   } catch {
     // Device-local presentation persistence must never block gameplay.
   }

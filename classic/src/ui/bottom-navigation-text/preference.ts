@@ -1,3 +1,4 @@
+import { getPresentationStorage } from '../../../../src/ui/presentationStorage'
 export const BOTTOM_NAVIGATION_TEXT_STORAGE_KEY =
   'idle-dyson-swarm.bottom-navigation-text.v1'
 export const LEGACY_BOTTOM_NAVIGATION_SIZE_STORAGE_KEY =
@@ -33,9 +34,7 @@ export class BottomNavigationTextPreferenceService {
   constructor(options: BottomNavigationTextPreferenceOptions = {}) {
     this.#storage = 'storage' in options
       ? options.storage ?? null
-      : typeof localStorage === 'undefined'
-        ? null
-        : localStorage
+      : getPresentationStorage()
     const stored = this.#readCurrent()
     if (stored !== null) {
       this.#includeText = stored.includeText

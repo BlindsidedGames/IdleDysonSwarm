@@ -702,6 +702,42 @@
     "src/ui/gameplay/shell/dysonGameplayShell.css": {
       "sha256": "3dbaec95cd93079beb1b5534cf2742fbe334507691dc357a3bf16f4fa91dc6d0",
       "reason": "Share only the bottom drawer mode control; no engine, time, schema or gameplay changes."
+    },
+    "src/App.tsx": {
+      "sha256": "72389377c8b743d7fd4ea336c92941c9f5d7d95d34333aa088f8d9582f8d428a",
+      "reason": "Route presentation-only storage through the fenced per-document mode scope; ordinary unscoped hosts retain their existing keys."
+    },
+    "src/platform/nativeHostBridge.ts": {
+      "sha256": "3306f8c37f5b7668353ad96cf55878e76268518946dcb77dacc43558b8222225",
+      "reason": "Share the Window bridge type declaration only; no native bootstrap or gameplay behavior is changed."
+    },
+    "src/ui/bottom-navigation-text/preference.ts": {
+      "sha256": "1af710b519fd103d6afdab4870a4d1fd2324cf39a9ac6d48fbd5a96ffb7a7ac4",
+      "reason": "Route presentation-only storage through the fenced per-document mode scope; ordinary unscoped hosts retain their existing keys."
+    },
+    "src/ui/components/disclosurePreference.ts": {
+      "sha256": "89bfa6fe8e934869c42c26e68b1636853b4ab5432476fa3789e2692d4d41a274",
+      "reason": "Route presentation-only storage through the fenced per-document mode scope; ordinary unscoped hosts retain their existing keys."
+    },
+    "src/ui/gameplay/skills/SkillsSurface.tsx": {
+      "sha256": "c62af01b6a29f9ef024cb12f6d5832c6d9e4835fabaa915ec568c408db2e85bc",
+      "reason": "Route presentation-only storage through the fenced per-document mode scope; ordinary unscoped hosts retain their existing keys."
+    },
+    "src/ui/i18n/localePreference.ts": {
+      "sha256": "6210decf71ee1d9e712881d1fede22e8b510e53d4867012cb88adfe67c0c0508",
+      "reason": "Route presentation-only storage through the fenced per-document mode scope; ordinary unscoped hosts retain their existing keys."
+    },
+    "src/ui/number-notation/preference.ts": {
+      "sha256": "39539c05de756645df36e3ac75275e9a3b8e7bf63851a003ebbae1ff3f405382",
+      "reason": "Route presentation-only storage through the fenced per-document mode scope; ordinary unscoped hosts retain their existing keys."
+    },
+    "src/ui/presentationPreferences.ts": {
+      "sha256": "9ff5c39f4eefb32dadb8962c4eabc00674ebe3cd264ffd148a9545bf106cd0ee",
+      "reason": "Route presentation-only storage through the fenced per-document mode scope; ordinary unscoped hosts retain their existing keys."
+    },
+    "src/ui/research-visibility/preference.ts": {
+      "sha256": "b60bdc82b68f0962a069cd1f5de94270c1e138052d6eaf1b94a13316eedf58d3",
+      "reason": "Route presentation-only storage through the fenced per-document mode scope; ordinary unscoped hosts retain their existing keys."
     }
   }
 }

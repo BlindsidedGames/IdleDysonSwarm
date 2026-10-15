@@ -1,3 +1,4 @@
+import { getPresentationStorage } from '../../presentationStorage'
 import { realTimeRate, realTimeDuration } from '../effectiveSpeed'
 import { stellarFracturedMessages, stellarFracturedDiscoveryObliterationMessage } from './stellarMessages'
 import { copyPlainText } from '../../../platform/plainTextClipboard'
@@ -229,7 +230,7 @@ const SKILL_COMPARISONS_STORAGE_KEY = 'idle-dyson-swarm:show-skill-production-co
 function readSkillComparisonsPreference(): boolean {
   try {
     return typeof window === 'undefined' ||
-      window.localStorage.getItem(SKILL_COMPARISONS_STORAGE_KEY) !== 'false'
+      getPresentationStorage()?.getItem(SKILL_COMPARISONS_STORAGE_KEY) !== 'false'
   } catch {
     return true
   }
@@ -238,7 +239,7 @@ function readSkillComparisonsPreference(): boolean {
 function readSkillLabelsPreference(): boolean {
   try {
     return typeof window === 'undefined' ||
-      window.localStorage.getItem(SKILL_LABELS_STORAGE_KEY) !== 'false'
+      getPresentationStorage()?.getItem(SKILL_LABELS_STORAGE_KEY) !== 'false'
   } catch {
     return true
   }
@@ -246,7 +247,7 @@ function readSkillLabelsPreference(): boolean {
 
 function writeSkillLabelsPreference(enabled: boolean): void {
   try {
-    window.localStorage.setItem(SKILL_LABELS_STORAGE_KEY, String(enabled))
+    getPresentationStorage()?.setItem(SKILL_LABELS_STORAGE_KEY, String(enabled))
   } catch {
     // Labels remain usable when preference storage is unavailable.
   }
@@ -255,7 +256,7 @@ function writeSkillLabelsPreference(enabled: boolean): void {
 function readDoubleClickAssignmentPreference(): boolean {
   try {
     return typeof window !== 'undefined' &&
-      window.localStorage.getItem(SKILL_DOUBLE_CLICK_STORAGE_KEY) === 'true'
+      getPresentationStorage()?.getItem(SKILL_DOUBLE_CLICK_STORAGE_KEY) === 'true'
   } catch {
     return false
   }
@@ -263,7 +264,7 @@ function readDoubleClickAssignmentPreference(): boolean {
 
 function writeDoubleClickAssignmentPreference(enabled: boolean): void {
   try {
-    window.localStorage.setItem(
+    getPresentationStorage()?.setItem(
       SKILL_DOUBLE_CLICK_STORAGE_KEY,
       String(enabled),
     )
@@ -757,7 +758,7 @@ function SkillsSurfaceContent({
           onShowProductionComparisonsChange={(enabled) => {
             setShowProductionComparisons(enabled)
             try {
-              window.localStorage.setItem(SKILL_COMPARISONS_STORAGE_KEY, String(enabled))
+              getPresentationStorage()?.setItem(SKILL_COMPARISONS_STORAGE_KEY, String(enabled))
             } catch { /* Keep the toggle usable without persistence. */ }
           }}
           showSkillLabels={showSkillLabels}

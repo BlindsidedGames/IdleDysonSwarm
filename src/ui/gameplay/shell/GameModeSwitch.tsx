@@ -15,7 +15,7 @@ const messages = defineMessages({
   migrate: { id: 'modes.migrate', defaultMessage: 'Migrate Classic progress' },
   confirm: { id: 'modes.confirm', defaultMessage: 'Confirm migration' },
   cancel: { id: 'modes.cancel', defaultMessage: 'Cancel' },
-  oneWay: { id: 'modes.oneWay', defaultMessage: 'Copy Classic progress to Modern? Your Classic save stays available. Modern progress cannot be converted back.' },
+  oneWay: { id: 'modes.oneWay', defaultMessage: 'Copy compatible Classic progress to Modern? Your Classic save stays available, including Classic-only progress. Modern progress cannot be converted back.' },
   conflict: { id: 'modes.conflict', defaultMessage: 'You already have a Modern save. Continue it to keep its progress.' },
   failed: { id: 'modes.failed', defaultMessage: 'The change could not be saved. Your last saved progress is preserved.' },
 })

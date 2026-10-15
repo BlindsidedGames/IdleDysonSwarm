@@ -1,3 +1,4 @@
+import { getPresentationStorage } from '../../../../src/ui/presentationStorage'
 import {
   LOCALE_REGISTRY,
   isEnabledLocale,
@@ -51,9 +52,7 @@ export class LocalePreferenceService {
     this.#storage =
       'storage' in options
         ? options.storage ?? null
-        : typeof localStorage === 'undefined'
-          ? null
-          : localStorage
+        : getPresentationStorage()
     this.#readPreferredLocales =
       options.readPreferredLocales ??
       (options.preferredLocales === undefined

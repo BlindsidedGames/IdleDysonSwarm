@@ -1,3 +1,4 @@
+import { getPresentationStorage } from '../presentationStorage'
 import {
   DEFAULT_NUMBER_NOTATION,
   isNumberNotationMode,
@@ -39,9 +40,7 @@ export class NumberNotationPreferenceService {
   constructor(options: NumberNotationPreferenceOptions = {}) {
     this.#storage = 'storage' in options
       ? options.storage ?? null
-      : typeof localStorage === 'undefined'
-        ? null
-        : localStorage
+      : getPresentationStorage()
     const stored = this.#readOnce()
     this.#hadStoredPreference = stored !== null
     this.#legacyAdoptionAvailable = stored === null

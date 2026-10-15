@@ -16,6 +16,12 @@ export interface ModeSessionContext {
   isCurrent(): boolean
 }
 export type ModeSessionFactory = (context: ModeSessionContext) => Promise<ModeSession>
+export interface ModeControllerHooks {
+  beforeOpen?(mode: GameMode): Promise<void>
+  checkpointSaved?(mode: GameMode, text: string, isCurrent: () => boolean): Promise<void>
+  finalCheckpointSaved?(mode: GameMode, text: string): Promise<void>
+  afterClose?(mode: GameMode): Promise<void>
+}
 export interface ModeControllerSnapshot {
   readonly phase: 'idle' | 'changing' | 'ready' | 'blocked' | 'closed'
   readonly manifest: ModeManifest | null
@@ -34,9 +40,11 @@ export class GameModeController {
   private terminal = false
   private readonly store: ModeSaveStore
   private readonly factories: Readonly<Record<GameMode, ModeSessionFactory>>
+  private readonly hooks: ModeControllerHooks
   private readonly convertClassic: (classic: string) => string | Promise<string>
   constructor(store: ModeSaveStore, factories: Readonly<Record<GameMode, ModeSessionFactory>>,
-    convertClassic: (classic: string) => string | Promise<string>) {
+    convertClassic: (classic: string) => string | Promise<string>, hooks: ModeControllerHooks = {}) {
+    this.hooks = hooks
     this.store = store
     this.factories = factories
     this.convertClassic = convertClassic
@@ -118,15 +126,22 @@ export class GameModeController {
       this.sessionId += 1
       if (mode === undefined) throw new Error('Active session has no mode.')
       await this.store.checkpoint(mode, text)
+      // The old graph is quiescent and the controller still owns transition
+      // admission. Await its final durable Cloud publication before opening any
+      // new graph; ordinary stale-session callbacks remain revoked.
+      await this.hooks.finalCheckpointSaved?.(mode, text).catch(() => undefined)
     } finally {
       // A failed final checkpoint blocks selection but still tears down workers.
       this.acceptingCheckpoints = false
       this.sessionId += 1
       await session.close()
+      if (mode) await this.hooks.afterClose?.(mode)
     }
   }
 
   private async open(manifest: ModeManifest): Promise<void> {
+    await this.hooks.beforeOpen?.(manifest.active)
+    manifest = (await this.store.inspect()) ?? manifest
     const initialSave = await this.store.read(manifest.active)
     if (initialSave === null) throw new Error('Selected mode save is missing.')
     const id = ++this.sessionId
@@ -139,6 +154,7 @@ export class GameModeController {
         const saved = await this.store.checkpoint(manifest.active, text)
         if (!context.isCurrent()) return false
         this.set({ ...this.snapshot, manifest: saved })
+        void this.hooks.checkpointSaved?.(manifest.active, text, context.isCurrent).catch(() => undefined)
         return true
       },
     }

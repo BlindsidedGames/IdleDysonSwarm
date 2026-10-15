@@ -1,3 +1,4 @@
+import { getPresentationStorage } from './ui/presentationStorage'
 import {
   useCallback,
   useEffect,
@@ -248,7 +249,7 @@ function App({
     if (!beginOperation('import-pending')) return
     try {
       try {
-        window.localStorage.setItem(
+        getPresentationStorage()?.setItem(
           'idle-dyson-swarm.recovery-choice',
           JSON.stringify({ choice: 'start-fresh', recordedAtUtc: sampleUtc() }),
         )

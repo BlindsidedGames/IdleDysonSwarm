@@ -104,7 +104,7 @@ export interface NativeReviewRequestResult {
 
 declare global {
   interface Window {
-    idleDysonSwarmNativeHost?: NativeHostBridgeApi
+    idleDysonSwarmNativeHost?: import('../../../src/platform/nativeHostBridge').NativeHostBridgeApi
   }
 }
 

@@ -16,4 +16,4 @@ for (const [name, originalHash] of Object.entries(baseline.files)) {
   if (patch && !patch.reason.trim()) throw Error('Missing Classic patch reason: ' + name)
 }
 for (const name of Object.keys(baseline.localPatches)) if (!(name in baseline.files)) throw Error('Patch has no baseline: ' + name)
-console.log(`${Object.keys(baseline.files).length} Classic baseline files verified at ${baseline.sourceCommit}; ${Object.keys(baseline.localPatches).length} documented navigation patches.`)
+console.log(`${Object.keys(baseline.files).length} Classic baseline files verified at ${baseline.sourceCommit}; ${Object.keys(baseline.localPatches).length} documented infrastructure patches.`)

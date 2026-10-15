@@ -13,6 +13,8 @@ export interface ModeSaveCodec {
 export interface VerifiedModeInventory {
   readonly discovery: 'complete'
   readonly saves: Readonly<Partial<Record<GameMode, string>>>
+  readonly originals?: readonly { readonly id: string; readonly text: string }[]
+  readonly beforePublication?: () => Promise<void>
 }
 export type ModeCodecs = Readonly<Record<GameMode, ModeSaveCodec>>
 interface SavePointer { readonly slot: number; readonly sha256: string }
@@ -22,6 +24,8 @@ export interface ModeManifest {
   readonly active: GameMode
   readonly saves: Readonly<Partial<Record<GameMode, SavePointer>>>
   /** Pinned pre-conversion source, preserved even after Classic resumes playing. */
+  readonly upgradeSources?: readonly { readonly id: string; readonly sha256: string }[]
+  readonly cloudReceipts?: Readonly<Partial<Record<GameMode, { readonly downloaded: string; readonly selected: string }>>>
   readonly migrationSource?: SavePointer
 }
 export interface ModeBundle {
@@ -75,6 +79,17 @@ export class ModeSaveStore {
       const current = await this.readManifest()
       if (current) return current
       if (inventory?.discovery !== 'complete') throw new Error('Complete save discovery is required before first startup.')
+      const upgradeSources = []
+      if ((inventory.originals?.length ?? 0) > 64) throw new Error('Too many upgrade recovery sources.')
+      for (const original of inventory.originals ?? []) {
+        if (original.id.length > 512) throw new Error('Upgrade source identity exceeds its limit.')
+        const sha256 = await sha256Utf8(original.text)
+        const path = `${this.root}/upgrade-originals/${sha256}.txt`
+        await this.assertWriter()
+        if (!await this.storage.exists(path)) await this.storage.writeText(path, original.text)
+        if (await this.storage.readText(path) !== original.text) throw new Error('Upgrade original recovery readback failed.')
+        upgradeSources.push({ id: original.id, sha256 })
+      }
       const existing = inventory.saves
       const saves: Partial<Record<GameMode, SavePointer>> = {}
       for (const mode of MODES) {
@@ -83,7 +98,7 @@ export class ModeSaveStore {
       // Existing public players keep Classic. An existing beta alone stays modern.
       const active = saves.classic ? 'classic' : 'modern'
       if (!saves[active]) saves[active] = await this.retain(active, await this.codecs[active].createFresh())
-      return this.publish({ format: 'IDS-MODES-1', generation: 1, active, saves })
+      return this.publish({ format: 'IDS-MODES-1', generation: 1, active, saves, ...(upgradeSources.length ? { upgradeSources } : {}) }, inventory.beforePublication)
     })
   }
 
@@ -133,6 +148,19 @@ export class ModeSaveStore {
     })
   }
 
+  resolveCloud(mode: GameMode, downloadedHash: string, selectedHash: string, selected: string | null,
+    expectedGeneration: number, unchanged: () => Promise<void>): Promise<ModeManifest> {
+    return this.serial(async () => {
+      const current = await this.requireManifest()
+      if (current.generation !== expectedGeneration) throw new Error('Local saves changed during Cloud selection.')
+      if (!/^[a-f0-9]{64}$/.test(downloadedHash) || !/^[a-f0-9]{64}$/.test(selectedHash)) throw new Error('Invalid downloaded Cloud identity.')
+      const pointer = selected === null ? current.saves[mode] : await this.retain(mode, selected)
+      if (!pointer) throw new Error('Cloud selection has no save.')
+      return this.publish({ ...current, generation: current.generation + 1,
+        saves: { ...current.saves, [mode]: pointer }, cloudReceipts: { ...current.cloudReceipts, [mode]: { downloaded: downloadedHash, selected: selectedHash } } }, unchanged)
+    })
+  }
+
   exportBundle(): Promise<string> {
     return this.serial(async () => {
       const current = await this.requireManifest()
@@ -168,7 +196,7 @@ export class ModeSaveStore {
       }
       if (!saves[bundle.active]) throw new Error('Mode export is missing its active save.')
       return this.publish({ format: 'IDS-MODES-1', generation: (current?.generation ?? 0) + 1,
-        active: bundle.active, saves, ...(current?.migrationSource ? { migrationSource: current.migrationSource } : {}) })
+        active: bundle.active, saves, ...(current?.upgradeSources ? { upgradeSources: current.upgradeSources } : {}), ...(current?.migrationSource ? { migrationSource: current.migrationSource } : {}) })
     })
   }
 
@@ -229,7 +257,7 @@ export class ModeSaveStore {
     if (!manifest) throw new Error('Mode saves have not been initialized.')
     return manifest
   }
-  private async publish(manifest: ModeManifest): Promise<ModeManifest> {
+  private async publish(manifest: ModeManifest, beforeReplacement?: () => Promise<void>): Promise<ModeManifest> {
     await this.assertWriter()
     const path = `${this.root}/manifest.json`
     const temporary = `${path}.tmp`
@@ -237,6 +265,7 @@ export class ModeSaveStore {
     await this.storage.writeText(temporary, text)
     if (await this.storage.readText(temporary) !== text) throw new Error('Mode manifest readback failed.')
     if (await this.storage.exists(path)) await this.storage.copy(path, `${path}.backup`)
+    await beforeReplacement?.()
     await this.assertWriter()
     await this.storage.replaceAtomically(temporary, path)
     if (await this.storage.readText(path) !== text) throw new Error('Mode manifest publication could not be verified.')
@@ -262,6 +291,11 @@ function parseManifest(text: string): ModeManifest {
   for (const [mode, pointer] of Object.entries(value.saves)) {
     requireMode(mode)
     if (!validPointer(pointer)) throw new Error('Invalid mode save pointer.')
+  }
+  if (value.upgradeSources !== undefined && (!Array.isArray(value.upgradeSources) || value.upgradeSources.length > 64 || value.upgradeSources.some(source => !record(source) || typeof source.id !== 'string' || source.id.length > 512 || typeof source.sha256 !== 'string' || !/^[a-f0-9]{64}$/.test(source.sha256)))) throw new Error('Invalid upgrade recovery sources.')
+  if (value.cloudReceipts !== undefined) {
+    if (!record(value.cloudReceipts)) throw new Error('Invalid Cloud receipts.')
+    for (const [mode, hash] of Object.entries(value.cloudReceipts)) { requireMode(mode); if (!record(hash) || typeof hash.downloaded !== 'string' || typeof hash.selected !== 'string' || !/^[a-f0-9]{64}$/.test(hash.downloaded) || !/^[a-f0-9]{64}$/.test(hash.selected)) throw new Error('Invalid Cloud receipt.') }
   }
   if (value.migrationSource !== undefined && !validPointer(value.migrationSource)) throw new Error('Invalid pinned migration source.')
   if (!value.saves[value.active]) throw new Error('Active mode save is missing.')

@@ -65,6 +65,12 @@ async function bootstrap(): Promise<void> {
   const nativeLaunch = createNativeLaunchDismissalController()
   try {
     const nativeBridge = detectNativeHostBridge()
+    if (import.meta.env.DEV && import.meta.env.VITE_IDS_DUAL_MODE_FOUNDATION === '1' && nativeBridge === null &&
+        ['127.0.0.1', 'localhost', '[::1]'].includes(window.location.hostname)) {
+      const { startDevelopmentModeHost } = await import('./modes/development/startDevelopmentModeHost')
+      await startDevelopmentModeHost(rootElement)
+      return
+    }
     if (nativeBridge !== null) {
       nativeLaunch.armFailsafe()
     }
