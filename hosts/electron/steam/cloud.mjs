@@ -4,9 +4,10 @@ import { join, dirname } from 'node:path'
 import { createHash, randomUUID } from 'node:crypto'
 const hash = text => createHash('sha256').update(text).digest('hex')
 const maximumBytes = 32*1024*1024
-function validateSnapshot(text) {
-  if (typeof text === 'string' && text.startsWith('IDLEDS:')) throw new Error('IDLEDS Cloud publication requires an approved isolated account namespace')
-  if (typeof text !== 'string' || !text.startsWith('IDSWEB1:') || Buffer.byteLength(text) > maximumBytes) throw new Error('Invalid portable Cloud snapshot')
+function validateSnapshot(text, namespace) {
+  if (typeof text === 'string' && text.startsWith('IDLEDS:') && namespace !== 'idleds-modern-v1') throw new Error('IDLEDS Cloud publication requires an approved isolated account namespace')
+  const prefix = namespace === 'idleds-modern-v1' ? 'IDLEDS:' : 'IDSWEB1:'
+  if (typeof text !== 'string' || !text.startsWith(prefix) || Buffer.byteLength(text) > maximumBytes) throw new Error('Invalid portable Cloud snapshot')
 }
 async function rejectLinks(path) {
   let current = path
@@ -42,18 +43,32 @@ async function write(path,text,beforeReplace) {
   finally { await directory?.close() }
 }
 export class SteamCloud {
-  constructor({userData,account,identity,choose}) {
+  constructor({userData,account,identity,choose,namespace}) {
     if (!/^\d{17}$/.test(account)) throw new Error('Steam identity unavailable')
+    if (namespace !== undefined && !['idleds-classic-v1', 'idleds-modern-v1'].includes(namespace)) throw new Error('Unsupported mode Cloud namespace')
     mkdirSync(userData, {recursive:true})
     userData = realpathSync(userData)
     this.readSucceeded = false
-    this.account=account;this.identity=identity;this.prompt=choose
-    this.directory=join(userData,'steam-cloud',account)
-    this.localDirectory=join(userData,'steam-local',account)
+    this.account=account;this.identity=identity;this.prompt=choose;this.namespace=namespace
+    this.directory=join(userData,'steam-cloud',account,...(namespace ? [namespace] : []))
+    this.localDirectory=join(userData,'steam-local',account,...(namespace ? [namespace] : []))
     this.marker=join(this.localDirectory,'cloud-sha256.txt')
     this.queue=Promise.resolve()
   }
   ensureIdentity(){if(this.identity()!==this.account)throw new Error('Steam account changed; restart before saving to Cloud')}
+  /** Upgrade evidence only: no acknowledgement, marker or download writes. */
+  async readHistorical(){
+    this.ensureIdentity()
+    return await read(join(this.directory,'current.idsw'))
+  }
+  async readForUpgrade(){ return this.readHistorical() }
+  async readBackupsForUpgrade(){ return this.readHistoricalBackups() }
+  async readHistoricalBackups(){
+    this.ensureIdentity()
+    const texts=[]
+    for(let index=1;index<=3;index++) { const text=await read(join(this.directory,`backup-${index}.idsw`)); if(text!==null)texts.push(text) }
+    return texts
+  }
   async read(){
     this.readSucceeded = false
     this.downloadedHash = null
@@ -86,7 +101,7 @@ export class SteamCloud {
     })
   }
   async choose(local,remote){
-    validateSnapshot(local);validateSnapshot(remote)
+    validateSnapshot(local,this.namespace);validateSnapshot(remote,this.namespace)
     this.ensureIdentity()
     const folder=join(this.localDirectory,'conflicts',randomUUID())
     await write(join(folder,'local.idsw'),local);await write(join(folder,'cloud.idsw'),remote)
@@ -94,10 +109,10 @@ export class SteamCloud {
     // snapshot. Unknown baselines, local progress, and backup recovery still
     // require a choice; never infer recency from device clocks.
     if (this.readSucceeded && hash(remote) === this.downloadedHash && hash(local) === await read(this.marker)) return 'cloud'
-    return this.prompt()
+    return this.prompt(local,remote)
   }
   publish(text){
-    try { validateSnapshot(text) } catch(error) { return Promise.reject(error) }
+    try { validateSnapshot(text,this.namespace) } catch(error) { return Promise.reject(error) }
     const run=this.queue.then(async()=>{
       this.ensureIdentity()
       if(!this.readSucceeded) throw new Error('Cloud startup read failed; publication disabled')

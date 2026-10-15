@@ -6573,6 +6573,282 @@
       "value": "サーバー10台で開始"
     }
   ],
+  "modes.cancel": [
+    {
+      "type": 0,
+      "value": "キャンセル"
+    }
+  ],
+  "modes.classic": [
+    {
+      "type": 0,
+      "value": "クラシック"
+    }
+  ],
+  "modes.confirm": [
+    {
+      "type": 0,
+      "value": "移行を確定"
+    }
+  ],
+  "modes.conflict": [
+    {
+      "type": 0,
+      "value": "モダンのセーブデータはすでにあります。進行状況を保つには、そのデータで続けてください。"
+    }
+  ],
+  "modes.continue": [
+    {
+      "type": 0,
+      "value": "続ける："
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
+  "modes.failed": [
+    {
+      "type": 0,
+      "value": "変更を保存できませんでした。最後に保存した進行状況は保持されています。"
+    }
+  ],
+  "modes.migrate": [
+    {
+      "type": 0,
+      "value": "クラシックの進行状況を移行"
+    }
+  ],
+  "modes.modern": [
+    {
+      "type": 0,
+      "value": "モダン"
+    }
+  ],
+  "modes.oneWay": [
+    {
+      "type": 0,
+      "value": "対応するクラシックの進行状況をモダンにコピーしますか？クラシック専用の進行状況を含むクラシックのセーブデータは引き続き利用できます。モダンの進行状況を逆変換することはできません。"
+    }
+  ],
+  "modes.saves.choose": [
+    {
+      "type": 0,
+      "value": "セーブデータを選択："
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
+  "modes.saves.chooseDescription": [
+    {
+      "type": 0,
+      "value": "これらのセーブデータは異なります。残す進行状況を選んでください。元のコピーは保持されます。"
+    }
+  ],
+  "modes.saves.close": [
+    {
+      "type": 0,
+      "value": "閉じる"
+    }
+  ],
+  "modes.saves.cloud": [
+    {
+      "type": 0,
+      "value": "クラウドを使用"
+    }
+  ],
+  "modes.saves.copy": [
+    {
+      "type": 0,
+      "value": "コピー"
+    }
+  ],
+  "modes.saves.copyNumber": [
+    {
+      "type": 0,
+      "value": "保存済みコピーを使用："
+    },
+    {
+      "type": 1,
+      "value": "number"
+    }
+  ],
+  "modes.saves.description": [
+    {
+      "type": 0,
+      "value": "両モードのセーブデータをまとめて書き出し、復元できます。"
+    }
+  ],
+  "modes.saves.done": [
+    {
+      "type": 0,
+      "value": "保存しました。"
+    }
+  ],
+  "modes.saves.download": [
+    {
+      "type": 0,
+      "value": "ファイルをダウンロード"
+    }
+  ],
+  "modes.saves.export": [
+    {
+      "type": 0,
+      "value": "モードのセーブデータを書き出す"
+    }
+  ],
+  "modes.saves.failed": [
+    {
+      "type": 0,
+      "value": "操作に失敗しました。保存済みデータは保持されています。"
+    }
+  ],
+  "modes.saves.file": [
+    {
+      "type": 0,
+      "value": "セーブファイルを選択"
+    }
+  ],
+  "modes.saves.import": [
+    {
+      "type": 0,
+      "value": "モードのセーブデータを読み込む"
+    }
+  ],
+  "modes.saves.local": [
+    {
+      "type": 0,
+      "value": "この端末を使用"
+    }
+  ],
+  "modes.saves.pending": [
+    {
+      "type": 0,
+      "value": "処理中…"
+    }
+  ],
+  "modes.saves.recovery": [
+    {
+      "type": 0,
+      "value": "モードのセーブデータを復旧"
+    }
+  ],
+  "modes.saves.recoveryDescription": [
+    {
+      "type": 0,
+      "value": "復旧アーカイブは問題調査用に破損データを保持します。ゲームのセーブデータとして読み込むことはできません。"
+    }
+  ],
+  "modes.saves.recoveryExport": [
+    {
+      "type": 0,
+      "value": "復旧アーカイブを書き出す"
+    }
+  ],
+  "modes.saves.recoveryPartial": [
+    {
+      "type": 0,
+      "value": "一部の復旧ファイルを読み取れませんでした。利用可能なデータは含まれています。"
+    }
+  ],
+  "modes.saves.recoveryWarning": [
+    {
+      "type": 0,
+      "value": "表示されたモードの保持済みチェックポイントを復元しますか？その後の進行状況は復旧アーカイブに保持されます。"
+    }
+  ],
+  "modes.saves.replace": [
+    {
+      "type": 0,
+      "value": "表示されたセーブデータを置き換える"
+    }
+  ],
+  "modes.saves.restoreRecovery": [
+    {
+      "type": 0,
+      "value": "保持済みチェックポイントを復元"
+    }
+  ],
+  "modes.saves.review": [
+    {
+      "type": 0,
+      "value": "読み込み内容を確認"
+    }
+  ],
+  "modes.saves.reviewRecovery": [
+    {
+      "type": 0,
+      "value": "保持済みチェックポイントを確認"
+    }
+  ],
+  "modes.saves.summary": [
+    {
+      "type": 0,
+      "value": "モード："
+    },
+    {
+      "type": 1,
+      "value": "modes"
+    },
+    {
+      "type": 0,
+      "value": "。"
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": "を開きます。"
+    }
+  ],
+  "modes.saves.text": [
+    {
+      "type": 0,
+      "value": "書き出したセーブデータ"
+    }
+  ],
+  "modes.saves.title": [
+    {
+      "type": 0,
+      "value": "クラシックとモダンのセーブデータ"
+    }
+  ],
+  "modes.saves.warning": [
+    {
+      "type": 0,
+      "value": "表示されたセーブデータを置き換えます。表示されていないデータは保持されます。先に現在のセーブデータを書き出してください。"
+    }
+  ],
+  "modes.separate": [
+    {
+      "type": 0,
+      "value": "各モードは個別のセーブデータを保持します。"
+    }
+  ],
+  "modes.start": [
+    {
+      "type": 0,
+      "value": "始める："
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
+  "modes.switch": [
+    {
+      "type": 0,
+      "value": "ゲームモード："
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
   "navigation.avocato": [
     {
       "type": 0,

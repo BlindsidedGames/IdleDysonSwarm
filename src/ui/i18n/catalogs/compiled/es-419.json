@@ -6573,6 +6573,282 @@
       "value": "Empezar con 10 Servidores"
     }
   ],
+  "modes.cancel": [
+    {
+      "type": 0,
+      "value": "Cancelar"
+    }
+  ],
+  "modes.classic": [
+    {
+      "type": 0,
+      "value": "Clásico"
+    }
+  ],
+  "modes.confirm": [
+    {
+      "type": 0,
+      "value": "Confirmar migración"
+    }
+  ],
+  "modes.conflict": [
+    {
+      "type": 0,
+      "value": "Ya tienes una partida Moderna guardada. Continúala para conservar su progreso."
+    }
+  ],
+  "modes.continue": [
+    {
+      "type": 0,
+      "value": "Continuar "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
+  "modes.failed": [
+    {
+      "type": 0,
+      "value": "No se pudo guardar el cambio. Se conserva tu último progreso guardado."
+    }
+  ],
+  "modes.migrate": [
+    {
+      "type": 0,
+      "value": "Migrar progreso Clásico"
+    }
+  ],
+  "modes.modern": [
+    {
+      "type": 0,
+      "value": "Moderno"
+    }
+  ],
+  "modes.oneWay": [
+    {
+      "type": 0,
+      "value": "¿Copiar el progreso Clásico compatible a Moderno? Tu partida Clásica seguirá disponible, incluido el progreso exclusivo de Clásico. El progreso Moderno no se puede convertir de vuelta."
+    }
+  ],
+  "modes.saves.choose": [
+    {
+      "type": 0,
+      "value": "Elegir partida: "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
+  "modes.saves.chooseDescription": [
+    {
+      "type": 0,
+      "value": "Estas partidas son diferentes. Elige qué progreso conservar. Las copias originales se conservan."
+    }
+  ],
+  "modes.saves.close": [
+    {
+      "type": 0,
+      "value": "Cerrar"
+    }
+  ],
+  "modes.saves.cloud": [
+    {
+      "type": 0,
+      "value": "Usar la nube"
+    }
+  ],
+  "modes.saves.copy": [
+    {
+      "type": 0,
+      "value": "Copiar"
+    }
+  ],
+  "modes.saves.copyNumber": [
+    {
+      "type": 0,
+      "value": "Usar copia guardada "
+    },
+    {
+      "type": 1,
+      "value": "number"
+    }
+  ],
+  "modes.saves.description": [
+    {
+      "type": 0,
+      "value": "Exporta o restaura juntas las partidas de ambos modos."
+    }
+  ],
+  "modes.saves.done": [
+    {
+      "type": 0,
+      "value": "Guardado."
+    }
+  ],
+  "modes.saves.download": [
+    {
+      "type": 0,
+      "value": "Descargar archivo"
+    }
+  ],
+  "modes.saves.export": [
+    {
+      "type": 0,
+      "value": "Exportar partidas de los modos"
+    }
+  ],
+  "modes.saves.failed": [
+    {
+      "type": 0,
+      "value": "La operación falló. Se conservan tus datos guardados."
+    }
+  ],
+  "modes.saves.file": [
+    {
+      "type": 0,
+      "value": "Elegir archivo de partida"
+    }
+  ],
+  "modes.saves.import": [
+    {
+      "type": 0,
+      "value": "Importar partidas de los modos"
+    }
+  ],
+  "modes.saves.local": [
+    {
+      "type": 0,
+      "value": "Usar este dispositivo"
+    }
+  ],
+  "modes.saves.pending": [
+    {
+      "type": 0,
+      "value": "Procesando…"
+    }
+  ],
+  "modes.saves.recovery": [
+    {
+      "type": 0,
+      "value": "Recuperar partidas de los modos"
+    }
+  ],
+  "modes.saves.recoveryDescription": [
+    {
+      "type": 0,
+      "value": "Un archivo de recuperación conserva los datos dañados para resolver problemas. No se puede importar como una partida."
+    }
+  ],
+  "modes.saves.recoveryExport": [
+    {
+      "type": 0,
+      "value": "Exportar archivo de recuperación"
+    }
+  ],
+  "modes.saves.recoveryPartial": [
+    {
+      "type": 0,
+      "value": "No se pudieron leer algunos archivos de recuperación. Se incluyen los datos disponibles."
+    }
+  ],
+  "modes.saves.recoveryWarning": [
+    {
+      "type": 0,
+      "value": "¿Restaurar el punto guardado conservado para los modos indicados? El progreso posterior permanece en el archivo de recuperación."
+    }
+  ],
+  "modes.saves.replace": [
+    {
+      "type": 0,
+      "value": "Reemplazar partidas indicadas"
+    }
+  ],
+  "modes.saves.restoreRecovery": [
+    {
+      "type": 0,
+      "value": "Restaurar punto guardado conservado"
+    }
+  ],
+  "modes.saves.review": [
+    {
+      "type": 0,
+      "value": "Revisar importación"
+    }
+  ],
+  "modes.saves.reviewRecovery": [
+    {
+      "type": 0,
+      "value": "Revisar punto guardado conservado"
+    }
+  ],
+  "modes.saves.summary": [
+    {
+      "type": 0,
+      "value": "Modos: "
+    },
+    {
+      "type": 1,
+      "value": "modes"
+    },
+    {
+      "type": 0,
+      "value": ". Abre "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "modes.saves.text": [
+    {
+      "type": 0,
+      "value": "Partida exportada"
+    }
+  ],
+  "modes.saves.title": [
+    {
+      "type": 0,
+      "value": "Partidas Clásica y Moderna"
+    }
+  ],
+  "modes.saves.warning": [
+    {
+      "type": 0,
+      "value": "Esto reemplaza las partidas indicadas. Las demás se conservan. Exporta primero tus partidas actuales."
+    }
+  ],
+  "modes.separate": [
+    {
+      "type": 0,
+      "value": "Cada modo conserva una partida independiente."
+    }
+  ],
+  "modes.start": [
+    {
+      "type": 0,
+      "value": "Iniciar "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
+  "modes.switch": [
+    {
+      "type": 0,
+      "value": "Modo de juego: "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
   "navigation.avocato": [
     {
       "type": 0,

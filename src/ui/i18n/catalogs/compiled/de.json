@@ -6573,6 +6573,282 @@
       "value": "Beginne mit 10 Servern"
     }
   ],
+  "modes.cancel": [
+    {
+      "type": 0,
+      "value": "Abbrechen"
+    }
+  ],
+  "modes.classic": [
+    {
+      "type": 0,
+      "value": "Klassisch"
+    }
+  ],
+  "modes.confirm": [
+    {
+      "type": 0,
+      "value": "Migration bestätigen"
+    }
+  ],
+  "modes.conflict": [
+    {
+      "type": 0,
+      "value": "Du hast bereits einen modernen Spielstand. Setze ihn fort, um seinen Fortschritt zu behalten."
+    }
+  ],
+  "modes.continue": [
+    {
+      "type": 0,
+      "value": "Fortsetzen: "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
+  "modes.failed": [
+    {
+      "type": 0,
+      "value": "Die Änderung konnte nicht gespeichert werden. Dein zuletzt gespeicherter Fortschritt bleibt erhalten."
+    }
+  ],
+  "modes.migrate": [
+    {
+      "type": 0,
+      "value": "Klassischen Fortschritt übertragen"
+    }
+  ],
+  "modes.modern": [
+    {
+      "type": 0,
+      "value": "Modern"
+    }
+  ],
+  "modes.oneWay": [
+    {
+      "type": 0,
+      "value": "Kompatiblen klassischen Fortschritt nach Modern kopieren? Dein klassischer Spielstand bleibt mit seinem moduseigenen Fortschritt verfügbar. Moderner Fortschritt kann nicht zurückkonvertiert werden."
+    }
+  ],
+  "modes.saves.choose": [
+    {
+      "type": 0,
+      "value": "Spielstand wählen: "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
+  "modes.saves.chooseDescription": [
+    {
+      "type": 0,
+      "value": "Diese Spielstände unterscheiden sich. Wähle den Fortschritt, den du behalten möchtest. Die Originalkopien bleiben erhalten."
+    }
+  ],
+  "modes.saves.close": [
+    {
+      "type": 0,
+      "value": "Schließen"
+    }
+  ],
+  "modes.saves.cloud": [
+    {
+      "type": 0,
+      "value": "Cloud verwenden"
+    }
+  ],
+  "modes.saves.copy": [
+    {
+      "type": 0,
+      "value": "Kopieren"
+    }
+  ],
+  "modes.saves.copyNumber": [
+    {
+      "type": 0,
+      "value": "Gespeicherte Kopie verwenden: "
+    },
+    {
+      "type": 1,
+      "value": "number"
+    }
+  ],
+  "modes.saves.description": [
+    {
+      "type": 0,
+      "value": "Exportiere oder stelle die Spielstände beider Modi gemeinsam wieder her."
+    }
+  ],
+  "modes.saves.done": [
+    {
+      "type": 0,
+      "value": "Gespeichert."
+    }
+  ],
+  "modes.saves.download": [
+    {
+      "type": 0,
+      "value": "Datei herunterladen"
+    }
+  ],
+  "modes.saves.export": [
+    {
+      "type": 0,
+      "value": "Modus-Spielstände exportieren"
+    }
+  ],
+  "modes.saves.failed": [
+    {
+      "type": 0,
+      "value": "Der Vorgang ist fehlgeschlagen. Deine gespeicherten Daten bleiben erhalten."
+    }
+  ],
+  "modes.saves.file": [
+    {
+      "type": 0,
+      "value": "Spielstanddatei wählen"
+    }
+  ],
+  "modes.saves.import": [
+    {
+      "type": 0,
+      "value": "Modus-Spielstände importieren"
+    }
+  ],
+  "modes.saves.local": [
+    {
+      "type": 0,
+      "value": "Dieses Gerät verwenden"
+    }
+  ],
+  "modes.saves.pending": [
+    {
+      "type": 0,
+      "value": "Wird bearbeitet…"
+    }
+  ],
+  "modes.saves.recovery": [
+    {
+      "type": 0,
+      "value": "Modus-Spielstände wiederherstellen"
+    }
+  ],
+  "modes.saves.recoveryDescription": [
+    {
+      "type": 0,
+      "value": "Ein Wiederherstellungsarchiv bewahrt beschädigte Daten zur Fehlerbehebung auf. Es kann nicht als Spielstand importiert werden."
+    }
+  ],
+  "modes.saves.recoveryExport": [
+    {
+      "type": 0,
+      "value": "Wiederherstellungsarchiv exportieren"
+    }
+  ],
+  "modes.saves.recoveryPartial": [
+    {
+      "type": 0,
+      "value": "Einige Wiederherstellungsdateien konnten nicht gelesen werden. Verfügbare Daten sind enthalten."
+    }
+  ],
+  "modes.saves.recoveryWarning": [
+    {
+      "type": 0,
+      "value": "Den aufbewahrten Speicherpunkt für die aufgeführten Modi wiederherstellen? Späterer Fortschritt bleibt im Wiederherstellungsarchiv erhalten."
+    }
+  ],
+  "modes.saves.replace": [
+    {
+      "type": 0,
+      "value": "Aufgeführte Spielstände ersetzen"
+    }
+  ],
+  "modes.saves.restoreRecovery": [
+    {
+      "type": 0,
+      "value": "Aufbewahrten Speicherpunkt wiederherstellen"
+    }
+  ],
+  "modes.saves.review": [
+    {
+      "type": 0,
+      "value": "Import prüfen"
+    }
+  ],
+  "modes.saves.reviewRecovery": [
+    {
+      "type": 0,
+      "value": "Aufbewahrten Speicherpunkt prüfen"
+    }
+  ],
+  "modes.saves.summary": [
+    {
+      "type": 0,
+      "value": "Modi: "
+    },
+    {
+      "type": 1,
+      "value": "modes"
+    },
+    {
+      "type": 0,
+      "value": ". Öffnet "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "modes.saves.text": [
+    {
+      "type": 0,
+      "value": "Spielstandexport"
+    }
+  ],
+  "modes.saves.title": [
+    {
+      "type": 0,
+      "value": "Klassische und moderne Spielstände"
+    }
+  ],
+  "modes.saves.warning": [
+    {
+      "type": 0,
+      "value": "Dies ersetzt die aufgeführten Spielstände. Nicht aufgeführte Spielstände bleiben erhalten. Exportiere zuerst deine aktuellen Spielstände."
+    }
+  ],
+  "modes.separate": [
+    {
+      "type": 0,
+      "value": "Jeder Modus behält einen eigenen Spielstand."
+    }
+  ],
+  "modes.start": [
+    {
+      "type": 0,
+      "value": "Starten: "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
+  "modes.switch": [
+    {
+      "type": 0,
+      "value": "Spielmodus: "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
   "navigation.avocato": [
     {
       "type": 0,

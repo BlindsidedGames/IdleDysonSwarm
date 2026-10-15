@@ -12957,6 +12957,602 @@
       "value": "‬"
     }
   ],
+  "modes.cancel": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɐuɔǝʅ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.classic": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄʅɐssıɔ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.confirm": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄouɟıɹɯ ɯıƃɹɐʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.conflict": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅄on ɐʅɹǝɐpʎ ɥɐʌǝ ɐ Wopǝɹu sɐʌǝ. Ↄouʇıunǝ ıʇ ʇo ʞǝǝd ıʇs dɹoƃɹǝss."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.continue": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄouʇıunǝ "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ ɔɥɐuƃǝ ɔonʅp uoʇ qǝ sɐʌǝp. ⅄onɹ ʅɐsʇ sɐʌǝp dɹoƃɹǝss ıs dɹǝsǝɹʌǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.migrate": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wıƃɹɐʇǝ Ↄʅɐssıɔ dɹoƃɹǝss"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.modern": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wopǝɹu"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.oneWay": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄodʎ ɔoɯdɐʇıqʅǝ Ↄʅɐssıɔ dɹoƃɹǝss ʇo Wopǝɹu? ⅄onɹ Ↄʅɐssıɔ sɐʌǝ sʇɐʎs ɐʌɐıʅɐqʅǝ, ıuɔʅnpıuƃ Ↄʅɐssıɔ-ouʅʎ dɹoƃɹǝss. Wopǝɹu dɹoƃɹǝss ɔɐuuoʇ qǝ ɔouʌǝɹʇǝp qɐɔʞ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.choose": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɥoosǝ sɐʌǝ: "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.chooseDescription": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝsǝ sɐʌǝs pıɟɟǝɹ. Ↄɥoosǝ ʍɥıɔɥ dɹoƃɹǝss ʇo ʞǝǝd. ⊥ɥǝ oɹıƃıuɐʅ ɔodıǝs sʇɐʎ dɹǝsǝɹʌǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.close": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄʅosǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.cloud": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩sǝ Ↄʅonp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.copy": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄodʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.copyNumber": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩sǝ sɐʌǝp ɔodʎ "
+    },
+    {
+      "type": 1,
+      "value": "number"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝxdoɹʇ oɹ ɹǝsʇoɹǝ qoʇɥ ɯopǝ sɐʌǝs ʇoƃǝʇɥǝɹ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.done": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɐʌǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.download": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡoʍuʅoɐp ɟıʅǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.export": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝxdoɹʇ ɯopǝ sɐʌǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ odǝɹɐʇıou ɟɐıʅǝp. ⅄onɹ sɐʌǝp pɐʇɐ ıs dɹǝsǝɹʌǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.file": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɥoosǝ sɐʌǝ ɟıʅǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.import": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iɯdoɹʇ ɯopǝ sɐʌǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.local": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩sǝ ʇɥıs pǝʌıɔǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.pending": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Moɹʞıuƃ…"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.recovery": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝɔoʌǝɹ ɯopǝ sɐʌǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.recoveryDescription": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ ɹǝɔoʌǝɹʎ ɐɹɔɥıʌǝ dɹǝsǝɹʌǝs pɐɯɐƃǝp pɐʇɐ ɟoɹ ʇɹonqʅǝsɥooʇıuƃ. Iʇ ɔɐuuoʇ qǝ ıɯdoɹʇǝp ɐs ɐ ƃɐɯǝ sɐʌǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.recoveryExport": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝxdoɹʇ ɹǝɔoʌǝɹʎ ɐɹɔɥıʌǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.recoveryPartial": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Soɯǝ ɹǝɔoʌǝɹʎ ɟıʅǝs ɔonʅp uoʇ qǝ ɹǝɐp. ∀ʌɐıʅɐqʅǝ pɐʇɐ ıs ıuɔʅnpǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.recoveryWarning": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsʇoɹǝ ʇɥǝ ɹǝʇɐıuǝp ɔɥǝɔʞdoıuʇ ɟoɹ ʇɥǝ ʅısʇǝp ɯopǝs? Ԁɹoƃɹǝss sıuɔǝ ʇɥɐʇ ɔɥǝɔʞdoıuʇ sʇɐʎs ıu ʇɥǝ ɹǝɔoʌǝɹʎ ɐɹɔɥıʌǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.replace": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝdʅɐɔǝ ʅısʇǝp sɐʌǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.restoreRecovery": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsʇoɹǝ ɹǝʇɐıuǝp ɔɥǝɔʞdoıuʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.review": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝʌıǝʍ ıɯdoɹʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.reviewRecovery": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝʌıǝʍ ɹǝʇɐıuǝp ɔɥǝɔʞdoıuʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.summary": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wopǝs: "
+    },
+    {
+      "type": 1,
+      "value": "modes"
+    },
+    {
+      "type": 0,
+      "value": ". Odǝus "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": "."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.text": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɐʌǝ ǝxdoɹʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄʅɐssıɔ ɐup Wopǝɹu sɐʌǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.warning": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥıs ɹǝdʅɐɔǝs ʇɥǝ ʅısʇǝp sɐʌǝs. Sɐʌǝs uoʇ ʅısʇǝp ɐɹǝ ʞǝdʇ. Ǝxdoɹʇ ʎonɹ ɔnɹɹǝuʇ sɐʌǝs ɟıɹsʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.separate": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɐɔɥ ɯopǝ ʞǝǝds ɐ sǝdɐɹɐʇǝ sɐʌǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.start": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɐɹʇ "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.switch": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɐɯǝ ɯopǝ: "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "navigation.avocato": [
     {
       "type": 0,

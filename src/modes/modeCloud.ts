@@ -10,6 +10,12 @@ import type { ReadOnlyUpgradeSource } from './upgradeDiscovery'
 import { ModeSaveStore, type GameMode, type ModeCodecs } from './modeSaveStore'
 
 export const MODE_CLOUD_NAMESPACES = Object.freeze({ classic: 'idleds-classic-v1', modern: 'idleds-modern-v1' })
+export interface ModeCloudPort extends PortableCloud {
+  /** Discovery must inspect raw remote state even if an old local sync marker
+   * says it was acknowledged. A missing local manifest is not a new account. */
+  readForUpgrade?(): Promise<string | null>
+  readBackupsForUpgrade?(): Promise<readonly string[]>
+}
 /** Host adapters must honor the supplied namespace. The existing unnamespaced
  * public Cloud input is a separate read-only Classic upgrade source. */
 export function createModeCloudAdapters(open: (namespace: string) => PortableCloud): Readonly<Record<GameMode, PortableCloud>> {
@@ -50,11 +56,11 @@ export class ModeCloudCoordinator {
   private readonly allowed = { classic: false, modern: false }
   private readonly published: Partial<Record<GameMode, string>> = {}
   private readonly store: ModeSaveStore
-  private readonly clouds: Readonly<Record<GameMode, PortableCloud>>
+  private readonly clouds: Readonly<Record<GameMode, ModeCloudPort>>
   private readonly codecs: ModeCodecs
   private readonly retainPurchase: (mode: GameMode, local: string, remote: string) => string
   private readonly portable: (mode: GameMode, text: string) => string
-  constructor(store: ModeSaveStore, clouds: Readonly<Record<GameMode, PortableCloud>>, codecs: ModeCodecs,
+  constructor(store: ModeSaveStore, clouds: Readonly<Record<GameMode, ModeCloudPort>>, codecs: ModeCodecs,
     portable: (mode: GameMode, text: string) => string = modeCloudText,
     retainPurchase: (mode: GameMode, local: string, remote: string) => string = retainModeCloudLocalPurchase) {
     if (clouds.classic === clouds.modern) throw new Error('Cloud adapters must be mode-separated.')
@@ -63,7 +69,12 @@ export class ModeCloudCoordinator {
   }
   discoverySources(): readonly ReadOnlyUpgradeSource[] {
     return (['classic', 'modern'] as const).map(mode => ({ id: `mode-cloud-${mode}`, mode,
-      read: async () => { const text = await this.clouds[mode].read(); return text === null ? [] : [{ id: `mode-cloud-${mode}:primary`, role: 'primary' as const, text }] },
+      read: async () => {
+        const cloud = this.clouds[mode], text = await (cloud.readForUpgrade?.() ?? cloud.read())
+        const backups = await (cloud.readBackupsForUpgrade?.() ?? cloud.readBackups?.() ?? [])
+        return [...(text === null ? [] : [{ id: `mode-cloud-${mode}:primary`, role: 'primary' as const, text }]),
+          ...backups.map((text, index) => ({ id: `mode-cloud-${mode}:backup-${index + 1}`, role: 'backup' as const, text }))]
+      },
       prepare: text => this.prepare(mode, text),
     }))
   }

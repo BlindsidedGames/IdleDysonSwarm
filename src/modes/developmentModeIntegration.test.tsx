@@ -123,6 +123,7 @@ test('the real scratch parent removes a failed iframe and retry reconnects the s
   vi.stubGlobal('localStorage', { getItem: publicAccess, setItem: publicAccess, removeItem: publicAccess })
   const container = document.createElement('div'); document.body.append(container)
   let connected: ReturnType<NonNullable<Window['__IDS_MODE_DEVELOPMENT_BRIDGE__']>['connect']> | undefined
+  let host: Awaited<ReturnType<typeof startDevelopmentModeHost>> | undefined
   try {
     const opening = startDevelopmentModeHost(container)
     await waitFor(() => expect(container.querySelector('iframe')).toBeTruthy())
@@ -133,7 +134,8 @@ test('the real scratch parent removes a failed iframe and retry reconnects the s
     const first = bridge.connect(token, failed.contentWindow!)
     const saved = first.context.initialSave
     first.fail(Error('Synthetic frame failure'))
-    await opening
+    host = await opening
+    await host.ready
     expect(failed.isConnected).toBe(false)
     expect(window.__IDS_MODE_DEVELOPMENT_BRIDGE__).toBeUndefined()
     fireEvent.click(screen.getByRole('button', { name: 'Retry saved development session' }))
@@ -146,5 +148,40 @@ test('the real scratch parent removes a failed iframe and retry reconnects the s
     connected.ready({ quiesce: async () => saved, close: async () => undefined })
     await waitFor(() => expect(connected!.controller.getSnapshot().phase).toBe('ready'))
     expect(publicAccess).not.toHaveBeenCalled()
-  } finally { await connected?.controller.close(); container.remove() }
+  } finally { await host?.close(); container.remove() }
+})
+
+test.each(['frame startup', 'Cloud choice during export'] as const)('closing the real scratch host cancels %s without another player response', async pending => {
+  vi.stubEnv('DEV', true); vi.stubEnv('VITE_IDS_DUAL_MODE_FOUNDATION', '1')
+  const forbidden = vi.fn(() => { throw Error('Public persistence prohibited') })
+  vi.stubGlobal('localStorage', { getItem: forbidden, setItem: forbidden, removeItem: forbidden })
+  const container = document.createElement('div'); document.body.append(container)
+  const host = await startDevelopmentModeHost(container)
+  try {
+    await waitFor(() => expect(container.querySelector('iframe')).toBeTruthy())
+    if (pending === 'Cloud choice during export') {
+      const frame = container.querySelector('iframe')!, doc = frame.contentDocument!
+      if (!doc.documentElement) doc.append(doc.createElement('html'))
+      const connection = window.__IDS_MODE_DEVELOPMENT_BRIDGE__!.connect(new URL(frame.src).searchParams.get('session')!, frame.contentWindow!)
+      connection.ready({ quiesce: async () => connection.context.initialSave, close: async () => undefined })
+      await host.ready
+      const cloud = screen.getByRole('button', { name: 'Simulate Cloud conflict' })
+      fireEvent.click(cloud)
+      await waitFor(() => expect(cloud.getAttribute('aria-busy')).toBeNull())
+      await act(() => connection.saveActions.open('export', 'en'))
+      await screen.findByRole('button', { name: 'Use this device' })
+    }
+    await act(async () => {
+      await Promise.race([host.close(), new Promise((_, reject) => setTimeout(() => reject(Error('Host close stalled')), 1000))])
+      await host.ready
+    })
+    expect(container.querySelector('iframe')).toBeNull()
+    expect(window.__IDS_MODE_DEVELOPMENT_BRIDGE__).toBeUndefined()
+    expect(screen.queryByRole('dialog')).toBeNull()
+    expect(forbidden).not.toHaveBeenCalled()
+  } finally {
+    const choice = screen.queryByRole('button', { name: 'Use this device' })
+    if (choice) fireEvent.click(choice)
+    await host.close().catch(() => undefined); container.remove()
+  }
 })

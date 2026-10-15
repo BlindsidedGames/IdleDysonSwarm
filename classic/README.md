@@ -1,7 +1,11 @@
 # Classic runtime source candidate
 
 This is a complete, independent production source graph from
-`0dde63fbaad175362df49feeb981f85dc6af4a5e`. Tests and test helpers are excluded. The complete source/identity inventory has 681 files; 11 documented local infrastructure patches add the shared bottom drawer control, scoped presentation storage and a shared host bridge type declaration. Gameplay engines and data are unchanged.
+`0dde63fbaad175362df49feeb981f85dc6af4a5e`. Tests and test helpers are excluded.
+The complete source/identity inventory has 681 files; 14 documented local
+infrastructure patches add the shared bottom drawer control, scoped presentation
+storage, a shared host bridge type declaration, parent save settings, mode-chrome
+catalogs and isolated development telemetry. Gameplay engines and data are unchanged.
 `baseline.json` records every upstream file's SHA-256 so the extraction and later
 Classic maintenance changes can be reviewed. Root code must not import Classic
 simulation code into modern or substitute a modern worker/decoder into Classic.

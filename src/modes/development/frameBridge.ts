@@ -1,3 +1,4 @@
+import type { ModeSaveActions } from '../../ui/gameplay/settings/modeSaveActions'
 import type { ModeSessionContext, ModeSession, GameModeController } from '../modeController'
 import type { PresentationStorage } from '../../ui/presentationStorage'
 export interface DevelopmentFrameBridge {
@@ -5,6 +6,8 @@ export interface DevelopmentFrameBridge {
     context: ModeSessionContext
     controller: GameModeController
     preferences: PresentationStorage
+    runtimeTarget: 'browser' | 'electron' | 'ios' | 'android'
+    saveActions: ModeSaveActions
     ready(session: ModeSession): void
     fail(error: unknown): void
   }

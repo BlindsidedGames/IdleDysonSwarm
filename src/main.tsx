@@ -68,7 +68,9 @@ async function bootstrap(): Promise<void> {
     if (import.meta.env.DEV && import.meta.env.VITE_IDS_DUAL_MODE_FOUNDATION === '1' && nativeBridge === null &&
         ['127.0.0.1', 'localhost', '[::1]'].includes(window.location.hostname)) {
       const { startDevelopmentModeHost } = await import('./modes/development/startDevelopmentModeHost')
-      await startDevelopmentModeHost(rootElement)
+      const host = await startDevelopmentModeHost(rootElement)
+      window.addEventListener('pagehide', () => { void host.close().catch(() => undefined) }, { once: true })
+      await host.ready
       return
     }
     if (nativeBridge !== null) {

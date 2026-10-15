@@ -2791,6 +2791,126 @@
     "defaultMessage": "Start with 10 Servers",
     "description": "Unity retained Servers upgrade title."
   },
+  "modes.cancel": {
+    "defaultMessage": "Cancel"
+  },
+  "modes.classic": {
+    "defaultMessage": "Classic"
+  },
+  "modes.confirm": {
+    "defaultMessage": "Confirm migration"
+  },
+  "modes.conflict": {
+    "defaultMessage": "You already have a Modern save. Continue it to keep its progress."
+  },
+  "modes.continue": {
+    "defaultMessage": "Continue {mode}"
+  },
+  "modes.failed": {
+    "defaultMessage": "The change could not be saved. Your last saved progress is preserved."
+  },
+  "modes.migrate": {
+    "defaultMessage": "Migrate Classic progress"
+  },
+  "modes.modern": {
+    "defaultMessage": "Modern"
+  },
+  "modes.oneWay": {
+    "defaultMessage": "Copy compatible Classic progress to Modern? Your Classic save stays available, including Classic-only progress. Modern progress cannot be converted back."
+  },
+  "modes.saves.choose": {
+    "defaultMessage": "Choose save: {mode}"
+  },
+  "modes.saves.chooseDescription": {
+    "defaultMessage": "These saves differ. Choose which progress to keep. The original copies stay preserved."
+  },
+  "modes.saves.close": {
+    "defaultMessage": "Close"
+  },
+  "modes.saves.cloud": {
+    "defaultMessage": "Use Cloud"
+  },
+  "modes.saves.copy": {
+    "defaultMessage": "Copy"
+  },
+  "modes.saves.copyNumber": {
+    "defaultMessage": "Use saved copy {number}"
+  },
+  "modes.saves.description": {
+    "defaultMessage": "Export or restore both mode saves together."
+  },
+  "modes.saves.done": {
+    "defaultMessage": "Saved."
+  },
+  "modes.saves.download": {
+    "defaultMessage": "Download file"
+  },
+  "modes.saves.export": {
+    "defaultMessage": "Export mode saves"
+  },
+  "modes.saves.failed": {
+    "defaultMessage": "The operation failed. Your saved data is preserved."
+  },
+  "modes.saves.file": {
+    "defaultMessage": "Choose save file"
+  },
+  "modes.saves.import": {
+    "defaultMessage": "Import mode saves"
+  },
+  "modes.saves.local": {
+    "defaultMessage": "Use this device"
+  },
+  "modes.saves.pending": {
+    "defaultMessage": "Working…"
+  },
+  "modes.saves.recovery": {
+    "defaultMessage": "Recover mode saves"
+  },
+  "modes.saves.recoveryDescription": {
+    "defaultMessage": "A recovery archive preserves damaged data for troubleshooting. It cannot be imported as a game save."
+  },
+  "modes.saves.recoveryExport": {
+    "defaultMessage": "Export recovery archive"
+  },
+  "modes.saves.recoveryPartial": {
+    "defaultMessage": "Some recovery files could not be read. Available data is included."
+  },
+  "modes.saves.recoveryWarning": {
+    "defaultMessage": "Restore the retained checkpoint for the listed modes? Progress since that checkpoint stays in the recovery archive."
+  },
+  "modes.saves.replace": {
+    "defaultMessage": "Replace listed saves"
+  },
+  "modes.saves.restoreRecovery": {
+    "defaultMessage": "Restore retained checkpoint"
+  },
+  "modes.saves.review": {
+    "defaultMessage": "Review import"
+  },
+  "modes.saves.reviewRecovery": {
+    "defaultMessage": "Review retained checkpoint"
+  },
+  "modes.saves.summary": {
+    "defaultMessage": "Modes: {modes}. Opens {mode}."
+  },
+  "modes.saves.text": {
+    "defaultMessage": "Save export"
+  },
+  "modes.saves.title": {
+    "defaultMessage": "Classic and Modern saves"
+  },
+  "modes.saves.warning": {
+    "defaultMessage": "This replaces the listed saves. Saves not listed are kept. Export your current saves first."
+  },
+  "modes.separate": {
+    "defaultMessage": "Each mode keeps a separate save."
+  },
+  "modes.start": {
+    "defaultMessage": "Start {mode}"
+  },
+  "modes.switch": {
+    "defaultMessage": "Game mode: {mode}"
+  },
   "navigation.avocato": {
     "defaultMessage": "Avocato",
     "description": "Unity Avocato sub-destination."

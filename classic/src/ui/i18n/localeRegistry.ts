@@ -1,4 +1,5 @@
 import type { SharedMessageCatalog } from './catalogs/types'
+import { mergeModeChromeCatalog } from '../../../../src/ui/i18n/modeChromeCatalog'
 
 export const ENABLED_LOCALES = [
   'en',
@@ -49,7 +50,7 @@ async function loadCompiledSharedCatalog(
     'en-XA': () => import('./catalogs/compiled/en-XA.json'),
     'ar-XB': () => import('./catalogs/compiled/ar-XB.json'),
   }[locale]()
-  return module.default as SharedMessageCatalog
+  return await mergeModeChromeCatalog(locale, module.default as SharedMessageCatalog) as SharedMessageCatalog
 }
 
 export const LOCALE_REGISTRY = Object.freeze({

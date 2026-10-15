@@ -39,8 +39,9 @@ was not used to establish either mobile public identity.
 `classic/` retains 681 production source/identity files from the exact Play source,
 including its own game data, schema/decoder, command handlers, simulation engine,
 Reality, Quantum, Simulations, offline policy, Stored Time worker and frontend
-projection. 11 original files have documented infrastructure patches: drawer navigation,
-mode-scoped presentation storage and the shared Window bridge type declaration.
+projection. 14 original files have documented infrastructure patches: drawer navigation,
+mode-scoped presentation storage, shared Window bridge typing, parent-owned save
+settings, shared mode-chrome localization and isolated-development telemetry.
 Gameplay data and engines are unchanged. `baseline.json` preserves every upstream
 hash and records patch reasons/current hashes separately. `npm run modes:check` verifies them.
 The candidate compiles independently. Maintaining two source graphs is deliberate:
@@ -201,60 +202,145 @@ Consequently **pixels/reference comparison remain unverified** at desktop
 80/100/130/150% Interface sizes, mobile 360×800/130% text, 320px/enlarged text,
 landscape, long locale/RTL, reduced motion, real keyboard/touch and native hosts.
 The browser script and fixture are retained for a supported host. DOM checks do
-not constitute visual acceptance. New copy has message IDs and English defaults;
-production localization/catalog integration remains pending.
+not constitute visual acceptance. All 40 shared mode messages are extracted and compiled through the existing
+catalog pipeline for English, all seven production translations and both
+pseudo-locales. Classic overlays only `modes.*` chrome entries and retains its
+original gameplay catalog. Actual-entrypoint DOM coverage changes Classic to
+French and returns to an independently English modern save. Language review and
+pixel/overflow acceptance remain pending.
+
+## Integrated host bindings and settings
+
+The real `main.tsx` development branch now composes the host adapters, optional
+Cloud coordinator, independently selected App/runtime and parent-owned save
+manager. This goes beyond invoking a renderer fixture:
+
+| Binding | Implemented and exercised | Deliberately inactive external surface |
+| --- | --- | --- |
+| Browser | Existing `IndexedDbSaveStorageAdapter` and expiring writer lease. Public and beta database names/paths are explicit read-only discovery sources; only `idle-dyson-swarm-dual-modes-v1` gets a writer. Reopened adapters retain both saves; competing leases and stale writes reject. Development supplies private database-protocol Maps. | The development path never selects the ambient/global IDB factory or opens real browser profiles. Real browser persistence/lease timing is not visually or operationally accepted here. |
+| Electron | Existing rooted native adapter and single-renderer authority, plus `hosts/electron/modeStorage.mjs` with distinct, nonoverlapping roots, read-only historical capabilities, safe relative paths, symlink rejection and fsynced writes/atomic rename. A canonical `mkdtemp` fixture verifies actual filesystem reopen and untouched historical files. | Existing beta IPC/bootstrap is unchanged. No `userData`, Steam account root or public filesystem capability was selected. Production root registration/attestation is an explicit activation step. |
+| iOS/Android | Existing Capacitor rooted-file protocol bound to separate destination/public/beta capabilities and the host writer authority; the same bindings run against private native-file Maps in development and tests. | No Capacitor plugin/native process was launched, re-rooted or connected to a device. The current beta-only bridge cannot substitute for the required three attested capabilities. Native registration, lifecycle and document-picker acceptance remain gated. |
+| Cloud | Account/namespace-scoped provider adapter, durable local receipts, guarded compare/publish and account-change rejection. Steam's existing file transport has explicit Classic/modern subdirectories and separate local markers. Old public Cloud primary/backups are read without acknowledgement/marker writes. Raw upgrade discovery includes acknowledged primaries and backup-only progress. | All services/accounts are mocks or synthetic filesystem fixtures. Existing published Steam Auto-Cloud rules are nonrecursive and do **not** include the new subdirectories; cross-device availability is not claimed. No provider account, Steamworks setting or store mutation occurred. |
+| Transfers | Existing browser download adapter and native `writeClipboardText`/`exportSaveFile` protocol. Native exports keep the existing allowlisted filename `idle-dyson-swarm-save.idsw`; labelled contents distinguish playable pair exports from forensic archives. Cancelled pickers are not reported as saved. | Native picker/clipboard effects are private mocks in development. No native filename/path whitelist was expanded and no real native file/clipboard export was invoked. |
+
+Development selects the concrete adapter with `?host=browser` (default),
+`?host=electron`, `?host=ios` or `?host=android`. These select disposable host
+protocols, not native applications. The selected mobile profile uses its own
+mode's mobile lifecycle policy. `?classic=1` seeds a fresh synthetic public
+Classic source; `?cloud=classic` or `?cloud=modern` seeds a fresh mock remote.
+The developer toolbar can simulate a remote conflict or restart the selected
+saved game. All this requires the development flag, loopback hostname and absence
+of a real native bridge. Reloading the parent resets the scratch installation.
+
+Both actual Settings screens replace their single-runtime transfer controls with
+labelled pair import/export/recovery when a mode host is present. The manager
+lives in the parent, so quiescing/replacing a child cannot lose an export or
+approval. Imports pause/checkpoint before preview, invalidate approval on edited
+input and require explicit replacement for the reviewed generation. Missing
+modes in an import remain retained; unlabelled saves and recovery archives cannot
+enter this pair-import boundary. A Cloud choice can overlay a transfer without
+losing its draft or pending operation.
+
+Recovery never silently adopts an older manifest. The player first reviews a
+verified retained checkpoint, then explicitly restores its exact source identity.
+Raw damaged/newer manifests and payloads are retained in content-addressed
+archives with a durable index before replacement. Later slot rotation does not
+remove that history from recovery exports. Evidence-only `IDS-MODE-RECOVERY-1`
+exports salvage readable sources and report missing/damaged index/files as
+per-source errors; invalid index paths are never followed. Partial evidence is
+labelled in the dialog. `IDS-MODE-EXPORT-1` remains the separate playable format.
+
+Shutdown cancels pending choices, fences further management requests and aborts
+pending frame startup before draining the controller and releasing the host
+writer. The returned host handle is available during startup; `main.tsx` installs
+its page-hide handler before awaiting readiness. Failed teardown prevents any new
+graph or save mutation until the host is reopened. Ambient development telemetry
+is disabled under this experiment flag, so the actual game cannot emit its usual
+loopback telemetry POSTs from disposable mode sessions.
+
+The parent manager reuses the existing Settings palette/dialog, semantic roles,
+shared buttons, applicable frame font/text scale, locale direction and CJK font
+families. It has keyboard focus containment and visible file/string controls.
+These are code/DOM checks, not accepted pixels. All native/visual states listed
+above remain unverified; no new shared design convention is asserted.
 
 ## Validation
 
-- `npm run modes:check`: 681 source files verified, 11 documented infrastructure patches;
-  Classic/fixture TypeScript compilation and **48 focused tests passed**.
-- Root and Classic TypeScript compilation and `npm run lint`: passed.
-- Production build, promotion catalog check, production store boundary and
-  generated legacy-data compatibility: passed. `npm run build` initially hit
-  the sandbox's `tsx` CLI IPC socket restriction. Executing the identical check
-  scripts with `node --import tsx` and the Vite binary passed without a listener
-  or protection change. Existing large-chunk warnings remain.
-- Final aggregate suite: **228 files / 2,529 tests passed** (25.70 seconds).
-- Synthetic real-runtime tests cover new-modern startup, actual reverse-codec
-  rejection, mature Simulations/late Quantum Classic state, old Quantum commands,
-  graph disposal, one-way migration/source retention, active time settlement and
-  offline time without duplicate credit.
-- Transport/controller tests cover both discovered saves, restarts, repeated
-  switches, late callbacks, failed final checkpoint, conversion failure, all four
-  migration mutation interruption points, lost acknowledgement, destination
-  conflicts, pair import/export, stale import approval, damaged data, bounded
-  rotation, pinned source retention and host authority loss.
-- OS/native launches, real accounts/Cloud, purchases, browser Worker-in-flight
-  switching and full legacy gameplay/balance playthroughs were not exercised.
+- `npm run modes:check`: **681 baseline files / 14 documented infrastructure
+  patches**, independent Classic compilation and **68 focused tests passed**.
+- Root TypeScript build and lint: passed, **no lint warnings**.
+- Final aggregate suite: **231 files / 2,549 tests passed**. This includes real
+  mode engines, actual App/settings and actual main/frame bootstrap coverage.
+- Actual entrypoint test: new Modern → Classic → Classic Settings in French →
+  Modern in English → parent pair export after child replacement. The test runs
+  real bootstrap functions against jsdom frame documents, with public storage,
+  IDB opening and network as throwing tripwires. Vitest's public `jsdom.window`
+  normalizes its parent-window proxy; production security checks are unmodified.
+  jsdom does not execute browser-loaded module scripts or prove isolated JS/CSS
+  realms/pixels. Real Worker cancellation still needs supported host QA.
+- Existing legacy tests retain mature Simulations/Quantum, Classic commands,
+  active/offline settlement and no duplicate credit. This continuation adds
+  concrete host adapter reopen, account/namespace, real file transport, backup-
+  only first discovery, pair/settings/recovery, live locale and shutdown checks.
+- Independent read-only review prompted fixes for indexed recovery retention,
+  salvage export, failed teardown fencing, atomic mock CAS, locale-load fallback,
+  parent theme scope, backup-only discovery and close during a pending choice.
+  Its final pass found no remaining concrete issues in those fixes.
+- Negative controls demonstrably failed for the intended reasons when removing
+  the teardown fence, atomic provider compare/publish, telemetry isolation and
+  pre-close choice cancellation. Backup-only discovery also failed before its
+  repair (incorrectly selecting fresh modern). Restored code passes.
+- Production build, promotion catalog, Store boundary, legacy generated-data
+  compatibility and translation completeness/ICU checks: passed. Production
+  manifest inspection excludes Classic and development mode graphs. Check
+  scripts use `node --import tsx` to avoid the sandbox's `tsx` IPC listener; no
+  protection change is involved. Existing Vite large-chunk warnings remain.
+- No browser server, OS/native game, real account, real save root, purchase,
+  external Cloud, release or deployment was used for this continuation.
 
-## Activation gates and next work
+## Bounded activation and acceptance checklist
 
-1. Verify the **released** Apple build/source with authenticated read-only App
-   Store Connect evidence. The existing session is expired; Matthew must restore
-   it or provide equivalent release evidence. No account/authentication changes
-   were attempted. If the released source differs from Google, preserve separate
-   platform baselines or resolve that difference before selecting a common one.
-2. Bind the implemented discovery/adoption ports to verified public/Unity/beta
-   roots per host, preserving existing public/internal separation. Compose the
-   exclusive writer lease/fencing across manifest, both sessions and host
-   persistence. The development host deliberately supplies only synthetic roots.
-3. Implement provider-specific mode namespace storage and old public Cloud
-   discovery mapping, plus host purchase/account entitlement wiring. Only mocked
-   Cloud adapters were exercised. Existing production providers are not enabled
-   by this change, and no real Cloud or purchase write was performed.
-4. Add player-facing pair-import/export and damaged-manifest recovery settings
-   using the implemented labelled/conflict-safe APIs. The APIs retain both saves;
-   complete production recovery/settings screens are not delivered here.
-5. Run supported browser and native visual/interaction acceptance, localization,
-   process-death upgrade/migration and real Worker cancellation checks with
-   disposable roots and account/Cloud writes disabled. Loopback bind denial
-   currently blocks browser pixels; no protection was relaxed. Native hosts,
-   mobile/long locale/RTL, applicable UI scales and touch/keyboard remain
-   unverified. Production localization/catalog integration is pending.
-6. Keep each mode in a separate document or equally isolated host process/root
-   with proven CSS/module-state disposal. Do not reuse a mode document after its
-   preference scope has been revoked. Review any additional economy/reward
-   mappings separately; existing conservative `keep` conversion is implemented.
+1. **Apple baseline evidence.** Matthew must restore the expired authenticated
+   App Store Connect session or provide equivalent read-only evidence of the
+   released build/source. Do not substitute internal/TestFlight or submission
+   evidence. If Apple differs, preserve per-platform Classic sources or explicitly
+   resolve the difference before selecting a common baseline.
+2. **Production host registration.** Keep the current beta-only roots/IPC intact.
+   Before enabling this path, each host must supply the implemented bindings with
+   attested public/Unity/beta read-only sources, a separate account-scoped dual-
+   mode destination and the existing exclusive writer/lifecycle authority. The
+   callable adapter/file-root bindings are implemented; production native bridge
+   exposure/root selection remains intentionally unregistered. Verify this on
+   disposable native/browser installations before connecting any real root.
+3. **External Cloud availability.** Validate each real provider's namespace,
+   account switch and conditional-publication semantics with isolated test
+   accounts. Mobile hosts without a Cloud provider remain local-only. Steam
+   requires separately reviewed/published rules for its new subdirectories;
+   existing nonrecursive public rules are unchanged. Do not advertise cross-
+   device availability until tester evidence exists. Store/provider mutations
+   need a separate authorization.
+4. **Native and browser acceptance.** On a supported executor, use disposable
+   profiles/roots, disabled real account/Cloud writes and mock Keychain on macOS.
+   Verify module-loaded frames, native process death during adoption/import/
+   recovery, in-flight Worker cancellation, mobile lifecycle replay, writer loss,
+   native picker cancellation and large export limits. The loopback bind denial
+   has not been retried or bypassed; native plugin registration/compilation and
+   OS file-picking were not exercised here.
+5. **UI/localization acceptance.** Compare bottom controls and save dialogs with
+   Infinity/Settings at desktop 80/100/130/150%, mobile 360×800/130% text, 320px,
+   landscape, long locale/RTL and reduced motion. Check actual targets, last
+   control reachability, keyboard/focus, touch meaning, overflow and copy. All
+   production/pseudo catalogs compile; language review and pixels remain open.
+6. **Migration scope.** Compatible progress uses the existing explicit `keep`
+   conversion. Classic-only progress stays playable in Classic. No additional
+   rewards, augment targets or compensation were invented. A different mapping
+   is a separate concrete product decision, not a blocker to this foundation.
 
-Local foundation commits remain reviewable on the branch; no merge, push,
-release or external communication is authorized by this report.
+The implemented development path is reachable for both games and settings. Real
+native roots/accounts, cross-device Cloud, OS lifecycle/pickers and accepted
+pixels are not reachable under the current safe gate. Both engines remain
+independently maintained; there is no modern → Classic conversion.
+
+Local work stays on `codex/classic-modern-foundation-20261015` in
+`/tmp/ids-classic-modern-foundation`, preserving `a8d8bd1d` and `1d2ab1c1`.
+No merge, push, release or external communication is authorized by this report.

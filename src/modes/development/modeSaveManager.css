@@ -1,0 +1,22 @@
+/* Existing Settings theme; parent dialogs cannot inherit child-frame variables. */
+.mode-save-manager {
+  --theme-page: #121a12;
+  --theme-panel: #243324;
+  --theme-selected: #3f7042;
+  --theme-divider: #364d36;
+  --theme-accent: #b9dfb7;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-body);
+  font-size: var(--ui-text-body);
+  line-height: var(--line-height-normal);
+}
+.mode-save-manager h2 { margin: 0; font-size: var(--ui-text-section-title); }
+.mode-save-manager [hidden] { display: none; }
+.mode-save-manager:lang(ja) { --font-family-body: var(--font-family-japanese); --line-height-body: 1.65; }
+.mode-save-manager:lang(zh-Hans) { --font-family-body: var(--font-family-simplified-chinese); --line-height-body: 1.6; }
+.mode-save-manager .ui-button,
+.mode-save-settings .ui-button { min-block-size: max(44px, 2.75rem); min-inline-size: 44px; white-space: normal; overflow-wrap: anywhere; }
+.mode-save-manager input[type=file] { display: block; max-inline-size: 100%; min-block-size: 44px; }
+@media (pointer: coarse) {
+  .mode-save-manager .ui-button, .mode-save-settings .ui-button { min-block-size: max(48px, 3rem); }
+}

@@ -6573,6 +6573,282 @@
       "value": "Começar com 10 Servidores"
     }
   ],
+  "modes.cancel": [
+    {
+      "type": 0,
+      "value": "Cancelar"
+    }
+  ],
+  "modes.classic": [
+    {
+      "type": 0,
+      "value": "Clássico"
+    }
+  ],
+  "modes.confirm": [
+    {
+      "type": 0,
+      "value": "Confirmar migração"
+    }
+  ],
+  "modes.conflict": [
+    {
+      "type": 0,
+      "value": "Você já tem um jogo Moderno salvo. Continue nele para manter o progresso."
+    }
+  ],
+  "modes.continue": [
+    {
+      "type": 0,
+      "value": "Continuar "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
+  "modes.failed": [
+    {
+      "type": 0,
+      "value": "Não foi possível salvar a alteração. Seu último progresso salvo foi preservado."
+    }
+  ],
+  "modes.migrate": [
+    {
+      "type": 0,
+      "value": "Migrar progresso Clássico"
+    }
+  ],
+  "modes.modern": [
+    {
+      "type": 0,
+      "value": "Moderno"
+    }
+  ],
+  "modes.oneWay": [
+    {
+      "type": 0,
+      "value": "Copiar o progresso Clássico compatível para Moderno? Seu jogo Clássico continuará disponível, incluindo o progresso exclusivo de Clássico. O progresso Moderno não pode ser convertido de volta."
+    }
+  ],
+  "modes.saves.choose": [
+    {
+      "type": 0,
+      "value": "Escolher jogo salvo: "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
+  "modes.saves.chooseDescription": [
+    {
+      "type": 0,
+      "value": "Estes jogos salvos são diferentes. Escolha qual progresso manter. As cópias originais continuam preservadas."
+    }
+  ],
+  "modes.saves.close": [
+    {
+      "type": 0,
+      "value": "Fechar"
+    }
+  ],
+  "modes.saves.cloud": [
+    {
+      "type": 0,
+      "value": "Usar a nuvem"
+    }
+  ],
+  "modes.saves.copy": [
+    {
+      "type": 0,
+      "value": "Copiar"
+    }
+  ],
+  "modes.saves.copyNumber": [
+    {
+      "type": 0,
+      "value": "Usar cópia salva "
+    },
+    {
+      "type": 1,
+      "value": "number"
+    }
+  ],
+  "modes.saves.description": [
+    {
+      "type": 0,
+      "value": "Exporte ou restaure juntos os jogos salvos dos dois modos."
+    }
+  ],
+  "modes.saves.done": [
+    {
+      "type": 0,
+      "value": "Salvo."
+    }
+  ],
+  "modes.saves.download": [
+    {
+      "type": 0,
+      "value": "Baixar arquivo"
+    }
+  ],
+  "modes.saves.export": [
+    {
+      "type": 0,
+      "value": "Exportar jogos salvos dos modos"
+    }
+  ],
+  "modes.saves.failed": [
+    {
+      "type": 0,
+      "value": "A operação falhou. Seus dados salvos foram preservados."
+    }
+  ],
+  "modes.saves.file": [
+    {
+      "type": 0,
+      "value": "Escolher arquivo de jogo salvo"
+    }
+  ],
+  "modes.saves.import": [
+    {
+      "type": 0,
+      "value": "Importar jogos salvos dos modos"
+    }
+  ],
+  "modes.saves.local": [
+    {
+      "type": 0,
+      "value": "Usar este dispositivo"
+    }
+  ],
+  "modes.saves.pending": [
+    {
+      "type": 0,
+      "value": "Processando…"
+    }
+  ],
+  "modes.saves.recovery": [
+    {
+      "type": 0,
+      "value": "Recuperar jogos salvos dos modos"
+    }
+  ],
+  "modes.saves.recoveryDescription": [
+    {
+      "type": 0,
+      "value": "Um arquivo de recuperação preserva dados danificados para solucionar problemas. Ele não pode ser importado como um jogo salvo."
+    }
+  ],
+  "modes.saves.recoveryExport": [
+    {
+      "type": 0,
+      "value": "Exportar arquivo de recuperação"
+    }
+  ],
+  "modes.saves.recoveryPartial": [
+    {
+      "type": 0,
+      "value": "Não foi possível ler alguns arquivos de recuperação. Os dados disponíveis foram incluídos."
+    }
+  ],
+  "modes.saves.recoveryWarning": [
+    {
+      "type": 0,
+      "value": "Restaurar o ponto salvo preservado dos modos listados? O progresso posterior permanece no arquivo de recuperação."
+    }
+  ],
+  "modes.saves.replace": [
+    {
+      "type": 0,
+      "value": "Substituir jogos salvos listados"
+    }
+  ],
+  "modes.saves.restoreRecovery": [
+    {
+      "type": 0,
+      "value": "Restaurar ponto salvo preservado"
+    }
+  ],
+  "modes.saves.review": [
+    {
+      "type": 0,
+      "value": "Revisar importação"
+    }
+  ],
+  "modes.saves.reviewRecovery": [
+    {
+      "type": 0,
+      "value": "Revisar ponto salvo preservado"
+    }
+  ],
+  "modes.saves.summary": [
+    {
+      "type": 0,
+      "value": "Modos: "
+    },
+    {
+      "type": 1,
+      "value": "modes"
+    },
+    {
+      "type": 0,
+      "value": ". Abre "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "modes.saves.text": [
+    {
+      "type": 0,
+      "value": "Jogo salvo exportado"
+    }
+  ],
+  "modes.saves.title": [
+    {
+      "type": 0,
+      "value": "Jogos salvos Clássico e Moderno"
+    }
+  ],
+  "modes.saves.warning": [
+    {
+      "type": 0,
+      "value": "Isso substitui os jogos salvos listados. Os demais são mantidos. Exporte primeiro seus jogos salvos atuais."
+    }
+  ],
+  "modes.separate": [
+    {
+      "type": 0,
+      "value": "Cada modo mantém um jogo salvo separado."
+    }
+  ],
+  "modes.start": [
+    {
+      "type": 0,
+      "value": "Iniciar "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
+  "modes.switch": [
+    {
+      "type": 0,
+      "value": "Modo de jogo: "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
   "navigation.avocato": [
     {
       "type": 0,

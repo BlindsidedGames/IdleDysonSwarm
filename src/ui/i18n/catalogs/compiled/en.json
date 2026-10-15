@@ -6573,6 +6573,282 @@
       "value": "Start with 10 Servers"
     }
   ],
+  "modes.cancel": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
+  "modes.classic": [
+    {
+      "type": 0,
+      "value": "Classic"
+    }
+  ],
+  "modes.confirm": [
+    {
+      "type": 0,
+      "value": "Confirm migration"
+    }
+  ],
+  "modes.conflict": [
+    {
+      "type": 0,
+      "value": "You already have a Modern save. Continue it to keep its progress."
+    }
+  ],
+  "modes.continue": [
+    {
+      "type": 0,
+      "value": "Continue "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
+  "modes.failed": [
+    {
+      "type": 0,
+      "value": "The change could not be saved. Your last saved progress is preserved."
+    }
+  ],
+  "modes.migrate": [
+    {
+      "type": 0,
+      "value": "Migrate Classic progress"
+    }
+  ],
+  "modes.modern": [
+    {
+      "type": 0,
+      "value": "Modern"
+    }
+  ],
+  "modes.oneWay": [
+    {
+      "type": 0,
+      "value": "Copy compatible Classic progress to Modern? Your Classic save stays available, including Classic-only progress. Modern progress cannot be converted back."
+    }
+  ],
+  "modes.saves.choose": [
+    {
+      "type": 0,
+      "value": "Choose save: "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
+  "modes.saves.chooseDescription": [
+    {
+      "type": 0,
+      "value": "These saves differ. Choose which progress to keep. The original copies stay preserved."
+    }
+  ],
+  "modes.saves.close": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
+  "modes.saves.cloud": [
+    {
+      "type": 0,
+      "value": "Use Cloud"
+    }
+  ],
+  "modes.saves.copy": [
+    {
+      "type": 0,
+      "value": "Copy"
+    }
+  ],
+  "modes.saves.copyNumber": [
+    {
+      "type": 0,
+      "value": "Use saved copy "
+    },
+    {
+      "type": 1,
+      "value": "number"
+    }
+  ],
+  "modes.saves.description": [
+    {
+      "type": 0,
+      "value": "Export or restore both mode saves together."
+    }
+  ],
+  "modes.saves.done": [
+    {
+      "type": 0,
+      "value": "Saved."
+    }
+  ],
+  "modes.saves.download": [
+    {
+      "type": 0,
+      "value": "Download file"
+    }
+  ],
+  "modes.saves.export": [
+    {
+      "type": 0,
+      "value": "Export mode saves"
+    }
+  ],
+  "modes.saves.failed": [
+    {
+      "type": 0,
+      "value": "The operation failed. Your saved data is preserved."
+    }
+  ],
+  "modes.saves.file": [
+    {
+      "type": 0,
+      "value": "Choose save file"
+    }
+  ],
+  "modes.saves.import": [
+    {
+      "type": 0,
+      "value": "Import mode saves"
+    }
+  ],
+  "modes.saves.local": [
+    {
+      "type": 0,
+      "value": "Use this device"
+    }
+  ],
+  "modes.saves.pending": [
+    {
+      "type": 0,
+      "value": "Working…"
+    }
+  ],
+  "modes.saves.recovery": [
+    {
+      "type": 0,
+      "value": "Recover mode saves"
+    }
+  ],
+  "modes.saves.recoveryDescription": [
+    {
+      "type": 0,
+      "value": "A recovery archive preserves damaged data for troubleshooting. It cannot be imported as a game save."
+    }
+  ],
+  "modes.saves.recoveryExport": [
+    {
+      "type": 0,
+      "value": "Export recovery archive"
+    }
+  ],
+  "modes.saves.recoveryPartial": [
+    {
+      "type": 0,
+      "value": "Some recovery files could not be read. Available data is included."
+    }
+  ],
+  "modes.saves.recoveryWarning": [
+    {
+      "type": 0,
+      "value": "Restore the retained checkpoint for the listed modes? Progress since that checkpoint stays in the recovery archive."
+    }
+  ],
+  "modes.saves.replace": [
+    {
+      "type": 0,
+      "value": "Replace listed saves"
+    }
+  ],
+  "modes.saves.restoreRecovery": [
+    {
+      "type": 0,
+      "value": "Restore retained checkpoint"
+    }
+  ],
+  "modes.saves.review": [
+    {
+      "type": 0,
+      "value": "Review import"
+    }
+  ],
+  "modes.saves.reviewRecovery": [
+    {
+      "type": 0,
+      "value": "Review retained checkpoint"
+    }
+  ],
+  "modes.saves.summary": [
+    {
+      "type": 0,
+      "value": "Modes: "
+    },
+    {
+      "type": 1,
+      "value": "modes"
+    },
+    {
+      "type": 0,
+      "value": ". Opens "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "modes.saves.text": [
+    {
+      "type": 0,
+      "value": "Save export"
+    }
+  ],
+  "modes.saves.title": [
+    {
+      "type": 0,
+      "value": "Classic and Modern saves"
+    }
+  ],
+  "modes.saves.warning": [
+    {
+      "type": 0,
+      "value": "This replaces the listed saves. Saves not listed are kept. Export your current saves first."
+    }
+  ],
+  "modes.separate": [
+    {
+      "type": 0,
+      "value": "Each mode keeps a separate save."
+    }
+  ],
+  "modes.start": [
+    {
+      "type": 0,
+      "value": "Start "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
+  "modes.switch": [
+    {
+      "type": 0,
+      "value": "Game mode: "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
   "navigation.avocato": [
     {
       "type": 0,

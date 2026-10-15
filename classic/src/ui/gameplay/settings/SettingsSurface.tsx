@@ -1,3 +1,6 @@
+import { HostModeSaveSettings } from '../../../../../src/ui/gameplay/settings/ModeSaveSettings'
+import { ModeSaveActionsContext } from '../../../../../src/ui/gameplay/settings/modeSaveActions'
+import { useContext } from 'react'
 import { orientationAvailable, readOrientationPreference, applyOrientationPreference, type OrientationPreference } from '../../../platform/screenOrientation'
 import { challengeMessages } from '../infinity/challengeMessages'
 import {
@@ -175,6 +178,7 @@ export function SettingsSurface({
   developerDestination,
 }: SettingsSurfaceProps) {
   const [achievementStatus, setAchievementStatus] = useState<'idle' | 'pending' | 'failed'>('idle')
+  const modeSaveActions = useContext(ModeSaveActionsContext)
   const intl = useIntl()
   const language = useLocalePreference()
   const [orientation, setOrientation] = useState(readOrientationPreference)
@@ -836,7 +840,8 @@ export function SettingsSurface({
             </div>
           </section>
         ) : null}
-        {!developmentOnly ? <section className="settings-surface__panel settings-surface__panel--save">
+        {!developmentOnly && modeSaveActions ? <HostModeSaveSettings /> : null}
+        {!developmentOnly && !modeSaveActions ? <section className="settings-surface__panel settings-surface__panel--save">
           <div className="settings-surface__copy">
             <h2>{intl.formatMessage(messages.saveData)}</h2>
             <p>{intl.formatMessage(messages.saveDescription)}</p>

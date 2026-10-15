@@ -738,6 +738,18 @@
     "src/ui/research-visibility/preference.ts": {
       "sha256": "b60bdc82b68f0962a069cd1f5de94270c1e138052d6eaf1b94a13316eedf58d3",
       "reason": "Route presentation-only storage through the fenced per-document mode scope; ordinary unscoped hosts retain their existing keys."
+    },
+    "src/ui/gameplay/settings/SettingsSurface.tsx": {
+      "sha256": "3afcf5bf0809e81bd3761794378d6281f601bbd9136e172bf81ea0c5b0e9d602",
+      "reason": "Use parent-owned labelled pair import/export/recovery settings when a mode host provides actions; normal Classic settings remain unchanged."
+    },
+    "src/ui/i18n/localeRegistry.ts": {
+      "sha256": "20847ca7b21cfb8cba7ee51f0d5d353567f892d78f00e5d51175cdf5391cc08d",
+      "reason": "Overlay only maintained modes.* chrome translations, including live locale changes; retain all original Classic gameplay messages."
+    },
+    "src/ui/runtime/developmentTelemetry.ts": {
+      "sha256": "3fd79e9c34396cfad5006939b2a252a2ce575cb8402a6b5c31a00acdbd951c07",
+      "reason": "Disable ambient development telemetry under the isolated mode flag so disposable game sessions cannot issue network writes."
     }
   }
 }

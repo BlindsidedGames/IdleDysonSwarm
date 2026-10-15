@@ -1,3 +1,4 @@
+import { ModeSaveActionsContext } from '../../ui/gameplay/settings/modeSaveActions'
 import { createRoot } from 'react-dom/client'
 import App from '../../App'
 import { LocalePreferenceProvider, LocalePreferenceService, loadStartupCatalog } from '../../ui/i18n'
@@ -22,7 +23,7 @@ export async function renderModernGame(context: ModeSessionContext, controller: 
   const root = createRoot(container)
   try {
     return await createModernModeSession(context, { ...options, attach: runtime => {
-      root.render(<GameModeControllerContext.Provider value={controller}>
+      root.render(<GameModeControllerContext.Provider value={controller}><ModeSaveActionsContext.Provider value={options.saveActions ?? null}>
         <LocalePreferenceProvider preference={locale} initialLocale={catalog.locale} initialMessages={catalog.messages}>
           <NumberNotationProvider preference={notation}><ResearchVisibilityProvider preference={research}>
             <BottomNavigationTextProvider preference={navigation}>
@@ -31,7 +32,7 @@ export async function renderModernGame(context: ModeSessionContext, controller: 
             </BottomNavigationTextProvider>
           </ResearchVisibilityProvider></NumberNotationProvider>
         </LocalePreferenceProvider>
-      </GameModeControllerContext.Provider>)
+      </ModeSaveActionsContext.Provider></GameModeControllerContext.Provider>)
       return () => root.unmount()
     } })
   } catch (error) { root.unmount(); throw error }

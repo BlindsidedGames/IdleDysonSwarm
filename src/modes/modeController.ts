@@ -1,4 +1,4 @@
-import { ModeSaveStore, type GameMode, type ModeManifest, type VerifiedModeInventory } from './modeSaveStore'
+import { ModeSaveStore, type GameMode, type ModeManifest, type VerifiedModeInventory, type ModeImportPreview } from './modeSaveStore'
 
 /** A complete mode graph owns its simulation, worker, lifecycle and presentation
  * state. quiesce suspends commands/time and returns a final checkpoint without
@@ -38,6 +38,7 @@ export class GameModeController {
   private sessionId = 0
   private acceptingCheckpoints = false
   private terminal = false
+  private disposalFailed = false
   private readonly store: ModeSaveStore
   private readonly factories: Readonly<Record<GameMode, ModeSessionFactory>>
   private readonly hooks: ModeControllerHooks
@@ -107,6 +108,31 @@ export class GameModeController {
     })
   }
 
+  prepareImport(text: string): Promise<ModeImportPreview> {
+    return this.run(async () => {
+      this.set({ phase: 'changing', manifest: this.snapshot.manifest })
+      await this.stopCurrent()
+      const preview = await this.store.previewBundle(text)
+      this.set({ phase: 'idle', manifest: await this.store.inspect() })
+      return preview
+    })
+  }
+  prepareRecovery(): Promise<void> {
+    return this.run(async () => {
+      this.set({ phase: 'changing', manifest: this.snapshot.manifest })
+      try { await this.stopCurrent() }
+      catch (error) { if (this.disposalFailed) throw error }
+      this.set({ phase: 'idle', manifest: this.snapshot.manifest })
+    })
+  }
+  restoreRecovery(identity: string): Promise<void> {
+    return this.run(async () => {
+      await this.stopCurrent()
+      this.set({ phase: 'changing', manifest: this.snapshot.manifest })
+      await this.open(await this.store.restoreRecovery(identity))
+    })
+  }
+
   close(): Promise<void> {
     return this.run(async () => {
       await this.stopCurrent()
@@ -134,12 +160,13 @@ export class GameModeController {
       // A failed final checkpoint blocks selection but still tears down workers.
       this.acceptingCheckpoints = false
       this.sessionId += 1
-      await session.close()
+      await this.disposeSession(session)
       if (mode) await this.hooks.afterClose?.(mode)
     }
   }
 
   private async open(manifest: ModeManifest): Promise<void> {
+    if (this.disposalFailed) throw Error('The previous mode could not shut down. Reopen the host before continuing.')
     await this.hooks.beforeOpen?.(manifest.active)
     manifest = (await this.store.inspect()) ?? manifest
     const initialSave = await this.store.read(manifest.active)
@@ -166,14 +193,20 @@ export class GameModeController {
       this.sessionId += 1
       const session = this.session
       this.session = undefined
-      await session?.close()
+      if (session) await this.disposeSession(session)
       throw error
     }
+  }
+
+  private async disposeSession(session: ModeSession): Promise<void> {
+    try { await session.close() }
+    catch (error) { this.disposalFailed = true; throw error }
   }
 
   private run<T>(action: () => Promise<T>): Promise<T> {
     const task = this.tail.then(async () => {
       if (this.terminal) throw new Error('Mode controller is closed.')
+      if (this.disposalFailed) throw new Error('The previous mode could not shut down. Reopen the host before continuing.')
       try { return await action() }
       catch (error) {
         // A conflict or validation failure can leave the existing session ready.

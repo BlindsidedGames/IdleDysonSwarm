@@ -6,6 +6,7 @@ import { createClassicModeCodec } from './classicModeCodec'
 import { serializeWebSave as serializeClassic } from '../../classic/src/save/serialization'
 import { deserializeWebSave, serializeWebSave } from '../save/serialization'
 import { createModernModeCodec } from './modernModeCodec'
+import { createModeHost } from './modeHost'
 
 async function fixture() {
   const storage = new ModeMemoryStorage(), store = new ModeSaveStore(storage, modeStringCodecs, () => undefined)
@@ -14,6 +15,22 @@ async function fixture() {
   const cloud = new ModeCloudCoordinator(store, clouds, modeStringCodecs, (_mode, text) => text, (_mode, _local, remote) => remote)
   return { store, storage, clouds, cloud }
 }
+test('backup-only Cloud progress on first discovery opens Classic and preserves the original backup', async () => {
+  const storage = new ModeMemoryStorage(), store = new ModeSaveStore(storage, modeStringCodecs, () => undefined)
+  const clouds = { classic: new MockModeCloud(), modern: new MockModeCloud() }
+  clouds.classic.backups = ['classic:remote-backup']
+  const cloud = new ModeCloudCoordinator(store, clouds, modeStringCodecs, (_mode, text) => text, (_mode, _local, remote) => remote)
+  const factory = async (context: import('./modeController').ModeSessionContext) => ({ quiesce: async () => context.initialSave, close: async () => undefined })
+  const host = createModeHost({ store, cloud, factories: { classic: factory, modern: factory }, convertClassic: text => text,
+    discovery: { codecs: modeStringCodecs, publicClassic: { id: 'public', mode: 'classic', read: async () => [] }, legacyUnity: { id: 'unity', mode: 'classic', read: async () => [] }, modernBeta: { id: 'beta', mode: 'modern', read: async () => [] } },
+  })
+  await host.start()
+  expect(host.controller.getSnapshot().manifest?.active).toBe('classic')
+  expect(await store.read('classic')).toBe('classic:remote-backup')
+  expect(await store.read('modern')).toBeNull()
+  expect([...storage.files].some(([path, text]) => path.includes('/upgrade-originals/') && text === 'classic:remote-backup')).toBe(true)
+  await host.controller.close()
+})
 test('separate namespace adapters publish each durable mode only; stale callbacks and new downloads suppress publication', async () => {
   const namespaces: string[] = []
   const adapters = createModeCloudAdapters(namespace => { namespaces.push(namespace); return new MockModeCloud() })

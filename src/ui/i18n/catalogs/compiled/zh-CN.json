@@ -6573,6 +6573,282 @@
       "value": "初始拥有 10 台服务器"
     }
   ],
+  "modes.cancel": [
+    {
+      "type": 0,
+      "value": "取消"
+    }
+  ],
+  "modes.classic": [
+    {
+      "type": 0,
+      "value": "经典"
+    }
+  ],
+  "modes.confirm": [
+    {
+      "type": 0,
+      "value": "确认迁移"
+    }
+  ],
+  "modes.conflict": [
+    {
+      "type": 0,
+      "value": "你已有现代模式存档。继续该存档以保留进度。"
+    }
+  ],
+  "modes.continue": [
+    {
+      "type": 0,
+      "value": "继续"
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
+  "modes.failed": [
+    {
+      "type": 0,
+      "value": "无法保存更改。上次保存的进度已保留。"
+    }
+  ],
+  "modes.migrate": [
+    {
+      "type": 0,
+      "value": "迁移经典模式进度"
+    }
+  ],
+  "modes.modern": [
+    {
+      "type": 0,
+      "value": "现代"
+    }
+  ],
+  "modes.oneWay": [
+    {
+      "type": 0,
+      "value": "将兼容的经典模式进度复制到现代模式？经典存档仍可使用，包括经典模式独有的进度。现代模式进度无法反向转换。"
+    }
+  ],
+  "modes.saves.choose": [
+    {
+      "type": 0,
+      "value": "选择存档："
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
+  "modes.saves.chooseDescription": [
+    {
+      "type": 0,
+      "value": "这些存档不同。请选择要保留的进度。原始副本会保留。"
+    }
+  ],
+  "modes.saves.close": [
+    {
+      "type": 0,
+      "value": "关闭"
+    }
+  ],
+  "modes.saves.cloud": [
+    {
+      "type": 0,
+      "value": "使用云端"
+    }
+  ],
+  "modes.saves.copy": [
+    {
+      "type": 0,
+      "value": "复制"
+    }
+  ],
+  "modes.saves.copyNumber": [
+    {
+      "type": 0,
+      "value": "使用存档副本"
+    },
+    {
+      "type": 1,
+      "value": "number"
+    }
+  ],
+  "modes.saves.description": [
+    {
+      "type": 0,
+      "value": "一起导出或恢复两种模式的存档。"
+    }
+  ],
+  "modes.saves.done": [
+    {
+      "type": 0,
+      "value": "已保存。"
+    }
+  ],
+  "modes.saves.download": [
+    {
+      "type": 0,
+      "value": "下载文件"
+    }
+  ],
+  "modes.saves.export": [
+    {
+      "type": 0,
+      "value": "导出模式存档"
+    }
+  ],
+  "modes.saves.failed": [
+    {
+      "type": 0,
+      "value": "操作失败。已保存的数据已保留。"
+    }
+  ],
+  "modes.saves.file": [
+    {
+      "type": 0,
+      "value": "选择存档文件"
+    }
+  ],
+  "modes.saves.import": [
+    {
+      "type": 0,
+      "value": "导入模式存档"
+    }
+  ],
+  "modes.saves.local": [
+    {
+      "type": 0,
+      "value": "使用此设备"
+    }
+  ],
+  "modes.saves.pending": [
+    {
+      "type": 0,
+      "value": "处理中…"
+    }
+  ],
+  "modes.saves.recovery": [
+    {
+      "type": 0,
+      "value": "恢复模式存档"
+    }
+  ],
+  "modes.saves.recoveryDescription": [
+    {
+      "type": 0,
+      "value": "恢复档案会保留受损数据以便排查问题，不能作为游戏存档导入。"
+    }
+  ],
+  "modes.saves.recoveryExport": [
+    {
+      "type": 0,
+      "value": "导出恢复档案"
+    }
+  ],
+  "modes.saves.recoveryPartial": [
+    {
+      "type": 0,
+      "value": "部分恢复文件无法读取。已包含可用数据。"
+    }
+  ],
+  "modes.saves.recoveryWarning": [
+    {
+      "type": 0,
+      "value": "恢复所列模式保留的存档点？此后获得的进度会保留在恢复档案中。"
+    }
+  ],
+  "modes.saves.replace": [
+    {
+      "type": 0,
+      "value": "替换所列存档"
+    }
+  ],
+  "modes.saves.restoreRecovery": [
+    {
+      "type": 0,
+      "value": "恢复保留的存档点"
+    }
+  ],
+  "modes.saves.review": [
+    {
+      "type": 0,
+      "value": "检查导入内容"
+    }
+  ],
+  "modes.saves.reviewRecovery": [
+    {
+      "type": 0,
+      "value": "检查保留的存档点"
+    }
+  ],
+  "modes.saves.summary": [
+    {
+      "type": 0,
+      "value": "模式："
+    },
+    {
+      "type": 1,
+      "value": "modes"
+    },
+    {
+      "type": 0,
+      "value": "。打开"
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": "。"
+    }
+  ],
+  "modes.saves.text": [
+    {
+      "type": 0,
+      "value": "导出的存档"
+    }
+  ],
+  "modes.saves.title": [
+    {
+      "type": 0,
+      "value": "经典与现代模式存档"
+    }
+  ],
+  "modes.saves.warning": [
+    {
+      "type": 0,
+      "value": "这会替换所列存档。未列出的存档会保留。请先导出当前存档。"
+    }
+  ],
+  "modes.separate": [
+    {
+      "type": 0,
+      "value": "每种模式保留独立存档。"
+    }
+  ],
+  "modes.start": [
+    {
+      "type": 0,
+      "value": "开始"
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
+  "modes.switch": [
+    {
+      "type": 0,
+      "value": "游戏模式："
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
   "navigation.avocato": [
     {
       "type": 0,

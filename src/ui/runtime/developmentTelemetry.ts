@@ -8,7 +8,7 @@ export function reportDevelopmentTelemetry(
   kind: string,
   sample: DevelopmentTelemetrySample,
 ): void {
-  if (!import.meta.env.DEV) return
+  if (!import.meta.env.DEV || import.meta.env.VITE_IDS_DUAL_MODE_FOUNDATION === '1') return
   const body = JSON.stringify({
     capturedAt: new Date().toISOString(),
     kind,
@@ -25,7 +25,7 @@ export function reportDevelopmentTelemetry(
 export function startDevelopmentTelemetry(
   sample: () => DevelopmentTelemetrySample,
 ): () => void {
-  if (!import.meta.env.DEV) return () => undefined
+  if (!import.meta.env.DEV || import.meta.env.VITE_IDS_DUAL_MODE_FOUNDATION === '1') return () => undefined
   const heartbeat = (): void => {
     reportDevelopmentTelemetry('heartbeat', sample())
   }

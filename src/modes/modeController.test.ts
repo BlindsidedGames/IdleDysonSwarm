@@ -2,6 +2,7 @@ import { expect, test } from 'vitest'
 import { GameModeController, type ModeSessionContext, type ModeSessionFactory } from './modeController'
 import { ModeSaveStore, type GameMode } from './modeSaveStore'
 import type { SaveStorageAdapter } from '../save/repository'
+import { ModeMemoryStorage, modeStringCodecs } from '../../test/support/modeFoundation'
 
 function fixture() {
   const files = new Map<string, string>()
@@ -53,6 +54,27 @@ test('failed final checkpoint blocks selection and closes workers; retry opens t
   f.setFailure(false); await f.controller.start()
   expect(f.contexts.at(-1)?.initialSave).toBe('legacy')
   await f.controller.close()
+})
+
+test('a failed teardown after a post-open storage error fences every later transition before another graph or write', async () => {
+  const storage = new ModeMemoryStorage(), store = new ModeSaveStore(storage, modeStringCodecs, () => undefined)
+  let opened = 0, failInspection = false
+  const read = storage.readText.bind(storage)
+  storage.readText = async path => {
+    if (failInspection && path === 'modes-v1/manifest.json') { failInspection = false; throw Error('Post-open inspection failed') }
+    return read(path)
+  }
+  const factory: ModeSessionFactory = async () => {
+    opened++; failInspection = true
+    return { quiesce: async () => 'modern:final', close: async () => { throw Error('Teardown failed') } }
+  }
+  const controller = new GameModeController(store, { classic: factory, modern: factory }, text => text)
+  await expect(controller.start({ discovery: 'complete', saves: {} })).rejects.toThrow('Teardown failed')
+  const before = [...storage.files]
+  const bundle = await store.exportBundle()
+  for (const action of [() => controller.start(), () => controller.switchTo('classic'), () => controller.importSaves(bundle, 1), () => controller.prepareRecovery(), () => controller.restoreRecovery('unreviewed')]) await expect(action()).rejects.toThrow('previous mode')
+  expect(opened).toBe(1)
+  expect([...storage.files]).toEqual(before)
 })
 
 test('migration checkpoints Classic first, conflict leaves play uninterrupted, and returning opens the preserved Classic save', async () => {

@@ -1,3 +1,4 @@
+import type { ModeSaveActions } from '../ui/gameplay/settings/modeSaveActions'
 import type { BrowserRuntimeFoundationOptions } from '../ui/runtime'
 
 /** Host-local adapters require explicit lifecycle receipts and clocks. In
@@ -5,4 +6,4 @@ import type { BrowserRuntimeFoundationOptions } from '../ui/runtime'
 export type ModeRuntimeHostOptions = Required<Pick<BrowserRuntimeFoundationOptions,
   'lifecycle' | 'lifecycleClock' | 'lifecyclePolicy' | 'activeTimeClock' |
   'activeTimeScheduler' | 'nowUtcMilliseconds' | 'departureMarker'>> &
-  Pick<BrowserRuntimeFoundationOptions, 'frontendSnapshotScheduler' | 'checkpointScheduler'>
+  Pick<BrowserRuntimeFoundationOptions, 'frontendSnapshotScheduler' | 'checkpointScheduler'> & { readonly saveActions?: ModeSaveActions }

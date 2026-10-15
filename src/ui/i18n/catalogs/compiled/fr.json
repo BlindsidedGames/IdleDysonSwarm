@@ -6573,6 +6573,282 @@
       "value": "Commencer avec 10 Serveurs"
     }
   ],
+  "modes.cancel": [
+    {
+      "type": 0,
+      "value": "Annuler"
+    }
+  ],
+  "modes.classic": [
+    {
+      "type": 0,
+      "value": "Classique"
+    }
+  ],
+  "modes.confirm": [
+    {
+      "type": 0,
+      "value": "Confirmer la migration"
+    }
+  ],
+  "modes.conflict": [
+    {
+      "type": 0,
+      "value": "Vous avez déjà une sauvegarde Moderne. Continuez-la pour conserver sa progression."
+    }
+  ],
+  "modes.continue": [
+    {
+      "type": 0,
+      "value": "Continuer "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
+  "modes.failed": [
+    {
+      "type": 0,
+      "value": "La modification n’a pas pu être enregistrée. Votre dernière progression sauvegardée est conservée."
+    }
+  ],
+  "modes.migrate": [
+    {
+      "type": 0,
+      "value": "Migrer la progression Classique"
+    }
+  ],
+  "modes.modern": [
+    {
+      "type": 0,
+      "value": "Moderne"
+    }
+  ],
+  "modes.oneWay": [
+    {
+      "type": 0,
+      "value": "Copier la progression Classique compatible vers Moderne ? Votre sauvegarde Classique reste disponible, y compris la progression propre à Classique. La progression Moderne ne peut pas être reconvertie."
+    }
+  ],
+  "modes.saves.choose": [
+    {
+      "type": 0,
+      "value": "Choisir la sauvegarde : "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
+  "modes.saves.chooseDescription": [
+    {
+      "type": 0,
+      "value": "Ces sauvegardes diffèrent. Choisissez la progression à conserver. Les copies originales restent conservées."
+    }
+  ],
+  "modes.saves.close": [
+    {
+      "type": 0,
+      "value": "Fermer"
+    }
+  ],
+  "modes.saves.cloud": [
+    {
+      "type": 0,
+      "value": "Utiliser le cloud"
+    }
+  ],
+  "modes.saves.copy": [
+    {
+      "type": 0,
+      "value": "Copier"
+    }
+  ],
+  "modes.saves.copyNumber": [
+    {
+      "type": 0,
+      "value": "Utiliser la copie "
+    },
+    {
+      "type": 1,
+      "value": "number"
+    }
+  ],
+  "modes.saves.description": [
+    {
+      "type": 0,
+      "value": "Exportez ou restaurez ensemble les sauvegardes des deux modes."
+    }
+  ],
+  "modes.saves.done": [
+    {
+      "type": 0,
+      "value": "Enregistré."
+    }
+  ],
+  "modes.saves.download": [
+    {
+      "type": 0,
+      "value": "Télécharger le fichier"
+    }
+  ],
+  "modes.saves.export": [
+    {
+      "type": 0,
+      "value": "Exporter les sauvegardes des modes"
+    }
+  ],
+  "modes.saves.failed": [
+    {
+      "type": 0,
+      "value": "L’opération a échoué. Vos données sauvegardées sont conservées."
+    }
+  ],
+  "modes.saves.file": [
+    {
+      "type": 0,
+      "value": "Choisir le fichier de sauvegarde"
+    }
+  ],
+  "modes.saves.import": [
+    {
+      "type": 0,
+      "value": "Importer les sauvegardes des modes"
+    }
+  ],
+  "modes.saves.local": [
+    {
+      "type": 0,
+      "value": "Utiliser cet appareil"
+    }
+  ],
+  "modes.saves.pending": [
+    {
+      "type": 0,
+      "value": "Traitement…"
+    }
+  ],
+  "modes.saves.recovery": [
+    {
+      "type": 0,
+      "value": "Récupérer les sauvegardes des modes"
+    }
+  ],
+  "modes.saves.recoveryDescription": [
+    {
+      "type": 0,
+      "value": "Une archive de récupération conserve les données endommagées pour le dépannage. Elle ne peut pas être importée comme sauvegarde de jeu."
+    }
+  ],
+  "modes.saves.recoveryExport": [
+    {
+      "type": 0,
+      "value": "Exporter l’archive de récupération"
+    }
+  ],
+  "modes.saves.recoveryPartial": [
+    {
+      "type": 0,
+      "value": "Certains fichiers de récupération sont illisibles. Les données disponibles sont incluses."
+    }
+  ],
+  "modes.saves.recoveryWarning": [
+    {
+      "type": 0,
+      "value": "Restaurer le point de sauvegarde conservé pour les modes indiqués ? La progression ultérieure reste dans l’archive de récupération."
+    }
+  ],
+  "modes.saves.replace": [
+    {
+      "type": 0,
+      "value": "Remplacer les sauvegardes indiquées"
+    }
+  ],
+  "modes.saves.restoreRecovery": [
+    {
+      "type": 0,
+      "value": "Restaurer le point de sauvegarde conservé"
+    }
+  ],
+  "modes.saves.review": [
+    {
+      "type": 0,
+      "value": "Vérifier l’importation"
+    }
+  ],
+  "modes.saves.reviewRecovery": [
+    {
+      "type": 0,
+      "value": "Vérifier le point de sauvegarde conservé"
+    }
+  ],
+  "modes.saves.summary": [
+    {
+      "type": 0,
+      "value": "Modes : "
+    },
+    {
+      "type": 1,
+      "value": "modes"
+    },
+    {
+      "type": 0,
+      "value": ". Ouvre "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "modes.saves.text": [
+    {
+      "type": 0,
+      "value": "Sauvegarde exportée"
+    }
+  ],
+  "modes.saves.title": [
+    {
+      "type": 0,
+      "value": "Sauvegardes Classique et Moderne"
+    }
+  ],
+  "modes.saves.warning": [
+    {
+      "type": 0,
+      "value": "Cette action remplace les sauvegardes indiquées. Les autres sont conservées. Exportez d’abord vos sauvegardes actuelles."
+    }
+  ],
+  "modes.separate": [
+    {
+      "type": 0,
+      "value": "Chaque mode conserve une sauvegarde distincte."
+    }
+  ],
+  "modes.start": [
+    {
+      "type": 0,
+      "value": "Commencer "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
+  "modes.switch": [
+    {
+      "type": 0,
+      "value": "Mode de jeu : "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
   "navigation.avocato": [
     {
       "type": 0,
