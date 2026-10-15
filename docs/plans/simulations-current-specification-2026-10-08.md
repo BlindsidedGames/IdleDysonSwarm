@@ -1397,3 +1397,11 @@ was accepted, then passed with the release cap. Focused checks pass 109 tests
 across frontend, canonical application/commands and Farming simulation.
 Rendered verification and final release identities are recorded in the release
 ledger after the candidate and all three internal destinations are verified.
+
+Rendered cap verification: isolated Chromium with mock Keychain exercised
+80/100/130/150% Interface sizes, 360px and 320px German at 130% text, and compact
+landscape, with collapsed/expanded settings and disabled keyboard semantics.
+The existing Infinity dock was captured for reference. The 320px German label
+needed a scoped word-wrap correction; its final pixels and desktop 100% were
+rechecked. No new layout pattern or smaller text was introduced. Mobile native
+hosts, screen-reader delivery and fluent translation review remain unverified.

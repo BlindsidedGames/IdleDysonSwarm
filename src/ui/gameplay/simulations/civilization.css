@@ -311,6 +311,7 @@
 /* Season status stays beside the shared upward-expanding Settings control. */
 .forager-dock-summary { display:flex; align-items:center; gap:var(--ui-section-gap); min-inline-size:0; }
 .forager-dock-progress { flex:1; min-inline-size:0; }
+.forager-dock-progress > button { overflow-wrap:anywhere; }
 .forager-dock-progress .ui-progress__value { flex-shrink:0; white-space:nowrap; }
 .forager-dock-progress .ui-progress { --color-accent-value:var(--theme-accent); }
 .forager-season-clock { flex:none; font-size:var(--ui-text-body); white-space:nowrap; }
