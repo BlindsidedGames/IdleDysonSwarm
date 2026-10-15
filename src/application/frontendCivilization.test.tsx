@@ -12,6 +12,7 @@ import { createUnityFirstRunPreparedSave } from './firstRun/unityFirstRunSave'
 import { hydrateGameState, dehydrateGameState } from '../game-state/mapping'
 import { validateCanonicalGameState } from '../game-state/validate'
 import { civilizationCycle } from '../simulation/civilization'
+import { startFarming } from '../simulation/farming'
 import { CivilizationSurface } from '../ui/gameplay/simulations/CivilizationSurface'
 import { ReadyDysonSlice, type ReadyGameRoute } from '../ui/gameplay/dyson/ReadyDysonSlice'
 
@@ -193,13 +194,12 @@ test.each(['forager', 'farming'] as const)('%s bars animate published work while
   const original = HTMLElement.prototype.animate
   HTMLElement.prototype.animate = animate
   try {
-    const app = factory(era==='farming'?matureSeed():seed()); await app.start()
+    const repo = era === 'farming' ? matureSeed() : seed()
     if (era === 'farming') {
-      app.advanceActive(7043000)
-      expect((await dispatch(app, { kind: 'civilization.enter-farming' })).accepted).toBe(true)
-      for (let n = 0; n < 2_000 && ready(app).state.gameState.civilization!.farming!.phase === 'settling-forager'; n++) app.advanceActive(1000)
-      expect(ready(app).state.gameState.civilization!.farming!.phase).toBe('farming')
+      const hydrated = hydrateGameState(repo.current)
+      repo.current = dehydrateGameState(hydrated, startFarming(hydrated.state)!)
     }
+    const app = factory(repo); await app.start()
     app.advanceActive(1000)
     const view = (gameSpeed = 1, almostFinished = false) => {
       const snapshot = app.frontendSnapshot('simulations')
@@ -251,55 +251,24 @@ test.each(['forager', 'farming'] as const)('%s bars animate published work while
   }
 })
 
-test('switching the mounted Forager surface to Farming cancels old fills and starts with real Farming work', async () => {
-  const animations: { cancel: ReturnType<typeof vi.fn> }[] = []
-  const original = HTMLElement.prototype.animate
-  HTMLElement.prototype.animate = () => {
-    const animation = { cancel: vi.fn() }; animations.push(animation)
-    return animation as unknown as Animation
-  }
-  try {
-    const repo = matureSeed(), app = factory(repo); await app.start(); app.advanceActive(1000)
-    const view = () => {
-      const snapshot = app.frontendSnapshot('simulations')
-      if (snapshot.phase !== 'ready') throw Error(snapshot.phase)
-      return <IntlProvider locale="en" messages={{}}><CivilizationSurface gameplay={snapshot.gameplay} locale="en" gameSpeed={1} dispatchPlayer={async () => { throw Error('No dispatch') }} /></IntlProvider>
-    }
-    const mounted = render(view())
-    app.advanceActive(100); mounted.rerender(view())
-    expect(animations.length).toBeGreaterThan(0)
-    expect(screen.getByRole('button', { name: 'Begin Farming era' })).toBeTruthy()
-    expect(screen.queryByRole('progressbar', { name: 'Next Catalyst' })).toBeNull()
-    const oldAnimations = [...animations]
-    const oldFill = mounted.container.querySelector('.civilization-cycle-fill')!
-    const before = ready(app).state.gameState, commits = repo.commits
-    repo.failNext = true
+test('the internal Forager endpoint rejects Farming entry without changing the save', async () => {
+  const repo = matureSeed(), app = factory(repo)
+  await app.start(); app.advanceActive(1000)
+  const before = structuredClone(ready(app).state.gameState), commits = repo.commits
+  expect(before.civilization!.awardedCatalystMilestoneIds).toContain('forager-catalyst-6')
+  for (let attempt = 0; attempt < 2; attempt++) {
     expect((await dispatch(app, { kind: 'civilization.enter-farming' })).accepted).toBe(false)
     expect(ready(app).state.gameState).toEqual(before)
     expect(repo.commits).toBe(commits)
-    expect((await dispatch(app, { kind: 'civilization.enter-farming' })).accepted).toBe(true)
-    const entered = ready(app).state.gameState
-    expect(entered.civilization!.farming!.phase).toBe('farming')
-    expect(entered.civilization!.farming!.elapsedSeconds).toBe(0)
-    expect(entered.timeline).toEqual(before.timeline)
-    expect(entered.civilization!.elapsedSeconds).toBe(before.civilization!.elapsedSeconds)
-    expect(hydrateGameState(await repo.loadCurrent()).state.civilization).toEqual(entered.civilization)
-    expect((await dispatch(app, { kind: 'civilization.enter-farming' })).accepted).toBe(false)
-    expect(ready(app).state.gameState).toEqual(entered)
-    expect(repo.commits).toBe(commits + 1)
-    mounted.rerender(view())
-    expect(oldFill.isConnected).toBe(false)
-    for (const animation of oldAnimations) expect(animation.cancel).toHaveBeenCalledOnce()
-    expect(ready(app).state.gameState.civilization!.farming!.phase).toBe('farming')
-    app.advanceActive(1000); mounted.rerender(view())
-    const job = ready(app).state.gameState.civilization!.farming!.jobs.food
-    const progress = screen.getByRole('progressbar', { name: 'Fields' }) as HTMLProgressElement
-    expect(progress.value).toBeCloseTo(job.work - job.remainingWork)
-    expect(progress.max).toBe(job.work)
-    expect(screen.queryByRole('progressbar', { name: 'Gathering' })).toBeNull()
-  } finally {
-    cleanup(); HTMLElement.prototype.animate = original
   }
+  const snapshot = app.frontendSnapshot('simulations')
+  if (snapshot.phase !== 'ready') throw Error(snapshot.phase)
+  render(<IntlProvider locale="en" messages={{}}><CivilizationSurface gameplay={snapshot.gameplay} locale="en" gameSpeed={1} dispatchPlayer={async () => { throw Error('Disabled action dispatched') }} /></IntlProvider>)
+  expect((screen.getByRole('button', { name: 'Begin Farming era' }) as HTMLButtonElement).disabled).toBe(true)
+  expect(screen.getByRole('progressbar', { name: 'Gathering' })).toBeTruthy()
+  const restored = factory(repo); await restored.start()
+  expect(ready(restored).state.gameState.civilization!.farming).toBeUndefined()
+  expect(ready(restored).state.gameState.civilization!.awardedCatalystMilestoneIds).toEqual(before.civilization!.awardedCatalystMilestoneIds)
 })
 
 

@@ -1379,3 +1379,29 @@ Reveal verification: 16 snapshot tests pass, including 3/4/9/10-goal boundaries;
 Reveal threshold update (Matthew, 14 October 2026): Simulations now appears after the first completed Bots goal (1/10), superseding the four-goal reveal threshold. Both navigation progress bars and the ten-goal permanent unlock remain unchanged.
 
 Navigation order correction (Matthew, 14 October 2026): Simulations precedes Challenges in both the drawer and bottom navigation, including the navigation-shortcut settings list. Reveal at 1/10 and unlock at 10/10 remain unchanged.
+
+
+## Internal release endpoint — 15 October 2026
+
+Matthew requested the current main changes with progression capped at Forager
+until Farming Villages is ready. The sixth-Catalyst dock retains its existing
+Infinity-style composition and shared purchase button, now disabled. Normal
+Farming entry is rejected without changing or committing the save; Debug's
+Farming option and direct era-jump action are unavailable too. Forager production,
+housing, Leadership, Catalyst awards and saved progress continue normally.
+Existing Farming saves remain readable; this cap introduces no destructive
+rollback or schema change. No new shared UI convention is introduced.
+
+The application regression failed on the uncapped source because Farming entry
+was accepted, then passed with the release cap. Focused checks pass 109 tests
+across frontend, canonical application/commands and Farming simulation.
+Rendered verification and final release identities are recorded in the release
+ledger after the candidate and all three internal destinations are verified.
+
+Rendered cap verification: isolated Chromium with mock Keychain exercised
+80/100/130/150% Interface sizes, 360px and 320px German at 130% text, and compact
+landscape, with collapsed/expanded settings and disabled keyboard semantics.
+The existing Infinity dock was captured for reference. The 320px German label
+needed a scoped word-wrap correction; its final pixels and desktop 100% were
+rechecked. No new layout pattern or smaller text was introduced. Mobile native
+hosts, screen-reader delivery and fluent translation review remain unverified.
