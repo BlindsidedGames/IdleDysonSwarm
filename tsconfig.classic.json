@@ -4,11 +4,6 @@
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.classic.tsbuildinfo"
   },
   "include": [
-    "classic/src",
-    "scripts/modes-preview/main.tsx"
-  ],
-  "exclude": [
-    "classic/src/**/*.test.ts",
-    "classic/src/**/*.test.tsx"
+    "classic/src"
   ]
 }

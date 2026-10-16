@@ -14,7 +14,7 @@ import {REWORK_CHALLENGES} from '../src/simulation/reworkChallenges'
 import {runCanonicalSkillAutoAssignment} from '../src/simulation/canonicalSkillTransactions'
 import {MANUAL_LABOUR_AUGMENTS} from '../src/simulation/skillSubskills'
 import type {CanonicalGameStateV1} from '../src/game-state/types'
-const session=hydrateGameState(prepareIdb1Save(readFileSync('test/fixtures/schema-08-canonical-idb1-main-save.txt','utf8')).prepared)
+const session=hydrateGameState(prepareIdb1Save(readFileSync('qa/fixtures/schema-08-canonical-idb1-main-save.txt','utf8')).prepared)
 const context={mode:'active' as const,automationIntervalSeconds:1,realityWorkerTuning:{workerBatchSize:128n,baseWorkerGenerationSpeed:4},dreamResetDefinitions:SIMULATION_UPGRADE_DEFINITIONS,realityUpgradeDefinitions:REALITY_UPGRADE_DEFINITIONS,infinityResetAssetLookup:createCapturedInfinityAssetLookup(gameDataCatalog.assets)}
 function seed():CanonicalGameStateV1{
  const s=session.state

@@ -11,7 +11,7 @@ const webRoot = resolve(import.meta.dirname, '..', '..')
 const save = readFileSync(
   resolve(
     webRoot,
-    'test',
+    'qa',
     'fixtures',
     'schema-08-canonical-idb1-main-save.txt',
   ),
@@ -84,7 +84,7 @@ const report = {
   createdAt: new Date().toISOString(),
   durationMilliseconds,
   cpuThrottleRate: 4,
-  saveSource: 'test/fixtures/schema-08-canonical-idb1-main-save.txt',
+  saveSource: 'qa/fixtures/schema-08-canonical-idb1-main-save.txt',
   measurements,
 }
 const output = resolve(
