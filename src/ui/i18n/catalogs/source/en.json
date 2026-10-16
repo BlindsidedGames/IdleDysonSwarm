@@ -2840,7 +2840,7 @@
     "defaultMessage": "Use saved copy {number}"
   },
   "modes.saves.description": {
-    "defaultMessage": "Export or restore both mode saves together."
+    "defaultMessage": "Export or import the save for your current mode."
   },
   "modes.saves.done": {
     "defaultMessage": "Saved."
@@ -2849,7 +2849,7 @@
     "defaultMessage": "Download file"
   },
   "modes.saves.export": {
-    "defaultMessage": "Export mode saves"
+    "defaultMessage": "Export Save"
   },
   "modes.saves.failed": {
     "defaultMessage": "The operation failed. Your saved data is preserved."
@@ -2858,10 +2858,13 @@
     "defaultMessage": "Choose save file"
   },
   "modes.saves.import": {
-    "defaultMessage": "Import mode saves"
+    "defaultMessage": "Import Save"
   },
   "modes.saves.importDescription": {
-    "defaultMessage": "Import a save into the current mode, or restore a paired export. Classic saves imported into Modern are migrated automatically."
+    "defaultMessage": "Import a save into your current mode. Classic saves imported into Modern are migrated automatically. The other mode’s save is kept."
+  },
+  "modes.saves.importTarget": {
+    "defaultMessage": "Import into {mode}."
   },
   "modes.saves.local": {
     "defaultMessage": "Use this device"
@@ -2885,7 +2888,7 @@
     "defaultMessage": "Restore the retained checkpoint for the listed modes? Progress since that checkpoint stays in the recovery archive."
   },
   "modes.saves.replace": {
-    "defaultMessage": "Replace listed saves"
+    "defaultMessage": "Replace Save"
   },
   "modes.saves.resetConfirmation": {
     "defaultMessage": "Reset all progress in {mode} and start again? The other mode’s save is kept."
@@ -2906,10 +2909,10 @@
     "defaultMessage": "Save export"
   },
   "modes.saves.title": {
-    "defaultMessage": "Classic and Modern saves"
+    "defaultMessage": "Save data"
   },
   "modes.saves.warning": {
-    "defaultMessage": "This replaces the listed saves. Saves not listed are kept. Export your current saves first."
+    "defaultMessage": "This replaces your current mode’s save. The other mode’s save is kept. Export your current save first."
   },
   "modes.separate": {
     "defaultMessage": "Each mode keeps a separate save."

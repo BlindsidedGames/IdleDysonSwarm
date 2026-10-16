@@ -103,14 +103,30 @@ test('real Classic migration and import retain the source and protect existing M
 
   // Actual standalone IDB1 import routes through Classic's decoder and the
   // production converter before publishing only the reviewed receiving slot.
+  const receiptHash = 'a'.repeat(64)
+  await store.resolveCloud('classic', receiptHash, receiptHash, null, (await store.inspect())!.generation, async () => undefined)
+  const classicReceipt = (await store.inspect())!.cloudReceipts!.classic
   const bundle = await store.prepareImportBundle(raw, 'modern', convertClassicForModern)
   const preview = await store.previewBundle(bundle)
   await store.importBundle(bundle, preview.generation!)
   expect(await open().read('classic')).toBe(classic)
+  expect((await open().inspect())!.cloudReceipts!.classic).toEqual(classicReceipt)
   expect(deserializeWebSave((await open().read('modern'))!).saveVersion).toBe(21)
   await expect(store.prepareImportBundle(modern, 'classic', convertClassicForModern)).rejects.toThrow('Modern progress')
 
+  // Importing Classic progress while playing Modern must not create or replace
+  // a separate Classic save, even when none exists yet.
+  const modernOnly = new ModeSaveStore(new MemoryStorage(), realCodecs, () => undefined)
+  await modernOnly.initialize({ discovery: 'complete', saves: { modern } })
+  const singleImport = await modernOnly.prepareImportBundle(raw, 'modern', convertClassicForModern)
+  const singlePreview = await modernOnly.previewBundle(singleImport)
+  expect(singlePreview.modes).toEqual(['modern'])
+  await modernOnly.importBundle(singleImport, singlePreview.generation!)
+  expect(await modernOnly.read('classic')).toBeNull()
+  expect(deserializeWebSave((await modernOnly.read('modern'))!).saveVersion).toBe(21)
+
   const exported = await open().exportBundle()
+  await expect(store.prepareImportBundle(exported, 'modern', convertClassicForModern)).rejects.toThrow('single-mode')
   const restored = new ModeSaveStore(new MemoryStorage(), realCodecs, () => undefined)
   await restored.importBundle(exported)
   expect(await restored.read('classic')).toBe(classic)

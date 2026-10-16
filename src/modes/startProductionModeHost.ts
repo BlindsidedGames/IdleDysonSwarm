@@ -29,6 +29,7 @@ import { mountModeSaveManager } from './development/mountModeSaveManager'
 import type { ModeRuntimeHostOptions } from './modeRuntimeHostOptions'
 import type { GameModeController, ModeSessionContext, ModeSession } from './modeController'
 import type { PresentationStorage } from '../ui/presentationStorage'
+import { readModeSavePresentation } from '../ui/gameplay/settings/modeSaveActions'
 import type { ProductionFrameBridge } from './productionFrameBridge'
 import { BrowserDepartureMarker } from '../platform/browserDepartureMarker'
 import './productionModeHost.css'
@@ -76,7 +77,7 @@ export async function startProductionModeHost(container: HTMLElement, native: Na
   const host = createModeHost({ store, cloud, factories: { classic: launch, modern: launch }, convertClassic: convertClassicForModern,
     discovery: { ...storage.discovery, codecs, choose: (mode, candidates) => manager.chooseSources(mode, candidates) } })
   controller = host.controller
-  manager = mountModeSaveManager(dialogs, panel, controller, store, native ? bindNativeModeSaveTransfers(native) : bindBrowserModeSaveTransfers())
+  manager = mountModeSaveManager(dialogs, panel, controller, store, native ? bindNativeModeSaveTransfers(native) : bindBrowserModeSaveTransfers(), preferences)
   const pwa = native === null ? createProductionPwaUpdateController() : undefined
   const pwaContainer = document.createElement('div'); container.append(pwaContainer)
   const pwaRoot = createRoot(pwaContainer)
@@ -129,12 +130,11 @@ function launchFrame(context: ModeSessionContext, controller: GameModeController
       connected = true
       return { context, controller, preferences, target, native: native ?? undefined, options: { ...options, saveActions: { open: (action, locale) => {
         if (!context.isCurrent()) return
-        const style = frame.contentWindow!.getComputedStyle(frame.contentDocument!.documentElement)
-        options.saveActions?.open(action, locale, { fontSize: style.fontSize, textScale: style.getPropertyValue('--game-text-scale') })
+        options.saveActions?.open(action, locale, readModeSavePresentation(frame.contentDocument!))
       } } }, ready(session) {
         if (settled || !context.isCurrent()) { void session.close().catch(() => undefined); return }
         settled = true; clearTimeout(timeout); signal.removeEventListener('abort', stop)
-        resolve({ quiesce: () => session.quiesce(), close: async () => { try { await session.close() } finally { dispose() } } })
+        resolve({ exportSave: () => session.exportSave(), quiesce: () => session.quiesce(), close: async () => { try { await session.close() } finally { dispose() } } })
       }, fail }
     } }
     const timeout = setTimeout(() => fail(Error('The game document did not become ready. Retry the saved game.')), 20000)

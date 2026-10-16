@@ -51,13 +51,14 @@ interface ModeRuntimeLifecycle {
  * sharing gameplay types or implementations. Every departure goes through the
  * selected runtime's own lifecycle settlement and worker cancellation. */
 export function runtimeModeSession(runtime: ModeRuntimeLifecycle, storage: ModeRuntimeStorage,
-  current: string, lifecycle: ModeLifecycleAdapter, detach: () => void = () => undefined): ModeSession {
+  current: string, lifecycle: ModeLifecycleAdapter, exportSave: ModeSession['exportSave'], detach: () => void = () => undefined): ModeSession {
   let detached = false
   const close = async () => {
     if (!detached) { detached = true; detach() }
     await runtime.shutdown()
   }
   return {
+    exportSave,
     async quiesce() {
       lifecycle.depart()
       if (!await runtime.checkpointBeforeSafeReload()) throw new Error('Mode switch requires a verified final checkpoint.')

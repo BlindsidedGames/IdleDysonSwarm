@@ -1,4 +1,4 @@
-/* Keep the paired-save explanation above its wrapping actions, as on mobile. */
+/* Keep the save explanation above its wrapping actions, as on mobile. */
 .settings-surface__panel.settings-surface__panel--save.mode-save-settings {
   grid-template-columns: minmax(0, 1fr);
 }
@@ -9,14 +9,22 @@
 }
 
 .mode-save-settings .ui-button {
-  min-block-size: max(44px, 2.75rem);
+  min-block-size: max(44px, 3.25rem);
   min-inline-size: 44px;
   white-space: normal;
   overflow-wrap: anywhere;
+  line-height: inherit;
 }
 
 @media (pointer: coarse) {
-  .mode-save-settings .ui-button { min-block-size: max(48px, 3rem); }
+  .mode-save-settings .ui-button { min-block-size: max(48px, 3.25rem); }
+}
+
+@container settings-surface (width <= 40rem) {
+  .mode-save-settings .ui-button { min-block-size: max(44px, var(--target-minimum)); }
+  @media (pointer: coarse) {
+    .mode-save-settings .ui-button { min-block-size: max(48px, var(--target-minimum)); }
+  }
 }
 
 /* Reuse the released Settings reset colour over generic action styling. */

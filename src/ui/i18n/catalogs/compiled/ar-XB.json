@@ -13204,7 +13204,7 @@
     },
     {
       "type": 0,
-      "value": "Ǝxdoɹʇ oɹ ɹǝsʇoɹǝ qoʇɥ ɯopǝ sɐʌǝs ʇoƃǝʇɥǝɹ."
+      "value": "Ǝxdoɹʇ oɹ ıɯdoɹʇ ʇɥǝ sɐʌǝ ɟoɹ ʎonɹ ɔnɹɹǝuʇ ɯopǝ."
     },
     {
       "type": 0,
@@ -13246,7 +13246,7 @@
     },
     {
       "type": 0,
-      "value": "Ǝxdoɹʇ ɯopǝ sɐʌǝs"
+      "value": "Ǝxdoɹʇ Sɐʌǝ"
     },
     {
       "type": 0,
@@ -13288,7 +13288,7 @@
     },
     {
       "type": 0,
-      "value": "Iɯdoɹʇ ɯopǝ sɐʌǝs"
+      "value": "Iɯdoɹʇ Sɐʌǝ"
     },
     {
       "type": 0,
@@ -13302,7 +13302,29 @@
     },
     {
       "type": 0,
-      "value": "Iɯdoɹʇ ɐ sɐʌǝ ıuʇo ʇɥǝ ɔnɹɹǝuʇ ɯopǝ, oɹ ɹǝsʇoɹǝ ɐ dɐıɹǝp ǝxdoɹʇ. Ↄʅɐssıɔ sɐʌǝs ıɯdoɹʇǝp ıuʇo Wopǝɹu ɐɹǝ ɯıƃɹɐʇǝp ɐnʇoɯɐʇıɔɐʅʅʎ."
+      "value": "Iɯdoɹʇ ɐ sɐʌǝ ıuʇo ʎonɹ ɔnɹɹǝuʇ ɯopǝ. Ↄʅɐssıɔ sɐʌǝs ıɯdoɹʇǝp ıuʇo Wopǝɹu ɐɹǝ ɯıƃɹɐʇǝp ɐnʇoɯɐʇıɔɐʅʅʎ. ⊥ɥǝ oʇɥǝɹ ɯopǝ’s sɐʌǝ ıs ʞǝdʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "modes.saves.importTarget": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iɯdoɹʇ ıuʇo "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": "."
     },
     {
       "type": 0,
@@ -13414,7 +13436,7 @@
     },
     {
       "type": 0,
-      "value": "ᴚǝdʅɐɔǝ ʅısʇǝp sɐʌǝs"
+      "value": "ᴚǝdʅɐɔǝ Sɐʌǝ"
     },
     {
       "type": 0,
@@ -13536,7 +13558,7 @@
     },
     {
       "type": 0,
-      "value": "Ↄʅɐssıɔ ɐup Wopǝɹu sɐʌǝs"
+      "value": "Sɐʌǝ pɐʇɐ"
     },
     {
       "type": 0,
@@ -13550,7 +13572,7 @@
     },
     {
       "type": 0,
-      "value": "⊥ɥıs ɹǝdʅɐɔǝs ʇɥǝ ʅısʇǝp sɐʌǝs. Sɐʌǝs uoʇ ʅısʇǝp ɐɹǝ ʞǝdʇ. Ǝxdoɹʇ ʎonɹ ɔnɹɹǝuʇ sɐʌǝs ɟıɹsʇ."
+      "value": "⊥ɥıs ɹǝdʅɐɔǝs ʎonɹ ɔnɹɹǝuʇ ɯopǝ’s sɐʌǝ. ⊥ɥǝ oʇɥǝɹ ɯopǝ’s sɐʌǝ ıs ʞǝdʇ. Ǝxdoɹʇ ʎonɹ ɔnɹɹǝuʇ sɐʌǝ ɟıɹsʇ."
     },
     {
       "type": 0,

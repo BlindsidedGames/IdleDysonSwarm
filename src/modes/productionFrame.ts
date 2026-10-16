@@ -37,5 +37,5 @@ try {
       removeItem: key => connection.preferences.removeItem(`${connection.context.mode}:${key}`),
     }),
   })
-  connection.ready({ quiesce: () => session.quiesce(), close: async () => { try { await session.close() } finally { stopCues(); await audio.destroy() } } })
+  connection.ready({ exportSave: () => session.exportSave(), quiesce: () => session.quiesce(), close: async () => { try { await session.close() } finally { stopCues(); await audio.destroy() } } })
 } catch (error) { connection.fail(error) }

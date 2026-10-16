@@ -6688,7 +6688,7 @@
   "modes.saves.description": [
     {
       "type": 0,
-      "value": "Exporte ou restaure juntos os jogos salvos dos dois modos."
+      "value": "Exporte ou importe o save do modo atual."
     }
   ],
   "modes.saves.done": [
@@ -6706,7 +6706,7 @@
   "modes.saves.export": [
     {
       "type": 0,
-      "value": "Exportar jogos salvos dos modos"
+      "value": "Exportar"
     }
   ],
   "modes.saves.failed": [
@@ -6724,13 +6724,27 @@
   "modes.saves.import": [
     {
       "type": 0,
-      "value": "Importar jogos salvos dos modos"
+      "value": "Importar"
     }
   ],
   "modes.saves.importDescription": [
     {
       "type": 0,
-      "value": "Importe um jogo salvo para o modo atual ou restaure uma exportação dos dois modos. Jogos salvos do Clássico importados no Moderno são migrados automaticamente."
+      "value": "Importe um save no modo atual. Saves do Classic importados no Modern são migrados automaticamente. O save do outro modo é mantido."
+    }
+  ],
+  "modes.saves.importTarget": [
+    {
+      "type": 0,
+      "value": "Importar em "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "modes.saves.local": [
@@ -6778,7 +6792,7 @@
   "modes.saves.replace": [
     {
       "type": 0,
-      "value": "Substituir jogos salvos listados"
+      "value": "Substituir save"
     }
   ],
   "modes.saves.resetConfirmation": [
@@ -6844,13 +6858,13 @@
   "modes.saves.title": [
     {
       "type": 0,
-      "value": "Jogos salvos Clássico e Moderno"
+      "value": "Dados salvos"
     }
   ],
   "modes.saves.warning": [
     {
       "type": 0,
-      "value": "Isso substitui os jogos salvos listados. Os demais são mantidos. Exporte primeiro seus jogos salvos atuais."
+      "value": "Isso substitui o save do modo atual. O save do outro modo é mantido. Exporte seu save atual primeiro."
     }
   ],
   "modes.separate": [

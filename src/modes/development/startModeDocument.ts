@@ -12,6 +12,6 @@ export async function startModeDocument(context: ModeSessionContext, controller:
     const session = context.mode === 'classic'
       ? await (await import('./renderClassicGame')).renderClassicGame(context, controller, container, options)
       : await (await import('./renderModernGame')).renderModernGame(context, controller, container, options)
-    return { quiesce: () => session.quiesce(), close: async () => { try { await session.close() } finally { release() } } }
+    return { exportSave: () => session.exportSave(), quiesce: () => session.quiesce(), close: async () => { try { await session.close() } finally { release() } } }
   } catch (error) { release(); throw error }
 }

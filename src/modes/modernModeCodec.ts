@@ -15,6 +15,10 @@ export function createModernModeCodec(nowUtc: () => string): ModeSaveCodec {
     return serializeWebSave(dehydrateGameState(hydrated, initializeGameplayRework(hydrated.state)).copyValidatedState())
   }
   return {
+    previewImport(text) {
+      const { state } = hydrateGameState(PreparedSave.fromDecoded(deserializeWebSave(text)))
+      return { infinityPoints: state.infinity.points, quantumPoints: state.quantum.pointsEarned, skillPoints: state.skills.points }
+    },
     prepareImport(text, receiving) {
       return serializeWebSave(prepareImportedSaveText(text, nowUtc(), undefined, undefined,
         receiving ? deserializeWebSave(receiving) : undefined).copyValidatedState())

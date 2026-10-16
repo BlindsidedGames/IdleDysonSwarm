@@ -3,6 +3,7 @@ import { PreparedSave } from '../../classic/src/save/prepare'
 import { deserializeWebSave, serializeWebSave } from '../../classic/src/save/serialization'
 import type { ModeSaveCodec } from './modeSaveStore'
 import { prepareImportedSaveText } from '../../classic/src/save/import'
+import { hydrateGameState } from '../../classic/src/game-state/mapping'
 
 /** Candidate Classic codec uses the released 4.1.10 schema authority. It does
  * not down-convert modern data. Public baseline identities are recorded in
@@ -10,6 +11,10 @@ import { prepareImportedSaveText } from '../../classic/src/save/import'
 export function createClassicModeCodec(nowUtc: () => string): ModeSaveCodec {
   const createFresh = () => serializeWebSave(createUnityFirstRunPreparedSave({ startedAtUtc: nowUtc() }).copyValidatedState())
   return {
+    previewImport(text) {
+      const { state } = hydrateGameState(PreparedSave.fromDecoded(deserializeWebSave(text)))
+      return { infinityPoints: state.infinity.points, quantumPoints: state.quantum.pointsEarned, skillPoints: state.skills.points }
+    },
     prepareImport(text, receiving) {
       return serializeWebSave(prepareImportedSaveText(text, nowUtc(), undefined, undefined,
         receiving ? deserializeWebSave(receiving) : undefined).copyValidatedState())

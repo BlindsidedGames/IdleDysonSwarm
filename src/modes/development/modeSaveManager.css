@@ -1,10 +1,12 @@
+@import "../../ui/components/checkbox.css";
+
 /* Existing Settings theme; parent dialogs cannot inherit child-frame variables. */
 .mode-save-manager {
-  --theme-page: #121a12;
-  --theme-panel: #243324;
-  --theme-selected: #3f7042;
-  --theme-divider: #364d36;
-  --theme-accent: #b9dfb7;
+  --theme-page: var(--mode-save-theme-page, #121a12);
+  --theme-panel: var(--mode-save-theme-panel, #243324);
+  --theme-selected: var(--mode-save-theme-selected, #3f7042);
+  --theme-divider: var(--mode-save-theme-divider, #364d36);
+  --theme-accent: var(--mode-save-theme-accent, #b9dfb7);
   color: var(--color-text-primary);
   font-family: var(--font-family-body);
   font-size: var(--ui-text-body);
@@ -14,9 +16,18 @@
 .mode-save-manager [hidden] { display: none; }
 .mode-save-manager:lang(ja) { --font-family-body: var(--font-family-japanese); --line-height-body: 1.65; }
 .mode-save-manager:lang(zh-Hans) { --font-family-body: var(--font-family-simplified-chinese); --line-height-body: 1.6; }
-.mode-save-manager .ui-button,
-.mode-save-settings .ui-button { min-block-size: max(44px, 2.75rem); min-inline-size: 44px; white-space: normal; overflow-wrap: anywhere; }
+.mode-save-manager .ui-button { min-inline-size: 44px; white-space: normal; overflow-wrap: anywhere; }
+.mode-save-manager .settings-surface__dialog-actions > .ui-button { min-block-size: max(44px, 3rem); line-height: inherit; }
 .mode-save-manager input[type=file] { display: block; max-inline-size: 100%; min-block-size: 44px; }
+.mode-save-manager .settings-surface__toggle { min-block-size: max(44px, var(--target-minimum)); }
+/* Classic's frozen Settings reduces the square to 1.1rem on narrow screens;
+   Modern retains the shell's 1.35rem minimum. Preserve each existing reference. */
+.mode-save-manager[data-game-mode="classic"] input[type="checkbox"] { min-inline-size: 0; min-block-size: 0; }
+@media (max-width: 40rem) {
+  .mode-save-manager .settings-surface__toggle { font-size: calc(0.8rem * var(--game-text-scale)); }
+  .mode-save-manager[data-game-mode="classic"] input[type="checkbox"] { inline-size: 1.1rem; block-size: 1.1rem; }
+  .mode-save-manager .settings-surface__dialog-actions > .ui-button { min-block-size: max(44px, var(--target-minimum)); }
+}
 @media (pointer: coarse) {
-  .mode-save-manager .ui-button, .mode-save-settings .ui-button { min-block-size: max(48px, 3rem); }
+  .mode-save-manager .settings-surface__dialog-actions > .ui-button { min-block-size: max(48px, 3rem); }
 }

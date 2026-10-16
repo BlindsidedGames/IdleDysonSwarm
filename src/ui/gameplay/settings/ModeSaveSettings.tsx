@@ -12,8 +12,8 @@ export function HostModeSaveSettings() {
   return <section className="settings-surface__panel settings-surface__panel--save mode-save-settings">
     <div className="settings-surface__copy"><h2>{intl.formatMessage(modeSaveMessages.title)}</h2><p>{intl.formatMessage(modeSaveMessages.description)}</p></div>
     <div className="settings-surface__save-actions">
-      {(['import', 'export', 'recovery'] as const).map(action => <Button key={action} onClick={() => actions.open(action, intl.locale)}>{intl.formatMessage(modeSaveMessages[action])}</Button>)}
-      <Button className="settings-surface__reset" variant="danger" onClick={() => actions.open('reset', intl.locale)}>{intl.formatMessage(settingsMessages.reset)}</Button>
+      {(['import', 'export'] as const).map(action => <Button key={action} data-mode-save-action={action} onClick={() => actions.open(action, intl.locale)}>{intl.formatMessage(modeSaveMessages[action])}</Button>)}
+      <Button data-mode-save-action="reset" className="settings-surface__reset" variant="danger" onClick={() => actions.open('reset', intl.locale)}>{intl.formatMessage(settingsMessages.reset)}</Button>
     </div>
   </section>
 }

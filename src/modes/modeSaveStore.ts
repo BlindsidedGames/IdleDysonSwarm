@@ -9,6 +9,7 @@ export interface ModeSaveCodec {
   /** Each game's reset policy retains receiving-device purchases/preferences. */
   createReset?(receiving: string): string | Promise<string>
   prepareImport?(text: string, receiving: string | null): string | Promise<string>
+  previewImport?(text: string): ModeImportProgress
 }
 /** Host attestation after all historical public/Unity/beta roots and Cloud
  * availability have been inspected. Unavailable, corrupt or ambiguous discovery
@@ -36,7 +37,13 @@ export interface ModeBundle {
   readonly active: GameMode
   readonly saves: Readonly<Partial<Record<GameMode, { readonly text: string; readonly sha256: string }>>>
 }
+export interface ModeImportProgress {
+  readonly infinityPoints: bigint
+  readonly quantumPoints: bigint
+  readonly skillPoints: bigint
+}
 export interface ModeImportPreview {
+  readonly progress?: ModeImportProgress
   readonly generation: number | null
   readonly active: GameMode
   readonly modes: readonly GameMode[]
@@ -90,31 +97,28 @@ export class ModeSaveStore {
     return this.serial(() => this.readManifest())
   }
 
-  /** Label a standalone save for the mode where import was opened. Pair exports
-   * retain their explicit labels; a single Classic save enters Modern's migration. */
+  /** Prepare only the receiving mode. Classic saves enter Modern's migration
+   * without creating or replacing the independent Classic save. */
   async prepareImportBundle(text: string, target: GameMode,
     convertClassic: (text: string) => string | Promise<string>): Promise<string> {
     if (text.length > 32 * 1024 * 1024) throw new Error('Save exceeds the import limit.')
     text = text.trim()
     if (text.startsWith('{')) {
       const value: unknown = JSON.parse(text)
-      if (record(value) && value.format === 'IDS-MODE-EXPORT-1') return text
+      if (record(value) && value.format === 'IDS-MODE-EXPORT-1') throw new Error('Import a single-mode save, not a paired export.')
     }
     let modern = false
     try { await this.codecs.modern.validate(text); modern = true } catch { /* Try the Classic import authority next. */ }
     if (modern && target === 'classic') throw new Error('Modern progress cannot be imported into Classic.')
-    let classicSource: string | undefined
     if (!modern) {
       text = await this.codecs.classic.prepareImport?.(text, null) ?? text
       await this.codecs.classic.validate(text)
-      if (target === 'modern' && await this.read('classic') === null) classicSource = text
       if (target === 'modern') text = await convertClassic(text)
     }
     text = await this.codecs[target].prepareImport?.(text, await this.read(target)) ?? text
     await this.codecs[target].validate(text)
     return JSON.stringify({ format: 'IDS-MODE-EXPORT-1', active: target,
-      saves: { ...(classicSource ? { classic: { text: classicSource, sha256: await sha256Utf8(classicSource) } } : {}),
-        [target]: { text, sha256: await sha256Utf8(text) } } } satisfies ModeBundle)
+      saves: { [target]: { text, sha256: await sha256Utf8(text) } } } satisfies ModeBundle)
   }
 
   /** Discovery must examine current, backups, legacy Unity and cloud availability
@@ -244,6 +248,7 @@ export class ModeSaveStore {
       }
       const modes = MODES.filter(mode => Boolean(bundle.saves[mode]))
       return { generation: current?.generation ?? null, active: bundle.active, modes,
+        progress: this.codecs[bundle.active].previewImport?.(bundle.saves[bundle.active]!.text),
         conflicts: modes.filter(mode => Boolean(current?.saves[mode])), sha256: await sha256Utf8(text) }
     })
   }
@@ -343,8 +348,11 @@ export class ModeSaveStore {
         }
       }
       if (!saves[bundle.active]) throw new Error('Mode export is missing its active save.')
+      const cloudReceipts = { ...current?.cloudReceipts }
+      for (const mode of MODES) if (bundle.saves[mode]) delete cloudReceipts[mode]
       return this.publish({ format: 'IDS-MODES-1', generation: (current?.generation ?? 0) + 1,
-        active: bundle.active, saves, ...(current?.upgradeSources ? { upgradeSources: current.upgradeSources } : {}), ...(current?.migrationSource ? { migrationSource: current.migrationSource } : {}) })
+        active: bundle.active, saves, ...(Object.keys(cloudReceipts).length ? { cloudReceipts } : {}),
+        ...(current?.upgradeSources ? { upgradeSources: current.upgradeSources } : {}), ...(current?.migrationSource ? { migrationSource: current.migrationSource } : {}) })
     })
   }
 

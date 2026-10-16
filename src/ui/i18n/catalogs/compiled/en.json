@@ -6688,7 +6688,7 @@
   "modes.saves.description": [
     {
       "type": 0,
-      "value": "Export or restore both mode saves together."
+      "value": "Export or import the save for your current mode."
     }
   ],
   "modes.saves.done": [
@@ -6706,7 +6706,7 @@
   "modes.saves.export": [
     {
       "type": 0,
-      "value": "Export mode saves"
+      "value": "Export Save"
     }
   ],
   "modes.saves.failed": [
@@ -6724,13 +6724,27 @@
   "modes.saves.import": [
     {
       "type": 0,
-      "value": "Import mode saves"
+      "value": "Import Save"
     }
   ],
   "modes.saves.importDescription": [
     {
       "type": 0,
-      "value": "Import a save into the current mode, or restore a paired export. Classic saves imported into Modern are migrated automatically."
+      "value": "Import a save into your current mode. Classic saves imported into Modern are migrated automatically. The other mode’s save is kept."
+    }
+  ],
+  "modes.saves.importTarget": [
+    {
+      "type": 0,
+      "value": "Import into "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "modes.saves.local": [
@@ -6778,7 +6792,7 @@
   "modes.saves.replace": [
     {
       "type": 0,
-      "value": "Replace listed saves"
+      "value": "Replace Save"
     }
   ],
   "modes.saves.resetConfirmation": [
@@ -6844,13 +6858,13 @@
   "modes.saves.title": [
     {
       "type": 0,
-      "value": "Classic and Modern saves"
+      "value": "Save data"
     }
   ],
   "modes.saves.warning": [
     {
       "type": 0,
-      "value": "This replaces the listed saves. Saves not listed are kept. Export your current saves first."
+      "value": "This replaces your current mode’s save. The other mode’s save is kept. Export your current save first."
     }
   ],
   "modes.separate": [

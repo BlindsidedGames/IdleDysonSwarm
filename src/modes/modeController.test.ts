@@ -19,6 +19,7 @@ function fixture() {
     expect(live).toBe(0); live++; contexts.push(context); events.push('open ' + context.mode)
     let closed = false
     return {
+      exportSave: async () => ({ text: context.initialSave + '-shareable', basis: 'current' as const }),
       quiesce: async () => { events.push('quiesce ' + context.mode); return context.initialSave + '-played' },
       close: async () => { if (!closed) { closed = true; live--; events.push('close ' + context.mode) } },
     }
@@ -53,6 +54,14 @@ test('switching closes the previous session and rejects its late checkpoint writ
     expect(await old.checkpoint('late-worker-result')).toBe(false)
   }
   expect(f.events.slice(0, 4)).toEqual(['open classic', 'quiesce classic', 'close classic', 'open modern'])
+  const inactive = await f.store.read('modern'), exporting = f.contexts.at(-1)!
+  expect(await f.controller.exportSave()).toEqual({ text: exporting.initialSave + '-shareable', basis: 'current' })
+  expect(await f.store.read('modern')).toBe(inactive)
+  expect(exporting.isCurrent()).toBe(true)
+  expect(f.contexts.at(-1)).toBe(exporting)
+  await expect(f.controller.prepareImport('{"format":"IDS-MODE-EXPORT-1"}')).rejects.toThrow('single-mode')
+  expect(f.controller.getSnapshot().phase).toBe('ready')
+  expect(exporting.isCurrent()).toBe(true)
   await f.controller.close()
   expect(await f.store.read('classic')).toBe('legacy-played-played-played')
   expect(await f.store.read('modern')).toBe('fresh-played-played')
