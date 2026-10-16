@@ -2725,5 +2725,6 @@
   "rework.migration.separateSaves": "Dein Fortschritt wird in zwei getrennten Spielständen fortgesetzt. Du kannst jederzeit zwischen Klassisch und Modern wechseln.",
   "rework.migration.returnClassic": "Zurück zu Klassisch",
   "rework.migration.continueModern": "In Modern fortfahren",
-  "modes.back": "Zurück zu {mode}"
+  "modes.back": "Zurück zu {mode}",
+  "modes.saves.resetConfirmation": "Den gesamten Fortschritt in {mode} zurücksetzen und neu beginnen? Der Spielstand des anderen Modus bleibt erhalten."
 }

@@ -4,11 +4,13 @@ import { Button } from '../../ui/components'
 import { loadStartupCatalog } from '../../ui/i18n/startupCatalog'
 import { LOCALE_REGISTRY, type EnabledLocale } from '../../ui/i18n/localeRegistry'
 import { modeSaveMessages as messages } from '../../ui/gameplay/settings/modeSaveMessages'
+import { settingsSurfaceMessages as settingsMessages } from '../../ui/gameplay/settings/messages'
 import type { ModeSaveAction } from '../../ui/gameplay/settings/modeSaveActions'
 import type { GameModeController } from '../modeController'
 import type { GameMode, ModeImportPreview, ModeRecoveryPreview, ModeSaveStore } from '../modeSaveStore'
 import type { ModeSaveManagerModel, Request } from './modeSaveManagerModel'
 import '../../ui/gameplay/settings/settingsSurface.css'
+import '../../ui/gameplay/settings/modeSaveSettings.css'
 import './modeSaveManager.css'
 import type { ModeSaveTransferPort } from '../hostSaveTransferBindings'
 
@@ -59,6 +61,7 @@ function Dialog({ active, action, controller, store, transfers, close }: {
   const [text, setText] = useState(''), [preview, setPreview] = useState<ModeImportPreview | null>(null)
   const [recovery, setRecovery] = useState<ModeRecoveryPreview | null>(null), [archive, setArchive] = useState(false)
   const [partial, setPartial] = useState(false)
+  const [resetMode] = useState(() => controller.getSnapshot().manifest?.active ?? null)
   const busyRef = useRef(false)
   const activeRef = useRef(active); activeRef.current = active
   const run = useCallback(async (work: () => Promise<void>) => {
@@ -73,6 +76,7 @@ function Dialog({ active, action, controller, store, transfers, close }: {
   }, [controller, close, run])
   useEffect(() => {
     const previous = document.activeElement as HTMLElement | null
+    const previousControl = previous instanceof HTMLIFrameElement ? previous.contentDocument?.activeElement as HTMLElement | null : previous
     dialog.current?.querySelector('button')?.focus()
     const keydown = (event: KeyboardEvent) => {
       if (!activeRef.current) return
@@ -85,7 +89,7 @@ function Dialog({ active, action, controller, store, transfers, close }: {
       else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus() }
     }
     document.addEventListener('keydown', keydown)
-    return () => { document.removeEventListener('keydown', keydown); if (previous?.isConnected) previous.focus() }
+    return () => { document.removeEventListener('keydown', keydown); if (previousControl?.isConnected) previousControl.focus(); else if (previous?.isConnected) previous.focus() }
   }, [exit])
   useEffect(() => {
     if (action === 'export') void run(async () => { setText(await controller.exportSaves()) })
@@ -94,13 +98,15 @@ function Dialog({ active, action, controller, store, transfers, close }: {
   const summary = preview ?? recovery
   return <div className="settings-surface__dialog-backdrop mode-save-manager">
     <section ref={dialog} className="settings-surface__dialog" role="dialog" aria-modal="true" aria-labelledby="mode-save-title" aria-describedby="mode-save-description" aria-busy={busy}>
-      <h2 id="mode-save-title">{intl.formatMessage(messages[action])}</h2>
-      <p id="mode-save-description">{intl.formatMessage(action === 'recovery' ? messages.recoveryDescription : action === 'import' ? messages.importDescription : messages.description)}</p>
+      <h2 id="mode-save-title">{intl.formatMessage(action === 'reset' ? settingsMessages.resetDialogTitle : messages[action])}</h2>
+      <p id="mode-save-description">{action === 'reset'
+        ? intl.formatMessage(messages.resetConfirmation, { mode: resetMode ? mode(resetMode) : '' })
+        : intl.formatMessage(action === 'recovery' ? messages.recoveryDescription : action === 'import' ? messages.importDescription : messages.description)}</p>
       {action === 'import' && <label>{intl.formatMessage(messages.file)}<input type="file" accept=".idsw,.json,.txt" disabled={busy} onChange={event => {
         const file = event.currentTarget.files?.[0]
         if (file) void run(async () => { if (file.size > 32 * 1024 * 1024) throw Error('Import too large'); setText(await file.text()); setPreview(null) })
       }} /></label>}
-      {(action !== 'recovery' || text) && <div className="settings-surface__transfer">
+      {action !== 'reset' && (action !== 'recovery' || text) && <div className="settings-surface__transfer">
         <label htmlFor="mode-save-text">{intl.formatMessage(messages.text)}</label>
         <textarea id="mode-save-text" value={text} readOnly={action !== 'import' || busy} spellCheck={false} wrap="off" onChange={event => { setText(event.currentTarget.value); setPreview(null) }} />
       </div>}
@@ -111,7 +117,11 @@ function Dialog({ active, action, controller, store, transfers, close }: {
       {failed && <p role="alert">{intl.formatMessage(messages.failed)}</p>}
       {(busy || done) && <p role="status">{intl.formatMessage(busy ? messages.pending : messages.done)}</p>}
       <div className="settings-surface__dialog-actions">
-        <Button disabled={busy} onClick={() => void exit()}>{intl.formatMessage(messages.close)}</Button>
+        <Button disabled={busy} onClick={() => void exit()}>{intl.formatMessage(action === 'reset' ? settingsMessages.cancel : messages.close)}</Button>
+        {action === 'reset' && <Button className="settings-surface__reset" variant="danger" disabled={busy || resetMode === null} onClick={() => void run(async () => {
+          if (resetMode === null) throw Error('No active save.')
+          await controller.resetSave(resetMode); close()
+        })}>{intl.formatMessage(busy ? settingsMessages.resetPending : settingsMessages.reset)}</Button>}
         {action === 'import' && <Button disabled={busy || !text.trim()} onClick={() => void run(async () => {
           if (!preview) setPreview(await controller.prepareImport(text))
           else { await controller.importSaves(text, preview.generation ?? undefined); close() }

@@ -6781,6 +6781,20 @@
       "value": "Заменить указанные сохранения"
     }
   ],
+  "modes.saves.resetConfirmation": [
+    {
+      "type": 0,
+      "value": "Сбросить весь прогресс в режиме "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": " и начать заново? Сохранение другого режима останется."
+    }
+  ],
   "modes.saves.restoreRecovery": [
     {
       "type": 0,

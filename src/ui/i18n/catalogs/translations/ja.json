@@ -2725,5 +2725,6 @@
   "rework.migration.separateSaves": "進行状況は2つの独立したセーブで続きます。クラシックとモダンはいつでも切り替えられます。",
   "rework.migration.returnClassic": "クラシックに戻る",
   "rework.migration.continueModern": "モダンで続ける",
-  "modes.back": "戻る: {mode}"
+  "modes.back": "戻る: {mode}",
+  "modes.saves.resetConfirmation": "「{mode}」の進行状況をすべてリセットして、最初からやり直しますか？もう一方のモードのセーブデータは保持されます。"
 }

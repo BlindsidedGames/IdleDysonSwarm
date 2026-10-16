@@ -3,6 +3,7 @@ import { createNativeHostEnvironment } from '../platform/nativeHostBridge'
 import { IndexedDbBrowserSaveDatabase } from '../platform/browserSaveDatabase'
 import { IndexedDbSaveStorageAdapter } from '../platform/indexedDbSaveStorage'
 import { BrowserExpiringWriterAuthority } from '../platform/browserWriterLease'
+import { createBrowserReloadWriterIdentity } from '../platform/browserReloadWriterIdentity'
 import { SingleHostSessionWriterAuthority } from '../platform/singleHostSessionWriterAuthority'
 import { NATIVE_WEB_SAVE_PATHS } from '../platform/platformSaveStorage'
 import type { SaveStorageAdapter } from '../save/repository'
@@ -52,9 +53,10 @@ export async function openProductionModeStorage(bridge: NativeHostBridgeApi | nu
           ...(bridge.target === 'electron' ? [rootedUpgradeSource('retained-modern-beta-offline', 'modern', scoped('beta-offline'), NATIVE_WEB_SAVE_PATHS)] : [])] },
       assertWriter: async () => { await authority.assertWritable() }, close: async () => { await authority.shutdown() } }
   }
+  const writerIdentity = createBrowserReloadWriterIdentity({ storageKey: `${DUAL_MODE_DATABASE_NAME}:writer-tab-token` })
   const opened = [DUAL_MODE_DATABASE_NAME, PRODUCTION_BROWSER_DATABASE_NAME, REWORK_BETA_DATABASE_NAME].map(name => {
     const database = new IndexedDbBrowserSaveDatabase(name)
-    const authority = new BrowserExpiringWriterAuthority({ database })
+    const authority = new BrowserExpiringWriterAuthority({ database, ...writerIdentity })
     return { database, authority, storage: new IndexedDbSaveStorageAdapter({ database, lease: authority }) }
   })
   try {

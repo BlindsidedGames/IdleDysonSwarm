@@ -6781,6 +6781,20 @@
       "value": "Aufgeführte Spielstände ersetzen"
     }
   ],
+  "modes.saves.resetConfirmation": [
+    {
+      "type": 0,
+      "value": "Den gesamten Fortschritt in "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": " zurücksetzen und neu beginnen? Der Spielstand des anderen Modus bleibt erhalten."
+    }
+  ],
   "modes.saves.restoreRecovery": [
     {
       "type": 0,

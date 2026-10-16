@@ -1,0 +1,32 @@
+/* Keep the paired-save explanation above its wrapping actions, as on mobile. */
+.settings-surface__panel.settings-surface__panel--save.mode-save-settings {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.mode-save-settings .settings-surface__save-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+}
+
+.mode-save-settings .ui-button {
+  min-block-size: max(44px, 2.75rem);
+  min-inline-size: 44px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+@media (pointer: coarse) {
+  .mode-save-settings .ui-button { min-block-size: max(48px, 3rem); }
+}
+
+/* Reuse the released Settings reset colour over generic action styling. */
+.mode-save-settings .settings-surface__save-actions > .settings-surface__reset,
+.mode-save-manager .settings-surface__dialog-actions > .settings-surface__reset {
+  border-color: #3b1111;
+  background-color: #8b3939;
+}
+
+.mode-save-settings .settings-surface__save-actions > .settings-surface__reset:hover:not(:disabled),
+.mode-save-manager .settings-surface__dialog-actions > .settings-surface__reset:hover:not(:disabled) {
+  background-color: #a34444;
+}

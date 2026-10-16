@@ -2725,5 +2725,6 @@
   "rework.migration.separateSaves": "你的进度将分别保存在两个独立存档中。你可以随时在经典模式和现代模式之间切换。",
   "rework.migration.returnClassic": "返回经典模式",
   "rework.migration.continueModern": "继续现代模式",
-  "modes.back": "返回{mode}"
+  "modes.back": "返回{mode}",
+  "modes.saves.resetConfirmation": "重置{mode}的全部进度并重新开始？另一模式的存档将保留。"
 }

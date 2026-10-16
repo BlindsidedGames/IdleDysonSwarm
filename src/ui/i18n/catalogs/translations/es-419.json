@@ -2725,5 +2725,6 @@
   "rework.migration.separateSaves": "Tu progreso continúa en dos partidas guardadas por separado. Puedes cambiar entre Clásico y Moderno en cualquier momento.",
   "rework.migration.returnClassic": "Volver a Clásico",
   "rework.migration.continueModern": "Continuar en Moderno",
-  "modes.back": "Volver a {mode}"
+  "modes.back": "Volver a {mode}",
+  "modes.saves.resetConfirmation": "¿Restablecer todo el progreso de {mode} y empezar de nuevo? La partida del otro modo se conserva."
 }

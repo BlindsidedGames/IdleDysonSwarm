@@ -6781,6 +6781,20 @@
       "value": "表示されたセーブデータを置き換える"
     }
   ],
+  "modes.saves.resetConfirmation": [
+    {
+      "type": 0,
+      "value": "「"
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": "」の進行状況をすべてリセットして、最初からやり直しますか？もう一方のモードのセーブデータは保持されます。"
+    }
+  ],
   "modes.saves.restoreRecovery": [
     {
       "type": 0,

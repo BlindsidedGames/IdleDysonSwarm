@@ -6781,6 +6781,20 @@
       "value": "Substituir jogos salvos listados"
     }
   ],
+  "modes.saves.resetConfirmation": [
+    {
+      "type": 0,
+      "value": "Reiniciar todo o progresso em "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": " e começar de novo? O jogo salvo do outro modo será mantido."
+    }
+  ],
   "modes.saves.restoreRecovery": [
     {
       "type": 0,
