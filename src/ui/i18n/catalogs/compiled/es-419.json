@@ -20336,6 +20336,120 @@
       "value": "Se mejoró el Tiempo almacenado para rechazar de forma segura los gastos duplicados o superpuestos, conservar el progreso y los controles de cancelación de los trabajos activos y mantener intactos los ajustes pendientes al cambiar de página."
     }
   ],
+  "wiki.patch-notes.version-4-2-1": [
+    {
+      "type": 0,
+      "value": "Versión 4.2.1"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.challenges": [
+    {
+      "type": 0,
+      "value": "Se agregaron Comienzos y nueve desafíos de Infinidad con nuevas reglas y recompensas."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.convergence": [
+    {
+      "type": 0,
+      "value": "El efecto de Convergencia se revela después de completar seis desafíos. Completar los diez desbloquea el crecimiento continuo de los Cerebros galácticos: los que ya tienes se duplican cada 30 minutos de tiempo de juego."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.feedback": [
+    {
+      "type": 0,
+      "value": "Se eliminaron los avisos repetidos de conflictos entre ajustes automáticos de habilidades y se mejoraron las cuentas regresivas, las animaciones de progreso y el formato de recursos de las Simulaciones."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.forager": [
+    {
+      "type": 0,
+      "value": "Las Simulaciones se desbloquean mediante Comienzos después de diez objetivos de Bots. Se agregaron recolección y caza estacionales, asignación de grupos, viviendas, fabricación y Liderazgo. Esta versión llega hasta la era de los cazadores-recolectores; las eras posteriores no están disponibles."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.offline": [
+    {
+      "type": 0,
+      "value": "Se corrigió que el tiempo sin conexión se acreditara otra vez después de reiniciar. Se mejoró la visualización de la velocidad efectiva del juego y se limitó el impulso sin conexión a 8×."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.production": [
+    {
+      "type": 0,
+      "value": "Se corrigieron las salvas de cañones de riel atascadas y la detección de partidas beta existentes en iOS. La investigación Mejora de durabilidad se oculta al completarla."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.progression": [
+    {
+      "type": 0,
+      "value": "Se reconstruyó la progresión de Moderno: el sistema cuántico, Realidad y las antiguas Simulaciones se reemplazaron por mejoras de Infinidad y Simulaciones de civilización. Las mejoras permanentes útiles ahora están en Infinidad."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.skills": [
+    {
+      "type": 0,
+      "value": "Se corrigió la disponibilidad de Fractura después de obtener un Catalizador y se conservó la carga de Manos pacientes procedente del tiempo no utilizado al terminar una acción de Tinker."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2": [
+    {
+      "type": 0,
+      "value": "Versión 4.2.2"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2.migration": [
+    {
+      "type": 0,
+      "value": "La migración a Moderno se realiza automáticamente. Las mejoras avanzadas deben conseguirse de nuevo y se eliminan las fracturas y sus aumentos. Se conservan el juego base, los Puntos de Infinidad, la Trascendencia, el Descubrimiento y las compras. Puedes volver a Clásico en cualquier momento."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2.modes": [
+    {
+      "type": 0,
+      "value": "Se agregaron los modos Clásico y Moderno por separado. Al abrir Moderno por primera vez, se copia tu progreso de Clásico y se conserva la partida original de Clásico. Los siguientes cambios de modo continúan el progreso propio de cada uno."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2.navigation": [
+    {
+      "type": 0,
+      "value": "El menú ahora muestra Volver a Clásico o Volver a Moderno y cambia directamente de modo. Clásico usa su propia etiqueta de versión C-1; Moderno muestra la versión de la aplicación. Se mejoraron la navegación compacta y los pies de página con la versión."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2.storage": [
+    {
+      "type": 0,
+      "value": "Se agregaron archivos de partida nativos y almacenamiento de Steam Cloud separados para Clásico y Moderno, con protección contra escrituras en conflicto o desactualizadas y conservación de copias de recuperación."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3": [
+    {
+      "type": 0,
+      "value": "Versión 4.2.3"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3.dialog": [
+    {
+      "type": 0,
+      "value": "Se restauraron los nombres de archivo exportados con fecha y hora, con una preferencia independiente para cada modo. La casilla ahora coincide con las de Configuración. Se mejoraron los mensajes de copia y descarga, las vistas previas de importación, el tema, el tamaño de la interfaz y el foco del teclado."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3.export": [
+    {
+      "type": 0,
+      "value": "Se corrigió el fallo de exportación cuando el navegador ya no podía guardar la partida. Crear una copia ya no reinicia el juego ni requiere guardar. Durante el procesamiento de Tiempo almacenado, la exportación conserva la copia segura anterior al procesamiento."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3.reset": [
+    {
+      "type": 0,
+      "value": "Se restauró el reinicio de la partida del modo actual sin reiniciar el otro modo. Se quitó la recuperación de partidas de modos de Configuración; la recuperación al iniciar sigue disponible si una partida no se puede abrir."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3.transfers": [
+    {
+      "type": 0,
+      "value": "Importar y exportar ahora solo afectan al modo que estás jugando y usan su cadena o archivo de partida habitual. Revisa el progreso importado antes de reemplazar la partida de ese modo; el otro modo se conserva."
+    }
+  ],
   "wiki.patch-notes.version-4.accessibility": [
     {
       "type": 0,

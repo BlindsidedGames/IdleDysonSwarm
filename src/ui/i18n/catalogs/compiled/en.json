@@ -20336,6 +20336,120 @@
       "value": "Improved Stored Time so duplicate or overlapping spends are safely rejected, active jobs retain their progress and cancellation controls, and unfinished settings remain intact when changing pages."
     }
   ],
+  "wiki.patch-notes.version-4-2-1": [
+    {
+      "type": 0,
+      "value": "Version 4.2.1"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.challenges": [
+    {
+      "type": 0,
+      "value": "Added Beginnings and nine Infinity Challenges with new rules and rewards."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.convergence": [
+    {
+      "type": 0,
+      "value": "Convergence’s effect is revealed after six challenge completions. Completing all ten unlocks continuous Galactic Brain growth, doubling existing Galactic Brains every 30 minutes of game time."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.feedback": [
+    {
+      "type": 0,
+      "value": "Stopped repeated automatic skill-preset conflict notices and improved Simulation countdowns, progress animation and resource formatting."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.forager": [
+    {
+      "type": 0,
+      "value": "Simulations unlock through Beginnings after ten Bots goals. Added seasonal Forager gathering and hunting, crew assignments, housing, crafting and Leadership. This version stops at the Forager era; later eras are unavailable."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.offline": [
+    {
+      "type": 0,
+      "value": "Fixed offline returns being credited again after a restart. Improved effective game-speed display and capped the offline boost at 8×."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.production": [
+    {
+      "type": 0,
+      "value": "Fixed stalled Railgun volleys and iOS detection of existing beta saves, and hid completed Durability research."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.progression": [
+    {
+      "type": 0,
+      "value": "Rebuilt Modern progression: Quantum, Reality and the former Simulations are replaced by Infinity upgrades and civilization Simulations. Useful permanent upgrades now live in Infinity."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.skills": [
+    {
+      "type": 0,
+      "value": "Fixed Fracture availability after earning a Catalyst and preserved Patient Hands charge from unused time after a Tinker completion."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2": [
+    {
+      "type": 0,
+      "value": "Version 4.2.2"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2.migration": [
+    {
+      "type": 0,
+      "value": "Modern migration runs automatically. Advanced upgrades must be earned again, and fractures and their augments are removed. Your base game, Infinity Points, Transcendence, Discovery and purchases stay. You can return to Classic at any time."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2.modes": [
+    {
+      "type": 0,
+      "value": "Added separate Classic and Modern modes. Opening Modern for the first time copies your Classic progress and preserves the original Classic save. Later switches resume each mode’s own progress."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2.navigation": [
+    {
+      "type": 0,
+      "value": "The menu now shows Back to Classic or Back to Modern and switches directly. Classic uses its own C-1 version label; Modern shows the app version. Improved compact navigation and version footers."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2.storage": [
+    {
+      "type": 0,
+      "value": "Added separate native save files and Steam Cloud storage for Classic and Modern, with protection against conflicting or outdated writes and retained recovery copies."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3": [
+    {
+      "type": 0,
+      "value": "Version 4.2.3"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3.dialog": [
+    {
+      "type": 0,
+      "value": "Restored timestamped export filenames with a separate preference for each mode. Matched the checkbox to Settings and improved copy/download feedback, import previews, theme and interface sizing, and keyboard focus."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3.export": [
+    {
+      "type": 0,
+      "value": "Fixed export failing when the browser could no longer write its save. Taking a copy no longer restarts the game or requires a save write, and active Stored Time processing retains its safe pre-processing snapshot."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3.reset": [
+    {
+      "type": 0,
+      "value": "Restored Reset Save for the current mode without resetting the other mode. Removed Recover mode saves from Settings; startup recovery remains available if a save cannot open."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3.transfers": [
+    {
+      "type": 0,
+      "value": "Import and export now apply only to the mode you are playing, using its normal save string or file. Review imported progress before replacing that mode’s save; the other mode is preserved."
+    }
+  ],
   "wiki.patch-notes.version-4.accessibility": [
     {
       "type": 0,

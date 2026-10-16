@@ -9953,6 +9953,82 @@
     "defaultMessage": "Improved Stored Time so duplicate or overlapping spends are safely rejected, active jobs retain their progress and cancellation controls, and unfinished settings remain intact when changing pages.",
     "description": "Version 4.1 release note for Stored Time reliability and controls."
   },
+  "wiki.patch-notes.version-4-2-1": {
+    "defaultMessage": "Version 4.2.1",
+    "description": "Version 4.2.1 release notes, reconstructed from gameplay rework history before the Classic/Modern update."
+  },
+  "wiki.patch-notes.version-4-2-1.challenges": {
+    "defaultMessage": "Added Beginnings and nine Infinity Challenges with new rules and rewards.",
+    "description": "Version 4.2.1 release notes."
+  },
+  "wiki.patch-notes.version-4-2-1.convergence": {
+    "defaultMessage": "Convergence’s effect is revealed after six challenge completions. Completing all ten unlocks continuous Galactic Brain growth, doubling existing Galactic Brains every 30 minutes of game time.",
+    "description": "Version 4.2.1 release notes."
+  },
+  "wiki.patch-notes.version-4-2-1.feedback": {
+    "defaultMessage": "Stopped repeated automatic skill-preset conflict notices and improved Simulation countdowns, progress animation and resource formatting.",
+    "description": "Version 4.2.1 release notes."
+  },
+  "wiki.patch-notes.version-4-2-1.forager": {
+    "defaultMessage": "Simulations unlock through Beginnings after ten Bots goals. Added seasonal Forager gathering and hunting, crew assignments, housing, crafting and Leadership. This version stops at the Forager era; later eras are unavailable.",
+    "description": "Version 4.2.1 release notes."
+  },
+  "wiki.patch-notes.version-4-2-1.offline": {
+    "defaultMessage": "Fixed offline returns being credited again after a restart. Improved effective game-speed display and capped the offline boost at 8×.",
+    "description": "Version 4.2.1 release notes."
+  },
+  "wiki.patch-notes.version-4-2-1.production": {
+    "defaultMessage": "Fixed stalled Railgun volleys and iOS detection of existing beta saves, and hid completed Durability research.",
+    "description": "Version 4.2.1 release notes."
+  },
+  "wiki.patch-notes.version-4-2-1.progression": {
+    "defaultMessage": "Rebuilt Modern progression: Quantum, Reality and the former Simulations are replaced by Infinity upgrades and civilization Simulations. Useful permanent upgrades now live in Infinity.",
+    "description": "Version 4.2.1 release notes."
+  },
+  "wiki.patch-notes.version-4-2-1.skills": {
+    "defaultMessage": "Fixed Fracture availability after earning a Catalyst and preserved Patient Hands charge from unused time after a Tinker completion.",
+    "description": "Version 4.2.1 release notes."
+  },
+  "wiki.patch-notes.version-4-2-2": {
+    "defaultMessage": "Version 4.2.2",
+    "description": "Version 4.2.2 release notes."
+  },
+  "wiki.patch-notes.version-4-2-2.migration": {
+    "defaultMessage": "Modern migration runs automatically. Advanced upgrades must be earned again, and fractures and their augments are removed. Your base game, Infinity Points, Transcendence, Discovery and purchases stay. You can return to Classic at any time.",
+    "description": "Version 4.2.2 release notes."
+  },
+  "wiki.patch-notes.version-4-2-2.modes": {
+    "defaultMessage": "Added separate Classic and Modern modes. Opening Modern for the first time copies your Classic progress and preserves the original Classic save. Later switches resume each mode’s own progress.",
+    "description": "Version 4.2.2 release notes."
+  },
+  "wiki.patch-notes.version-4-2-2.navigation": {
+    "defaultMessage": "The menu now shows Back to Classic or Back to Modern and switches directly. Classic uses its own C-1 version label; Modern shows the app version. Improved compact navigation and version footers.",
+    "description": "Version 4.2.2 release notes."
+  },
+  "wiki.patch-notes.version-4-2-2.storage": {
+    "defaultMessage": "Added separate native save files and Steam Cloud storage for Classic and Modern, with protection against conflicting or outdated writes and retained recovery copies.",
+    "description": "Version 4.2.2 release notes."
+  },
+  "wiki.patch-notes.version-4-2-3": {
+    "defaultMessage": "Version 4.2.3",
+    "description": "Version 4.2.3 release notes."
+  },
+  "wiki.patch-notes.version-4-2-3.dialog": {
+    "defaultMessage": "Restored timestamped export filenames with a separate preference for each mode. Matched the checkbox to Settings and improved copy/download feedback, import previews, theme and interface sizing, and keyboard focus.",
+    "description": "Version 4.2.3 release notes."
+  },
+  "wiki.patch-notes.version-4-2-3.export": {
+    "defaultMessage": "Fixed export failing when the browser could no longer write its save. Taking a copy no longer restarts the game or requires a save write, and active Stored Time processing retains its safe pre-processing snapshot.",
+    "description": "Version 4.2.3 release notes."
+  },
+  "wiki.patch-notes.version-4-2-3.reset": {
+    "defaultMessage": "Restored Reset Save for the current mode without resetting the other mode. Removed Recover mode saves from Settings; startup recovery remains available if a save cannot open.",
+    "description": "Version 4.2.3 release notes."
+  },
+  "wiki.patch-notes.version-4-2-3.transfers": {
+    "defaultMessage": "Import and export now apply only to the mode you are playing, using its normal save string or file. Review imported progress before replacing that mode’s save; the other mode is preserved.",
+    "description": "Version 4.2.3 release notes."
+  },
   "wiki.patch-notes.version-4.accessibility": {
     "defaultMessage": "Improved keyboard and screen-reader support, reduced-motion behavior, mobile text selection, text-field editing, focus handling, and rapid-touch protection.",
     "description": "Version 4 release note for accessibility and input support."

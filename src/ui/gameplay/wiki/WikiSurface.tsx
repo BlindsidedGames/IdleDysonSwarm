@@ -145,6 +145,12 @@ const goalMessages = [
   messages.goal10,
 ] as const
 
+const recentPatchNotes = [
+  { title: messages.patchNotesVersion423, entries: [messages.patchNotesVersion423Transfers, messages.patchNotesVersion423Export, messages.patchNotesVersion423Dialog, messages.patchNotesVersion423Reset] },
+  { title: messages.patchNotesVersion422, entries: [messages.patchNotesVersion422Modes, messages.patchNotesVersion422Migration, messages.patchNotesVersion422Storage, messages.patchNotesVersion422Navigation] },
+  { title: messages.patchNotesVersion421, entries: [messages.patchNotesVersion421Progression, messages.patchNotesVersion421Challenges, messages.patchNotesVersion421Forager, messages.patchNotesVersion421Convergence, messages.patchNotesVersion421Offline, messages.patchNotesVersion421Skills, messages.patchNotesVersion421Production, messages.patchNotesVersion421Feedback] },
+] as const
+
 const version4PatchNoteMessages = [
   messages.patchNotesVersion4WebRelease,
   messages.patchNotesVersion4OfflineTime,
@@ -489,8 +495,14 @@ function PatchNotesArticle() {
   return (
     <>
       <div className="wiki-surface__long-form-list">
+        {recentPatchNotes.map((release, index) => <section key={release.title.id} className="wiki-surface__section">
+          {index < 2 && <h3>{intl.formatMessage(index === 0 ? messages.patchNotesMostRecent : messages.patchNotesPrevious)}</h3>}
+          <h4>{intl.formatMessage(release.title)}</h4>
+          <ul className="wiki-surface__patch-note-list">
+            {release.entries.map(entry => <li key={entry.id}>{intl.formatMessage(entry)}</li>)}
+          </ul>
+        </section>)}
         <section className="wiki-surface__section">
-          <h3>{intl.formatMessage(messages.patchNotesMostRecent)}</h3>
           <h4>{intl.formatMessage(messages.patchNotesVersion4111)}</h4>
           <ul className="wiki-surface__patch-note-list">
             <li>{intl.formatMessage(messages.patchNotesVersion4111Stellar)}</li>
@@ -509,7 +521,6 @@ function PatchNotesArticle() {
           </ul>
         </section>
         <section className="wiki-surface__section">
-          <h3>{intl.formatMessage(messages.patchNotesPrevious)}</h3>
           <h4>{intl.formatMessage(messages.patchNotesVersion4110)}</h4>
           <ul className="wiki-surface__patch-note-list">
             <li>{intl.formatMessage(messages.patchNotesVersion4110Transcendence)}</li>
