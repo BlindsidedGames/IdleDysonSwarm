@@ -1,6 +1,19 @@
 # Classic and modern foundation — 15 October 2026
 
-## Status and scope
+## Activation update - 16 October 2026
+
+Matthew explicitly requested activation, restoration of the released Classic save
+location, separate Modern files, and Steam Cloud. The production/native host now
+loads one isolated mode document at a time and exposes the existing drawer switch.
+See [the current storage contract](../platform/classic-modern-save-storage.md) for
+paths, recovery, Cloud publication and actual validation evidence. Steam settings
+were published with the five separately approved pending achievement definitions.
+This source change does not publish the Website or promote the public Steam build.
+
+The dated foundation report below describes the earlier development-only state;
+its host-registration and Cloud-publication status is superseded by this update.
+
+## Historical foundation status and scope
 
 Implemented locally on `codex/classic-modern-foundation-20261015`, based on
 `c7c81ec176e0c00c75dace25a031b10d38ec589c`, in

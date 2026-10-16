@@ -1,0 +1,6 @@
+.production-mode-host { block-size: 100dvh; display: flex; flex-direction: column; }
+.production-mode-slot { flex: 1; min-block-size: 0; }
+.production-mode-frame { border: 0; inline-size: 100%; block-size: 100%; display: block; }
+.production-mode-recovery { margin: .6rem; padding: .6rem; color: var(--color-text-primary, #f7f4f8); background: var(--color-panel, #241d2f); }
+.production-mode-recovery[hidden] { display: none; }
+.production-mode-recovery button { min-block-size: 44px; margin: .25rem; }

@@ -72,12 +72,15 @@ export class ModeSaveStore {
   private readonly codecs: ModeCodecs
   private readonly assertWriter: () => void | Promise<void>
   private readonly root: string
+  private readonly published?: (manifest: ModeManifest, saves: Readonly<Partial<Record<GameMode, string>>>) => Promise<void>
   constructor(storage: SaveStorageAdapter, codecs: ModeCodecs,
-    assertWriter: () => void | Promise<void>, root = 'modes-v1') {
+    assertWriter: () => void | Promise<void>, root = 'modes-v1',
+    published?: (manifest: ModeManifest, saves: Readonly<Partial<Record<GameMode, string>>>) => Promise<void>) {
     this.storage = storage
     this.codecs = codecs
     this.assertWriter = assertWriter
     this.root = root
+    this.published = published
     if (!/^[a-zA-Z0-9_-]+$/.test(root)) throw new Error('Invalid mode save root.')
   }
 
@@ -118,7 +121,7 @@ export class ModeSaveStore {
   initialize(inventory?: VerifiedModeInventory): Promise<ModeManifest> {
     return this.serial(async () => {
       const current = await this.readManifest()
-      if (current) return current
+      if (current) return this.completePublication(current)
       if (inventory?.discovery !== 'complete') throw new Error('Complete save discovery is required before first startup.')
       const upgradeSources = []
       if ((inventory.originals?.length ?? 0) > 64) throw new Error('Too many upgrade recovery sources.')
@@ -158,7 +161,7 @@ export class ModeSaveStore {
       const current = await this.requireManifest()
       if (current.active !== mode) throw new Error('Inactive mode cannot checkpoint.')
       const pointer = await this.retain(mode, text)
-      if (pointer.sha256 === current.saves[mode]?.sha256) return current
+      if (pointer.sha256 === current.saves[mode]?.sha256) return this.completePublication(current)
       return this.publish({ ...current, generation: current.generation + 1,
         saves: { ...current.saves, [mode]: pointer } })
     })
@@ -167,7 +170,7 @@ export class ModeSaveStore {
   select(mode: GameMode): Promise<ModeManifest> {
     return this.serial(async () => {
       const current = await this.requireManifest()
-      if (current.active === mode) return current
+      if (current.active === mode) return this.completePublication(current)
       const pointer = current.saves[mode] ?? await this.retain(mode, await this.codecs[mode].createFresh())
       // Validate before selection; corrupt destination never becomes a fresh save.
       await this.readPayload(mode, pointer)
@@ -278,7 +281,7 @@ export class ModeSaveStore {
       if (await this.recoveryIdentity(backup) !== identity) throw Error('Recovery sources changed. Review them again.')
       await this.assertWriter(); await this.storage.replaceAtomically(temporary, path)
       if (await this.storage.readText(path) !== text) throw Error('Recovery publication could not be verified.')
-      return next
+      return this.completePublication(next)
     })
   }
 
@@ -414,6 +417,14 @@ export class ModeSaveStore {
     if (!manifest) throw new Error('Mode saves have not been initialized.')
     return manifest
   }
+  private async completePublication(manifest: ModeManifest): Promise<ModeManifest> {
+    if (this.published) {
+      const saves: Partial<Record<GameMode, string>> = {}
+      for (const mode of MODES) if (manifest.saves[mode]) saves[mode] = await this.readPayload(mode, manifest.saves[mode]!)
+      await this.published(manifest, saves)
+    }
+    return manifest
+  }
   private async publish(manifest: ModeManifest, beforeReplacement?: () => Promise<void>): Promise<ModeManifest> {
     await this.assertWriter()
     const path = `${this.root}/manifest.json`
@@ -426,7 +437,7 @@ export class ModeSaveStore {
     await this.assertWriter()
     await this.storage.replaceAtomically(temporary, path)
     if (await this.storage.readText(path) !== text) throw new Error('Mode manifest publication could not be verified.')
-    return manifest
+    return this.completePublication(manifest)
   }
 }
 

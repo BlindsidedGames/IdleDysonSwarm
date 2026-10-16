@@ -12,7 +12,11 @@
     "current.idsw",
     "backup-1.idsw",
     "backup-2.idsw",
-    "backup-3.idsw"
+    "backup-3.idsw",
+    "modern-current.idsw",
+    "modern-backup-1.idsw",
+    "modern-backup-2.idsw",
+    "modern-backup-3.idsw"
   ],
   "recursive": false,
   "overrides": {
@@ -25,5 +29,5 @@
       "path": ""
     }
   },
-  "notes": "Root names and unchanged relative subdirectory verified in Steamworks. Four nonrecursive All OSes paths, with macOS/Linux root overrides and empty add/replace paths. Cloud available to public beta testers. No temporary files, caches, device preferences, Unity originals or local bookkeeping."
+  "notes": "Published 2026-10-16 and verified through Steam app metadata. Eight nonrecursive All OSes paths: existing Classic primary/backups plus distinct modern- primary/backups, with unchanged macOS/Linux root overrides. Cloud enabled for all testers. App settings publication also included the five explicitly approved pending achievement definitions. Default/public build remained 25569496. Temporary files, caches, device preferences, Unity originals and local bookkeeping remain excluded."
 }

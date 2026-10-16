@@ -1,3 +1,6 @@
+import { mkdtemp, mkdir, readFile, writeFile, rm } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { expect, test } from 'vitest'
 import { ModeCloudCoordinator, createModeCloudAdapters, MODE_CLOUD_NAMESPACES } from './modeCloud'
 import { ModeSaveStore } from './modeSaveStore'
@@ -61,4 +64,34 @@ test('a remote race, wrong-mode payload, future schema and changed backup cannot
   await f.cloud.publish('classic', 'classic:backup', () => true)
   expect(f.clouds.classic.uploads).toEqual([])
   expect(await f.store.read('classic')).toBe('classic:backup')
+})
+
+
+test('Steam resumes released Classic Cloud files and keeps Modern publication and account receipts separate', async () => {
+  const { bindSteamModeCloud } = await import(new URL('../../hosts/electron/steam/modeCloud.mjs', import.meta.url).href)
+  const userData = await mkdtemp(join(tmpdir(), 'ids-mode-cloud-'))
+  let identity = '76561198000000001'
+  const directory = join(userData, 'steam-cloud', identity)
+  try {
+    await mkdir(directory, { recursive: true })
+    const released = 'IDSWEB1:released-classic', modern = 'IDLEDS:modern-progress'
+    await writeFile(join(directory, 'current.idsw'), released)
+    const { clouds } = bindSteamModeCloud({ userData, account: identity, identity: () => identity, choose: async () => 'local' })
+    expect(await clouds.classic.readForUpgrade()).toBe(released)
+    expect(await clouds.classic.read()).toBe(released)
+    await clouds.classic.acknowledge(released)
+    expect(await clouds.modern.read()).toBeNull()
+    await clouds.modern.publish(modern)
+    expect(await readFile(join(directory, 'modern-current.idsw'), 'utf8')).toBe(modern)
+    expect(await readFile(join(directory, 'current.idsw'), 'utf8')).toBe(released)
+    await expect(clouds.classic.publish(modern)).rejects.toThrow()
+    await clouds.classic.publish('IDSWEB1:classic-earned')
+    expect(await readFile(join(directory, 'backup-1.idsw'), 'utf8')).toBe(released)
+    const reopened = bindSteamModeCloud({ userData, account: identity, identity: () => identity, choose: async () => 'local' }).clouds
+    expect(await reopened.classic.read()).toBeNull()
+    expect(await reopened.modern.read()).toBeNull()
+    identity = '76561198000000002'
+    await expect(reopened.modern.publish('IDLEDS:wrong-account')).rejects.toThrow('account changed')
+    expect(await readFile(join(directory, 'modern-current.idsw'), 'utf8')).toBe(modern)
+  } finally { await rm(userData, { recursive: true, force: true }) }
 })

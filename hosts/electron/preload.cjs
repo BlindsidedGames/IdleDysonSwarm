@@ -22,10 +22,17 @@ const channels = Object.freeze({
 
 // A marked Copy button's trusted click grants one write in this event turn.
 let clipboardCopyAction = false
-document.addEventListener('click', (event) => {
+const grantClipboardCopy = (event) => {
   if (!event.isTrusted || !event.target?.closest?.('[data-clipboard-copy]')) return
   clipboardCopyAction = true
   setTimeout(() => { clipboardCopyAction = false }, 0)
+}
+document.addEventListener('click', grantClipboardCopy, true)
+document.addEventListener('load', (event) => {
+  const frame = event.target
+  if (!(frame instanceof HTMLIFrameElement) || !frame.classList.contains('production-mode-frame')) return
+  // Preset Copy lives in the owned game document; pair-save Copy lives here.
+  frame.contentDocument?.addEventListener('click', grantClipboardCopy, true)
 }, true)
 
 let currentPhase = 'active'
@@ -65,6 +72,9 @@ contextBridge.exposeInMainWorld(
       }
       return ipcRenderer.invoke(channels.writeClipboardText, text)
     },
+    ...(process.argv.includes('--ids-steam-cloud') ? { modeClouds: Object.freeze(Object.fromEntries(['classic', 'modern'].map(mode => [mode, Object.freeze(Object.fromEntries(
+      ['read', 'readBackups', 'readForUpgrade', 'readBackupsForUpgrade', 'acknowledge', 'publish'].map(method => [method, text => ipcRenderer.invoke(`ids:mode-cloud:${method}`, mode, text)])
+    ))]))) } : {}),
     ...(process.argv.includes('--ids-steam-cloud') ? { cloud: Object.freeze({
       read: () => ipcRenderer.invoke('ids:cloud:read'),
       readBackups: () => ipcRenderer.invoke('ids:cloud:backups'),

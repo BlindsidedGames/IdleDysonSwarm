@@ -142,9 +142,12 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin || !url.pathname.startsWith(SCOPE_PATH)) return;
 
   if (request.mode === 'navigate') {
+    const shell = url.pathname === SCOPE_PATH + 'mode.html'
+      ? new URL('mode.html', self.registration.scope).href
+      : APP_SHELL_URL;
     event.respondWith(
       fetch(request).catch(async () =>
-        (await caches.match(APP_SHELL_URL)) ?? Response.error()),
+        (await caches.match(shell)) ?? Response.error()),
     );
     return;
   }

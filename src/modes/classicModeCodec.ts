@@ -5,8 +5,8 @@ import type { ModeSaveCodec } from './modeSaveStore'
 import { prepareImportedSaveText } from '../../classic/src/save/import'
 
 /** Candidate Classic codec uses the released 4.1.10 schema authority. It does
- * not down-convert modern data. Apple public build verification is still a
- * host-activation gate; see classic/baseline.json. */
+ * not down-convert modern data. Public baseline identities are recorded in
+ * classic/baseline.json. */
 export function createClassicModeCodec(nowUtc: () => string): ModeSaveCodec {
   return {
     prepareImport(text, receiving) {

@@ -1,3 +1,4 @@
+import { installNativeReviewPrompt } from '../../platform/nativeReviewPrompt'
 import { ModeSaveActionsContext } from '../../ui/gameplay/settings/modeSaveActions'
 import { createRoot } from 'react-dom/client'
 import App from '../../App'
@@ -26,18 +27,20 @@ export async function renderModernGame(context: ModeSessionContext, controller: 
   const root = createRoot(container)
   try {
     return await createModernModeSession(context, { ...options, attach: runtime => {
+      const stopReview = options.native && options.native.target !== 'electron' && options.native.requestStoreReview
+        ? installNativeReviewPrompt({ runtime, bridge: options.native }) : undefined
       root.render(<GameModeControllerContext.Provider value={controller}><ModeSaveActionsContext.Provider value={options.saveActions ?? null}>
         <LocalePreferenceProvider preference={locale} initialLocale={catalog.locale} initialMessages={catalog.messages}>
           <NumberNotationProvider preference={notation}><ResearchVisibilityProvider preference={research}>
             <BottomNavigationTextProvider preference={navigation}>
               <App key={context.sessionId} runtime={runtime} locale={catalog.locale} saveSchemaVersion={21}
-                releaseFooter={releaseFooter}
-                sampleUtc={() => options.lifecycleClock.sample().serializedUtcText} reloadSafely={async () => { throw new Error('Use the parent development host reload.') }} />
+                releaseFooter={options.releaseFooter ?? releaseFooter}
+                sampleUtc={() => options.lifecycleClock.sample().serializedUtcText} reloadSafely={options.reloadSafely ?? (async () => { throw new Error('Reload the owning game host.') })} hostKind={options.hostKind} releasePlatformServices={options.services} audio={options.audio} />
             </BottomNavigationTextProvider>
           </ResearchVisibilityProvider></NumberNotationProvider>
         </LocalePreferenceProvider>
       </ModeSaveActionsContext.Provider></GameModeControllerContext.Provider>)
-      return () => root.unmount()
+      return () => { stopReview?.(); root.unmount() }
     } })
   } catch (error) { root.unmount(); throw error }
 }

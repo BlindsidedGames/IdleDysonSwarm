@@ -1,6 +1,6 @@
 {
   "sourceCommit": "0dde63fbaad175362df49feeb981f85dc6af4a5e",
-  "status": "google-public-verified-apple-submission-candidate",
+  "status": "google-and-apple-public-verified",
   "googlePlay": {
     "version": "4.1.10",
     "versionCode": 2026092801,
@@ -9,7 +9,8 @@
   "apple": {
     "publicVersion": "4.1.10",
     "submittedBuild": "2609.29.1",
-    "releasedBuildVerified": false
+    "releasedBuildVerified": true,
+    "observedReadyForDistributionUtc": "2026-10-16"
   },
   "files": {
     "src/App.tsx": "e12e1e60b317fe75c851261c5a925430a8cf3c1bd9b750a612911ec58c485baf",
