@@ -37,6 +37,9 @@ jobs:
       - name: Lint sources
         run: npm run lint
 
+      - name: Verify the approved save-safety suite
+        run: npm run test:save-safety
+
       - name: Validate generated gameplay data
         run: npm run data:check
 
