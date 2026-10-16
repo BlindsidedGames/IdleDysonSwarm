@@ -111,10 +111,12 @@ This automatic flow is scoped to the two-save host. Until that host is enabled
 for a platform, its older single-save entry point retains the explicit Keep /
 Earn upgrades again migration choice because it cannot offer Classic return.
 Fresh saves need no choice. The Classic-to-Modern switch uses the same dialog.
-When importing Classic into Modern without an existing Classic save, include
-the original Classic progress in the reviewed import so the return action has
-a save to continue. Existing Classic saves are preserved. Paired exports retain
-their explicit mode labels. The import window closes on success to expose the
+Import and Export apply only to the current mode (Matthew, 17 October 2026).
+Export produces that mode's normal standalone save string/file. Import replaces
+only that mode after review, preserving the other mode even when it has no save
+yet; old paired exports are not accepted through Settings. The panel uses the
+existing Settings composition with Save data, Import Save and Export Save labels.
+The import window closes on success to expose the
 notice. Verified automatic migration before either action, Classic return,
 reopening the migrated Modern save, desktop and 360px layouts, and keyboard
 continuation. Other scales, long locales and native hosts
@@ -125,7 +127,7 @@ Verified desktop and 360px Classic layouts, plum and green panel themes,
 keyboard activation and direct Modern-to-Classic return. Other Interface/text
 scales, long locales and native hosts are unverified.
 
-The existing mode switch and paired-save settings are now composed by the
+The existing mode switch and save settings are now composed by the
 production/native host (16 October 2026). Each mode mounts in a fresh owned
 document, retaining the same drawer and Settings patterns; no new gameplay
 layout convention is introduced. Current save paths and QA limits are recorded

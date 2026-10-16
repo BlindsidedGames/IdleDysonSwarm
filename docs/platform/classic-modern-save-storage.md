@@ -41,7 +41,14 @@ slots, retained upgrade/migration sources and canonical publication receipts.
 The manifest commits before publishing visible canonical files. Interrupted
 publication retries from the committed pair; it never manufactures a fresh save.
 A verified later write by the old Classic release is adopted on the next launch.
-Both saves survive export/import and explicit recovery through Settings.
+Settings exports a normal standalone save for the current mode and imports only
+into that mode. The other mode's save and Cloud receipt are preserved. Classic
+saves imported into Modern still migrate automatically, without creating or
+replacing a separate Classic save. Paired exports are rejected by Settings;
+the pair format remains internal to atomic storage transactions and recovery.
+Settings offers Import Save, Export Save and Reset Save; the Recover mode saves button was
+removed at Matthew's request on 17 October 2026. Retained checkpoints and the
+startup-failure recovery action remain available.
 
 ## Steam Cloud
 
@@ -136,3 +143,83 @@ and Web/native builds pass. The archived suite was not executed. Android/Steam
 interaction, physical devices, real Cloud failure/sync, reduced motion, 360px with
 130% text, and the full locale/scale matrix remain unverified. This source fix is
 not itself a new internal deployment.
+
+## Current-mode import/export - 17 October 2026
+
+Import Save and Export Save now use only the mode where Settings was opened.
+Exports are normal standalone save strings/files, without a paired-save wrapper.
+Import review names Classic or Modern, and confirmation is bound to the reviewed
+text, receiving mode and save generation. Imports preserve the other mode's
+checkpoint and Cloud receipt. The approved save-safety suite still has 31 cases;
+its existing import case now also covers importing into Modern when no Classic
+save exists, rejecting paired exports at the Settings preparation boundary, and
+retaining the inactive mode's Cloud receipt. The controller export check verifies
+that the owning runtime supplies the shareable snapshot without replacing the
+running session; rejected input also leaves that session current.
+
+Actual-game checks used a disposable development host with private in-memory
+storage: Classic and Modern standalone exports, paste import/review/confirmation
+in both modes, the checked-in schema-08 Classic file, Modern-to-Classic rejection,
+and Classic-to-Modern automatic migration. A mature Classic import left Modern at
+zero bots/workers/IP; the later Modern import left Classic's earned IP and worker
+progress available. English desktop and German 360px Settings were inspected,
+including keyboard reachability of the final save control. The shared Settings
+composition and existing controls retain the Infinity settings reference; no new
+layout exception is introduced. Native hosts, native picker cancellation, real
+Cloud sync, enlarged text and the full Interface-size/locale matrix remain
+unverified for this change.
+
+The current-mode Export Save dialog also retains the existing Timestamp export
+filenames checkbox. Its preference is stored in the receiving mode's presentation
+namespace, and both browser and native downloads use the existing UTC filename
+formatter. Browser downloads were checked with the setting on and off, and the
+setting survived reopening the dialog. Native picker interaction remains unverified.
+
+The follow-up comparison with the original Settings flow restored the runtime's
+shareable-save export boundary, including its immutable pre-Stored-Time snapshot
+metadata. Local save bytes are not used as the player export, and opening Export
+no longer tears down/reopens the game. Both modes provide import progress through
+their own codecs (IP, QP and Skill Points), using the current mode's number notation.
+Invalid input is rejected before closing the running graph. Confirmed imports use
+the existing final Cloud publication hook before reopening the receiving mode.
+
+Export now reads each owning application's validated transfer snapshot directly,
+without requiring a storage checkpoint. This keeps backup export available after
+a browser writer lease expires; it does not restore write authority. A disposable
+game was checked with a deliberately expired lease and a confirmed failed
+checkpoint: its standalone export, clipboard and fixed/timestamped file downloads
+still succeeded. The open player tab was then reopened and downloaded its save
+successfully. The failure setup and diagnostics were removed after verification.
+
+The dialog reuses the existing copy/download success messages, file-input limits,
+platform download availability and UTC filename formatter. It carries the Settings
+theme and Interface/text scale across the frame boundary. Keyboard navigation
+includes the timestamp checkbox, skips disabled controls and wraps within the
+dialog. Closing/cancelling returns focus to the live Settings control even when
+review replaced the game document; an immediate migration notice owns its own focus.
+
+Follow-up actual-game checks used only the disposable in-memory browser host:
+unchanged iframe/session across export in both modes; clipboard contents matching
+the displayed string; a real timestamped download; invalid-input rejection without
+session replacement; mature Classic and Modern file previews; cancellation and
+successful-import focus restoration; a legacy Classic import into Modern with
+keyboard focus inside its migration notice; and a Classic export still showing
+zero IP/bots after the Modern imports. Enabling host Developer Options and then
+decoding the shareable export confirmed that local developer flags were absent.
+Desktop English 80%/100% and German 150%, plus German 360x800 at 150% Interface
+size, were inspected; the smallest measured action target was 44px high. Copy
+feedback, the timestamp checkbox and all three export actions were reachable.
+The browser clipboard was restored and generated downloads were removed after QA.
+
+All 31 approved save-safety cases, Classic integrity, lint and the production
+build pass. Physical/native picker interaction, real two-device Cloud sync, a
+live Stored Time worker export, 130% text enlargement and the remaining full
+scale/locale matrix are not claimed by these browser checks.
+
+The subsequent [4.1.10 export comparison](save-export-4.1.10-comparison-2026-10-17.md)
+identified that the timestamp checkbox still missed the shell-scoped custom
+appearance, despite its Settings row class. The shell and parent dialog now load
+the shared checkbox rules. Checked/unchecked styles match the real Settings
+references in both modes, including each mode's mobile square size. The export
+buttons also retain the old 52px Settings / 48px dialog desktop dimensions at
+100% scale, with responsive wrapping and minimum touch targets preserved.

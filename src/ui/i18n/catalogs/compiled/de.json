@@ -6688,7 +6688,7 @@
   "modes.saves.description": [
     {
       "type": 0,
-      "value": "Exportiere oder stelle die Spielstände beider Modi gemeinsam wieder her."
+      "value": "Exportiere oder importiere den Spielstand deines aktuellen Modus."
     }
   ],
   "modes.saves.done": [
@@ -6706,7 +6706,7 @@
   "modes.saves.export": [
     {
       "type": 0,
-      "value": "Modus-Spielstände exportieren"
+      "value": "Exportieren"
     }
   ],
   "modes.saves.failed": [
@@ -6724,13 +6724,27 @@
   "modes.saves.import": [
     {
       "type": 0,
-      "value": "Modus-Spielstände importieren"
+      "value": "Importieren"
     }
   ],
   "modes.saves.importDescription": [
     {
       "type": 0,
-      "value": "Importiere einen Spielstand in den aktuellen Modus oder stelle einen Export beider Modi wieder her. Klassische Spielstände werden beim Import in Modern automatisch migriert."
+      "value": "Importiere einen Spielstand in deinen aktuellen Modus. Classic-Spielstände werden beim Import in Modern automatisch migriert. Der Spielstand des anderen Modus bleibt erhalten."
+    }
+  ],
+  "modes.saves.importTarget": [
+    {
+      "type": 0,
+      "value": "In "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": " importieren."
     }
   ],
   "modes.saves.local": [
@@ -6778,7 +6792,7 @@
   "modes.saves.replace": [
     {
       "type": 0,
-      "value": "Aufgeführte Spielstände ersetzen"
+      "value": "Spielstand ersetzen"
     }
   ],
   "modes.saves.resetConfirmation": [
@@ -6844,13 +6858,13 @@
   "modes.saves.title": [
     {
       "type": 0,
-      "value": "Klassische und moderne Spielstände"
+      "value": "Speicherdaten"
     }
   ],
   "modes.saves.warning": [
     {
       "type": 0,
-      "value": "Dies ersetzt die aufgeführten Spielstände. Nicht aufgeführte Spielstände bleiben erhalten. Exportiere zuerst deine aktuellen Spielstände."
+      "value": "Dies ersetzt den Spielstand deines aktuellen Modus. Der Spielstand des anderen Modus bleibt erhalten. Exportiere zuerst deinen aktuellen Spielstand."
     }
   ],
   "modes.separate": [

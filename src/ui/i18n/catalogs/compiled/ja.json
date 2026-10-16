@@ -6688,7 +6688,7 @@
   "modes.saves.description": [
     {
       "type": 0,
-      "value": "両モードのセーブデータをまとめて書き出し、復元できます。"
+      "value": "現在のモードのセーブをエクスポートまたはインポートします。"
     }
   ],
   "modes.saves.done": [
@@ -6706,7 +6706,7 @@
   "modes.saves.export": [
     {
       "type": 0,
-      "value": "モードのセーブデータを書き出す"
+      "value": "エクスポート"
     }
   ],
   "modes.saves.failed": [
@@ -6724,13 +6724,27 @@
   "modes.saves.import": [
     {
       "type": 0,
-      "value": "モードのセーブデータを読み込む"
+      "value": "インポート"
     }
   ],
   "modes.saves.importDescription": [
     {
       "type": 0,
-      "value": "現在のモードにセーブをインポートするか、両モードを含むエクスポートを復元します。モダンにインポートしたクラシックのセーブは自動的に移行されます。"
+      "value": "現在のモードにセーブをインポートします。Classic のセーブを Modern にインポートすると自動的に移行されます。もう一方のモードのセーブは保持されます。"
+    }
+  ],
+  "modes.saves.importTarget": [
+    {
+      "type": 0,
+      "value": "インポート先: "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": "。"
     }
   ],
   "modes.saves.local": [
@@ -6778,7 +6792,7 @@
   "modes.saves.replace": [
     {
       "type": 0,
-      "value": "表示されたセーブデータを置き換える"
+      "value": "セーブを置き換える"
     }
   ],
   "modes.saves.resetConfirmation": [
@@ -6844,13 +6858,13 @@
   "modes.saves.title": [
     {
       "type": 0,
-      "value": "クラシックとモダンのセーブデータ"
+      "value": "セーブデータ"
     }
   ],
   "modes.saves.warning": [
     {
       "type": 0,
-      "value": "表示されたセーブデータを置き換えます。表示されていないデータは保持されます。先に現在のセーブデータを書き出してください。"
+      "value": "現在のモードのセーブを置き換えます。もう一方のモードのセーブは保持されます。先に現在のセーブをエクスポートしてください。"
     }
   ],
   "modes.separate": [

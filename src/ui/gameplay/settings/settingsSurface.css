@@ -601,6 +601,8 @@
 .settings-surface__toggle {
   display: flex;
   align-items: center;
+  color: #eff8ef;
+  font-size: 1rem;
   min-block-size: var(--target-minimum);
   gap: 0.45rem;
   padding: 0.35rem 0.5rem;

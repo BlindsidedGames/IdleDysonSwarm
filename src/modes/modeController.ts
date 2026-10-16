@@ -3,7 +3,12 @@ import { ModeSaveStore, type GameMode, type ModeManifest, type VerifiedModeInven
 /** A complete mode graph owns its simulation, worker, lifecycle and presentation
  * state. quiesce suspends commands/time and returns a final checkpoint without
  * calling the periodic checkpoint callback. close drains and disposes all work. */
+export interface ModeSaveExportSnapshot {
+  readonly text: string
+  readonly basis: 'current' | 'pre-stored-time'
+}
 export interface ModeSession {
+  exportSave(): Promise<ModeSaveExportSnapshot | null>
   quiesce(): Promise<string>
   close(): Promise<void>
 }
@@ -39,7 +44,7 @@ export class GameModeController {
   private acceptingCheckpoints = false
   private terminal = false
   private disposalFailed = false
-  private preparedImport: { source: string; bundle: string } | undefined
+  private preparedImport: { source: string; bundle: string; target: GameMode; generation: number | null } | undefined
   private readonly store: ModeSaveStore
   private readonly factories: Readonly<Record<GameMode, ModeSessionFactory>>
   private readonly hooks: ModeControllerHooks
@@ -88,14 +93,14 @@ export class GameModeController {
     })
   }
 
-  exportSaves(): Promise<string> {
+  exportSave(): Promise<ModeSaveExportSnapshot> {
     return this.run(async () => {
-      this.set({ phase: 'changing', manifest: this.snapshot.manifest })
-      await this.stopCurrent()
-      const text = await this.store.exportBundle()
-      const manifest = await this.store.inspect()
-      if (manifest) await this.open(manifest)
-      return text
+      if (!this.session || this.snapshot.phase !== 'ready') throw Error('Open a mode before exporting.')
+      // The owning runtime supplies its shareable snapshot and Stored Time
+      // boundary. Export must not tear down gameplay or expose local save bytes.
+      const exported = await this.session.exportSave()
+      if (!exported) throw Error('The current save could not be exported.')
+      return exported
     })
   }
 
@@ -114,28 +119,39 @@ export class GameModeController {
     })
   }
 
-  importSaves(text: string, replaceGeneration?: number): Promise<void> {
+  importSave(text: string, replaceGeneration?: number): Promise<void> {
     return this.run(async () => {
       // A final checkpoint can change the generation. Reconfirmation is required
       // in that case, rather than applying a stale import approval.
+      const prepared = this.preparedImport
+      if (!prepared || prepared.source !== text || prepared.target !== this.snapshot.manifest?.active ||
+        replaceGeneration === undefined || prepared.generation !== replaceGeneration) {
+        throw Error('Review this save for the current mode before importing.')
+      }
       this.set({ phase: 'changing', manifest: this.snapshot.manifest })
       await this.stopCurrent()
-      const bundle = this.preparedImport?.source === text ? this.preparedImport.bundle : text
-      await this.open(await this.store.importBundle(bundle, replaceGeneration))
+      const manifest = await this.store.importBundle(prepared.bundle, replaceGeneration)
+      const imported = await this.store.read(prepared.target)
+      if (imported === null) throw Error('The imported save is missing.')
+      await this.hooks.finalCheckpointSaved?.(prepared.target, imported).catch(() => undefined)
+      await this.open(manifest)
       this.preparedImport = undefined
     })
   }
 
   prepareImport(text: string): Promise<ModeImportPreview> {
     return this.run(async () => {
-      this.set({ phase: 'changing', manifest: this.snapshot.manifest })
-      await this.stopCurrent()
       this.preparedImport = undefined
       const target = this.snapshot.manifest?.active
       if (!target) throw new Error('Open a mode before importing.')
+      // Reject invalid input while the current graph remains playable. The final
+      // preparation below uses the settled receiving save for local preferences.
+      await this.store.prepareImportBundle(text, target, this.convertClassic)
+      this.set({ phase: 'changing', manifest: this.snapshot.manifest })
+      await this.stopCurrent()
       const bundle = await this.store.prepareImportBundle(text, target, this.convertClassic)
       const preview = await this.store.previewBundle(bundle)
-      this.preparedImport = { source: text, bundle }
+      this.preparedImport = { source: text, bundle, target, generation: preview.generation }
       this.set({ phase: 'idle', manifest: await this.store.inspect() })
       return preview
     })

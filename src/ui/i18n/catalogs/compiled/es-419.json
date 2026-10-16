@@ -6688,7 +6688,7 @@
   "modes.saves.description": [
     {
       "type": 0,
-      "value": "Exporta o restaura juntas las partidas de ambos modos."
+      "value": "Exporta o importa la partida de tu modo actual."
     }
   ],
   "modes.saves.done": [
@@ -6706,7 +6706,7 @@
   "modes.saves.export": [
     {
       "type": 0,
-      "value": "Exportar partidas de los modos"
+      "value": "Exportar"
     }
   ],
   "modes.saves.failed": [
@@ -6724,13 +6724,27 @@
   "modes.saves.import": [
     {
       "type": 0,
-      "value": "Importar partidas de los modos"
+      "value": "Importar"
     }
   ],
   "modes.saves.importDescription": [
     {
       "type": 0,
-      "value": "Importa una partida al modo actual o restaura una exportación de ambos modos. Las partidas de Clásico importadas en Moderno se migran automáticamente."
+      "value": "Importa una partida en tu modo actual. Las partidas de Classic importadas en Modern se migran automáticamente. La partida del otro modo se conserva."
+    }
+  ],
+  "modes.saves.importTarget": [
+    {
+      "type": 0,
+      "value": "Importar en "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "modes.saves.local": [
@@ -6778,7 +6792,7 @@
   "modes.saves.replace": [
     {
       "type": 0,
-      "value": "Reemplazar partidas indicadas"
+      "value": "Reemplazar partida"
     }
   ],
   "modes.saves.resetConfirmation": [
@@ -6844,13 +6858,13 @@
   "modes.saves.title": [
     {
       "type": 0,
-      "value": "Partidas Clásica y Moderna"
+      "value": "Datos de partida"
     }
   ],
   "modes.saves.warning": [
     {
       "type": 0,
-      "value": "Esto reemplaza las partidas indicadas. Las demás se conservan. Exporta primero tus partidas actuales."
+      "value": "Esto reemplaza la partida de tu modo actual. La partida del otro modo se conserva. Exporta primero tu partida actual."
     }
   ],
   "modes.separate": [

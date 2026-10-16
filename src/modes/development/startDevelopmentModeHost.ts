@@ -13,6 +13,7 @@ import { ModeCloudCoordinator, MODE_CLOUD_NAMESPACES } from '../modeCloud'
 import { bindModeCloudTransport } from '../hostCloudBindings'
 import { mountModeSaveManager } from './mountModeSaveManager'
 import type { ModeSaveActions } from '../../ui/gameplay/settings/modeSaveActions'
+import { readModeSavePresentation } from '../../ui/gameplay/settings/modeSaveActions'
 import './host.css'
 
 /** Development-only scratch composition. All saves and UI preferences live in
@@ -56,7 +57,7 @@ export async function startDevelopmentModeHost(container: HTMLElement): Promise<
     discovery: { ...binding.discovery, codecs, choose: (mode, candidates) => manager.chooseSources(mode, candidates) },
   })
   controller = host.controller
-  manager = mountModeSaveManager(dialogs, panel, controller, store, installation.transfers)
+  manager = mountModeSaveManager(dialogs, panel, controller, store, installation.transfers, prefs)
   const controls = mountDevelopmentModeStatus(status, host)
   const ready = controls.start()
   let closePromise: Promise<void> | undefined
@@ -89,14 +90,13 @@ function launchDevelopmentFrame(context: ModeSessionContext, controller: GameMod
         return { context, controller, preferences, runtimeTarget, saveActions: {
           open(action, locale) {
             if (!context.isCurrent()) return
-            const style = frame.contentWindow!.getComputedStyle(frame.contentDocument!.documentElement)
-            saveActions.open(action, locale, { fontSize: style.fontSize, textScale: style.getPropertyValue('--game-text-scale') })
+            saveActions.open(action, locale, readModeSavePresentation(frame.contentDocument!))
           },
         },
           ready(session) {
             if (settled || !context.isCurrent()) { void session.close().catch(() => undefined); return }
             settled = true; clearTimeout(timeout); signal.removeEventListener('abort', abort)
-            resolve({ quiesce: () => session.quiesce(), close: async () => { try { await session.close() } finally { dispose() } } })
+            resolve({ exportSave: () => session.exportSave(), quiesce: () => session.quiesce(), close: async () => { try { await session.close() } finally { dispose() } } })
           }, fail,
         }
       },
