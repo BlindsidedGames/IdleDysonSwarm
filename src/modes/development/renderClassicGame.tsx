@@ -1,3 +1,4 @@
+import { ReactiveStartupErrorBoundary } from '../../../classic/src/ui/shell'
 import { installNativeReviewPrompt } from '../../../classic/src/platform/nativeReviewPrompt'
 import { ModeSaveActionsContext } from '../../ui/gameplay/settings/modeSaveActions'
 import { createRoot } from 'react-dom/client'
@@ -31,9 +32,11 @@ export async function renderClassicGame(context: ModeSessionContext, controller:
         <LocalePreferenceProvider preference={locale} initialLocale={catalog.locale} initialMessages={catalog.messages}>
           <NumberNotationProvider preference={notation}><ResearchVisibilityProvider preference={research}>
             <BottomNavigationTextProvider preference={navigation}>
+              <ReactiveStartupErrorBoundary actions={{ reloadSafely: options.reloadSafely, recoveryExportAvailable: runtime.recoveryExportAvailable, exportRecovery: runtime.exportLastRecovery }} diagnosticContext={{ hostKind: options.hostKind ?? 'browser', saveSchemaVersion: 20 }}>
               <App key={context.sessionId} runtime={runtime} locale={catalog.locale} saveSchemaVersion={20}
                 releaseFooter={{ ...(options.releaseFooter ?? { platform: 'Dev', build: 'local' }), version: `C-${classicRelease.version}` }}
                 sampleUtc={() => options.lifecycleClock.sample().serializedUtcText} reloadSafely={options.reloadSafely ?? (async () => { throw new Error('Reload the owning game host.') })} hostKind={options.hostKind} releasePlatformServices={options.services} audio={options.audio} />
+              </ReactiveStartupErrorBoundary>
             </BottomNavigationTextProvider>
           </ResearchVisibilityProvider></NumberNotationProvider>
         </LocalePreferenceProvider>

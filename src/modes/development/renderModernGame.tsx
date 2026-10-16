@@ -1,3 +1,4 @@
+import { ReactiveStartupErrorBoundary } from '../../ui/shell'
 import { installNativeReviewPrompt } from '../../platform/nativeReviewPrompt'
 import { ModeSaveActionsContext } from '../../ui/gameplay/settings/modeSaveActions'
 import { createRoot } from 'react-dom/client'
@@ -33,9 +34,11 @@ export async function renderModernGame(context: ModeSessionContext, controller: 
         <LocalePreferenceProvider preference={locale} initialLocale={catalog.locale} initialMessages={catalog.messages}>
           <NumberNotationProvider preference={notation}><ResearchVisibilityProvider preference={research}>
             <BottomNavigationTextProvider preference={navigation}>
+              <ReactiveStartupErrorBoundary actions={{ reloadSafely: options.reloadSafely, recoveryExportAvailable: runtime.recoveryExportAvailable, exportRecovery: runtime.exportLastRecovery }} diagnosticContext={{ hostKind: options.hostKind ?? 'browser', saveSchemaVersion: 21 }}>
               <App key={context.sessionId} runtime={runtime} locale={catalog.locale} saveSchemaVersion={21}
                 releaseFooter={options.releaseFooter ?? releaseFooter}
                 sampleUtc={() => options.lifecycleClock.sample().serializedUtcText} reloadSafely={options.reloadSafely ?? (async () => { throw new Error('Reload the owning game host.') })} hostKind={options.hostKind} releasePlatformServices={options.services} audio={options.audio} />
+              </ReactiveStartupErrorBoundary>
             </BottomNavigationTextProvider>
           </ResearchVisibilityProvider></NumberNotationProvider>
         </LocalePreferenceProvider>
