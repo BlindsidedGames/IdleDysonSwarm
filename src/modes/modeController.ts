@@ -39,6 +39,7 @@ export class GameModeController {
   private acceptingCheckpoints = false
   private terminal = false
   private disposalFailed = false
+  private preparedImport: { source: string; bundle: string } | undefined
   private readonly store: ModeSaveStore
   private readonly factories: Readonly<Record<GameMode, ModeSessionFactory>>
   private readonly hooks: ModeControllerHooks
@@ -104,7 +105,9 @@ export class GameModeController {
       // in that case, rather than applying a stale import approval.
       this.set({ phase: 'changing', manifest: this.snapshot.manifest })
       await this.stopCurrent()
-      await this.open(await this.store.importBundle(text, replaceGeneration))
+      const bundle = this.preparedImport?.source === text ? this.preparedImport.bundle : text
+      await this.open(await this.store.importBundle(bundle, replaceGeneration))
+      this.preparedImport = undefined
     })
   }
 
@@ -112,7 +115,12 @@ export class GameModeController {
     return this.run(async () => {
       this.set({ phase: 'changing', manifest: this.snapshot.manifest })
       await this.stopCurrent()
-      const preview = await this.store.previewBundle(text)
+      this.preparedImport = undefined
+      const target = this.snapshot.manifest?.active
+      if (!target) throw new Error('Open a mode before importing.')
+      const bundle = await this.store.prepareImportBundle(text, target, this.convertClassic)
+      const preview = await this.store.previewBundle(bundle)
+      this.preparedImport = { source: text, bundle }
       this.set({ phase: 'idle', manifest: await this.store.inspect() })
       return preview
     })

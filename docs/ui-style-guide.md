@@ -86,3 +86,40 @@ Only for Simulations: [current specification](plans/simulations-current-specific
 Selected Research drawer icon exception (Matthew, 14 October 2026): its fine
 magnifying-glass strokes use the darker page foreground matching selected text,
 rather than the panel foreground used by the other selected drawer icons.
+
+Mode switch (Matthew, 16 October 2026): the bottom drawer trigger uses the same
+navigation button styling as the other drawer entries, with a left-right arrow
+and current mode name. Both modes switch immediately without a disclosure.
+Opening Modern for the first time copies and automatically migrates Classic
+progress; subsequent switches continue the existing destination save. There
+is no separate migration action or confirmation in the drawer. Classic also uses the modern drawer's
+selected fill, icon contrast, scrollbar spacing and responsive target fixes.
+The mode switch has no enclosing decorative panel or separate-save reminder.
+Classic uses the independent release label C-1 (then C-2, C-3, and so on),
+controlled by classic/release.json. Modern retains the normal packaged version.
+Version metadata remains visible beneath the mode switch and has its own row
+in compact navigation.
+Standalone Classic imports in Modern enter migration automatically after the
+save-replacement review (Matthew, 16 October 2026). The rework dialog offers
+Return to Classic and Continue in Modern. Migration runs automatically when
+Modern opens, using the former Earn upgrades again policy. The notice remains
+until the player chooses where to continue, explaining that the two saves stay
+separate and Classic remains available at any time. The separate Classic save
+retains its original progression.
+This automatic flow is scoped to the two-save host. Until that host is enabled
+for a platform, its older single-save entry point retains the explicit Keep /
+Earn upgrades again migration choice because it cannot offer Classic return.
+Fresh saves need no choice. The Classic-to-Modern switch uses the same dialog.
+When importing Classic into Modern without an existing Classic save, include
+the original Classic progress in the reviewed import so the return action has
+a save to continue. Existing Classic saves are preserved. Paired exports retain
+their explicit mode labels. The import window closes on success to expose the
+notice. Verified automatic migration before either action, Classic return,
+reopening the migrated Modern save, desktop and 360px layouts, and keyboard
+continuation. Other scales, long locales and native hosts
+are unverified.
+The development preview
+has no persistent top toolbar; startup recovery appears only on failure.
+Verified desktop and 360px Classic layouts, plum and green panel themes,
+keyboard activation and direct Modern-to-Classic return. Other Interface/text
+scales, long locales and native hosts are unverified.

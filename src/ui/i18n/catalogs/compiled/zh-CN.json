@@ -6717,6 +6717,12 @@
       "value": "导入模式存档"
     }
   ],
+  "modes.saves.importDescription": [
+    {
+      "type": 0,
+      "value": "将存档导入当前模式，或恢复包含两种模式的导出文件。导入现代模式的经典存档会自动迁移。"
+    }
+  ],
   "modes.saves.local": [
     {
       "type": 0,
@@ -10325,6 +10331,18 @@
       "value": "无限升级"
     }
   ],
+  "rework.migration.automaticDescription": [
+    {
+      "type": 0,
+      "value": "打开现代模式时，存档会自动迁移。高级升级需要重新获得，裂解及其强化会被移除。基础游戏、IP、超越、探索和购买项目均保留。"
+    }
+  ],
+  "rework.migration.continueModern": [
+    {
+      "type": 0,
+      "value": "继续现代模式"
+    }
+  ],
   "rework.migration.description": [
     {
       "type": 0,
@@ -10347,6 +10365,18 @@
     {
       "type": 0,
       "value": "保留等效进度"
+    }
+  ],
+  "rework.migration.returnClassic": [
+    {
+      "type": 0,
+      "value": "返回经典模式"
+    }
+  ],
+  "rework.migration.separateSaves": [
+    {
+      "type": 0,
+      "value": "你的进度将分别保存在两个独立存档中。你可以随时在经典模式和现代模式之间切换。"
     }
   ],
   "rework.migration.title": [

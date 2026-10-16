@@ -6717,6 +6717,12 @@
       "value": "Importar jogos salvos dos modos"
     }
   ],
+  "modes.saves.importDescription": [
+    {
+      "type": 0,
+      "value": "Importe um jogo salvo para o modo atual ou restaure uma exportação dos dois modos. Jogos salvos do Clássico importados no Moderno são migrados automaticamente."
+    }
+  ],
   "modes.saves.local": [
     {
       "type": 0,
@@ -10325,6 +10331,18 @@
       "value": "Melhorias do Infinito"
     }
   ],
+  "rework.migration.automaticDescription": [
+    {
+      "type": 0,
+      "value": "Seu jogo salvo é migrado automaticamente ao abrir o Moderno. As melhorias avançadas precisam ser conquistadas novamente, e as fraturas e seus aprimoramentos são removidos. O jogo base, IP, Transcendência, Descoberta e suas compras são mantidos."
+    }
+  ],
+  "rework.migration.continueModern": [
+    {
+      "type": 0,
+      "value": "Continuar no Moderno"
+    }
+  ],
   "rework.migration.description": [
     {
       "type": 0,
@@ -10347,6 +10365,18 @@
     {
       "type": 0,
       "value": "Manter progresso equivalente"
+    }
+  ],
+  "rework.migration.returnClassic": [
+    {
+      "type": 0,
+      "value": "Voltar ao Clássico"
+    }
+  ],
+  "rework.migration.separateSaves": [
+    {
+      "type": 0,
+      "value": "Seu progresso continua em dois jogos salvos separados. Você pode alternar entre Clássico e Moderno a qualquer momento."
     }
   ],
   "rework.migration.title": [

@@ -1,8 +1,7 @@
-import { useContext, useId, useState, useSyncExternalStore } from 'react'
+import { useContext, useState, useSyncExternalStore } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { GameModeControllerContext } from './GameModeControllerContext'
 import type { GameModeController } from '../../../modes/modeController'
-import { Button } from '../../components'
 import './gameModeSwitch.css'
 
 const messages = defineMessages({
@@ -23,40 +22,29 @@ const messages = defineMessages({
 export function GameModeSwitch({ controller }: { controller: GameModeController }) {
   const intl = useIntl()
   const snapshot = useSyncExternalStore(controller.subscribe, controller.getSnapshot)
-  const [expanded, setExpanded] = useState(false)
-  const [confirming, setConfirming] = useState(false)
   const [failed, setFailed] = useState(false)
-  const id = useId()
   const active = snapshot.manifest?.active
   if (!active) return null
   const target = active === 'classic' ? 'modern' : 'classic'
+  const migrationAvailable = active === 'classic' && !snapshot.manifest?.saves.modern
   const label = (mode: 'classic' | 'modern') => intl.formatMessage(messages[mode])
   const busy = snapshot.phase === 'changing' || snapshot.phase === 'closed' || snapshot.phase === 'idle'
   const act = async (action: () => Promise<void>) => {
     setFailed(false)
-    try { await action(); setConfirming(false); setExpanded(false) }
+    try { await action() }
     catch { setFailed(true) }
   }
-  return <div className="game-mode-switch">
-    {expanded && <section id={id} className="game-mode-switch__options" aria-label={intl.formatMessage(messages.modes, { mode: label(active) })}>
-      <p>{intl.formatMessage(messages.separate)}</p>
-      <Button fullWidth disabled={busy} onClick={() => void act(() => controller.switchTo(target))}>
-        {intl.formatMessage(snapshot.manifest?.saves[target] ? messages.continue : messages.start, { mode: label(target) })}
-      </Button>
-      {active === 'classic' && (snapshot.manifest?.saves.modern
-        ? <p>{intl.formatMessage(messages.conflict)}</p>
-        : confirming ? <div className="game-mode-switch__confirmation">
-          <p>{intl.formatMessage(messages.oneWay)}</p>
-          <Button fullWidth disabled={busy} onClick={() => void act(() => controller.migrateClassic())}>{intl.formatMessage(messages.confirm)}</Button>
-          <Button fullWidth disabled={busy} onClick={() => setConfirming(false)}>{intl.formatMessage(messages.cancel)}</Button>
-        </div> : <Button fullWidth disabled={busy} onClick={() => setConfirming(true)}>{intl.formatMessage(messages.migrate)}</Button>)}
-      {failed && <p role="alert">{intl.formatMessage(messages.failed)}</p>}
-      {snapshot.phase === 'blocked' && <Button fullWidth onClick={() => void act(() => controller.start())}>{intl.formatMessage(messages.continue, { mode: label(active) })}</Button>}
-    </section>}
-    <Button fullWidth aria-expanded={expanded} aria-controls={expanded ? id : undefined}
-      disabled={busy} onClick={() => { setExpanded(value => !value); setConfirming(false) }}>
-      {intl.formatMessage(messages.modes, { mode: label(active) })}
-    </Button>
+  return <div className="game-mode-switch dyson-navigation--drawer">
+    {failed && <p role="alert">{intl.formatMessage(messages.failed)}</p>}
+    <button type="button" className="dyson-navigation__link"
+      aria-label={intl.formatMessage(messages.continue, { mode: label(target) })}
+      disabled={busy} onClick={() => {
+        void act(() => snapshot.phase === 'blocked' ? controller.start()
+          : migrationAvailable ? controller.migrateClassic() : controller.switchTo(target))
+      }}>
+      <span className="dyson-navigation__icon game-mode-switch__arrow" aria-hidden="true">↔</span>
+      <span className="dyson-navigation__label">{label(active)}</span>
+    </button>
   </div>
 }
 

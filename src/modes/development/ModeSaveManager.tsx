@@ -95,7 +95,7 @@ function Dialog({ active, action, controller, store, transfers, close }: {
   return <div className="settings-surface__dialog-backdrop mode-save-manager">
     <section ref={dialog} className="settings-surface__dialog" role="dialog" aria-modal="true" aria-labelledby="mode-save-title" aria-describedby="mode-save-description" aria-busy={busy}>
       <h2 id="mode-save-title">{intl.formatMessage(messages[action])}</h2>
-      <p id="mode-save-description">{intl.formatMessage(action === 'recovery' ? messages.recoveryDescription : messages.description)}</p>
+      <p id="mode-save-description">{intl.formatMessage(action === 'recovery' ? messages.recoveryDescription : action === 'import' ? messages.importDescription : messages.description)}</p>
       {action === 'import' && <label>{intl.formatMessage(messages.file)}<input type="file" accept=".idsw,.json,.txt" disabled={busy} onChange={event => {
         const file = event.currentTarget.files?.[0]
         if (file) void run(async () => { if (file.size > 32 * 1024 * 1024) throw Error('Import too large'); setText(await file.text()); setPreview(null) })
@@ -114,7 +114,7 @@ function Dialog({ active, action, controller, store, transfers, close }: {
         <Button disabled={busy} onClick={() => void exit()}>{intl.formatMessage(messages.close)}</Button>
         {action === 'import' && <Button disabled={busy || !text.trim()} onClick={() => void run(async () => {
           if (!preview) setPreview(await controller.prepareImport(text))
-          else { await controller.importSaves(text, preview.generation ?? undefined); setPreview(null); setDone(true) }
+          else { await controller.importSaves(text, preview.generation ?? undefined); close() }
         })}>{intl.formatMessage(preview ? messages.replace : messages.review)}</Button>}
         {action === 'recovery' && <>
           <Button disabled={busy} onClick={() => void run(async () => {

@@ -32,6 +32,20 @@ export async function createModernModeSession(context: ModeSessionContext,
   })
   try {
     if ((await runtime.start()).phase !== 'ready') throw new Error('Modern runtime could not open its save.')
-    return runtimeModeSession(runtime, storage, paths.current, lifecycle, options.attach?.(runtime))
+    const session = runtimeModeSession(runtime, storage, paths.current, lifecycle, options.attach?.(runtime))
+    return {
+      close: session.close,
+      async quiesce() {
+        const snapshot = runtime.snapshot()
+        if (snapshot.phase === 'ready' && snapshot.operation === 'rework-choice-pending') {
+          // This graph has admitted neither gameplay nor time. Its durable input
+          // is already the complete pending save; normal checkpoints are blocked
+          // until the player chooses migration. Close it without making a choice.
+          await session.close()
+          return storage.readText(paths.current)
+        }
+        return session.quiesce()
+      },
+    }
   } catch (error) { await runtime.shutdown(); throw error }
 }

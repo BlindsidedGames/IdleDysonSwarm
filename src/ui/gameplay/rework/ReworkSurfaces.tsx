@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import { useCallback, useContext, useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useIntl } from 'react-intl'
 import type { DeepReadonly } from '../../../core/contracts'
@@ -12,24 +12,46 @@ import { DiscoverySurface } from '../discovery/DiscoverySurface'
 import { discoveryMessages } from '../discovery/messages'
 import { avocatoMessages } from '../quantum/messages'
 import { reworkMessages as m } from './messages'
+import { GameModeControllerContext } from '../shell/GameModeControllerContext'
 import './rework.css'
 
 type Gameplay = DeepReadonly<FrontendGameplaySnapshot>
 type Dispatch = (command: CanonicalPlayerCommand) => Promise<UiRuntimePlayerCommandResult>
 
 export function ReworkMigrationNotice({ gameplay, dispatchPlayer }: { gameplay: Gameplay; dispatchPlayer: Dispatch }) {
-  return gameplay.progression.meta.reworkMigrationChoice ? null : <ReworkMigrationDialog dispatchPlayer={dispatchPlayer} />
+  const modeController = useContext(GameModeControllerContext)
+  const migrated = gameplay.progression.meta.reworkMigrationChoice !== undefined
+  const [visible, setVisible] = useState(!migrated)
+  useEffect(() => { if (!migrated) setVisible(true) }, [migrated])
+  // Hosts without the separate Classic runtime keep the existing opt-in policy.
+  // Automatic migration is safe only after the mode host has retained Classic.
+  if (!modeController && migrated) return null
+  return visible || !migrated ? <ReworkMigrationDialog dispatchPlayer={dispatchPlayer} migrated={migrated} onContinue={() => setVisible(false)} /> : null
 }
 
-function ReworkMigrationDialog({ dispatchPlayer }: { dispatchPlayer: Dispatch }) {
+function ReworkMigrationDialog({ dispatchPlayer, migrated, onContinue }: { dispatchPlayer: Dispatch; migrated: boolean; onContinue(): void }) {
   const intl = useIntl()
+  const modeController = useContext(GameModeControllerContext)
   const [pending, setPending] = useState(false)
   const [failed, setFailed] = useState(false)
   const busy = useRef(false)
+  const started = useRef(false)
   const dialogRef = useRef<HTMLElement>(null)
   const backdropRef = useRef<HTMLDivElement>(null)
   const titleId = useId()
   const descriptionId = useId()
+  const migrate = useCallback(async (choice: 'keep' | 'fresh' = 'fresh') => {
+    if (busy.current) return
+    busy.current = true; setPending(true); setFailed(false)
+    try {
+      const result = await dispatchPlayer({ kind: 'rework.choose-migration', choice })
+      setFailed(result.status !== 'accepted')
+    } catch { setFailed(true) }
+    finally { busy.current = false; setPending(false) }
+  }, [dispatchPlayer])
+  useEffect(() => {
+    if (modeController && !migrated && !started.current) { started.current = true; void migrate() }
+  }, [modeController, migrated, migrate])
   useEffect(() => {
     const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null
     const siblings = [...document.body.children].filter((element): element is HTMLElement => element instanceof HTMLElement && element !== backdropRef.current)
@@ -54,12 +76,22 @@ function ReworkMigrationDialog({ dispatchPlayer }: { dispatchPlayer: Dispatch })
       if (previous?.isConnected && !previous.closest('[inert]')) previous.focus({ preventScroll: true })
     }
   }, [])
-  const choose = async (choice: 'keep' | 'fresh') => {
+  const choose = async (destination: 'classic' | 'modern') => {
     if (busy.current) return
+    if (destination === 'modern') {
+      if (migrated) onContinue()
+      else await migrate()
+      return
+    }
     busy.current = true
     setPending(true)
     setFailed(false)
-    try { setFailed((await dispatchPlayer({ kind: 'rework.choose-migration', choice })).status !== 'accepted') }
+    try {
+      if (destination === 'classic') {
+        if (!modeController) throw new Error('Classic mode is unavailable in this host.')
+        await modeController.switchTo('classic')
+      }
+    }
     catch { setFailed(true) }
     finally { busy.current = false; setPending(false) }
   }
@@ -67,10 +99,16 @@ function ReworkMigrationDialog({ dispatchPlayer }: { dispatchPlayer: Dispatch })
   <section ref={dialogRef} className="rework-migration" role="dialog" aria-modal="true" aria-labelledby={titleId} aria-describedby={descriptionId} aria-busy={pending} tabIndex={-1}>
     <h2 id={titleId}>{intl.formatMessage(m.progressionUpdate)}</h2>
     <p>{intl.formatMessage(m.migrationIntro)}</p>
-    <p id={descriptionId}>{intl.formatMessage(m.migrationDescription)}</p>
+    <p id={descriptionId}>{intl.formatMessage(modeController ? m.automaticMigrationDescription : m.migrationDescription)}</p>
+    {modeController && <p>{intl.formatMessage(m.separateSavesDescription)}</p>}
     <div className="rework-actions">
-        <Button disabled={pending} onClick={() => void choose('keep')}>{intl.formatMessage(m.keep)}</Button>
-        <Button disabled={pending} onClick={() => void choose('fresh')}>{intl.formatMessage(m.fresh)}</Button>
+        {modeController ? <>
+          <Button disabled={pending} onClick={() => void choose('classic')}>{intl.formatMessage(m.returnClassic)}</Button>
+          <Button disabled={pending} onClick={() => void choose('modern')}>{intl.formatMessage(m.continueModern)}</Button>
+        </> : <>
+          <Button disabled={pending} onClick={() => void migrate('keep')}>{intl.formatMessage(m.keep)}</Button>
+          <Button disabled={pending} onClick={() => void migrate('fresh')}>{intl.formatMessage(m.fresh)}</Button>
+        </>}
     </div>
     {failed && <p role="alert">{intl.formatMessage(m.failed)}</p>}
   </section></div>, document.body)

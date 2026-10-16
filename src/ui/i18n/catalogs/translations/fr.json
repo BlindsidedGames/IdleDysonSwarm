@@ -2719,5 +2719,10 @@
   "modes.separate": "Chaque mode conserve une sauvegarde distincte.",
   "modes.start": "Commencer {mode}",
   "modes.switch": "Mode de jeu : {mode}",
-  "modes.saves.recoveryPartial": "Certains fichiers de récupération sont illisibles. Les données disponibles sont incluses."
+  "modes.saves.recoveryPartial": "Certains fichiers de récupération sont illisibles. Les données disponibles sont incluses.",
+  "modes.saves.importDescription": "Importez une sauvegarde dans le mode actuel ou restaurez un export des deux modes. Les sauvegardes Classique importées dans Moderne sont migrées automatiquement.",
+  "rework.migration.automaticDescription": "Votre sauvegarde est migrée automatiquement lorsque vous ouvrez Moderne. Les améliorations avancées doivent être gagnées à nouveau, et les fractures ainsi que leurs augmentations sont retirées. Votre jeu de base, IP, Transcendance, Découverte et achats sont conservés.",
+  "rework.migration.separateSaves": "Votre progression se poursuit dans deux sauvegardes distinctes. Vous pouvez passer de Classique à Moderne et inversement à tout moment.",
+  "rework.migration.returnClassic": "Retourner à Classique",
+  "rework.migration.continueModern": "Continuer dans Moderne"
 }

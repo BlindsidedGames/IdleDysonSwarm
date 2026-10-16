@@ -700,8 +700,8 @@
       "reason": "Share only the bottom drawer mode control; no engine, time, schema or gameplay changes."
     },
     "src/ui/gameplay/shell/dysonGameplayShell.css": {
-      "sha256": "3dbaec95cd93079beb1b5534cf2742fbe334507691dc357a3bf16f4fa91dc6d0",
-      "reason": "Share only the bottom drawer mode control; no engine, time, schema or gameplay changes."
+      "sha256": "a91a5ddcd992eaef9aa0dc2ecb8e68c0fe52701a0e5e26a846d51e6ea438a9dc",
+      "reason": "Shared bottom drawer mode control plus approved modern drawer selected colors, icon contrast, scrollbar spacing, and responsive targets. Presentation only; Classic gameplay is unchanged. Match modern off-screen skip-link clearance so its focus border cannot leak above the sidebar. Give compact version metadata its own navigation row, matching modern, so restored Classic release text does not overlap controls."
     },
     "src/App.tsx": {
       "sha256": "72389377c8b743d7fd4ea336c92941c9f5d7d95d34333aa088f8d9582f8d428a",

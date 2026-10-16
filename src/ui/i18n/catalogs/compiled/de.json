@@ -6717,6 +6717,12 @@
       "value": "Modus-Spielstände importieren"
     }
   ],
+  "modes.saves.importDescription": [
+    {
+      "type": 0,
+      "value": "Importiere einen Spielstand in den aktuellen Modus oder stelle einen Export beider Modi wieder her. Klassische Spielstände werden beim Import in Modern automatisch migriert."
+    }
+  ],
   "modes.saves.local": [
     {
       "type": 0,
@@ -10325,6 +10331,18 @@
       "value": "Unendlichkeitsverbesserungen"
     }
   ],
+  "rework.migration.automaticDescription": [
+    {
+      "type": 0,
+      "value": "Dein Spielstand wird automatisch migriert, wenn du Modern öffnest. Fortgeschrittene Verbesserungen müssen erneut erspielt werden. Brüche und ihre Erweiterungen werden entfernt. Grundspiel, IP, Transzendenz, Entdeckung und Käufe bleiben erhalten."
+    }
+  ],
+  "rework.migration.continueModern": [
+    {
+      "type": 0,
+      "value": "In Modern fortfahren"
+    }
+  ],
   "rework.migration.description": [
     {
       "type": 0,
@@ -10347,6 +10365,18 @@
     {
       "type": 0,
       "value": "Gleichwertigen Fortschritt behalten"
+    }
+  ],
+  "rework.migration.returnClassic": [
+    {
+      "type": 0,
+      "value": "Zurück zu Klassisch"
+    }
+  ],
+  "rework.migration.separateSaves": [
+    {
+      "type": 0,
+      "value": "Dein Fortschritt wird in zwei getrennten Spielständen fortgesetzt. Du kannst jederzeit zwischen Klassisch und Modern wechseln."
     }
   ],
   "rework.migration.title": [

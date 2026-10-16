@@ -9,6 +9,8 @@ import { createModernModeSession } from '../createModernModeSession'
 import { GameModeControllerContext } from '../../ui/gameplay/shell/GameModeControllerContext'
 import type { GameModeController, ModeSessionContext } from '../modeController'
 import type { ModeRuntimeHostOptions } from '../modeRuntimeHostOptions'
+import { PACKAGED_RELEASE_IDENTITY } from '../../packagedReleaseIdentity'
+import { resolveReleaseFooter } from '../../platform/releaseFooter'
 import '../../index.css'
 
 /** Invoked only inside a separately mounted mode document; no historical
@@ -17,6 +19,7 @@ export async function renderModernGame(context: ModeSessionContext, controller: 
   container: HTMLElement, options: ModeRuntimeHostOptions) {
   const locale = new LocalePreferenceService()
   const catalog = await loadStartupCatalog(locale.getSnapshot().locale)
+  const releaseFooter = await resolveReleaseFooter({ target: 'browser', developmentBuild: import.meta.env.DEV, source: PACKAGED_RELEASE_IDENTITY })
   const notation = new NumberNotationPreferenceService()
   const research = new ResearchVisibilityPreferenceService()
   const navigation = new BottomNavigationTextPreferenceService()
@@ -28,6 +31,7 @@ export async function renderModernGame(context: ModeSessionContext, controller: 
           <NumberNotationProvider preference={notation}><ResearchVisibilityProvider preference={research}>
             <BottomNavigationTextProvider preference={navigation}>
               <App key={context.sessionId} runtime={runtime} locale={catalog.locale} saveSchemaVersion={21}
+                releaseFooter={releaseFooter}
                 sampleUtc={() => options.lifecycleClock.sample().serializedUtcText} reloadSafely={async () => { throw new Error('Use the parent development host reload.') }} />
             </BottomNavigationTextProvider>
           </ResearchVisibilityProvider></NumberNotationProvider>

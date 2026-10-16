@@ -2,7 +2,7 @@ import { createModeHost } from '../modeHost'
 import { ModeSaveStore } from '../modeSaveStore'
 import { createClassicModeCodec } from '../classicModeCodec'
 import { createModernModeCodec } from '../modernModeCodec'
-import { convertClassicUsingExistingKeepPolicy } from '../classicToModernMigration'
+import { convertClassicForModern } from '../classicToModernMigration'
 import type { ModeSession, ModeSessionContext, GameModeController } from '../modeController'
 import type { PresentationStorage } from '../../ui/presentationStorage'
 import type { DevelopmentFrameBridge } from './frameBridge'
@@ -52,19 +52,12 @@ export async function startDevelopmentModeHost(container: HTMLElement): Promise<
   const clouds = bindModeCloudTransport({ provider: installation.cloudProvider, account: 'synthetic-account', identity: () => 'synthetic-account',
     local: binding.storage, assertWriter: () => binding.authority.assertWritable().then(() => undefined), choose: (mode, local, remote) => manager.choose(mode, local, remote) })
   const cloud = new ModeCloudCoordinator(store, clouds, codecs)
-  const host = createModeHost({ store, cloud, factories: { classic: launch, modern: launch }, convertClassic: convertClassicUsingExistingKeepPolicy,
+  const host = createModeHost({ store, cloud, factories: { classic: launch, modern: launch }, convertClassic: convertClassicForModern,
     discovery: { ...binding.discovery, codecs, choose: (mode, candidates) => manager.chooseSources(mode, candidates) },
   })
   controller = host.controller
   manager = mountModeSaveManager(dialogs, panel, controller, store, installation.transfers)
-  const controls = mountDevelopmentModeStatus(status, host, manager, async () => {
-    const mode = controller.getSnapshot().manifest?.active
-    if (!mode) return
-    const date = () => new Date(Date.now() - 1000).toISOString()
-    const remote = mode === 'classic' ? createClassicModeCodec(date) : createModernModeCodec(date)
-    const key = `synthetic-account/${MODE_CLOUD_NAMESPACES[mode]}`
-    await installation.cloudProvider.compareAndPublish(key, await installation.cloudProvider.read(key), await remote.createFresh())
-  })
+  const controls = mountDevelopmentModeStatus(status, host)
   const ready = controls.start()
   let closePromise: Promise<void> | undefined
   return { ready, close() {
