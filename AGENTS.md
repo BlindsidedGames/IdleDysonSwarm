@@ -2,9 +2,15 @@
 
 ## Testing policy
 
-- Do not commit automated tests or introduce an automated test suite. Matthew
-  prefers that agents do not write tests at all.
-- Only write a temporary, disposable test very rarely, when it is genuinely
+- The only approved automated tests are the minimal save-safety suite explicitly
+  listed in `vitest.save-safety.config.ts`, run with `npm run test:save-safety`.
+  Its scope is lossless saves, interrupted publication, startup recovery,
+  Classic/Modern isolation and migration/import safety, stale-writer and Cloud
+  conflict protection, and the two offline cases (credit once after restart and
+  retry after failed publication). Maintain these focused cases and their small
+  storage/Cloud fakes; do not add unrelated tests or restore the wider suite.
+  Expanding this exception requires Matthew's explicit request.
+- Outside that suite, only write a temporary, disposable test very rarely, when it is genuinely
   needed to investigate something that cannot reasonably be checked in the
   actual game. Keep it out of commits and remove it after the investigation.
 - Verify changes in the running game, using the affected player flows and
@@ -14,8 +20,9 @@
   obsolete behavior or constrain a requested change to satisfy unit tests.
 - TypeScript, lint, build, data-integrity, and packaging checks may remain;
   they do not replace validation in the game.
-- The former automated suite is preserved on `test-archive-2026-10-16`.
-  Do not restore it or add test requirements without Matthew's explicit request.
+- The rest of the former automated suite remains on `test-archive-2026-10-16`.
+  The approved tests complement actual-game validation; do not add test-only
+  production APIs or freeze gameplay balance to satisfy them.
 
 ## UI and player-facing text
 
