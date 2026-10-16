@@ -9,6 +9,11 @@ import { prepareImportedSaveText } from '../save/import'
 /** Modern alone owns the modern parser. Classic must supply its released parser.
  * Transport validation never processes away time or converts a legacy save. */
 export function createModernModeCodec(nowUtc: () => string): ModeSaveCodec {
+  const createFresh = () => {
+    const save = createUnityFirstRunPreparedSave({ startedAtUtc: nowUtc() })
+    const hydrated = hydrateGameState(save)
+    return serializeWebSave(dehydrateGameState(hydrated, initializeGameplayRework(hydrated.state)).copyValidatedState())
+  }
   return {
     prepareImport(text, receiving) {
       return serializeWebSave(prepareImportedSaveText(text, nowUtc(), undefined, undefined,
@@ -22,10 +27,12 @@ export function createModernModeCodec(nowUtc: () => string): ModeSaveCodec {
       // A schema-21 save can be awaiting the gameplay migration decision.
       PreparedSave.fromDecoded(decoded)
     },
-    createFresh() {
-      const save = createUnityFirstRunPreparedSave({ startedAtUtc: nowUtc() })
-      const hydrated = hydrateGameState(save)
-      return serializeWebSave(dehydrateGameState(hydrated, initializeGameplayRework(hydrated.state)).copyValidatedState())
+    createFresh,
+    createReset(receiving) {
+      const importedAtUtc = nowUtc()
+      return serializeWebSave(prepareImportedSaveText(createFresh(), importedAtUtc, undefined,
+        { kind: 'manual-shared-import', importedAtUtc, intent: 'save-reset' },
+        deserializeWebSave(receiving)).copyValidatedState())
     },
   }
 }

@@ -7,6 +7,7 @@ export const modeSaveMessages = defineMessages({
   importDescription: { id: 'modes.saves.importDescription', defaultMessage: 'Import a save into the current mode, or restore a paired export. Classic saves imported into Modern are migrated automatically.' },
   export: { id: 'modes.saves.export', defaultMessage: 'Export mode saves' },
   recovery: { id: 'modes.saves.recovery', defaultMessage: 'Recover mode saves' },
+  resetConfirmation: { id: 'modes.saves.resetConfirmation', defaultMessage: 'Reset all progress in {mode} and start again? The other mode’s save is kept.' },
   text: { id: 'modes.saves.text', defaultMessage: 'Save export' },
   file: { id: 'modes.saves.file', defaultMessage: 'Choose save file' },
   review: { id: 'modes.saves.review', defaultMessage: 'Review import' },

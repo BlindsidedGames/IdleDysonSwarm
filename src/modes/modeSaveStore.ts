@@ -6,6 +6,8 @@ export interface ModeSaveCodec {
   /** Must use this mode's own schema and gameplay authority, never the other decoder. */
   validate(text: string): void | Promise<void>
   createFresh(): string | Promise<string>
+  /** Each game's reset policy retains receiving-device purchases/preferences. */
+  createReset?(receiving: string): string | Promise<string>
   prepareImport?(text: string, receiving: string | null): string | Promise<string>
 }
 /** Host attestation after all historical public/Unity/beta roots and Cloud
@@ -176,6 +178,19 @@ export class ModeSaveStore {
       await this.readPayload(mode, pointer)
       return this.publish({ ...current, active: mode, generation: current.generation + 1,
         saves: { ...current.saves, [mode]: pointer } })
+    })
+  }
+
+  reset(mode: GameMode): Promise<ModeManifest> {
+    return this.serial(async () => {
+      const current = await this.requireManifest()
+      if (current.active !== mode) throw Error('Only the active mode can be reset.')
+      const pointer = current.saves[mode], createReset = this.codecs[mode].createReset
+      if (!pointer || !createReset) throw Error('Reset is unavailable for this mode.')
+      const reset = await this.retain(mode, await createReset(await this.readPayload(mode, pointer)))
+      // Preserve the other pointer, its Cloud receipt and all recovery sources.
+      return this.publish({ ...current, generation: current.generation + 1,
+        saves: { ...current.saves, [mode]: reset } })
     })
   }
 

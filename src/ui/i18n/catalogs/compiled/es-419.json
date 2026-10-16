@@ -6781,6 +6781,20 @@
       "value": "Reemplazar partidas indicadas"
     }
   ],
+  "modes.saves.resetConfirmation": [
+    {
+      "type": 0,
+      "value": "¿Restablecer todo el progreso de "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": " y empezar de nuevo? La partida del otro modo se conserva."
+    }
+  ],
   "modes.saves.restoreRecovery": [
     {
       "type": 0,

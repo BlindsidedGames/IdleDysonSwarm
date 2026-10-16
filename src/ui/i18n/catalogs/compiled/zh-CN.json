@@ -6781,6 +6781,20 @@
       "value": "替换所列存档"
     }
   ],
+  "modes.saves.resetConfirmation": [
+    {
+      "type": 0,
+      "value": "重置"
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": "的全部进度并重新开始？另一模式的存档将保留。"
+    }
+  ],
   "modes.saves.restoreRecovery": [
     {
       "type": 0,

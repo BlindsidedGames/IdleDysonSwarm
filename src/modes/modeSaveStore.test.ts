@@ -5,7 +5,9 @@ import { readFileSync } from 'node:fs'
 import { createClassicModeCodec } from './classicModeCodec'
 import { createModernModeCodec } from './modernModeCodec'
 import { convertClassicForModern } from './classicToModernMigration'
-import { deserializeWebSave } from '../save/serialization'
+import { deserializeWebSave, serializeWebSave as serializeModern } from '../save/serialization'
+import { packSettingsFlags } from '../save/settingsFlags'
+import { packSettingsFlags as packClassicFlags } from '../../classic/src/save/settingsFlags'
 import { serializeWebSave as serializeClassic } from '../../classic/src/save/serialization'
 import type { SaveStorageAdapter } from '../save/repository'
 import { ModeSaveStore, ModeSaveConflictError, type ModeCodecs } from './modeSaveStore'
@@ -34,8 +36,44 @@ class MemoryStorage implements SaveStorageAdapter {
 const codecs: ModeCodecs = Object.fromEntries(['classic', 'modern'].map(mode => [mode, {
   validate: (text: string) => { if (!text.startsWith(mode + ':')) throw new Error('wrong mode') },
   createFresh: () => `${mode}:fresh`,
+  createReset: () => `${mode}:fresh`,
 }])) as unknown as ModeCodecs
 const create = (storage = new MemoryStorage()) => new ModeSaveStore(storage, codecs, () => undefined)
+
+test('each real reset retains local purchases and starts an eligible new run without changing the other save', async () => {
+  const realCodecs = { classic: createClassicModeCodec(() => '2026-10-17T00:00:00Z'), modern: createModernModeCodec(() => '2026-10-17T00:00:00Z') }
+  const storage = new MemoryStorage(), store = new ModeSaveStore(storage, realCodecs, () => undefined)
+  await store.initialize({ discovery: 'complete', saves: { classic: await realCodecs.classic.createFresh(), modern: await realCodecs.modern.createFresh() } })
+  for (const mode of ['classic', 'modern'] as const) {
+    await store.select(mode)
+    const state = deserializeWebSave((await store.read(mode))!)
+    state.debugEverEnabled = true; state.debugOptions = true; state.unlockAllTabs = true
+    if (mode === 'classic') packClassicFlags(state); else packSettingsFlags(state)
+    await store.checkpoint(mode, (mode === 'classic' ? serializeClassic : serializeModern)(state))
+    const other = mode === 'classic' ? 'modern' : 'classic', before = await store.read(other)
+    await store.reset(mode)
+    const reopened = new ModeSaveStore(storage, realCodecs, () => undefined)
+    expect(await reopened.read(other)).toBe(before)
+    expect(deserializeWebSave((await reopened.read(mode))!)).toMatchObject({ debugEverEnabled: true, debugOptions: true, unlockAllTabs: false, idsSpeedruns: { imported: false } })
+  }
+})
+
+test('interrupted reset publication keeps both old saves restartable before retry', async () => {
+  for (const offset of [1, 4]) {
+    const storage = new MemoryStorage(), store = create(storage)
+    await store.initialize({ discovery: 'complete', saves: { classic: 'classic:earned', modern: 'modern:earned' } })
+    await store.select('modern')
+    storage.failAt = storage.mutations + offset
+    await expect(store.reset('modern')).rejects.toThrow('interrupted')
+    storage.failAt = Infinity
+    const reopened = create(storage)
+    expect(await reopened.read('classic')).toBe('classic:earned')
+    expect(await reopened.read('modern')).toBe('modern:earned')
+    await reopened.reset('modern')
+    expect(await create(storage).read('modern')).toBe('modern:fresh')
+    expect(await create(storage).read('classic')).toBe('classic:earned')
+  }
+})
 
 test('real Classic migration and import retain the source and protect existing Modern progress', async () => {
   const date = () => '2026-10-16T00:00:00Z'

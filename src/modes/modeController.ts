@@ -99,6 +99,21 @@ export class GameModeController {
     })
   }
 
+  resetSave(mode: GameMode): Promise<void> {
+    return this.run(async () => {
+      if (!this.session || this.snapshot.phase !== 'ready' || this.snapshot.manifest?.active !== mode) {
+        throw Error('The selected mode changed. Review the reset again.')
+      }
+      this.set({ phase: 'changing', manifest: this.snapshot.manifest })
+      await this.stopCurrent()
+      const manifest = await this.store.reset(mode)
+      const text = await this.store.read(mode)
+      if (text === null) throw Error('The reset save is missing.')
+      await this.hooks.finalCheckpointSaved?.(mode, text).catch(() => undefined)
+      await this.open(manifest)
+    })
+  }
+
   importSaves(text: string, replaceGeneration?: number): Promise<void> {
     return this.run(async () => {
       // A final checkpoint can change the generation. Reconfirmation is required

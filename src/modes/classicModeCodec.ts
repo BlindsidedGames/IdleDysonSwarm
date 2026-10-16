@@ -8,6 +8,7 @@ import { prepareImportedSaveText } from '../../classic/src/save/import'
  * not down-convert modern data. Public baseline identities are recorded in
  * classic/baseline.json. */
 export function createClassicModeCodec(nowUtc: () => string): ModeSaveCodec {
+  const createFresh = () => serializeWebSave(createUnityFirstRunPreparedSave({ startedAtUtc: nowUtc() }).copyValidatedState())
   return {
     prepareImport(text, receiving) {
       return serializeWebSave(prepareImportedSaveText(text, nowUtc(), undefined, undefined,
@@ -18,8 +19,12 @@ export function createClassicModeCodec(nowUtc: () => string): ModeSaveCodec {
       if (decoded.idsReworkMigrationChoice !== undefined) throw new Error('Modern progress cannot be imported into Classic.')
       PreparedSave.fromDecoded(decoded)
     },
-    createFresh() {
-      return serializeWebSave(createUnityFirstRunPreparedSave({ startedAtUtc: nowUtc() }).copyValidatedState())
+    createFresh,
+    createReset(receiving) {
+      const importedAtUtc = nowUtc()
+      return serializeWebSave(prepareImportedSaveText(createFresh(), importedAtUtc, undefined,
+        { kind: 'manual-shared-import', importedAtUtc, intent: 'save-reset' },
+        deserializeWebSave(receiving)).copyValidatedState())
     },
   }
 }

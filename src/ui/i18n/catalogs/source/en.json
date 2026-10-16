@@ -2887,6 +2887,9 @@
   "modes.saves.replace": {
     "defaultMessage": "Replace listed saves"
   },
+  "modes.saves.resetConfirmation": {
+    "defaultMessage": "Reset all progress in {mode} and start again? The other mode’s save is kept."
+  },
   "modes.saves.restoreRecovery": {
     "defaultMessage": "Restore retained checkpoint"
   },

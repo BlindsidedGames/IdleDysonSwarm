@@ -11,7 +11,7 @@ function fixture() {
     copy: async (a, b) => { files.set(b, files.get(a)!) },
     replaceAtomically: async (a, b) => { files.set(b, files.get(a)!); files.delete(a) }, discoverLegacyCandidates: async () => [],
   }
-  const codec = { validate: () => undefined, createFresh: () => 'fresh' }
+  const codec = { validate: () => undefined, createFresh: () => 'fresh', createReset: () => 'fresh' }
   const store = new ModeSaveStore(storage, { classic: codec, modern: codec }, () => undefined)
   const contexts: ModeSessionContext[] = [], events: string[] = []
   let live = 0
@@ -26,6 +26,22 @@ function fixture() {
   const controller = new GameModeController(store, { classic: factory, modern: factory }, text => text + '-migrated')
   return { controller, contexts, events, store }
 }
+
+test.each(['classic', 'modern'] as const)('%s reset changes only the confirmed active mode and fences the old runtime', async mode => {
+  const f = fixture(), other = mode === 'classic' ? 'modern' : 'classic'
+  await f.controller.start({ discovery: 'complete', saves: { classic: 'classic-earned', modern: 'modern-earned' } })
+  await f.controller.switchTo(mode)
+  const previous = f.contexts.at(-1)!, inactive = await f.store.read(other)
+  await expect(f.controller.resetSave(other)).rejects.toThrow('changed')
+  expect(previous.isCurrent()).toBe(true)
+  await f.controller.resetSave(mode)
+  expect(previous.isCurrent()).toBe(false)
+  expect(await previous.checkpoint('late pre-reset worker')).toBe(false)
+  expect(await f.store.read(mode)).toBe('fresh')
+  expect(await f.store.read(other)).toBe(inactive)
+  expect(f.contexts.at(-1)?.initialSave).toBe('fresh')
+  await f.controller.close()
+})
 
 test('switching closes the previous session and rejects its late checkpoint writes', async () => {
   const f = fixture()

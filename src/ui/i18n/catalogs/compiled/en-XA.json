@@ -13421,6 +13421,28 @@
       "value": "]"
     }
   ],
+  "modes.saves.resetConfirmation": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗşḗḗŧ ȧȧŀŀ ƥřǿǿɠřḗḗşş īƞ "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": " ȧȧƞḓ şŧȧȧřŧ ȧȧɠȧȧīƞ? Ŧħḗḗ ǿǿŧħḗḗř ḿǿǿḓḗḗ’ş şȧȧṽḗḗ īş ķḗḗƥŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "modes.saves.restoreRecovery": [
     {
       "type": 0,

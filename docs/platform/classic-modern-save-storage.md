@@ -78,3 +78,61 @@ Android interaction, physical devices, Windows/Linux interaction, two-device
 Cloud, native picker cancellation, long locales, 320/360px layouts and the full
 UI acceptance matrix remain unverified. Simulator/build success is not physical
 hardware or tester availability. Release records must state deployment separately.
+
+## Reset Save and archived coverage review - 17 October 2026
+
+Settings > Classic and Modern saves includes Reset Save in both games. The
+confirmation names the mode being reset and says that the other save is kept.
+Cancel/Escape does not reset it. Confirmation closes the old runtime, fences its
+late writes and atomically replaces only that mode's pointer using its own reset
+policy. Receiving-device preferences, local purchase state and existing reset
+speedrun rules are retained. The other mode, its Cloud receipt and recovery
+sources remain unchanged. Final publication is attempted through the existing per-mode Cloud
+path before the reset runtime opens; failed publication retains the durable local
+reset for the existing Cloud retry/conflict flow.
+
+The missing-button regression was already present in the archived paired-save
+panel: comparing SettingsSurface.tsx and ModeSaveSettings.tsx between archive
+`fb7470d4018ebfc5ffbb35c101abffc3cdde3844` and release `455c878c` produces no diff.
+The archived SettingsSurface.test.tsx passes an unused resetSave mock and tests
+export/slider flows. nativeHostBridge.test.ts invokes resetSave directly to test
+persistence and failure; it does not operate the button. The mode entrypoint and
+save-management tests assert paired exports/import/recovery, not reset availability.
+The speedrun reset test covers reset semantics, not the Settings control. None
+would detect this specific missing button. Other archived tests contain stale UI
+expectations, so this review does not claim the old suite passes unchanged today.
+The archive was inspected read-only, not restored or run as the current suite.
+
+The approved save-safety suite now checks reset isolation, old-runtime fencing,
+reset policy and interrupted reset publication. Button availability, confirmation,
+Cancel and keyboard/focus are checked in the actual game rather than extending
+the automated suite into UI tests. Verification details and native gaps are
+recorded with the fix's QA evidence.
+
+Actual-game verification for this fix used an isolated Chrome for Testing profile
+with mock Keychain and the production two-mode entry point. Classic reset returned
+to zero cash/bots while Modern retained its worker and earned cash. The Modern
+confirmation named Modern; Escape cancelled without resetting and restored focus
+to Reset Save; Enter reopened it; Shift-Tab wrapped within the confirmation.
+Desktop English 100%/150% and German 130% were inspected. The paired-save panel
+uses the existing stacked Settings composition so long action labels cannot
+squeeze its explanation. Reset uses the released red Settings styling and shared
+Button semantics. No new shared UI convention is proposed.
+
+A disposable iPhone 16 Pro / iOS 26.4 simulator with the checked-in mature Classic
+fixture exercised Modern reset, zero-progress Bots, and terminate/reopen. Classic's
+canonical file was byte-identical before reset, after reset and after restart
+(SHA-256 `3ce9d5b3cb197ade08ad13c94bf651012e7ded23a08297ac71fd156d195bfaa4`).
+This is simulator evidence, not physical hardware or Steam Cloud sync evidence.
+
+An immediate browser reload initially failed because the new production host had
+not composed the existing same-tab reload writer identity. It now reuses that
+helper for its three leased databases, preserving generation fencing and fresh
+ownership for non-reload navigation. The same populated browser profile reopened
+successfully after an immediate reload; no save/database cleanup was used.
+
+The approved six-file suite passes 31 cases. Lint, localization, Classic integrity
+and Web/native builds pass. The archived suite was not executed. Android/Steam
+interaction, physical devices, real Cloud failure/sync, reduced motion, 360px with
+130% text, and the full locale/scale matrix remain unverified. This source fix is
+not itself a new internal deployment.

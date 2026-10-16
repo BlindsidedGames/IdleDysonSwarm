@@ -6781,6 +6781,20 @@
       "value": "Remplacer les sauvegardes indiquées"
     }
   ],
+  "modes.saves.resetConfirmation": [
+    {
+      "type": 0,
+      "value": "Réinitialiser toute la progression de "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": " et recommencer ? La sauvegarde de l’autre mode est conservée."
+    }
+  ],
   "modes.saves.restoreRecovery": [
     {
       "type": 0,

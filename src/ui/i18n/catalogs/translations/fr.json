@@ -2725,5 +2725,6 @@
   "rework.migration.separateSaves": "Votre progression se poursuit dans deux sauvegardes distinctes. Vous pouvez passer de Classique à Moderne et inversement à tout moment.",
   "rework.migration.returnClassic": "Retourner à Classique",
   "rework.migration.continueModern": "Continuer dans Moderne",
-  "modes.back": "Retour à {mode}"
+  "modes.back": "Retour à {mode}",
+  "modes.saves.resetConfirmation": "Réinitialiser toute la progression de {mode} et recommencer ? La sauvegarde de l’autre mode est conservée."
 }

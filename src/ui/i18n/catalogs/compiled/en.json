@@ -6781,6 +6781,20 @@
       "value": "Replace listed saves"
     }
   ],
+  "modes.saves.resetConfirmation": [
+    {
+      "type": 0,
+      "value": "Reset all progress in "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": " and start again? The other mode’s save is kept."
+    }
+  ],
   "modes.saves.restoreRecovery": [
     {
       "type": 0,
