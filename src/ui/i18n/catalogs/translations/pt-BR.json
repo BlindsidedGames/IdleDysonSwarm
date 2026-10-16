@@ -2724,5 +2724,6 @@
   "rework.migration.automaticDescription": "Seu jogo salvo é migrado automaticamente ao abrir o Moderno. As melhorias avançadas precisam ser conquistadas novamente, e as fraturas e seus aprimoramentos são removidos. O jogo base, IP, Transcendência, Descoberta e suas compras são mantidos.",
   "rework.migration.separateSaves": "Seu progresso continua em dois jogos salvos separados. Você pode alternar entre Clássico e Moderno a qualquer momento.",
   "rework.migration.returnClassic": "Voltar ao Clássico",
-  "rework.migration.continueModern": "Continuar no Moderno"
+  "rework.migration.continueModern": "Continuar no Moderno",
+  "modes.back": "Voltar para {mode}"
 }

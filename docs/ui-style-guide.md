@@ -88,8 +88,9 @@ magnifying-glass strokes use the darker page foreground matching selected text,
 rather than the panel foreground used by the other selected drawer icons.
 
 Mode switch (Matthew, 16 October 2026): the bottom drawer trigger uses the same
-navigation button styling as the other drawer entries, with a left-right arrow
-and current mode name. Both modes switch immediately without a disclosure.
+navigation button styling as the other drawer entries, with the destination text
+“Back to Classic” or “Back to Modern”, centered with no arrow (updated by Matthew, 16 October
+2026). Both modes switch immediately without a disclosure.
 Opening Modern for the first time copies and automatically migrates Classic
 progress; subsequent switches continue the existing destination save. There
 is no separate migration action or confirmation in the drawer. Classic also uses the modern drawer's

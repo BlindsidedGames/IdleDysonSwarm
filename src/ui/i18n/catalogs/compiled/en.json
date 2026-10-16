@@ -6573,6 +6573,16 @@
       "value": "Start with 10 Servers"
     }
   ],
+  "modes.back": [
+    {
+      "type": 0,
+      "value": "Back to "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
   "modes.cancel": [
     {
       "type": 0,

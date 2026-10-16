@@ -12957,6 +12957,24 @@
       "value": "]"
     }
   ],
+  "modes.back": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓȧȧƈķ ŧǿǿ "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "modes.cancel": [
     {
       "type": 0,

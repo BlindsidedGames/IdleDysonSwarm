@@ -6573,6 +6573,16 @@
       "value": "Commencer avec 10 Serveurs"
     }
   ],
+  "modes.back": [
+    {
+      "type": 0,
+      "value": "Retour à "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
   "modes.cancel": [
     {
       "type": 0,

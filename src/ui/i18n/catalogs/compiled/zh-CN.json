@@ -6573,6 +6573,16 @@
       "value": "初始拥有 10 台服务器"
     }
   ],
+  "modes.back": [
+    {
+      "type": 0,
+      "value": "返回"
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
   "modes.cancel": [
     {
       "type": 0,

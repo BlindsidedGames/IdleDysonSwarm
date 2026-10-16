@@ -17,14 +17,15 @@
   font-size: var(--font-size-body, .82rem);
   line-height: 1.4;
 }
-.game-mode-switch .dyson-navigation__link {
+.game-mode-switch.dyson-navigation--drawer .dyson-navigation__link {
+  justify-content: center;
+  text-align: center;
   min-block-size: max(44px, 2.75rem);
   min-inline-size: 44px;
   white-space: normal;
   overflow-wrap: anywhere;
 }
+.game-mode-switch.dyson-navigation--drawer .dyson-navigation__label { text-align: center; }
 @media (pointer: coarse) {
-  .game-mode-switch .dyson-navigation__link { min-block-size: max(48px, 3rem); }
+  .game-mode-switch.dyson-navigation--drawer .dyson-navigation__link { min-block-size: max(48px, 3rem); }
 }
-
-.game-mode-switch__arrow { font-size: 1.35em; line-height: 1; }
