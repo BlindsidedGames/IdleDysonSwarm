@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os'
 import { resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { isDeepStrictEqual } from 'node:util'
-import fixture from '../../test/parity/dyson-no-skills-two-ticks.json'
+import fixture from '../../qa/parity/dyson-no-skills-two-ticks.json'
 import { BasicDysonSimulationModel, createBasicDysonState, type BasicDysonStateInput } from '../../src/simulation/dysonModel'
 import { advanceEventTime } from '../../src/simulation/eventTime'
 

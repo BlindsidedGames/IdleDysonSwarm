@@ -10,7 +10,7 @@ import {replacementSkillPoints} from '../src/simulation/reworkChallenges'
 import {validateCanonicalGameState} from '../src/game-state/validate'
 import type {CanonicalGameStateV1,ReworkChallengeId} from '../src/game-state/types'
 
-const original=hydrateGameState(prepareIdb1Save(readFileSync('test/fixtures/schema-08-canonical-idb1-main-save.txt','utf8')).prepared).state
+const original=hydrateGameState(prepareIdb1Save(readFileSync('qa/fixtures/schema-08-canonical-idb1-main-save.txt','utf8')).prepared).state
 function seed(ids:ReworkChallengeId[]):CanonicalGameStateV1{return {...original,meta:{...original.meta,reworkMigrationChoice:'keep',firstInfinityComplete:true},dyson:{...original.dyson,bots:OVERFLOW_BOT_CAP},infinity:{...original.infinity,points:64n,spentPoints:0n,automationUnlocked:{research:true,bots:true}},challenges:{...EMPTY_INFINITY_CHALLENGES,unlocked:true,noScienceCompleted:true,completedQuantumChallenges:['built-by-hand','no-science'],replacement:{version:1,active:null,completedIds:ids,earnedIp:0n,infinities:0,paidPurchases:0,paidFacilityIds:[],savedAutoAssignment:[],savedBreakTarget:1n,savedBotDistribution:0}}}}
 function proposedSticky(s:CanonicalGameStateV1):CanonicalGameStateV1{
  const ids=s.challenges?.replacement?.completedIds??[]

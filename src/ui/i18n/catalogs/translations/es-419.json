@@ -2719,5 +2719,10 @@
   "modes.separate": "Cada modo conserva una partida independiente.",
   "modes.start": "Iniciar {mode}",
   "modes.switch": "Modo de juego: {mode}",
-  "modes.saves.recoveryPartial": "No se pudieron leer algunos archivos de recuperación. Se incluyen los datos disponibles."
+  "modes.saves.recoveryPartial": "No se pudieron leer algunos archivos de recuperación. Se incluyen los datos disponibles.",
+  "modes.saves.importDescription": "Importa una partida al modo actual o restaura una exportación de ambos modos. Las partidas de Clásico importadas en Moderno se migran automáticamente.",
+  "rework.migration.automaticDescription": "Tu partida se migra automáticamente al abrir Moderno. Las mejoras avanzadas deben ganarse de nuevo y se eliminan las fracturas y sus aumentos. Se conservan el juego base, IP, Trascendencia, Descubrimiento y tus compras.",
+  "rework.migration.separateSaves": "Tu progreso continúa en dos partidas guardadas por separado. Puedes cambiar entre Clásico y Moderno en cualquier momento.",
+  "rework.migration.returnClassic": "Volver a Clásico",
+  "rework.migration.continueModern": "Continuar en Moderno"
 }

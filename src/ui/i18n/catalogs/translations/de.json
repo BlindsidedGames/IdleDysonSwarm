@@ -2719,5 +2719,10 @@
   "modes.separate": "Jeder Modus behält einen eigenen Spielstand.",
   "modes.start": "Starten: {mode}",
   "modes.switch": "Spielmodus: {mode}",
-  "modes.saves.recoveryPartial": "Einige Wiederherstellungsdateien konnten nicht gelesen werden. Verfügbare Daten sind enthalten."
+  "modes.saves.recoveryPartial": "Einige Wiederherstellungsdateien konnten nicht gelesen werden. Verfügbare Daten sind enthalten.",
+  "modes.saves.importDescription": "Importiere einen Spielstand in den aktuellen Modus oder stelle einen Export beider Modi wieder her. Klassische Spielstände werden beim Import in Modern automatisch migriert.",
+  "rework.migration.automaticDescription": "Dein Spielstand wird automatisch migriert, wenn du Modern öffnest. Fortgeschrittene Verbesserungen müssen erneut erspielt werden. Brüche und ihre Erweiterungen werden entfernt. Grundspiel, IP, Transzendenz, Entdeckung und Käufe bleiben erhalten.",
+  "rework.migration.separateSaves": "Dein Fortschritt wird in zwei getrennten Spielständen fortgesetzt. Du kannst jederzeit zwischen Klassisch und Modern wechseln.",
+  "rework.migration.returnClassic": "Zurück zu Klassisch",
+  "rework.migration.continueModern": "In Modern fortfahren"
 }

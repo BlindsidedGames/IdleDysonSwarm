@@ -28,7 +28,7 @@ import type {CanonicalGameStateV1, ReworkChallengeId} from '../src/game-state/ty
 type Job={id:ReworkChallengeId; profile?:'early'|'previous'|'mature'; progression?:'first'|'entry'|'developed'|'legacy'; budgetOverride?:number; plan?:'division'|'first-secret'; giftAuto?:'bots'; build?:string; adaptive?:boolean; target?:number; tick?:number; max?:number; tinker?:boolean; bootstrap?:boolean; breakTarget?:number; distribution?:number; stopFirst?:boolean; botGoal?:number; noFractures?:boolean}
 const jobs:Job[]=JSON.parse(process.env.CHALLENGE_JOBS??'[]')
 const output=process.env.CHALLENGE_OUTPUT??'investigation-results.json'
-const session=hydrateGameState(prepareIdb1Save(readFileSync('test/fixtures/schema-08-canonical-idb1-main-save.txt','utf8')).prepared)
+const session=hydrateGameState(prepareIdb1Save(readFileSync('qa/fixtures/schema-08-canonical-idb1-main-save.txt','utf8')).prepared)
 const context={mode:'active' as const,automationIntervalSeconds:1,realityWorkerTuning:{workerBatchSize:128n,baseWorkerGenerationSpeed:4},dreamResetDefinitions:SIMULATION_UPGRADE_DEFINITIONS,realityUpgradeDefinitions:REALITY_UPGRADE_DEFINITIONS,infinityResetAssetLookup:createCapturedInfinityAssetLookup(gameDataCatalog.assets)}
 const industrial=['startHereTree','assemblyLineTree','aiManagerTree','serverTree','dataCenterTree','planetsTree','workerEfficiencyTree','panelLifetime20Tree','scientificPlanets','androids']
 const builds:Record<string,string[]>={

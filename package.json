@@ -36,11 +36,9 @@
     "report:performance:matrix:smoke": "vite build --config scripts/performance/laneAttributionViteConfig.ts --mode performance && tsx scripts/performance/runProgressionMatrixReport.ts --smoke",
     "report:performance:stored-time-matrix": "tsx scripts/performance/runStoredTimeMatrixReport.ts",
     "report:performance:skill-effects": "tsx scripts/performance/runSkillEffectEvaluationReport.ts",
-    "verify:performance:skill-effects": "vitest run src/simulation/skillEffectOptimizationCertification.test.ts && tsx scripts/performance/runSkillEffectEvaluationReport.ts --assert",
+    "verify:performance:skill-effects": "tsx scripts/performance/runSkillEffectEvaluationReport.ts --assert",
     "report:performance:soak": "npm run build && tsx scripts/performance/runSoakReport.ts",
     "report:performance:soak:smoke": "npm run build && tsx scripts/performance/runSoakReport.ts --smoke",
-    "verify:web-accessibility:browser": "npm run build:performance && tsx scripts/performance/runWebAccessibilityAcceptance.ts",
-    "verify:number-typography:browser": "tsx scripts/verify-tabular-number-rendering.ts",
     "verify:localization:browser": "npm run build && tsx scripts/run-localization-visual-audit.ts",
     "verify:localization:contact-sheets": "tsx scripts/create-localization-contact-sheets.ts",
     "pwa:icons": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/generate-pwa-icons.ps1",
@@ -72,15 +70,12 @@
     "i18n:compile:ar-xb": "formatjs compile src/ui/i18n/catalogs/source/en.json --out-file src/ui/i18n/catalogs/compiled/ar-XB.json --ast --pseudo-locale en-XB",
     "i18n:check": "npm run i18n:extract && npm run i18n:translations:check && npm run i18n:compile",
     "lint": "oxlint",
-    "test": "vitest run",
     "preview": "vite preview",
     "native:steam:build": "node scripts/build-steam-native.mjs",
     "native:steam:package:macos": "VITE_IDS_DESKTOP_DISTRIBUTION=steam npm run build:native && node scripts/package-steam-platform.mjs macos",
     "promotions:sync": "tsx scripts/sync-promotion-catalog.ts",
     "promotions:check": "tsx scripts/check-promotion-catalog.ts",
-    "verify:promotions:browser": "tsx scripts/verify-promotion-cache.ts",
-    "modes:check": "node --import tsx scripts/check-classic-source.ts && tsc -p tsconfig.classic.json && vitest run src/modes src/ui/gameplay/shell/GameModeSwitch.test.tsx",
-    "modes:ui": "node --import tsx scripts/verify-mode-switch-ui.ts"
+    "modes:check": "node --import tsx scripts/check-classic-source.ts && tsc -p tsconfig.classic.json"
   },
   "dependencies": {
     "@capacitor/android": "8.5.0",
@@ -96,20 +91,17 @@
   "devDependencies": {
     "@capacitor/cli": "8.5.0",
     "@formatjs/cli": "^6.16.14",
-    "@testing-library/react": "^16.3.3",
     "@types/node": "^24.13.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
     "electron": "43.2.0",
     "electron-builder": "26.15.3",
-    "jsdom": "^29.1.1",
     "oxlint": "^1.71.0",
     "sharp": "^0.35.3",
     "tsx": "^4.23.1",
     "typescript": "~6.0.2",
     "vite": "^8.1.1",
-    "vitest": "^4.1.10",
     "yaml": "^2.9.0"
   }
 }

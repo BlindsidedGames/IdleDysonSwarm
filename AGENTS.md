@@ -1,5 +1,22 @@
 # Agent instructions
 
+## Testing policy
+
+- Do not commit automated tests or introduce an automated test suite. Matthew
+  prefers that agents do not write tests at all.
+- Only write a temporary, disposable test very rarely, when it is genuinely
+  needed to investigate something that cannot reasonably be checked in the
+  actual game. Keep it out of commits and remove it after the investigation.
+- Verify changes in the running game, using the affected player flows and
+  representative saves, screen sizes, and states. Report what was actually
+  checked and any remaining gaps.
+- The implementation is the contract for how the game works. Do not preserve
+  obsolete behavior or constrain a requested change to satisfy unit tests.
+- TypeScript, lint, build, data-integrity, and packaging checks may remain;
+  they do not replace validation in the game.
+- The former automated suite is preserved on `test-archive-2026-10-16`.
+  Do not restore it or add test requirements without Matthew's explicit request.
+
 ## UI and player-facing text
 
 - Before UI/layout/copy work, apply the project [IDS UI skill](.agents/skills/ids-ui/SKILL.md),

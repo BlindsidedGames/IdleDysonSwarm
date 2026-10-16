@@ -6717,6 +6717,12 @@
       "value": "Importar partidas de los modos"
     }
   ],
+  "modes.saves.importDescription": [
+    {
+      "type": 0,
+      "value": "Importa una partida al modo actual o restaura una exportación de ambos modos. Las partidas de Clásico importadas en Moderno se migran automáticamente."
+    }
+  ],
   "modes.saves.local": [
     {
       "type": 0,
@@ -10325,6 +10331,18 @@
       "value": "Mejoras de Infinito"
     }
   ],
+  "rework.migration.automaticDescription": [
+    {
+      "type": 0,
+      "value": "Tu partida se migra automáticamente al abrir Moderno. Las mejoras avanzadas deben ganarse de nuevo y se eliminan las fracturas y sus aumentos. Se conservan el juego base, IP, Trascendencia, Descubrimiento y tus compras."
+    }
+  ],
+  "rework.migration.continueModern": [
+    {
+      "type": 0,
+      "value": "Continuar en Moderno"
+    }
+  ],
   "rework.migration.description": [
     {
       "type": 0,
@@ -10347,6 +10365,18 @@
     {
       "type": 0,
       "value": "Conservar progreso equivalente"
+    }
+  ],
+  "rework.migration.returnClassic": [
+    {
+      "type": 0,
+      "value": "Volver a Clásico"
+    }
+  ],
+  "rework.migration.separateSaves": [
+    {
+      "type": 0,
+      "value": "Tu progreso continúa en dos partidas guardadas por separado. Puedes cambiar entre Clásico y Moderno en cualquier momento."
     }
   ],
   "rework.migration.title": [

@@ -1,5 +1,10 @@
 # Classic runtime source candidate
 
+Classic's independent release label is `C-1`, controlled by `release.json`.
+Increment that integer for subsequent Classic releases (`C-2`, `C-3`, ...).
+This is separate from the save schema and the frozen upstream package identity
+below. Modern continues to use the root native/package release identity.
+
 This is a complete, independent production source graph from
 `0dde63fbaad175362df49feeb981f85dc6af4a5e`. Tests and test helpers are excluded.
 The complete source/identity inventory has 681 files; 14 documented local
@@ -21,7 +26,7 @@ The foundation does not expose this graph through a production entry point.
 Its original composition/bootstrap files are retained as source evidence, not
 approved host wiring: they reference historical public storage, Cloud and store
 services. Do not launch `classic/src/main.tsx` or those host compositions. The
-foundation tests and gated development host instantiate independent Apps and
+gated development host instantiates independent Apps and
 application/session owners using disposable memory storage, without host account
 or real Cloud ports. The development host creates a fresh iframe document for
 each mode session; its scratch saves reset when the parent reloads.

@@ -13277,6 +13277,20 @@
       "value": "‬"
     }
   ],
+  "modes.saves.importDescription": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iɯdoɹʇ ɐ sɐʌǝ ıuʇo ʇɥǝ ɔnɹɹǝuʇ ɯopǝ, oɹ ɹǝsʇoɹǝ ɐ dɐıɹǝp ǝxdoɹʇ. Ↄʅɐssıɔ sɐʌǝs ıɯdoɹʇǝp ıuʇo Wopǝɹu ɐɹǝ ɯıƃɹɐʇǝp ɐnʇoɯɐʇıɔɐʅʅʎ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "modes.saves.local": [
     {
       "type": 0,
@@ -20677,6 +20691,34 @@
       "value": "‬"
     }
   ],
+  "rework.migration.automaticDescription": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅄onɹ sɐʌǝ ıs ɐnʇoɯɐʇıɔɐʅʅʎ ɯıƃɹɐʇǝp ʍɥǝu ʎon odǝu Wopǝɹu. ∀pʌɐuɔǝp ndƃɹɐpǝs ɐɹǝ ǝɐɹuǝp ɐƃɐıu ɐup ɟɹɐɔʇnɹǝs ɐup ʇɥǝıɹ ɐnƃɯǝuʇs ɐɹǝ ɹǝɯoʌǝp. ⅄onɹ qɐsǝ ƃɐɯǝ, IԀ, ⊥ɹɐusɔǝupǝuɔǝ, ᗡısɔoʌǝɹʎ ɐup dnɹɔɥɐsǝs sʇɐʎ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.migration.continueModern": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄouʇıunǝ ıu Wopǝɹu"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "rework.migration.description": [
     {
       "type": 0,
@@ -20727,6 +20769,34 @@
     {
       "type": 0,
       "value": "Ӽǝǝd ǝbnıʌɐʅǝuʇ dɹoƃɹǝss"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.migration.returnClassic": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝʇnɹu ʇo Ↄʅɐssıɔ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "rework.migration.separateSaves": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅄onɹ dɹoƃɹǝss ɔouʇıunǝs ıu ʇʍo sǝdɐɹɐʇǝ sɐʌǝs. ⅄on ɔɐu sʍıʇɔɥ qǝʇʍǝǝu Ↄʅɐssıɔ ɐup Wopǝɹu ɐʇ ɐuʎ ʇıɯǝ."
     },
     {
       "type": 0,

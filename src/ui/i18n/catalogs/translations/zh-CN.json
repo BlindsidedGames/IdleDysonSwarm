@@ -2719,5 +2719,10 @@
   "modes.separate": "每种模式保留独立存档。",
   "modes.start": "开始{mode}",
   "modes.switch": "游戏模式：{mode}",
-  "modes.saves.recoveryPartial": "部分恢复文件无法读取。已包含可用数据。"
+  "modes.saves.recoveryPartial": "部分恢复文件无法读取。已包含可用数据。",
+  "modes.saves.importDescription": "将存档导入当前模式，或恢复包含两种模式的导出文件。导入现代模式的经典存档会自动迁移。",
+  "rework.migration.automaticDescription": "打开现代模式时，存档会自动迁移。高级升级需要重新获得，裂解及其强化会被移除。基础游戏、IP、超越、探索和购买项目均保留。",
+  "rework.migration.separateSaves": "你的进度将分别保存在两个独立存档中。你可以随时在经典模式和现代模式之间切换。",
+  "rework.migration.returnClassic": "返回经典模式",
+  "rework.migration.continueModern": "继续现代模式"
 }

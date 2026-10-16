@@ -6717,6 +6717,12 @@
       "value": "Import mode saves"
     }
   ],
+  "modes.saves.importDescription": [
+    {
+      "type": 0,
+      "value": "Import a save into the current mode, or restore a paired export. Classic saves imported into Modern are migrated automatically."
+    }
+  ],
   "modes.saves.local": [
     {
       "type": 0,
@@ -10325,6 +10331,18 @@
       "value": "Infinity upgrades"
     }
   ],
+  "rework.migration.automaticDescription": [
+    {
+      "type": 0,
+      "value": "Your save is automatically migrated when you open Modern. Advanced upgrades are earned again and fractures and their augments are removed. Your base game, IP, Transcendence, Discovery and purchases stay."
+    }
+  ],
+  "rework.migration.continueModern": [
+    {
+      "type": 0,
+      "value": "Continue in Modern"
+    }
+  ],
   "rework.migration.description": [
     {
       "type": 0,
@@ -10347,6 +10365,18 @@
     {
       "type": 0,
       "value": "Keep equivalent progress"
+    }
+  ],
+  "rework.migration.returnClassic": [
+    {
+      "type": 0,
+      "value": "Return to Classic"
+    }
+  ],
+  "rework.migration.separateSaves": [
+    {
+      "type": 0,
+      "value": "Your progress continues in two separate saves. You can switch between Classic and Modern at any time."
     }
   ],
   "rework.migration.title": [

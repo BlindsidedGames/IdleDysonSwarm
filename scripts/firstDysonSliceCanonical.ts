@@ -44,7 +44,7 @@ import {
 } from '../src/application/canonicalRuntimeSession'
 
 const SOURCE_SAVE_URL = new URL(
-  '../test/fixtures/schema-08-canonical-idb1-main-save.txt',
+  '../qa/fixtures/schema-08-canonical-idb1-main-save.txt',
   import.meta.url,
 )
 const CATALOG_URL = new URL(
@@ -174,7 +174,7 @@ export async function generateFirstDysonSliceFixture(): Promise<FirstDysonSliceF
   return {
     schemaVersion: 1,
     preparedSave: {
-      sourcePath: 'test/fixtures/schema-08-canonical-idb1-main-save.txt',
+      sourcePath: 'qa/fixtures/schema-08-canonical-idb1-main-save.txt',
       sourceSha256: sha256(readFileSync(SOURCE_SAVE_URL)),
       preparedStateSha256: sha256(stableJson(prepared.copyValidatedState())),
       catalogSha256: sha256(

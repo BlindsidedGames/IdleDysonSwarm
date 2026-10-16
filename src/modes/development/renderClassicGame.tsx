@@ -9,6 +9,7 @@ import { createClassicModeSession } from '../createClassicModeSession'
 import { GameModeControllerContext } from '../../ui/gameplay/shell/GameModeControllerContext'
 import type { GameModeController, ModeSessionContext } from '../modeController'
 import type { ModeRuntimeHostOptions } from '../modeRuntimeHostOptions'
+import classicRelease from '../../../classic/release.json'
 import '../../../classic/src/index.css'
 
 /** Invoked only inside a separately mounted mode document; no historical
@@ -28,6 +29,7 @@ export async function renderClassicGame(context: ModeSessionContext, controller:
           <NumberNotationProvider preference={notation}><ResearchVisibilityProvider preference={research}>
             <BottomNavigationTextProvider preference={navigation}>
               <App key={context.sessionId} runtime={runtime} locale={catalog.locale} saveSchemaVersion={20}
+                releaseFooter={{ platform: 'Dev', version: `C-${classicRelease.version}`, build: 'local' }}
                 sampleUtc={() => options.lifecycleClock.sample().serializedUtcText} reloadSafely={async () => { throw new Error('Use the parent development host reload.') }} />
             </BottomNavigationTextProvider>
           </ResearchVisibilityProvider></NumberNotationProvider>

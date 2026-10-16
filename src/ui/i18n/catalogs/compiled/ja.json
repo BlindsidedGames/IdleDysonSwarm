@@ -6717,6 +6717,12 @@
       "value": "モードのセーブデータを読み込む"
     }
   ],
+  "modes.saves.importDescription": [
+    {
+      "type": 0,
+      "value": "現在のモードにセーブをインポートするか、両モードを含むエクスポートを復元します。モダンにインポートしたクラシックのセーブは自動的に移行されます。"
+    }
+  ],
   "modes.saves.local": [
     {
       "type": 0,
@@ -10325,6 +10331,18 @@
       "value": "無限アップグレード"
     }
   ],
+  "rework.migration.automaticDescription": [
+    {
+      "type": 0,
+      "value": "モダンを開くとセーブは自動的に移行されます。高度なアップグレードは再獲得が必要となり、断裂とその拡張は削除されます。基本ゲーム、IP、超越、発見、購入内容は保持されます。"
+    }
+  ],
+  "rework.migration.continueModern": [
+    {
+      "type": 0,
+      "value": "モダンで続ける"
+    }
+  ],
   "rework.migration.description": [
     {
       "type": 0,
@@ -10347,6 +10365,18 @@
     {
       "type": 0,
       "value": "同等の進行を保持"
+    }
+  ],
+  "rework.migration.returnClassic": [
+    {
+      "type": 0,
+      "value": "クラシックに戻る"
+    }
+  ],
+  "rework.migration.separateSaves": [
+    {
+      "type": 0,
+      "value": "進行状況は2つの独立したセーブで続きます。クラシックとモダンはいつでも切り替えられます。"
     }
   ],
   "rework.migration.title": [

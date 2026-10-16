@@ -108,7 +108,6 @@ export async function runLocalRelease(options: LocalReleaseOptions): Promise<voi
 
   if (options.cleanInstall) run('npm', ['ci'])
   await syncNativeRelease(metadata.releaseCandidateId)
-  run('npm', ['test', '--', '--maxWorkers=1'])
   run('npm', ['run', 'lint'])
   run('npm', ['run', 'i18n:check'])
   run('npm', ['run', 'build'])

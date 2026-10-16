@@ -2719,5 +2719,10 @@
   "modes.separate": "Cada modo mantém um jogo salvo separado.",
   "modes.start": "Iniciar {mode}",
   "modes.switch": "Modo de jogo: {mode}",
-  "modes.saves.recoveryPartial": "Não foi possível ler alguns arquivos de recuperação. Os dados disponíveis foram incluídos."
+  "modes.saves.recoveryPartial": "Não foi possível ler alguns arquivos de recuperação. Os dados disponíveis foram incluídos.",
+  "modes.saves.importDescription": "Importe um jogo salvo para o modo atual ou restaure uma exportação dos dois modos. Jogos salvos do Clássico importados no Moderno são migrados automaticamente.",
+  "rework.migration.automaticDescription": "Seu jogo salvo é migrado automaticamente ao abrir o Moderno. As melhorias avançadas precisam ser conquistadas novamente, e as fraturas e seus aprimoramentos são removidos. O jogo base, IP, Transcendência, Descoberta e suas compras são mantidos.",
+  "rework.migration.separateSaves": "Seu progresso continua em dois jogos salvos separados. Você pode alternar entre Clássico e Moderno a qualquer momento.",
+  "rework.migration.returnClassic": "Voltar ao Clássico",
+  "rework.migration.continueModern": "Continuar no Moderno"
 }
