@@ -41560,6 +41560,272 @@
       "value": "‬"
     }
   ],
+  "wiki.patch-notes.version-4-2-1": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ʌǝɹsıou 4.2.1"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.challenges": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp Ԑǝƃıuuıuƃs ɐup uıuǝ Iuɟıuıʇʎ Ↄɥɐʅʅǝuƃǝs ʍıʇɥ uǝʍ ɹnʅǝs ɐup ɹǝʍɐɹps."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.convergence": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄouʌǝɹƃǝuɔǝ’s ǝɟɟǝɔʇ ıs ɹǝʌǝɐʅǝp ɐɟʇǝɹ sıx ɔɥɐʅʅǝuƃǝ ɔoɯdʅǝʇıous. Ↄoɯdʅǝʇıuƃ ɐʅʅ ʇǝu nuʅoɔʞs ɔouʇıunons ⅁ɐʅɐɔʇıɔ Ԑɹɐıu ƃɹoʍʇɥ, ponqʅıuƃ ǝxısʇıuƃ ⅁ɐʅɐɔʇıɔ Ԑɹɐıus ǝʌǝɹʎ 30 ɯıunʇǝs oɟ ƃɐɯǝ ʇıɯǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.feedback": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇoddǝp ɹǝdǝɐʇǝp ɐnʇoɯɐʇıɔ sʞıʅʅ-dɹǝsǝʇ ɔouɟʅıɔʇ uoʇıɔǝs ɐup ıɯdɹoʌǝp Sıɯnʅɐʇıou ɔonuʇpoʍus, dɹoƃɹǝss ɐuıɯɐʇıou ɐup ɹǝsonɹɔǝ ɟoɹɯɐʇʇıuƃ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.forager": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sıɯnʅɐʇıous nuʅoɔʞ ʇɥɹonƃɥ Ԑǝƃıuuıuƃs ɐɟʇǝɹ ʇǝu Ԑoʇs ƃoɐʅs. ∀ppǝp sǝɐsouɐʅ Ⅎoɹɐƃǝɹ ƃɐʇɥǝɹıuƃ ɐup ɥnuʇıuƃ, ɔɹǝʍ ɐssıƃuɯǝuʇs, ɥonsıuƃ, ɔɹɐɟʇıuƃ ɐup ⅂ǝɐpǝɹsɥıd. ⊥ɥıs ʌǝɹsıou sʇods ɐʇ ʇɥǝ Ⅎoɹɐƃǝɹ ǝɹɐ; ʅɐʇǝɹ ǝɹɐs ɐɹǝ nuɐʌɐıʅɐqʅǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.offline": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıxǝp oɟɟʅıuǝ ɹǝʇnɹus qǝıuƃ ɔɹǝpıʇǝp ɐƃɐıu ɐɟʇǝɹ ɐ ɹǝsʇɐɹʇ. Iɯdɹoʌǝp ǝɟɟǝɔʇıʌǝ ƃɐɯǝ-sdǝǝp pısdʅɐʎ ɐup ɔɐddǝp ʇɥǝ oɟɟʅıuǝ qoosʇ ɐʇ 8×."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.production": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıxǝp sʇɐʅʅǝp ᴚɐıʅƃnu ʌoʅʅǝʎs ɐup ıOS pǝʇǝɔʇıou oɟ ǝxısʇıuƃ qǝʇɐ sɐʌǝs, ɐup ɥıp ɔoɯdʅǝʇǝp ᗡnɹɐqıʅıʇʎ ɹǝsǝɐɹɔɥ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.progression": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝqnıʅʇ Wopǝɹu dɹoƃɹǝssıou: Ònɐuʇnɯ, ᴚǝɐʅıʇʎ ɐup ʇɥǝ ɟoɹɯǝɹ Sıɯnʅɐʇıous ɐɹǝ ɹǝdʅɐɔǝp qʎ Iuɟıuıʇʎ ndƃɹɐpǝs ɐup ɔıʌıʅızɐʇıou Sıɯnʅɐʇıous. ∩sǝɟnʅ dǝɹɯɐuǝuʇ ndƃɹɐpǝs uoʍ ʅıʌǝ ıu Iuɟıuıʇʎ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.skills": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıxǝp Ⅎɹɐɔʇnɹǝ ɐʌɐıʅɐqıʅıʇʎ ɐɟʇǝɹ ǝɐɹuıuƃ ɐ Ↄɐʇɐʅʎsʇ ɐup dɹǝsǝɹʌǝp Ԁɐʇıǝuʇ Hɐups ɔɥɐɹƃǝ ɟɹoɯ nunsǝp ʇıɯǝ ɐɟʇǝɹ ɐ ⊥ıuʞǝɹ ɔoɯdʅǝʇıou."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ʌǝɹsıou 4.2.2"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2.migration": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wopǝɹu ɯıƃɹɐʇıou ɹnus ɐnʇoɯɐʇıɔɐʅʅʎ. ∀pʌɐuɔǝp ndƃɹɐpǝs ɯnsʇ qǝ ǝɐɹuǝp ɐƃɐıu, ɐup ɟɹɐɔʇnɹǝs ɐup ʇɥǝıɹ ɐnƃɯǝuʇs ɐɹǝ ɹǝɯoʌǝp. ⅄onɹ qɐsǝ ƃɐɯǝ, Iuɟıuıʇʎ Ԁoıuʇs, ⊥ɹɐusɔǝupǝuɔǝ, ᗡısɔoʌǝɹʎ ɐup dnɹɔɥɐsǝs sʇɐʎ. ⅄on ɔɐu ɹǝʇnɹu ʇo Ↄʅɐssıɔ ɐʇ ɐuʎ ʇıɯǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2.modes": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp sǝdɐɹɐʇǝ Ↄʅɐssıɔ ɐup Wopǝɹu ɯopǝs. Odǝuıuƃ Wopǝɹu ɟoɹ ʇɥǝ ɟıɹsʇ ʇıɯǝ ɔodıǝs ʎonɹ Ↄʅɐssıɔ dɹoƃɹǝss ɐup dɹǝsǝɹʌǝs ʇɥǝ oɹıƃıuɐʅ Ↄʅɐssıɔ sɐʌǝ. ⅂ɐʇǝɹ sʍıʇɔɥǝs ɹǝsnɯǝ ǝɐɔɥ ɯopǝ’s oʍu dɹoƃɹǝss."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2.navigation": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ ɯǝun uoʍ sɥoʍs Ԑɐɔʞ ʇo Ↄʅɐssıɔ oɹ Ԑɐɔʞ ʇo Wopǝɹu ɐup sʍıʇɔɥǝs pıɹǝɔʇʅʎ. Ↄʅɐssıɔ nsǝs ıʇs oʍu Ↄ-1 ʌǝɹsıou ʅɐqǝʅ; Wopǝɹu sɥoʍs ʇɥǝ ɐdd ʌǝɹsıou. Iɯdɹoʌǝp ɔoɯdɐɔʇ uɐʌıƃɐʇıou ɐup ʌǝɹsıou ɟooʇǝɹs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2.storage": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp sǝdɐɹɐʇǝ uɐʇıʌǝ sɐʌǝ ɟıʅǝs ɐup Sʇǝɐɯ Ↄʅonp sʇoɹɐƃǝ ɟoɹ Ↄʅɐssıɔ ɐup Wopǝɹu, ʍıʇɥ dɹoʇǝɔʇıou ɐƃɐıusʇ ɔouɟʅıɔʇıuƃ oɹ onʇpɐʇǝp ʍɹıʇǝs ɐup ɹǝʇɐıuǝp ɹǝɔoʌǝɹʎ ɔodıǝs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ʌǝɹsıou 4.2.3"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3.dialog": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsʇoɹǝp ʇıɯǝsʇɐɯdǝp ǝxdoɹʇ ɟıʅǝuɐɯǝs ʍıʇɥ ɐ sǝdɐɹɐʇǝ dɹǝɟǝɹǝuɔǝ ɟoɹ ǝɐɔɥ ɯopǝ. Wɐʇɔɥǝp ʇɥǝ ɔɥǝɔʞqox ʇo Sǝʇʇıuƃs ɐup ıɯdɹoʌǝp ɔodʎ/poʍuʅoɐp ɟǝǝpqɐɔʞ, ıɯdoɹʇ dɹǝʌıǝʍs, ʇɥǝɯǝ ɐup ıuʇǝɹɟɐɔǝ sızıuƃ, ɐup ʞǝʎqoɐɹp ɟoɔns."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3.export": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıxǝp ǝxdoɹʇ ɟɐıʅıuƃ ʍɥǝu ʇɥǝ qɹoʍsǝɹ ɔonʅp uo ʅouƃǝɹ ʍɹıʇǝ ıʇs sɐʌǝ. ⊥ɐʞıuƃ ɐ ɔodʎ uo ʅouƃǝɹ ɹǝsʇɐɹʇs ʇɥǝ ƃɐɯǝ oɹ ɹǝbnıɹǝs ɐ sɐʌǝ ʍɹıʇǝ, ɐup ɐɔʇıʌǝ Sʇoɹǝp ⊥ıɯǝ dɹoɔǝssıuƃ ɹǝʇɐıus ıʇs sɐɟǝ dɹǝ-dɹoɔǝssıuƃ suɐdsɥoʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3.reset": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsʇoɹǝp ᴚǝsǝʇ Sɐʌǝ ɟoɹ ʇɥǝ ɔnɹɹǝuʇ ɯopǝ ʍıʇɥonʇ ɹǝsǝʇʇıuƃ ʇɥǝ oʇɥǝɹ ɯopǝ. ᴚǝɯoʌǝp ᴚǝɔoʌǝɹ ɯopǝ sɐʌǝs ɟɹoɯ Sǝʇʇıuƃs; sʇɐɹʇnd ɹǝɔoʌǝɹʎ ɹǝɯɐıus ɐʌɐıʅɐqʅǝ ıɟ ɐ sɐʌǝ ɔɐuuoʇ odǝu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3.transfers": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iɯdoɹʇ ɐup ǝxdoɹʇ uoʍ ɐddʅʎ ouʅʎ ʇo ʇɥǝ ɯopǝ ʎon ɐɹǝ dʅɐʎıuƃ, nsıuƃ ıʇs uoɹɯɐʅ sɐʌǝ sʇɹıuƃ oɹ ɟıʅǝ. ᴚǝʌıǝʍ ıɯdoɹʇǝp dɹoƃɹǝss qǝɟoɹǝ ɹǝdʅɐɔıuƃ ʇɥɐʇ ɯopǝ’s sɐʌǝ; ʇɥǝ oʇɥǝɹ ɯopǝ ıs dɹǝsǝɹʌǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "wiki.patch-notes.version-4.accessibility": [
     {
       "type": 0,

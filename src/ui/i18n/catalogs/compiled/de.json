@@ -20336,6 +20336,120 @@
       "value": "Gespeicherte Zeit wurde verbessert: Doppelte oder überlappende Ausgaben werden sicher abgelehnt, aktive Vorgänge behalten ihren Fortschritt und ihre Abbruchsteuerung, und unfertige Einstellungen bleiben beim Seitenwechsel erhalten."
     }
   ],
+  "wiki.patch-notes.version-4-2-1": [
+    {
+      "type": 0,
+      "value": "Version 4.2.1"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.challenges": [
+    {
+      "type": 0,
+      "value": "Anfänge und neun Herausforderungen der Unendlichkeit mit neuen Regeln und Belohnungen hinzugefügt."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.convergence": [
+    {
+      "type": 0,
+      "value": "Der Effekt von Konvergenz wird nach sechs abgeschlossenen Herausforderungen enthüllt. Nach Abschluss aller zehn wachsen Galaktische Gehirne kontinuierlich: Vorhandene Galaktische Gehirne verdoppeln sich alle 30 Minuten Spielzeit."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.feedback": [
+    {
+      "type": 0,
+      "value": "Wiederholte Konfliktmeldungen automatischer Skill-Vorlagen unterbunden und Simulations-Countdowns, Fortschrittsanimationen und Ressourcenformatierung verbessert."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.forager": [
+    {
+      "type": 0,
+      "value": "Simulationen werden durch Anfänge nach zehn Bot-Zielen freigeschaltet. Saisonales Sammeln und Jagen, Gruppenzuweisungen, Unterkünfte, Handwerk und Führung hinzugefügt. Diese Version endet im Zeitalter der Jäger und Sammler; spätere Zeitalter sind nicht verfügbar."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.offline": [
+    {
+      "type": 0,
+      "value": "Behoben, dass Offline-Zeit nach einem Neustart erneut gutgeschrieben wurde. Die Anzeige der tatsächlichen Spielgeschwindigkeit verbessert und den Offline-Boost auf 8× begrenzt."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.production": [
+    {
+      "type": 0,
+      "value": "Festhängende Railgun-Salven und die Erkennung vorhandener Beta-Spielstände unter iOS behoben. Die Forschung Haltbarkeits-Upgrade wird nach Abschluss ausgeblendet."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.progression": [
+    {
+      "type": 0,
+      "value": "Den Fortschritt in Modern neu aufgebaut: Quantenfortschritt, Realität und die bisherigen Simulationen werden durch Verbesserungen der Unendlichkeit und Simulationen von Zivilisationen ersetzt. Nützliche dauerhafte Verbesserungen befinden sich jetzt unter Unendlichkeit."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.skills": [
+    {
+      "type": 0,
+      "value": "Die Verfügbarkeit von Fraktur nach dem Erhalt eines Katalysators korrigiert. Geduldige Hände behält die Ladung aus ungenutzter Zeit nach dem Abschluss eines Tinker-Vorgangs."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2": [
+    {
+      "type": 0,
+      "value": "Version 4.2.2"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2.migration": [
+    {
+      "type": 0,
+      "value": "Die Migration zu Modern erfolgt automatisch. Fortgeschrittene Verbesserungen müssen erneut erspielt werden; Frakturen und ihre Erweiterungen werden entfernt. Grundspiel, Unendlichkeitspunkte, Transzendenz, Entdeckung und Käufe bleiben erhalten. Du kannst jederzeit zu Klassisch zurückkehren."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2.modes": [
+    {
+      "type": 0,
+      "value": "Getrennte Modi Klassisch und Modern hinzugefügt. Beim ersten Öffnen von Modern wird dein klassischer Fortschritt kopiert und der ursprüngliche klassische Spielstand bleibt erhalten. Spätere Wechsel setzen den jeweiligen Fortschritt des Zielmodus fort."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2.navigation": [
+    {
+      "type": 0,
+      "value": "Das Menü zeigt jetzt Zurück zu Klassisch oder Zurück zu Modern und wechselt direkt. Klassisch verwendet seine eigene Versionskennung C-1; Modern zeigt die App-Version. Kompakte Navigation und Versionsangaben am unteren Rand verbessert."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2.storage": [
+    {
+      "type": 0,
+      "value": "Getrennte native Speicherdateien und Steam-Cloud-Speicher für Klassisch und Modern hinzugefügt, mit Schutz vor widersprüchlichen oder veralteten Schreibvorgängen und aufbewahrten Wiederherstellungskopien."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3": [
+    {
+      "type": 0,
+      "value": "Version 4.2.3"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3.dialog": [
+    {
+      "type": 0,
+      "value": "Exportdateinamen mit Zeitstempel wiederhergestellt, mit einer eigenen Einstellung für jeden Modus. Das Kontrollkästchen entspricht jetzt den Einstellungen. Rückmeldungen zu Kopieren und Herunterladen, Importvorschauen, Design, Oberflächengröße und Tastaturfokus verbessert."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3.export": [
+    {
+      "type": 0,
+      "value": "Behoben, dass der Export fehlschlug, wenn der Browser den Spielstand nicht mehr schreiben konnte. Das Erstellen einer Kopie startet das Spiel nicht mehr neu und erfordert keinen Speichervorgang. Während Gespeicherte Zeit verarbeitet wird, bleibt der sichere Stand vor der Verarbeitung für den Export erhalten."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3.reset": [
+    {
+      "type": 0,
+      "value": "Das Zurücksetzen des Spielstands im aktuellen Modus wiederhergestellt, ohne den anderen Modus zurückzusetzen. Die Wiederherstellung von Modus-Spielständen aus den Einstellungen entfernt. Wenn sich ein Spielstand nicht öffnen lässt, bleibt die Wiederherstellung beim Start verfügbar."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3.transfers": [
+    {
+      "type": 0,
+      "value": "Import und Export gelten jetzt nur für den Modus, den du gerade spielst, und verwenden dessen übliche Spielstandzeichenfolge oder Datei. Prüfe den importierten Fortschritt, bevor du den Spielstand dieses Modus ersetzt. Der andere Modus bleibt erhalten."
+    }
+  ],
   "wiki.patch-notes.version-4.accessibility": [
     {
       "type": 0,

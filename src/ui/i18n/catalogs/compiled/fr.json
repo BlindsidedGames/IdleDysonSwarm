@@ -20336,6 +20336,120 @@
       "value": "Amélioration du Temps stocké afin que les dépenses en double ou simultanées soient refusées en toute sécurité, que les tâches actives conservent leur progression et leurs contrôles d’annulation, et que les réglages non terminés restent intacts lors d’un changement de page."
     }
   ],
+  "wiki.patch-notes.version-4-2-1": [
+    {
+      "type": 0,
+      "value": "Version 4.2.1"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.challenges": [
+    {
+      "type": 0,
+      "value": "Ajout des Débuts et de neuf défis d’Infinité, avec de nouvelles règles et récompenses."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.convergence": [
+    {
+      "type": 0,
+      "value": "L’effet de la Convergence est révélé après six défis terminés. Terminer les dix débloque la croissance continue des Cerveaux galactiques : les Cerveaux galactiques existants doublent toutes les 30 minutes de temps de jeu."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.feedback": [
+    {
+      "type": 0,
+      "value": "Suppression des avertissements répétés de conflit entre préréglages automatiques de compétences et amélioration des comptes à rebours, des animations de progression et du formatage des ressources des Simulations."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.forager": [
+    {
+      "type": 0,
+      "value": "Les Simulations se débloquent via Les débuts après dix objectifs de Bots. Ajout de la cueillette et de la chasse saisonnières, de l’affectation des équipes, des logements, de l’artisanat et de la Direction. Cette version s’arrête à l’ère des chasseurs-cueilleurs ; les ères suivantes sont indisponibles."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.offline": [
+    {
+      "type": 0,
+      "value": "Correction du temps hors ligne crédité une seconde fois après un redémarrage. Amélioration de l’affichage de la vitesse effective du jeu et limitation de l’accélération hors ligne à 8×."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.production": [
+    {
+      "type": 0,
+      "value": "Correction des salves de canons électromagnétiques bloquées et de la détection des sauvegardes bêta existantes sur iOS. La recherche Amélioration de durabilité est désormais masquée une fois terminée."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.progression": [
+    {
+      "type": 0,
+      "value": "Refonte de la progression Moderne : le Quantique, la Réalité et les anciennes Simulations sont remplacés par des améliorations d’Infinité et des Simulations de civilisation. Les améliorations permanentes utiles se trouvent désormais dans Infinité."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-1.skills": [
+    {
+      "type": 0,
+      "value": "Correction de la disponibilité de la fracture après avoir obtenu un Catalyseur et préservation de la charge de Mains patientes issue du temps inutilisé après la fin d’un bricolage."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2": [
+    {
+      "type": 0,
+      "value": "Version 4.2.2"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2.migration": [
+    {
+      "type": 0,
+      "value": "La migration vers le mode Moderne est automatique. Les améliorations avancées doivent être regagnées ; les fractures et leurs augmentations sont retirées. Le jeu de base, les Points d’Infinité, la Transcendance, la Découverte et les achats sont conservés. Vous pouvez revenir au mode Classique à tout moment."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2.modes": [
+    {
+      "type": 0,
+      "value": "Ajout de modes Classique et Moderne distincts. La première ouverture du mode Moderne copie votre progression Classique et préserve la sauvegarde Classique d’origine. Les changements de mode suivants reprennent la progression propre à chaque mode."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2.navigation": [
+    {
+      "type": 0,
+      "value": "Le menu affiche désormais Retour au mode Classique ou Retour au mode Moderne et change directement de mode. Le mode Classique utilise son propre numéro de version C-1 ; le mode Moderne affiche la version de l’application. Amélioration de la navigation compacte et des pieds de page de version."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-2.storage": [
+    {
+      "type": 0,
+      "value": "Ajout de fichiers de sauvegarde natifs et d’un stockage Steam Cloud distincts pour les modes Classique et Moderne, avec protection contre les écritures contradictoires ou obsolètes et conservation de copies de récupération."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3": [
+    {
+      "type": 0,
+      "value": "Version 4.2.3"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3.dialog": [
+    {
+      "type": 0,
+      "value": "Rétablissement des noms de fichiers exportés horodatés, avec une préférence distincte pour chaque mode. La case à cocher reprend le style des Paramètres. Amélioration des messages de copie et de téléchargement, des aperçus d’importation, du thème, de la taille de l’interface et du focus clavier."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3.export": [
+    {
+      "type": 0,
+      "value": "Correction de l’échec de l’exportation lorsque le navigateur ne pouvait plus enregistrer la sauvegarde. Créer une copie ne redémarre plus le jeu et ne nécessite plus d’enregistrement. Pendant le traitement du Temps stocké, l’exportation conserve l’instantané sécurisé pris avant le traitement."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3.reset": [
+    {
+      "type": 0,
+      "value": "Rétablissement de la réinitialisation de la sauvegarde du mode actuel, sans réinitialiser l’autre mode. Retrait de la récupération des sauvegardes de modes des Paramètres ; la récupération au démarrage reste disponible si une sauvegarde ne peut pas s’ouvrir."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-3.transfers": [
+    {
+      "type": 0,
+      "value": "L’importation et l’exportation concernent désormais uniquement le mode auquel vous jouez, avec sa chaîne ou son fichier de sauvegarde habituel. Vérifiez la progression importée avant de remplacer la sauvegarde de ce mode ; l’autre mode est préservé."
+    }
+  ],
   "wiki.patch-notes.version-4.accessibility": [
     {
       "type": 0,
