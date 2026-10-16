@@ -86,3 +86,14 @@ Only for Simulations: [current specification](plans/simulations-current-specific
 Selected Research drawer icon exception (Matthew, 14 October 2026): its fine
 magnifying-glass strokes use the darker page foreground matching selected text,
 rather than the panel foreground used by the other selected drawer icons.
+
+Mode switch (Matthew, 16 October 2026): the bottom drawer trigger uses the same
+navigation button styling as the other drawer entries, with a left-right arrow
+and current mode name. Classic opens route-themed options; Modern returns to
+Classic immediately without a disclosure. Classic also uses the modern drawer's
+selected fill, icon contrast, scrollbar spacing and responsive target fixes.
+The development preview
+has no persistent top toolbar; startup recovery appears only on failure.
+Verified desktop and 360px Classic layouts, plum and green panel themes,
+keyboard disclosure and direct Modern-to-Classic return. Other Interface/text
+scales, long locales and native hosts are unverified.

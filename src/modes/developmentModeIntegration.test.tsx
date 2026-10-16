@@ -14,8 +14,9 @@ import type { GameModeController, ModeSessionContext } from './modeController'
 import { ModeCloudCoordinator } from './modeCloud'
 import { mountDevelopmentModeStatus } from './development/mountDevelopmentModeStatus'
 import { startDevelopmentModeHost } from './development/startDevelopmentModeHost'
+import { DisposableCloudProvider } from './development/disposableHostPorts'
 
-afterEach(() => { cleanup(); vi.unstubAllGlobals(); vi.unstubAllEnvs() })
+afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); vi.unstubAllEnvs() })
 test('actual Classic and modern App drawers switch independent graphs, reset disclosure state and retain both saves', async () => {
   // Before every in-memory game construction: all persistence and departure
   // receipts are Maps; host/IDB/account/Cloud capabilities are absent. Public
@@ -54,13 +55,12 @@ test('actual Classic and modern App drawers switch independent graphs, reset dis
     fireEvent.click(button)
     fireEvent.click(screen.getByRole('button', { name: 'Start Modern' }))
     await waitFor(() => { if (controller.getSnapshot().phase === 'blocked') throw new Error(JSON.stringify(controller.getSnapshot())); expect(controller.getSnapshot().phase).toBe('ready'); expect(controller.getSnapshot().manifest?.active).toBe('modern') }, { timeout: 10000 })
-    await screen.findByRole('button', { name: 'Game mode: Modern' }, { timeout: 10000 })
+    await screen.findByRole('button', { name: 'Continue Classic' }, { timeout: 10000 })
     expect(screen.queryByRole('button', { name: 'Game mode: Classic' })).toBeNull()
-    expect(screen.getByRole('button', { name: 'Game mode: Modern' }).getAttribute('aria-expanded')).toBe('false')
-    fireEvent.click(screen.getByRole('button', { name: 'Game mode: Modern' }))
+    expect(screen.getByRole('button', { name: 'Continue Classic' }).hasAttribute('aria-expanded')).toBe(false)
     fireEvent.click(screen.getByRole('button', { name: 'Continue Classic' }))
     await screen.findByRole('button', { name: 'Game mode: Classic' }, { timeout: 10000 })
-    expect(screen.queryByRole('button', { name: 'Game mode: Modern' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Continue Classic' })).toBeNull()
     expect(screen.getByRole('button', { name: 'Game mode: Classic' }).getAttribute('aria-expanded')).toBe('false')
     expect(await store.read('modern')).toBeTruthy(); expect(await store.read('classic')).toBeTruthy()
     expect(publicGet).not.toHaveBeenCalled(); expect(publicSet).not.toHaveBeenCalled()
@@ -165,9 +165,8 @@ test.each(['frame startup', 'Cloud choice during export'] as const)('closing the
       const connection = window.__IDS_MODE_DEVELOPMENT_BRIDGE__!.connect(new URL(frame.src).searchParams.get('session')!, frame.contentWindow!)
       connection.ready({ quiesce: async () => connection.context.initialSave, close: async () => undefined })
       await host.ready
-      const cloud = screen.getByRole('button', { name: 'Simulate Cloud conflict' })
-      fireEvent.click(cloud)
-      await waitFor(() => expect(cloud.getAttribute('aria-busy')).toBeNull())
+      const remote = await createModernModeCodec(() => new Date(Date.now() - 1000).toISOString()).createFresh()
+      vi.spyOn(DisposableCloudProvider.prototype, 'read').mockResolvedValue(remote)
       await act(() => connection.saveActions.open('export', 'en'))
       await screen.findByRole('button', { name: 'Use this device' })
     }

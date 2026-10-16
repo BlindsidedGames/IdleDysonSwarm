@@ -38,13 +38,12 @@ test('the real main entry executes Modern and Classic frame bootstraps with disp
     frame.requestAnimationFrame = callback => frame.setTimeout(() => callback(frame.performance.now()), 16)
     frame.cancelAnimationFrame = id => frame.clearTimeout(id)
     await act(() => startDevelopmentFrame(frame))
-    return within(doc.body).findByRole('button', { name: `Game mode: ${mode}` }, { timeout: 10000 })
+    return within(doc.body).findByRole('button', { name: mode === 'Classic' ? 'Game mode: Classic' : 'Continue Classic' }, { timeout: 10000 })
   }
   try {
     await import('../main')
     const modern = await bootNext('Modern')
     fireEvent.click(modern)
-    fireEvent.click(within(active!.contentDocument!.body).getByRole('button', { name: 'Start Classic' }))
     await bootNext('Classic')
     const classicUi = within(active!.contentDocument!.body)
     fireEvent.click(classicUi.getAllByRole('button', { name: 'Settings' })[0])

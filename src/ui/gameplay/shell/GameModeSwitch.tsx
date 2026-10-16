@@ -2,7 +2,6 @@ import { useContext, useId, useState, useSyncExternalStore } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { GameModeControllerContext } from './GameModeControllerContext'
 import type { GameModeController } from '../../../modes/modeController'
-import { Button } from '../../components'
 import './gameModeSwitch.css'
 
 const messages = defineMessages({
@@ -37,26 +36,29 @@ export function GameModeSwitch({ controller }: { controller: GameModeController 
     try { await action(); setConfirming(false); setExpanded(false) }
     catch { setFailed(true) }
   }
-  return <div className="game-mode-switch">
-    {expanded && <section id={id} className="game-mode-switch__options" aria-label={intl.formatMessage(messages.modes, { mode: label(active) })}>
-      <p>{intl.formatMessage(messages.separate)}</p>
-      <Button fullWidth disabled={busy} onClick={() => void act(() => controller.switchTo(target))}>
+  return <div className="game-mode-switch dyson-navigation--drawer">
+    {active === 'classic' && expanded && <section id={id} className="game-mode-switch__options" aria-label={intl.formatMessage(messages.modes, { mode: label(active) })}>
+      <button type="button" className="dyson-navigation__link" disabled={busy} onClick={() => void act(() => controller.switchTo(target))}>
         {intl.formatMessage(snapshot.manifest?.saves[target] ? messages.continue : messages.start, { mode: label(target) })}
-      </Button>
-      {active === 'classic' && (snapshot.manifest?.saves.modern
-        ? <p>{intl.formatMessage(messages.conflict)}</p>
-        : confirming ? <div className="game-mode-switch__confirmation">
+      </button>
+      {active === 'classic' && !snapshot.manifest?.saves.modern && (confirming ? <div className="game-mode-switch__confirmation">
           <p>{intl.formatMessage(messages.oneWay)}</p>
-          <Button fullWidth disabled={busy} onClick={() => void act(() => controller.migrateClassic())}>{intl.formatMessage(messages.confirm)}</Button>
-          <Button fullWidth disabled={busy} onClick={() => setConfirming(false)}>{intl.formatMessage(messages.cancel)}</Button>
-        </div> : <Button fullWidth disabled={busy} onClick={() => setConfirming(true)}>{intl.formatMessage(messages.migrate)}</Button>)}
-      {failed && <p role="alert">{intl.formatMessage(messages.failed)}</p>}
-      {snapshot.phase === 'blocked' && <Button fullWidth onClick={() => void act(() => controller.start())}>{intl.formatMessage(messages.continue, { mode: label(active) })}</Button>}
+          <button type="button" className="dyson-navigation__link" disabled={busy} onClick={() => void act(() => controller.migrateClassic())}>{intl.formatMessage(messages.confirm)}</button>
+          <button type="button" className="dyson-navigation__link" disabled={busy} onClick={() => setConfirming(false)}>{intl.formatMessage(messages.cancel)}</button>
+        </div> : <button type="button" className="dyson-navigation__link" disabled={busy} onClick={() => setConfirming(true)}>{intl.formatMessage(messages.migrate)}</button>)}
+      {snapshot.phase === 'blocked' && <button type="button" className="dyson-navigation__link" onClick={() => void act(() => controller.start())}>{intl.formatMessage(messages.continue, { mode: label(active) })}</button>}
     </section>}
-    <Button fullWidth aria-expanded={expanded} aria-controls={expanded ? id : undefined}
-      disabled={busy} onClick={() => { setExpanded(value => !value); setConfirming(false) }}>
-      {intl.formatMessage(messages.modes, { mode: label(active) })}
-    </Button>
+    {failed && <p role="alert">{intl.formatMessage(messages.failed)}</p>}
+    <button type="button" className="dyson-navigation__link"
+      aria-label={intl.formatMessage(active === 'classic' ? messages.modes : messages.continue, { mode: label('classic') })}
+      aria-expanded={active === 'classic' ? expanded : undefined} aria-controls={active === 'classic' && expanded ? id : undefined}
+      disabled={busy} onClick={() => {
+        if (active === 'modern') { void act(() => snapshot.phase === 'blocked' ? controller.start() : controller.switchTo('classic')); return }
+        setExpanded(value => !value); setConfirming(false)
+      }}>
+      <span className="dyson-navigation__icon game-mode-switch__arrow" aria-hidden="true">↔</span>
+      <span className="dyson-navigation__label">{label(active)}</span>
+    </button>
   </div>
 }
 

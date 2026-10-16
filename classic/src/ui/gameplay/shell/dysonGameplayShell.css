@@ -598,7 +598,7 @@
   background: #201722;
   color: white;
   transform: translateY(
-    calc(-100% - max(0.5rem, var(--safe-area-top)))
+    calc(-100% - max(0.5rem, var(--safe-area-top)) - 4px)
   );
 }
 
@@ -1440,7 +1440,7 @@
   scrollbar-color:
     var(--menu-scrollbar-thumb)
     var(--menu-scrollbar-track);
-  scrollbar-gutter: stable;
+  scrollbar-gutter: auto;
   scrollbar-width: thin;
   padding: max(0.4rem, var(--safe-area-top)) 0.4rem
     max(0.55rem, var(--safe-area-bottom));
@@ -1736,8 +1736,22 @@
 .dyson-shell[data-route-theme]
   .dyson-navigation--drawer
   .dyson-navigation__link[aria-current="page"] {
-  background: var(--theme-selected);
-  color: white;
+  background: var(--theme-accent);
+  background-image: var(--ui-action-gradient);
+  color: var(--theme-page);
+  opacity: 1;
+}
+
+.dyson-shell[data-route-theme] .dyson-navigation--drawer .dyson-navigation__link[aria-current="page"] :is(.dyson-navigation__label, .dyson-navigation__drawer-value, .dyson-navigation__status) {
+  color: inherit;
+  text-shadow: none;
+}
+.dyson-shell[data-route-theme] .dyson-navigation--drawer .dyson-navigation__link[aria-current="page"] .dyson-navigation__icon {
+  color: var(--theme-panel);
+  text-shadow: none;
+}
+.dyson-shell[data-route-theme] .dyson-navigation--drawer .dyson-navigation__link[aria-current="page"] .dyson-navigation__icon-mask {
+  filter: none;
 }
 
 .dyson-shell[data-route-theme]
@@ -1968,3 +1982,34 @@
 
 /* Shared mode-navigation chrome; Classic gameplay and route layout stay independent. */
 .dyson-shell__side-bottom { grid-row: 4; align-self: end; min-inline-size: 0; }
+
+/* Drawer destinations remain readable when narrow bars move shortcuts here. */
+.dyson-navigation--drawer .dyson-navigation__link {
+  min-block-size: max(44px, var(--target-minimum));
+}
+.dyson-navigation--drawer .dyson-navigation__label {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
+.dyson-navigation__drawer-metadata { display: contents; }
+@media (max-width: 720px) {
+  .dyson-navigation--drawer .dyson-navigation__link { flex-wrap: wrap; }
+  .dyson-navigation--drawer .dyson-navigation__label { flex: 1 1 0; }
+  .dyson-navigation__drawer-metadata {
+    display: flex;
+    flex: 0 0 100%;
+    min-inline-size: 0;
+    justify-content: flex-end;
+    gap: var(--ui-control-gap);
+  }
+}
+
+/* Match the user-selected Assembly Line purchase fill in the plum palette. */
+.dyson-shell:is([data-route-theme="bots"], [data-route-theme="store"], [data-route-theme="story"], [data-route-theme="wiki"]) .dyson-navigation--drawer .dyson-navigation__link[aria-current="page"] {
+  background-color: #d1b6d7;
+}
+
+/* Research needs the deeper foreground for its fine magnifying-glass strokes. */
+.dyson-shell[data-route-theme="research"] .dyson-navigation--drawer .dyson-navigation__link[aria-current="page"] .dyson-navigation__icon { color: var(--theme-page); }

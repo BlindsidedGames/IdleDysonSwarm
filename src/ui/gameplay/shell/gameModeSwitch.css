@@ -23,12 +23,14 @@
   font-size: var(--font-size-body, .82rem);
   line-height: 1.4;
 }
-.game-mode-switch .ui-button {
+.game-mode-switch .dyson-navigation__link {
   min-block-size: max(44px, 2.75rem);
   min-inline-size: 44px;
   white-space: normal;
   overflow-wrap: anywhere;
 }
 @media (pointer: coarse) {
-  .game-mode-switch .ui-button { min-block-size: max(48px, 3rem); }
+  .game-mode-switch .dyson-navigation__link { min-block-size: max(48px, 3rem); }
 }
+
+.game-mode-switch__arrow { font-size: 1.35em; line-height: 1; }

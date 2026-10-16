@@ -57,14 +57,7 @@ export async function startDevelopmentModeHost(container: HTMLElement): Promise<
   })
   controller = host.controller
   manager = mountModeSaveManager(dialogs, panel, controller, store, installation.transfers)
-  const controls = mountDevelopmentModeStatus(status, host, manager, async () => {
-    const mode = controller.getSnapshot().manifest?.active
-    if (!mode) return
-    const date = () => new Date(Date.now() - 1000).toISOString()
-    const remote = mode === 'classic' ? createClassicModeCodec(date) : createModernModeCodec(date)
-    const key = `synthetic-account/${MODE_CLOUD_NAMESPACES[mode]}`
-    await installation.cloudProvider.compareAndPublish(key, await installation.cloudProvider.read(key), await remote.createFresh())
-  })
+  const controls = mountDevelopmentModeStatus(status, host)
   const ready = controls.start()
   let closePromise: Promise<void> | undefined
   return { ready, close() {
