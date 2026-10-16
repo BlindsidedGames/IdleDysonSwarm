@@ -1,3 +1,5 @@
+import { ReactiveStartupErrorBoundary } from '../../../classic/src/ui/shell'
+import { installNativeReviewPrompt } from '../../../classic/src/platform/nativeReviewPrompt'
 import { ModeSaveActionsContext } from '../../ui/gameplay/settings/modeSaveActions'
 import { createRoot } from 'react-dom/client'
 import App from '../../../classic/src/App'
@@ -24,18 +26,22 @@ export async function renderClassicGame(context: ModeSessionContext, controller:
   const root = createRoot(container)
   try {
     return await createClassicModeSession(context, { ...options, attach: runtime => {
+      const stopReview = options.native && options.native.target !== 'electron' && options.native.requestStoreReview
+        ? installNativeReviewPrompt({ runtime, bridge: options.native }) : undefined
       root.render(<GameModeControllerContext.Provider value={controller}><ModeSaveActionsContext.Provider value={options.saveActions ?? null}>
         <LocalePreferenceProvider preference={locale} initialLocale={catalog.locale} initialMessages={catalog.messages}>
           <NumberNotationProvider preference={notation}><ResearchVisibilityProvider preference={research}>
             <BottomNavigationTextProvider preference={navigation}>
+              <ReactiveStartupErrorBoundary actions={{ reloadSafely: options.reloadSafely, recoveryExportAvailable: runtime.recoveryExportAvailable, exportRecovery: runtime.exportLastRecovery }} diagnosticContext={{ hostKind: options.hostKind ?? 'browser', saveSchemaVersion: 20 }}>
               <App key={context.sessionId} runtime={runtime} locale={catalog.locale} saveSchemaVersion={20}
-                releaseFooter={{ platform: 'Dev', version: `C-${classicRelease.version}`, build: 'local' }}
-                sampleUtc={() => options.lifecycleClock.sample().serializedUtcText} reloadSafely={async () => { throw new Error('Use the parent development host reload.') }} />
+                releaseFooter={{ ...(options.releaseFooter ?? { platform: 'Dev', build: 'local' }), version: `C-${classicRelease.version}` }}
+                sampleUtc={() => options.lifecycleClock.sample().serializedUtcText} reloadSafely={options.reloadSafely ?? (async () => { throw new Error('Reload the owning game host.') })} hostKind={options.hostKind} releasePlatformServices={options.services} audio={options.audio} />
+              </ReactiveStartupErrorBoundary>
             </BottomNavigationTextProvider>
           </ResearchVisibilityProvider></NumberNotationProvider>
         </LocalePreferenceProvider>
       </ModeSaveActionsContext.Provider></GameModeControllerContext.Provider>)
-      return () => root.unmount()
+      return () => { stopReview?.(); root.unmount() }
     } })
   } catch (error) { root.unmount(); throw error }
 }

@@ -1,3 +1,4 @@
+import { RuntimeEntitlementBridge } from '../../classic/src/store/runtimeEntitlements'
 import { createProductionCanonicalApplicationFactory } from '../../classic/src/application/productionApplicationFactory'
 import { createBrowserRuntimeFoundation, type BrowserUiRuntimeFoundation } from '../../classic/src/ui/runtime'
 import { SingleHostSessionWriterAuthority } from '../../classic/src/platform/singleHostSessionWriterAuthority'
@@ -11,17 +12,23 @@ import type { ModeRuntimeHostOptions } from './modeRuntimeHostOptions'
 export async function createClassicModeSession(context: ModeSessionContext,
   options: ModeRuntimeHostOptions & { attach?: (runtime: BrowserUiRuntimeFoundation) => (() => void) }): Promise<ModeSession> {
   if (context.mode !== 'classic') throw new Error('Classic runtime requires Classic storage.')
+  const hostEntitlements = options.services ? new RuntimeEntitlementBridge(options.services.entitlements, options.services.doubleInfinityPointsEffect) : undefined
   const paths = NATIVE_WEB_SAVE_PATHS
   const storage = new ModeRuntimeStorage(context, paths.current)
   const lifecycle = new ModeLifecycleAdapter(options.lifecycle)
   const runtime = createBrowserRuntimeFoundation({
     createApplication: createProductionCanonicalApplicationFactory({
       createFirstRunSave: () => { throw new Error('Mode owner must supply a fresh save.') },
-      readHostEntitlements: () => ({ permanentDoubleIp: false }),
+      readHostEntitlements: () => hostEntitlements?.currentDysonEntitlements() ?? ({ permanentDoubleIp: false }),
+      readDeveloperOptions: () => hostEntitlements?.currentOwnership().developerOptions === true,
     }),
     saveStorage: storage, saveRepositoryPaths: paths,
+    exportSaveFile: options.native?.exportSaveFile?.bind(options.native),
     writerAuthority: new SingleHostSessionWriterAuthority(),
-    allowCanonicalPlayerWrites: true, allowedExternalOrigins: [],
+    allowCanonicalPlayerWrites: true, allowedExternalOrigins: options.allowedExternalOrigins ?? [],
+    hostEntitlements,
+    developmentControlsAvailable: options.developmentControlsAvailable,
+    developmentControlsRequireEntitlement: options.developmentControlsRequireEntitlement,
     lifecycle, lifecycleClock: options.lifecycleClock,
     lifecyclePolicy: options.lifecyclePolicy,
     activeTimeClock: options.activeTimeClock, activeTimeScheduler: options.activeTimeScheduler,

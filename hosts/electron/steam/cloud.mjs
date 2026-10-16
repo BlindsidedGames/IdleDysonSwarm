@@ -50,30 +50,32 @@ export class SteamCloud {
     userData = realpathSync(userData)
     this.readSucceeded = false
     this.account=account;this.identity=identity;this.prompt=choose;this.namespace=namespace
-    this.directory=join(userData,'steam-cloud',account,...(namespace ? [namespace] : []))
+    this.directory=join(userData,'steam-cloud',account)
+    this.filePrefix=namespace === 'idleds-modern-v1' ? 'modern-' : ''
     this.localDirectory=join(userData,'steam-local',account,...(namespace ? [namespace] : []))
     this.marker=join(this.localDirectory,'cloud-sha256.txt')
     this.queue=Promise.resolve()
   }
+  file(name){return join(this.directory,this.filePrefix+name)}
   ensureIdentity(){if(this.identity()!==this.account)throw new Error('Steam account changed; restart before saving to Cloud')}
   /** Upgrade evidence only: no acknowledgement, marker or download writes. */
   async readHistorical(){
     this.ensureIdentity()
-    return await read(join(this.directory,'current.idsw'))
+    return await read(this.file('current.idsw'))
   }
   async readForUpgrade(){ return this.readHistorical() }
   async readBackupsForUpgrade(){ return this.readHistoricalBackups() }
   async readHistoricalBackups(){
     this.ensureIdentity()
     const texts=[]
-    for(let index=1;index<=3;index++) { const text=await read(join(this.directory,`backup-${index}.idsw`)); if(text!==null)texts.push(text) }
+    for(let index=1;index<=3;index++) { const text=await read(this.file(`backup-${index}.idsw`)); if(text!==null)texts.push(text) }
     return texts
   }
   async read(){
     this.readSucceeded = false
     this.downloadedHash = null
     this.ensureIdentity()
-    const text=await read(join(this.directory,'current.idsw'))
+    const text=await read(this.file('current.idsw'))
     const changed=text!==null&&hash(text)!==await read(this.marker)
     if(changed) await write(join(this.localDirectory,'downloads',`${hash(text)}.idsw`),text)
     this.downloadedHash = changed ? hash(text) : null
@@ -84,7 +86,7 @@ export class SteamCloud {
     this.ensureIdentity()
     const texts=[]
     for(let index=1;index<=3;index++) {
-      try { const text=await read(join(this.directory,`backup-${index}.idsw`)); if(text!==null) texts.push(text) }
+      try { const text=await read(this.file(`backup-${index}.idsw`)); if(text!==null) texts.push(text) }
       catch { /* Keep unreadable backups untouched and try the next candidate. */ }
     }
     return texts
@@ -94,10 +96,10 @@ export class SteamCloud {
     // bytes after recovery, without treating them as a publishable snapshot.
     if(typeof text !== 'string' || Buffer.byteLength(text)>maximumBytes) throw new Error('Invalid Cloud acknowledgement')
     this.ensureIdentity()
-    if(await read(join(this.directory,'current.idsw'))!==text) throw new Error('Cloud changed before acknowledgement; restart to resolve it')
+    if(await read(this.file('current.idsw'))!==text) throw new Error('Cloud changed before acknowledgement; restart to resolve it')
     await write(this.marker,hash(text),async()=>{
       this.ensureIdentity()
-      if(await read(join(this.directory,'current.idsw'))!==text) throw new Error('Cloud changed before acknowledgement; restart to resolve it')
+      if(await read(this.file('current.idsw'))!==text) throw new Error('Cloud changed before acknowledgement; restart to resolve it')
     })
   }
   async choose(local,remote){
@@ -116,11 +118,11 @@ export class SteamCloud {
     const run=this.queue.then(async()=>{
       this.ensureIdentity()
       if(!this.readSucceeded) throw new Error('Cloud startup read failed; publication disabled')
-      const current=join(this.directory,'current.idsw')
+      const current=this.file('current.idsw')
       const previousCurrent=await read(current)
       if(previousCurrent===text){await this.acknowledge(text);return}
       if(previousCurrent!==null && hash(previousCurrent)!==await read(this.marker)) throw new Error('Cloud changed before publication; restart to resolve it')
-      for(let i=3;i>=1;i--){const source=i===1?current:join(this.directory,`backup-${i-1}.idsw`);const previous=await read(source);if(previous!==null)await write(join(this.directory,`backup-${i}.idsw`),previous)}
+      for(let i=3;i>=1;i--){const source=i===1?current:this.file(`backup-${i-1}.idsw`);const previous=await read(source);if(previous!==null)await write(this.file(`backup-${i}.idsw`),previous)}
       await write(current,text,async()=>{
         this.ensureIdentity()
         if(await read(current)!==previousCurrent) throw new Error('Cloud changed during publication; restart to resolve it')

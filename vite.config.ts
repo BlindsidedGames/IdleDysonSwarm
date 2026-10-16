@@ -1,10 +1,13 @@
+import { fileURLToPath } from 'node:url'
 import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import {
   HTML_CONTENT_SECURITY_POLICY,
   renderStaticSecurityHeaders,
   SECURITY_HEADERS,
+  MODE_FRAME_SECURITY_HEADERS,
 } from './securityHeaders.js'
 import {
   stripMessageAuthoringMetadataPlugin,
@@ -102,8 +105,17 @@ export default defineConfig(({ mode }) => {
         : [pwaPackagePlugin()]),
       {
         name: 'idle-dyson-swarm-security-headers',
-        apply: 'build',
-        transformIndexHtml() {
+        configurePreviewServer(server) {
+          // Serve the single owned iframe before preview's global DENY headers.
+          server.middlewares.use((request, response, next) => {
+            if (request.url?.split('?')[0] !== `${server.config.base}mode.html`) return next()
+            for (const [name, value] of Object.entries(MODE_FRAME_SECURITY_HEADERS)) response.setHeader(name, value)
+            response.setHeader('Content-Type', 'text/html; charset=utf-8')
+            response.end(readFileSync(resolve(server.config.root, server.config.build.outDir, 'mode.html')))
+          })
+        },
+        transformIndexHtml(_html, context) {
+          if (context.server) return []
           return [
             {
               tag: 'meta',
@@ -126,6 +138,7 @@ export default defineConfig(({ mode }) => {
       },
     ],
     build: {
+      rolldownOptions: { input: { main: fileURLToPath(new URL('./index.html', import.meta.url)), mode: fileURLToPath(new URL('./mode.html', import.meta.url)) } },
       // Native schemes and Electron's file loader require relative asset URLs.
       outDir: nativeBuild ? 'dist-native' : 'dist',
       // The repeatable initial-request budget report consumes this graph instead

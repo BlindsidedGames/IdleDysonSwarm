@@ -6,4 +6,11 @@ import type { BrowserRuntimeFoundationOptions } from '../ui/runtime'
 export type ModeRuntimeHostOptions = Required<Pick<BrowserRuntimeFoundationOptions,
   'lifecycle' | 'lifecycleClock' | 'lifecyclePolicy' | 'activeTimeClock' |
   'activeTimeScheduler' | 'nowUtcMilliseconds' | 'departureMarker'>> &
-  Pick<BrowserRuntimeFoundationOptions, 'frontendSnapshotScheduler' | 'checkpointScheduler'> & { readonly saveActions?: ModeSaveActions }
+  Partial<Pick<BrowserRuntimeFoundationOptions, 'frontendSnapshotScheduler' | 'checkpointScheduler' | 'hostEntitlements' | 'allowedExternalOrigins' | 'developmentControlsAvailable' | 'developmentControlsRequireEntitlement'>> & { readonly saveActions?: ModeSaveActions
+    readonly services?: Readonly<import('../platform/releaseFoundation').ReleasePlatformServices>
+    readonly hostKind?: import('../platform/releaseFoundation').HostKind
+    readonly releaseFooter?: import('../platform/releaseFooter').ReleaseFooterPresentation
+    readonly reloadSafely?: () => Promise<void>
+    readonly audio?: import('../audio').GameAudioService
+    readonly native?: import('../platform/nativeHostBridge').NativeHostBridgeApi
+  }

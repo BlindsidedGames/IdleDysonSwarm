@@ -6,7 +6,7 @@ import type { ModeSessionContext, ModeSession } from './modeController'
 import { ModeLifecycleAdapter, ModeRuntimeStorage, runtimeModeSession } from './modeRuntimeStorage'
 import type { ModeRuntimeHostOptions } from './modeRuntimeHostOptions'
 
-/** Local-only adapter. Public/native activation is deliberately not composed. */
+/** Modern graph with host-owned persistence, lifecycle and entitlement capabilities. */
 export async function createModernModeSession(context: ModeSessionContext,
   options: ModeRuntimeHostOptions & { attach?: (runtime: BrowserUiRuntimeFoundation) => (() => void) }): Promise<ModeSession> {
   if (context.mode !== 'modern') throw new Error('Modern runtime requires modern storage.')
@@ -16,11 +16,16 @@ export async function createModernModeSession(context: ModeSessionContext,
   const runtime = createBrowserRuntimeFoundation({
     createApplication: createProductionCanonicalApplicationFactory({
       createFirstRunSave: () => { throw new Error('Mode owner must supply a fresh save.') },
-      readHostEntitlements: () => ({ permanentDoubleIp: false }),
+      readHostEntitlements: () => options.hostEntitlements?.currentDysonEntitlements() ?? ({ permanentDoubleIp: false }),
+      readDeveloperOptions: () => options.hostEntitlements?.currentOwnership().developerOptions === true,
     }),
     saveStorage: storage, saveRepositoryPaths: paths,
+    exportSaveFile: options.native?.exportSaveFile?.bind(options.native),
     writerAuthority: new SingleHostSessionWriterAuthority(),
-    allowCanonicalPlayerWrites: true, allowedExternalOrigins: [],
+    allowCanonicalPlayerWrites: true, allowedExternalOrigins: options.allowedExternalOrigins ?? [],
+    hostEntitlements: options.hostEntitlements,
+    developmentControlsAvailable: options.developmentControlsAvailable,
+    developmentControlsRequireEntitlement: options.developmentControlsRequireEntitlement,
     lifecycle, lifecycleClock: options.lifecycleClock,
     lifecyclePolicy: options.lifecyclePolicy,
     activeTimeClock: options.activeTimeClock, activeTimeScheduler: options.activeTimeScheduler,

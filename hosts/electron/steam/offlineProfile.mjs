@@ -2,7 +2,7 @@ import { createHash, randomUUID } from 'node:crypto'
 import { lstat, mkdir, open, readFile, readdir, rename } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 
-const stateFile = 'offline-profile.json'
+const defaultStateFile = 'offline-profile.json'
 const maximumFileBytes = 32 * 1024 * 1024
 const maximumProfileBytes = 256 * 1024 * 1024
 const fingerprintPattern = /^[a-f0-9]{64}$/
@@ -32,7 +32,7 @@ async function writeDurably(path, bytes) {
   await syncDirectory(dirname(path))
 }
 
-async function writeSelection(accountDirectory, state) {
+async function writeSelection(accountDirectory, state, stateFile = defaultStateFile) {
   const temporary = join(accountDirectory, `${stateFile}.${randomUUID()}.tmp`)
   await writeDurably(temporary, JSON.stringify(state))
   await rename(temporary, join(accountDirectory, stateFile))
@@ -68,7 +68,9 @@ async function readProfile(root) {
 
 /** Select an account-owned copy; never overwrite either original profile. */
 export async function selectSteamSaveRoot({ offlineRoot, accountDirectory, ensureIdentity, choose, saveRootName = 'web-runtime-v1' }) {
-  if (!['web-runtime-v1', 'idleds-rework-beta-v1'].includes(saveRootName)) throw new Error('Unsupported Steam save namespace')
+  if (!['web-runtime-v1', 'idleds-rework-beta-v1', 'idleds-modern-v1'].includes(saveRootName)) throw new Error('Unsupported Steam save namespace')
+  const stateFile = saveRootName === 'idleds-modern-v1' ? 'modern-offline-profile.json' : defaultStateFile
+  const recoveryFolder = saveRootName === 'idleds-modern-v1' ? 'modern-offline-recovery' : 'offline-recovery'
   ensureIdentity()
   await rejectLinks(accountDirectory)
   await mkdir(accountDirectory, { recursive: true })
@@ -86,7 +88,7 @@ export async function selectSteamSaveRoot({ offlineRoot, accountDirectory, ensur
       throw new Error('Invalid offline profile selection')
     }
   } catch (error) { if (error.code !== 'ENOENT') throw error }
-  const recoveryDirectory = join(accountDirectory, 'offline-recovery')
+  const recoveryDirectory = join(accountDirectory, recoveryFolder)
   await rejectLinks(recoveryDirectory)
   if (!hasSelection) {
     try {
@@ -95,7 +97,7 @@ export async function selectSteamSaveRoot({ offlineRoot, accountDirectory, ensur
   }
   const selectedRoot = state.recovery === null
     ? join(accountDirectory, saveRootName)
-    : join(accountDirectory, 'offline-recovery', state.recovery, saveRootName)
+    : join(accountDirectory, recoveryFolder, state.recovery, saveRootName)
   await rejectLinks(selectedRoot)
   // A missing selected profile must not silently become a fresh game.
   if (state.recovery !== null && !(await lstat(selectedRoot)).isDirectory()) throw new Error('Recovered offline profile is missing')
@@ -116,9 +118,9 @@ export async function selectSteamSaveRoot({ offlineRoot, accountDirectory, ensur
   if (choice === 'offline') {
     // Commit the old selection first. A crash while copying can then retry;
     // loss of the selection file later cannot silently load an older profile.
-    if (!hasSelection) await writeSelection(accountDirectory, state)
+    if (!hasSelection) await writeSelection(accountDirectory, state, stateFile)
     recovery = randomUUID()
-    root = join(accountDirectory, 'offline-recovery', recovery, saveRootName)
+    root = join(accountDirectory, recoveryFolder, recovery, saveRootName)
     await rejectLinks(root)
     for (const { relative, bytes } of files) await writeDurably(join(root, relative), bytes)
     // Persist every new directory entry before committing the root pointer.
@@ -129,6 +131,6 @@ export async function selectSteamSaveRoot({ offlineRoot, accountDirectory, ensur
     for (const path of [...directories].sort((a, b) => b.length - a.length)) await syncDirectory(path)
   }
   ensureIdentity()
-  await writeSelection(accountDirectory, { version: 1, recovery, handledFingerprint: fingerprint })
+  await writeSelection(accountDirectory, { version: 1, recovery, handledFingerprint: fingerprint }, stateFile)
   return root
 }

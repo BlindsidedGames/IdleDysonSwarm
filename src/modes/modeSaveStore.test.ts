@@ -1,4 +1,6 @@
 import { describe, expect, test } from 'vitest'
+import { CanonicalModeFiles } from './canonicalModeFiles'
+import { NATIVE_WEB_SAVE_PATHS } from '../platform/platformSaveStorage'
 import { readFileSync } from 'node:fs'
 import { createClassicModeCodec } from './classicModeCodec'
 import { createModernModeCodec } from './modernModeCodec'
@@ -151,4 +153,40 @@ test('a missing primary selection record with a preserved backup cannot reset an
   storage.files.delete('modes-v1/manifest.json')
   await expect(create(storage).initialize({ discovery: 'complete', saves: {} })).rejects.toThrow('selection record is missing')
   expect([...storage.files.values()]).toContain('classic:original')
+})
+
+
+test('released Classic files and separate Modern files survive interrupted publication and old-release writes', async () => {
+  const metadata = new MemoryStorage(), classic = new MemoryStorage(), modern = new MemoryStorage()
+  const files = { classic: { storage: classic, paths: NATIVE_WEB_SAVE_PATHS }, modern: { storage: modern, paths: NATIVE_WEB_SAVE_PATHS } }
+  const open = () => {
+    const canonical = new CanonicalModeFiles(metadata, files, codecs)
+    return { canonical, store: new ModeSaveStore(metadata, codecs, () => undefined, 'modes-v1', canonical.publish) }
+  }
+  let { store, canonical } = open()
+  await store.initialize({ discovery: 'complete', saves: { classic: 'classic:released' } })
+  expect(await classic.readText(NATIVE_WEB_SAVE_PATHS.current)).toBe('classic:released')
+  await store.migrateClassic(() => 'modern:migrated')
+  expect(await modern.readText(NATIVE_WEB_SAVE_PATHS.current)).toBe('modern:migrated')
+  const replace = modern.replaceAtomically.bind(modern)
+  modern.replaceAtomically = async (a, b) => { if (b === NATIVE_WEB_SAVE_PATHS.current) throw Error('interrupted canonical publication'); await replace(a, b) }
+  await expect(store.checkpoint('modern', 'modern:earned')).rejects.toThrow('interrupted canonical')
+  expect(await classic.readText(NATIVE_WEB_SAVE_PATHS.current)).toBe('classic:released')
+  modern.replaceAtomically = replace
+  ;({ store, canonical } = open())
+  await canonical.reconcile(store)
+  expect(await store.read('modern')).toBe('modern:earned')
+  expect(await modern.readText(NATIVE_WEB_SAVE_PATHS.current)).toBe('modern:earned')
+  // Running the released Classic build after this build must remain visible on
+  // the next launch without converting it into, or overwriting, Modern progress.
+  await classic.writeText(NATIVE_WEB_SAVE_PATHS.current, 'classic:old-release-earned')
+  ;({ store, canonical } = open())
+  metadata.failAt = metadata.mutations + 1
+  await expect(canonical.reconcile(store)).rejects.toThrow('interrupted')
+  metadata.failAt = Infinity
+  ;({ store, canonical } = open())
+  await canonical.reconcile(store)
+  expect(await store.read('classic')).toBe('classic:old-release-earned')
+  expect(await store.read('modern')).toBe('modern:earned')
+  expect([...metadata.files.values()]).toContain('classic:released')
 })

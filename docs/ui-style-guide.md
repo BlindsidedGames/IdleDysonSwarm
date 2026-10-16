@@ -124,3 +124,9 @@ has no persistent top toolbar; startup recovery appears only on failure.
 Verified desktop and 360px Classic layouts, plum and green panel themes,
 keyboard activation and direct Modern-to-Classic return. Other Interface/text
 scales, long locales and native hosts are unverified.
+
+The existing mode switch and paired-save settings are now composed by the
+production/native host (16 October 2026). Each mode mounts in a fresh owned
+document, retaining the same drawer and Settings patterns; no new gameplay
+layout convention is introduced. Current save paths and QA limits are recorded
+in [Classic/Modern save storage](platform/classic-modern-save-storage.md).
