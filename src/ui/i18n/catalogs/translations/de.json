@@ -2724,5 +2724,6 @@
   "rework.migration.automaticDescription": "Dein Spielstand wird automatisch migriert, wenn du Modern öffnest. Fortgeschrittene Verbesserungen müssen erneut erspielt werden. Brüche und ihre Erweiterungen werden entfernt. Grundspiel, IP, Transzendenz, Entdeckung und Käufe bleiben erhalten.",
   "rework.migration.separateSaves": "Dein Fortschritt wird in zwei getrennten Spielständen fortgesetzt. Du kannst jederzeit zwischen Klassisch und Modern wechseln.",
   "rework.migration.returnClassic": "Zurück zu Klassisch",
-  "rework.migration.continueModern": "In Modern fortfahren"
+  "rework.migration.continueModern": "In Modern fortfahren",
+  "modes.back": "Zurück zu {mode}"
 }

@@ -6573,6 +6573,16 @@
       "value": "Начинать с 10 серверами"
     }
   ],
+  "modes.back": [
+    {
+      "type": 0,
+      "value": "Вернуться в "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
   "modes.cancel": [
     {
       "type": 0,

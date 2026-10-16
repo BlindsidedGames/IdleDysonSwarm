@@ -6573,6 +6573,16 @@
       "value": "サーバー10台で開始"
     }
   ],
+  "modes.back": [
+    {
+      "type": 0,
+      "value": "戻る: "
+    },
+    {
+      "type": 1,
+      "value": "mode"
+    }
+  ],
   "modes.cancel": [
     {
       "type": 0,

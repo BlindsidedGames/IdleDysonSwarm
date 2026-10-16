@@ -2724,5 +2724,6 @@
   "rework.migration.automaticDescription": "Tu partida se migra automáticamente al abrir Moderno. Las mejoras avanzadas deben ganarse de nuevo y se eliminan las fracturas y sus aumentos. Se conservan el juego base, IP, Trascendencia, Descubrimiento y tus compras.",
   "rework.migration.separateSaves": "Tu progreso continúa en dos partidas guardadas por separado. Puedes cambiar entre Clásico y Moderno en cualquier momento.",
   "rework.migration.returnClassic": "Volver a Clásico",
-  "rework.migration.continueModern": "Continuar en Moderno"
+  "rework.migration.continueModern": "Continuar en Moderno",
+  "modes.back": "Volver a {mode}"
 }

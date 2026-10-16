@@ -9,6 +9,7 @@ const messages = defineMessages({
   classic: { id: 'modes.classic', defaultMessage: 'Classic' },
   modern: { id: 'modes.modern', defaultMessage: 'Modern' },
   continue: { id: 'modes.continue', defaultMessage: 'Continue {mode}' },
+  back: { id: 'modes.back', defaultMessage: 'Back to {mode}' },
   start: { id: 'modes.start', defaultMessage: 'Start {mode}' },
   separate: { id: 'modes.separate', defaultMessage: 'Each mode keeps a separate save.' },
   migrate: { id: 'modes.migrate', defaultMessage: 'Migrate Classic progress' },
@@ -37,13 +38,12 @@ export function GameModeSwitch({ controller }: { controller: GameModeController 
   return <div className="game-mode-switch dyson-navigation--drawer">
     {failed && <p role="alert">{intl.formatMessage(messages.failed)}</p>}
     <button type="button" className="dyson-navigation__link"
-      aria-label={intl.formatMessage(messages.continue, { mode: label(target) })}
+      aria-label={intl.formatMessage(messages.back, { mode: label(target) })}
       disabled={busy} onClick={() => {
         void act(() => snapshot.phase === 'blocked' ? controller.start()
           : migrationAvailable ? controller.migrateClassic() : controller.switchTo(target))
       }}>
-      <span className="dyson-navigation__icon game-mode-switch__arrow" aria-hidden="true">↔</span>
-      <span className="dyson-navigation__label">{label(active)}</span>
+      <span className="dyson-navigation__label">{intl.formatMessage(messages.back, { mode: label(target) })}</span>
     </button>
   </div>
 }

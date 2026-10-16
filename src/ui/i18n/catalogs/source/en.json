@@ -2791,6 +2791,9 @@
     "defaultMessage": "Start with 10 Servers",
     "description": "Unity retained Servers upgrade title."
   },
+  "modes.back": {
+    "defaultMessage": "Back to {mode}"
+  },
   "modes.cancel": {
     "defaultMessage": "Cancel"
   },
