@@ -1,4 +1,5 @@
 import { simulationsAvailable } from '../simulation/reworkChallenges'
+import { maximumOfflineBoostMultiplier } from '../simulation/offlineBoost'
 import { builtByHandTinkerGoal } from '../simulation/canonicalGoalProgression'
 import { challengeAllowsTinker, effectiveDivisions, isQuantumChallengeActive, quantumDoubleIpEnabled, isBreakInfinityEnabled, infinityChallenges } from '../simulation/infinityChallenges'
 import { deriveDiscoveryEffects, type DiscoveryEffects } from '../simulation/discoveryEffects'
@@ -431,6 +432,8 @@ export interface FrontendCanonicalResources {
   readonly time: {
     readonly storedTimeAvailableSeconds: number
     readonly storedTimeCapacitySeconds: number
+    readonly maximumOfflineBoostMultiplier: number
+    readonly offlineBoostAutoResume?: 'off' | 'last' | 'max'
     readonly offlineBoost?: { readonly multiplier: number }
   }
 }
@@ -1447,6 +1450,8 @@ function selectResources(
       storedTimeCapacitySeconds:
         state.timeline.storedTimeCapacitySeconds,
       offlineBoost: state.timeline.offlineBoost,
+      maximumOfflineBoostMultiplier: maximumOfflineBoostMultiplier(state.civilization),
+      ...(state.timeline.offlineBoostAutoResume === undefined ? {} : { offlineBoostAutoResume: state.timeline.offlineBoostAutoResume }),
     }),
   }
 }

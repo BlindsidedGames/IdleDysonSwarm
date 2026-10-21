@@ -44,22 +44,23 @@ export interface CivilizationActivityState {
   readonly cycleReceipt?: { readonly seconds: number; readonly inputs: Partial<Record<CivilizationResource, bigint>>; readonly outputs: Partial<Record<CivilizationResource, bigint>>; readonly populationDelta: bigint; readonly rate: number; readonly remainingWork: number; readonly finishAt?: number; readonly legacyWorkMultiplier?: 1 }
   readonly legacyCycle?: { readonly seconds: number; readonly inputs: Partial<Record<CivilizationResource, bigint>>; readonly outputs: Partial<Record<CivilizationResource, bigint>> }
 }
-export type FarmingResource = 'food' | 'materials' | 'tools' | 'goods'
-export type FarmingBuilding = 'pasture' | 'kiln' | 'waterworks' | 'hall' | 'intensiveCultivation' | 'guildWorkshop' | 'townMarket'
-export type FarmingRecipe = Readonly<Partial<Record<FarmingResource, number>>>
-export interface FarmingJob {
+/** Previous village saves are kept as an archival receipt during migration. */
+export type LegacyFarmingResource = 'food' | 'materials' | 'tools' | 'goods'
+export type LegacyFarmingBuilding = 'pasture' | 'kiln' | 'waterworks' | 'hall' | 'intensiveCultivation' | 'guildWorkshop' | 'townMarket'
+export type LegacyFarmingRecipe = Readonly<Partial<Record<LegacyFarmingResource, number>>>
+export interface LegacyFarmingJob {
   /** Monotonic paid-cycle identity, including cycles completed between publications. */
   readonly cycle?: number
-  readonly kind: FarmingResource | FarmingBuilding | 'home' | 'repair' | 'ship'
+  readonly kind: LegacyFarmingResource | LegacyFarmingBuilding | 'home' | 'repair' | 'ship'
   readonly index?: number
   readonly work: number
   readonly remainingWork: number
   /** Paid inputs and the final partial Food batch survive mode changes/reload. */
-  readonly inputs: FarmingRecipe
+  readonly inputs: LegacyFarmingRecipe
   readonly output: number
 }
-export interface FarmingState {
-  readonly version: 2
+export interface LegacyFarmingState {
+  readonly version: 1 | 2 | 3
   readonly phase: 'settling-forager' | 'farming' | 'settling-village' | 'complete'
   readonly focus: CivilizationFocus
   readonly elapsedSeconds: number
@@ -69,14 +70,14 @@ export interface FarmingState {
   /** Saved linear segment anchors avoid accumulating partition/reload roundoff. */
   readonly continuous?: {
     readonly since: number
-    readonly resources: Readonly<Record<FarmingResource, number>>
+    readonly resources: Readonly<Record<LegacyFarmingResource, number>>
     readonly weathering: number
     readonly jobs: Readonly<Record<string, number>>
     readonly signature: string
   }
-  readonly resources: Readonly<Record<FarmingResource, number>>
-  readonly targets: Readonly<Record<FarmingResource, number>>
-  readonly jobs: Readonly<Record<string, FarmingJob>>
+  readonly resources: Readonly<Record<LegacyFarmingResource, number>>
+  readonly targets: Readonly<Record<LegacyFarmingResource, number>>
+  readonly jobs: Readonly<Record<string, LegacyFarmingJob>>
   readonly homes: readonly number[]
   readonly lostHomes: readonly number[]
   readonly homesBuilt: number
@@ -84,15 +85,178 @@ export interface FarmingState {
   readonly shipments: number
   readonly weathering: number
   readonly firstHarvest: boolean
-  readonly completedBuildings: readonly FarmingBuilding[]
+  readonly completedBuildings: readonly LegacyFarmingBuilding[]
   readonly awardedCatalystIds: readonly string[]
-  readonly inheritedFoodPerMinute: number
-  readonly inheritedMaterialsPerMinute: number
-  readonly transferredWorkers: bigint
-  readonly transferredEquippedWorkers: bigint
   readonly skillRewardPending: boolean
   /** Earned readiness remains owned if later weather removes a Home. */
   readonly cityReadinessReached?: boolean
+}
+
+export type FarmingResource = 'food' | 'materials' | 'tools'
+export type FarmingRecipe = Readonly<Partial<Record<FarmingResource, number>>>
+export type FarmingWorkplace = 'crops' | 'herding' | 'woodland' | 'workshop' | 'shaman'
+export type FarmingPurchase = 'house' | 'field' | 'pasture' | 'workshop' | 'granary' | 'irrigation' | 'loggingCamp' | 'shrine'
+export interface FarmingJob {
+  readonly cycle: number
+  readonly kind: 'woodland' | 'workshop'
+  readonly work: number
+  readonly remainingWork: number
+  readonly inputs: FarmingRecipe
+  readonly outputs: FarmingRecipe
+  readonly land: number
+}
+export interface AssignedFarmingState {
+  readonly version: 4
+  readonly phase: 'farming' | 'complete'
+  readonly elapsedSeconds: number
+  readonly population: number
+  readonly peakPopulation: number
+  readonly houses: number
+  readonly clearedLand: number
+  readonly barleyFields: number
+  readonly wheatFields: number
+  readonly pastures: number
+  readonly granaries: number
+  readonly workshop: boolean
+  readonly nets: boolean
+  readonly cattle: boolean
+  readonly irrigation: boolean
+  readonly assignments: Readonly<Record<'fishing' | 'barley' | 'wheat' | 'herding' | 'woodland' | 'workshop', number>>
+  readonly resources: Readonly<Record<FarmingResource, number>>
+  readonly jobs: Readonly<Partial<Record<'woodland' | 'workshop', FarmingJob>>>
+  readonly jobSequence: number
+  readonly starvationDeaths: number
+  readonly naturalDeaths: number
+  readonly generations: number
+  readonly awardedCatalystIds: readonly string[]
+  readonly skillRewardPending: boolean
+  readonly completionReached: boolean
+  /** Paid work from a retired village is applied once to new work. */
+  readonly legacyWorkCredit: number
+  /** Lossless source receipt, never an active second economy. */
+  readonly legacyVillage?: LegacyFarmingState
+  readonly continuous?: {
+    readonly since: number
+    readonly food: number
+    readonly jobs: Readonly<Partial<Record<'woodland' | 'workshop', number>>>
+    readonly signature: string
+  }
+}
+
+export interface AutomaticFarmingState {
+  readonly version: 5
+  readonly phase: 'farming' | 'complete'
+  readonly elapsedSeconds: number
+  readonly population: number
+  readonly peakPopulation: number
+  readonly houses: number
+  readonly clearedLand: number
+  readonly fields: number
+  readonly pastures: number
+  readonly granaries: number
+  readonly workshop: boolean
+  readonly irrigation: boolean
+  readonly assignments: Readonly<Record<Exclude<FarmingWorkplace, 'shaman'>, number>>
+  readonly resources: Readonly<Record<FarmingResource, number>>
+  readonly jobs: Readonly<Partial<Record<'woodland' | 'workshop', FarmingJob>>>
+  readonly jobSequence: number
+  readonly starvationDeaths: number
+  readonly naturalDeaths: number
+  readonly generations: number
+  readonly awardedCatalystIds: readonly string[]
+  readonly skillRewardPending: boolean
+  readonly completionReached: boolean
+  /** Paid work from a retired village is applied once to new work. */
+  readonly legacyWorkCredit: number
+  /** Lossless source receipt, never an active second economy. */
+  readonly legacyVillage?: LegacyFarmingState
+  readonly previousVillage?: AssignedFarmingState
+  readonly continuous?: {
+    readonly since: number
+    readonly food: number
+    readonly jobs: Readonly<Partial<Record<'woodland' | 'workshop', number>>>
+    readonly signature: string
+  }
+}
+
+export interface ManagedFarmingState {
+  readonly version: 6
+  readonly phase: 'farming' | 'complete'
+  readonly elapsedSeconds: number
+  readonly population: number
+  readonly peakPopulation: number
+  readonly houses: number
+  readonly clearedLand: number
+  readonly loggingCamps: number
+  readonly fields: number
+  readonly pastures: number
+  readonly granaries: number
+  readonly workshop: boolean
+  readonly irrigation: boolean
+  readonly assignments: Readonly<Record<Exclude<FarmingWorkplace, 'shaman'>, number>>
+  readonly resources: Readonly<Record<FarmingResource, number>>
+  readonly jobs: Readonly<Partial<Record<'woodland' | 'workshop', FarmingJob>>>
+  readonly jobSequence: number
+  readonly starvationDeaths: number
+  readonly naturalDeaths: number
+  readonly generations: number
+  readonly awardedCatalystIds: readonly string[]
+  readonly skillRewardPending: boolean
+  readonly completionReached: boolean
+  /** Paid work from a retired village is applied once to new work. */
+  readonly legacyWorkCredit: number
+  /** Lossless source receipt, never an active second economy. */
+  readonly legacyVillage?: LegacyFarmingState
+  readonly previousVillage?: AssignedFarmingState
+  readonly previousAutomaticVillage?: AutomaticFarmingState
+  readonly continuous?: {
+    readonly since: number
+    readonly food: number
+    readonly jobs: Readonly<Partial<Record<'woodland' | 'workshop', number>>>
+    readonly signature: string
+  }
+}
+
+export type FarmingDisaster = 'flood' | 'fire' | 'sickness'
+export type FarmingSeason = 'spring' | 'summer' | 'autumn' | 'winter'
+export interface PreferredFarmingState extends Omit<ManagedFarmingState, 'version' | 'assignments' | 'continuous'> {
+  readonly version: 7
+  readonly shrines: number
+  /** Player-selected job limits, distinct from available building spaces and actual crews. */
+  readonly desiredJobs: Readonly<Record<FarmingWorkplace, number>>
+  readonly assignments: Readonly<Record<FarmingWorkplace, number>>
+  readonly growthProgress: number
+  readonly hungerDebt: number
+  readonly disasterSeed: number
+  readonly nextDisasterSeconds: number
+  readonly sicknessUntil: number
+  readonly disasters: number
+  readonly lastDisaster?: { readonly kind: 'spoilage' | 'fire' | 'sickness'; readonly at: number; readonly prevented: boolean; readonly loss: number }
+  readonly previousManagedVillage?: ManagedFarmingState
+  readonly continuous?: {
+    readonly since: number
+    readonly food: number
+    readonly growthProgress: number
+    readonly hungerDebt: number
+    readonly jobs: Readonly<Partial<Record<'woodland' | 'workshop', number>>>
+    readonly signature: string
+  }
+}
+
+/** Seasonal population disasters replace the retired timed stock/health events. */
+export interface SeasonalFarmingState extends Omit<PreferredFarmingState, 'version' | 'nextDisasterSeconds' | 'sicknessUntil' | 'lastDisaster'> {
+  readonly version: 8
+  readonly disasterDeaths: number
+  readonly lastDisaster?: { readonly kind: FarmingDisaster; readonly at: number; readonly season: FarmingSeason; readonly prevented: boolean; readonly loss: number }
+  readonly previousPreferredVillage?: PreferredFarmingState
+}
+
+/** Protection is earned by actual Shaman staffing throughout the current season. */
+export interface FarmingState extends Omit<SeasonalFarmingState, 'version' | 'continuous'> {
+  readonly version: 9
+  readonly seasonProtection: number
+  readonly previousSeasonalVillage?: SeasonalFarmingState
+  readonly continuous?: NonNullable<PreferredFarmingState['continuous']> & { readonly seasonProtection: number }
 }
 
 export interface CivilizationState {
@@ -329,6 +493,8 @@ export interface AvocadoState {
 export interface TimelineState {
   /** Selection survives saves; running is foreground session state only. */
   readonly offlineBoost?: { readonly multiplier: number }
+  readonly offlineBoostAutoResume?: 'off' | 'last' | 'max'
+  readonly offlineBoostResumeMultiplier?: number
   readonly eventClockInitialized: boolean
   readonly automationTimeUntilNextEvent: number
   readonly dysonAutomationTargetIndex: number

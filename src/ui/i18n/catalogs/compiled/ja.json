@@ -1113,12 +1113,6 @@
       "value": "食料の保存"
     }
   ],
-  "civilization.foragerGenerator": [
-    {
-      "type": 0,
-      "value": "採集者の野営地"
-    }
-  ],
   "civilization.fractureRule": [
     {
       "type": 0,
@@ -1157,6 +1151,12 @@
     {
       "type": 0,
       "value": "皮革加工"
+    }
+  ],
+  "civilization.hideworkingPrerequisite": [
+    {
+      "type": 0,
+      "value": "狩猟を1サイクル完了すると解放されます。"
     }
   ],
   "civilization.hireChieftain": [
@@ -1441,6 +1441,12 @@
     {
       "type": 0,
       "value": "道具の製作"
+    }
+  ],
+  "civilization.toolmakingPrerequisite": [
+    {
+      "type": 0,
+      "value": "採集を1サイクル完了すると解放されます。"
     }
   ],
   "civilization.tools": [
@@ -5315,24 +5321,6 @@
       "value": "value"
     }
   ],
-  "farming.automatic": [
-    {
-      "type": 0,
-      "value": "村の計画に従って自動で建設。"
-    }
-  ],
-  "farming.averageLabor": [
-    {
-      "type": 0,
-      "value": "労働は時間を通じて分配されます。おおよその平均値には小数が含まれますが、労働者総数は整数の人数です。"
-    }
-  ],
-  "farming.balanced": [
-    {
-      "type": 0,
-      "value": "均衡"
-    }
-  ],
   "farming.begin": [
     {
       "type": 0,
@@ -5345,96 +5333,10 @@
       "value": "狩猟採集時代と農耕集落は完了しました。続きは近日公開です。"
     }
   ],
-  "farming.boost": [
-    {
-      "type": 0,
-      "value": "実際の亀裂：+"
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": "%"
-    }
-  ],
-  "farming.build": [
-    {
-      "type": 0,
-      "value": "穀倉を建てる"
-    }
-  ],
   "farming.buy": [
     {
       "type": 0,
       "value": "購入"
-    }
-  ],
-  "farming.cap": [
-    {
-      "type": 0,
-      "value": "貯蔵が満杯です。食料を消費するか穀倉を建てるまで畑は停止します。"
-    }
-  ],
-  "farming.capacity": [
-    {
-      "type": 0,
-      "value": "食料貯蔵"
-    }
-  ],
-  "farming.closed": [
-    {
-      "type": 0,
-      "value": "終了"
-    }
-  ],
-  "farming.compactStorage": [
-    {
-      "type": 0,
-      "value": "貯蔵160"
-    }
-  ],
-  "farming.complete": [
-    {
-      "type": 0,
-      "value": "集落が成立"
-    }
-  ],
-  "farming.connection": [
-    {
-      "type": 0,
-      "value": "交易路"
-    }
-  ],
-  "farming.constructed": [
-    {
-      "type": 0,
-      "value": "建設済みの改良"
-    }
-  ],
-  "farming.crew": [
-    {
-      "type": 0,
-      "value": "平均配分労働力"
-    }
-  ],
-  "farming.cultivationEffect": [
-    {
-      "type": 0,
-      "value": "今後の畑の収穫で食料が20%増加します。水道設備の効果に加えて、住宅の劣化の増加量がさらに20%減少します。"
-    }
-  ],
-  "farming.cultivationNeeded": [
-    {
-      "type": 0,
-      "value": "水道設備の建設"
-    }
-  ],
-  "farming.done": [
-    {
-      "type": 0,
-      "value": "完成済み"
     }
   ],
   "farming.era": [
@@ -5443,42 +5345,10 @@
       "value": "農耕集落"
     }
   ],
-  "farming.export": [
-    {
-      "type": 1,
-      "value": "workers"
-    },
-    {
-      "type": 0,
-      "value": "人の残った労働者が、実際の亀裂強化を適用する前に、シミュレーション1分につき食料"
-    },
-    {
-      "type": 1,
-      "value": "food"
-    },
-    {
-      "type": 0,
-      "value": "と資材"
-    },
-    {
-      "type": 1,
-      "value": "materials"
-    },
-    {
-      "type": 0,
-      "value": "を供給します。以前の在庫はキャンプに残ります。"
-    }
-  ],
   "farming.failed": [
     {
       "type": 0,
       "value": "操作に失敗しました。再試行してください。"
-    }
-  ],
-  "farming.fields": [
-    {
-      "type": 0,
-      "value": "畑"
     }
   ],
   "farming.finish": [
@@ -5487,248 +5357,22 @@
       "value": "集落を完成させる"
     }
   ],
-  "farming.finished": [
-    {
-      "type": 0,
-      "value": "維持されている家6軒、交易路6本、都市に向けた3つの改良が完成しました。村は最初の都市に向けて準備が整っています。次の時代はまだ利用できません。"
-    }
-  ],
-  "farming.finite": [
-    {
-      "type": 0,
-      "value": "完成済みです。建設周期は繰り返しません。"
-    }
-  ],
-  "farming.firstHarvest": [
-    {
-      "type": 0,
-      "value": "最初の収穫"
-    }
-  ],
-  "farming.focus": [
-    {
-      "type": 0,
-      "value": "労働力の重点"
-    }
-  ],
-  "farming.focusEffect": [
-    {
-      "type": 0,
-      "value": "補給は維持費を抑えて在庫を優先しますが、風化が増えます。成長は建設と回復を優先します。遠征は集会所完成後に交易便を優先し、それ以前は均衡した労働配分を使います。"
-    }
-  ],
-  "farming.fullFood": [
-    {
-      "type": 0,
-      "value": "食料："
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " / "
-    },
-    {
-      "type": 1,
-      "value": "capacity"
-    }
-  ],
-  "farming.goods": [
-    {
-      "type": 0,
-      "value": "商品"
-    }
-  ],
-  "farming.granaries": [
-    {
-      "type": 0,
-      "value": "穀倉"
-    }
-  ],
   "farming.granary": [
     {
       "type": 0,
       "value": "穀倉"
     }
   ],
-  "farming.granaryDetails": [
-    {
-      "type": 0,
-      "value": "穀倉の費用と詳細"
-    }
-  ],
-  "farming.granaryEffect": [
-    {
-      "type": 0,
-      "value": "穀倉1棟につき食料容量が160増加します。手動で即座に購入でき、修復予定の資材と道具の予備は保持されます。"
-    }
-  ],
-  "farming.granaryFirstHome": [
-    {
-      "type": 0,
-      "value": "最初の家が完成すると利用可能。"
-    }
-  ],
-  "farming.granaryInactive": [
-    {
-      "type": 0,
-      "value": "村が支払済みの作業を終えるまで購入できません。"
-    }
-  ],
-  "farming.granaryInputs": [
-    {
-      "type": 0,
-      "value": "材料か道具が不足しています。購入は即時です。"
-    }
-  ],
-  "farming.granaryMaximum": [
-    {
-      "type": 0,
-      "value": "穀物庫の所有上限に到達。"
-    }
-  ],
-  "farming.granaryRepairReserve": [
-    {
-      "type": 0,
-      "value": "材料と道具は、予定されている家の修理用に確保されています。"
-    }
-  ],
-  "farming.growth": [
-    {
-      "type": 0,
-      "value": "成長"
-    }
-  ],
-  "farming.guildEffect": [
-    {
-      "type": 0,
-      "value": "今後の商品生産は資材6と63人秒で商品3を生産します。支払い済みの生産は元のレシピを維持します。"
-    }
-  ],
-  "farming.guildNeeded": [
-    {
-      "type": 0,
-      "value": "集会所、建設済みの家5軒、交易路3本"
-    }
-  ],
-  "farming.guildWorkshop": [
-    {
-      "type": 0,
-      "value": "ギルド工房"
-    }
-  ],
-  "farming.hall": [
-    {
-      "type": 0,
-      "value": "集会所"
-    }
-  ],
-  "farming.hallNeeded": [
-    {
-      "type": 0,
-      "value": "家屋4棟、牧草地、水利施設"
-    }
-  ],
   "farming.handoff": [
     {
       "type": 0,
-      "value": "3人の開拓者が新しい集落へ移ります。残ったキャンプは在庫を保有し、食料と資材を供給します。支払い済みの作業は移行前に完了します。"
-    }
-  ],
-  "farming.home": [
-    {
-      "type": 0,
-      "value": "家屋 "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "farming.homeEffect": [
-    {
-      "type": 0,
-      "value": "維持できている家屋1棟につき住民が2人増えます。風化100で維持を失い、修復には元の資材、道具、労働量が必要です。"
-    }
-  ],
-  "farming.homes": [
-    {
-      "type": 0,
-      "value": "家屋"
-    }
-  ],
-  "farming.homesCount": [
-    {
-      "type": 0,
-      "value": "維持できている家屋"
-    }
-  ],
-  "farming.housingWeathering": [
-    {
-      "type": 0,
-      "value": "住居の劣化"
+      "value": "農業時代に進むと採集者のキャンプは置き換えられ、3人の開拓者と空の備蓄で始まります。未完了の作業は破棄されます。獲得した触媒は保持されます。"
     }
   ],
   "farming.inputs": [
     {
       "type": 0,
       "value": "サイクルのコスト"
-    }
-  ],
-  "farming.intensiveCultivation": [
-    {
-      "type": 0,
-      "value": "集約農業"
-    }
-  ],
-  "farming.kiln": [
-    {
-      "type": 0,
-      "value": "窯"
-    }
-  ],
-  "farming.kilnNeeded": [
-    {
-      "type": 0,
-      "value": "窯の完成"
-    }
-  ],
-  "farming.limit": [
-    {
-      "type": 0,
-      "value": "上限"
-    }
-  ],
-  "farming.locked": [
-    {
-      "type": 0,
-      "value": "未解放"
-    }
-  ],
-  "farming.lost": [
-    {
-      "type": 0,
-      "value": "家屋1棟が維持できなくなりました。修復すると住民が戻ります。開拓者は残ります。"
-    }
-  ],
-  "farming.manual": [
-    {
-      "type": 0,
-      "value": "続けるには穀倉を建ててください。貯蔵時間はここで停止し、残りを保持します。"
-    }
-  ],
-  "farming.marketEffect": [
-    {
-      "type": 0,
-      "value": "今後の輸送は1,512人秒を必要とし、資材100を獲得します。家6軒と交易路6本で都市への準備が整います。"
-    }
-  ],
-  "farming.marketNeeded": [
-    {
-      "type": 0,
-      "value": "集約農業、ギルド工房、建設済みの家5軒、交易路3本"
     }
   ],
   "farming.missingInputs": [
@@ -5741,38 +5385,10 @@
       "value": "inputs"
     }
   ],
-  "farming.need": [
-    {
-      "type": 0,
-      "value": "不足"
-    }
-  ],
-  "farming.needsInputs": [
-    {
-      "type": 0,
-      "value": "材料不足"
-    }
-  ],
-  "farming.next": [
-    {
-      "type": 0,
-      "value": "現在の計画："
-    },
-    {
-      "type": 1,
-      "value": "name"
-    }
-  ],
   "farming.nextPrice": [
     {
       "type": 0,
       "value": "次の価格"
-    }
-  ],
-  "farming.oneGranary": [
-    {
-      "type": 0,
-      "value": "穀倉1棟"
     }
   ],
   "farming.outputs": [
@@ -5791,62 +5407,10 @@
       "value": "value"
     }
   ],
-  "farming.paid": [
-    {
-      "type": 0,
-      "value": "投入資源はすでに確保済みです。重点を変えると労働力が移り、再び支払うことはありません。"
-    }
-  ],
-  "farming.paidStatus": [
-    {
-      "type": 0,
-      "value": "支払い済み周期"
-    }
-  ],
-  "farming.pasture": [
-    {
-      "type": 0,
-      "value": "牧草地"
-    }
-  ],
-  "farming.pendingFinish": [
-    {
-      "type": 0,
-      "value": "集落の支払い済み周期を完了しています。"
-    }
-  ],
   "farming.pendingSkill": [
     {
       "type": 0,
       "value": "この節目は既存のスキルツリーに対象の選択肢が現れるか、触媒の保有量に空きができるまで待機します。"
-    }
-  ],
-  "farming.production": [
-    {
-      "type": 0,
-      "value": "生産"
-    }
-  ],
-  "farming.repair": [
-    {
-      "type": 0,
-      "value": "修復する家屋 "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "farming.reserved": [
-    {
-      "type": 0,
-      "value": "確保済み"
-    }
-  ],
-  "farming.risk": [
-    {
-      "type": 0,
-      "value": "住居に危険"
     }
   ],
   "farming.settings": [
@@ -5855,146 +5419,354 @@
       "value": "集落の設定"
     }
   ],
-  "farming.settling": [
-    {
-      "type": 0,
-      "value": "集落が始まる前に、採集キャンプの支払い済み作業を完了しています。"
-    }
-  ],
-  "farming.ship": [
-    {
-      "type": 0,
-      "value": "交易便"
-    }
-  ],
   "farming.shop": [
     {
       "type": 0,
       "value": "購入"
     }
   ],
-  "farming.skillLimit": [
+  "farming.village.averted": [
     {
       "type": 0,
-      "value": "農耕集落専用の亀裂はまだ設計されていません。この6つの節目は既存の触媒保有量と対象スキルを利用します。未使用の触媒では加速しません。"
+      "value": "災害を回避。精霊たちは自分のおかげだと言っています。"
     }
   ],
-  "farming.source": [
+  "farming.village.balance": [
     {
       "type": 0,
-      "value": "残された採集キャンプ"
+      "value": "食料収支"
     }
   ],
-  "farming.stage": [
+  "farming.village.burials": [
     {
       "type": 0,
-      "value": "集落の進捗"
+      "value": "埋葬者数"
     }
   ],
-  "farming.storageGain": [
+  "farming.village.consumption": [
     {
       "type": 0,
-      "value": "購入ごとに食料貯蔵+160 · 合計："
+      "value": "消費量"
+    }
+  ],
+  "farming.village.crops": [
+    {
+      "type": 0,
+      "value": "作物"
+    }
+  ],
+  "farming.village.disasterDeaths": [
+    {
+      "type": 0,
+      "value": "災害"
+    }
+  ],
+  "farming.village.disasterLoss": [
+    {
+      "type": 0,
+      "value": "人口減少"
+    }
+  ],
+  "farming.village.disasterRisk": [
+    {
+      "type": 0,
+      "value": "季節末の災害確率"
+    }
+  ],
+  "farming.village.fewerJobs": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "：仕事枠を減らす"
+    }
+  ],
+  "farming.village.field": [
+    {
+      "type": 0,
+      "value": "畑"
+    }
+  ],
+  "farming.village.fire": [
+    {
+      "type": 0,
+      "value": "火災：人口−"
     },
     {
       "type": 1,
       "value": "value"
     }
   ],
-  "farming.supplies": [
+  "farming.village.flood": [
     {
       "type": 0,
-      "value": "物資"
+      "value": "洪水：人口−"
+    },
+    {
+      "type": 1,
+      "value": "value"
     }
   ],
-  "farming.townMarket": [
+  "farming.village.food": [
     {
       "type": 0,
-      "value": "町の市場"
+      "value": "食料"
     }
   ],
-  "farming.travel": [
+  "farming.village.fullCrew": [
     {
       "type": 0,
-      "value": "遠征"
+      "value": "最大人数"
     }
   ],
-  "farming.upcoming": [
+  "farming.village.growth": [
     {
       "type": 0,
-      "value": "まだ利用できません"
+      "value": "人口増加"
     }
   ],
-  "farming.village": [
+  "farming.village.herding": [
     {
       "type": 0,
-      "value": "集落"
+      "value": "畜産"
     }
   ],
-  "farming.waiting": [
+  "farming.village.house": [
     {
       "type": 0,
-      "value": "有効な需要または十分な投入資源を待っています。"
+      "value": "住居"
     }
   ],
-  "farming.waterworks": [
+  "farming.village.housing": [
     {
       "type": 0,
-      "value": "水利施設"
+      "value": "住居定員"
     }
   ],
-  "farming.weatherHelp": [
+  "farming.village.idle": [
     {
       "type": 0,
-      "value": "バランスは劣化を毎分1減少、物資は毎分2増加、成長は毎分4減少、旅は毎分4増加させます。水道設備は増加を40%減らし、集約農業は残りの増加をさらに20%減らします。75で住宅が危険になり、100で家1軒の住民が失われ、劣化が40に戻ります。"
+      "value": "待機中"
     }
   ],
-  "farming.weathering": [
+  "farming.village.irrigation": [
     {
       "type": 0,
-      "value": "風化"
+      "value": "灌漑"
     }
   ],
-  "farming.woodlot": [
+  "farming.village.jobSpaces": [
     {
       "type": 0,
-      "value": "林地"
+      "value": "建物の定員"
     }
   ],
-  "farming.work": [
+  "farming.village.jobs": [
+    {
+      "type": 0,
+      "value": "仕事枠"
+    }
+  ],
+  "farming.village.jobsFor": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "：仕事枠"
+    }
+  ],
+  "farming.village.land": [
+    {
+      "type": 0,
+      "value": "空き地"
+    }
+  ],
+  "farming.village.lastEvent": [
+    {
+      "type": 0,
+      "value": "前回の出来事"
+    }
+  ],
+  "farming.village.loggingCamp": [
+    {
+      "type": 0,
+      "value": "伐採キャンプ"
+    }
+  ],
+  "farming.village.moreJobs": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "：仕事枠を増やす"
+    }
+  ],
+  "farming.village.natural": [
+    {
+      "type": 0,
+      "value": "自然死"
+    }
+  ],
+  "farming.village.needsGranary": [
+    {
+      "type": 0,
+      "value": "家3軒"
+    }
+  ],
+  "farming.village.needsIrrigation": [
+    {
+      "type": 0,
+      "value": "畑4面"
+    }
+  ],
+  "farming.village.needsLand": [
+    {
+      "type": 0,
+      "value": "空き地なし"
+    }
+  ],
+  "farming.village.needsPasture": [
+    {
+      "type": 0,
+      "value": "畑2面 · 家2軒"
+    }
+  ],
+  "farming.village.needsShrine": [
+    {
+      "type": 0,
+      "value": "家4軒"
+    }
+  ],
+  "farming.village.needsWoodland": [
+    {
+      "type": 0,
+      "value": "森林を開拓"
+    }
+  ],
+  "farming.village.needsWorkshop": [
+    {
+      "type": 0,
+      "value": "工房が必要"
+    }
+  ],
+  "farming.village.nextDisaster": [
+    {
+      "type": 0,
+      "value": "次の災害"
+    }
+  ],
+  "farming.village.noMaterials": [
+    {
+      "type": 0,
+      "value": "資材なし"
+    }
+  ],
+  "farming.village.pasture": [
+    {
+      "type": 0,
+      "value": "牧草地"
+    }
+  ],
+  "farming.village.perMinute": [
     {
       "type": 1,
       "value": "value"
     },
     {
       "type": 0,
-      "value": " 人秒"
+      "value": "/分"
     }
   ],
-  "farming.workers": [
+  "farming.village.production": [
     {
       "type": 0,
-      "value": "労働者"
+      "value": "生産量"
+    }
+  ],
+  "farming.village.protection": [
+    {
+      "type": 0,
+      "value": "災害リスク軽減"
+    }
+  ],
+  "farming.village.reserve": [
+    {
+      "type": 0,
+      "value": "食料備蓄"
+    }
+  ],
+  "farming.village.shaman": [
+    {
+      "type": 0,
+      "value": "シャーマン"
+    }
+  ],
+  "farming.village.shrine": [
+    {
+      "type": 0,
+      "value": "祠"
+    }
+  ],
+  "farming.village.sickness": [
+    {
+      "type": 0,
+      "value": "病気：人口−"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.village.starvation": [
+    {
+      "type": 0,
+      "value": "餓死"
+    }
+  ],
+  "farming.village.status": [
+    {
+      "type": 0,
+      "value": "状態"
+    }
+  ],
+  "farming.village.stocked": [
+    {
+      "type": 0,
+      "value": "備蓄済み"
+    }
+  ],
+  "farming.village.woodland": [
+    {
+      "type": 0,
+      "value": "森林"
+    }
+  ],
+  "farming.village.work": [
+    {
+      "type": 0,
+      "value": "作業"
+    }
+  ],
+  "farming.village.workingCount": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " 作業中"
     }
   ],
   "farming.workshop": [
     {
       "type": 0,
       "value": "工房"
-    }
-  ],
-  "farming.yield": [
-    {
-      "type": 0,
-      "value": "輸送は食料350と商品35を消費し、資材"
-    },
-    {
-      "type": 1,
-      "value": "materials"
-    },
-    {
-      "type": 0,
-      "value": "と交易路1本を獲得します。交易路6本、維持されている家6軒、都市に向けた改良でこの時代が完了します。"
     }
   ],
   "gameplay.notifications.continue": [
@@ -7169,6 +6941,30 @@
       "value": "アプリがバックグラウンドに移動したため、処理がキャンセルされました"
     }
   ],
+  "offline-time.auto-resume": [
+    {
+      "type": 0,
+      "value": "復帰時"
+    }
+  ],
+  "offline-time.auto-resume-last": [
+    {
+      "type": 0,
+      "value": "前回の速度"
+    }
+  ],
+  "offline-time.auto-resume-max": [
+    {
+      "type": 0,
+      "value": "最大速度"
+    }
+  ],
+  "offline-time.auto-resume-off": [
+    {
+      "type": 0,
+      "value": "オフ"
+    }
+  ],
   "offline-time.balanced-preset": [
     {
       "type": 0,
@@ -7256,7 +7052,7 @@
   "offline-time.boost-stack": [
     {
       "type": 0,
-      "value": "スライダーを1×より上に動かすと貯蔵時間を使用します。追加時間のみ貯蔵を消費します。ダブルタイムは別途適用されます。貯蔵が空になる、バックグラウンドに移る、または手動リセットすると、スライダーは1×に戻ります。"
+      "value": "追加時間のみが貯蔵時間を消費します。ダブルタイムは別に加算されます。"
     }
   ],
   "offline-time.boost-start": [

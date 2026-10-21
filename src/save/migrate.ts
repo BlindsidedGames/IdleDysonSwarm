@@ -1,4 +1,6 @@
-import { validateFarming } from '../simulation/farming'
+import { migrateLegacyFarming, migrateAssignedFarming, migrateAutomaticFarming, migrateManagedFarming, migratePreferredFarming, migrateSeasonalFarming, replaceForagerWithFarming } from '../simulation/farming'
+import { validateCivilizationSave } from '../simulation/civilization'
+import type { CivilizationState, LegacyFarmingState, AssignedFarmingState, AutomaticFarmingState, ManagedFarmingState, PreferredFarmingState, SeasonalFarmingState } from '../game-state/types'
 import { SKILL_PRESET_COUNT } from '../game-state/skillPresetSlots'
 import { EMPTY_DISCOVERY } from '../simulation/discovery'
 import { isSubskill } from '../simulation/skillSubskills'
@@ -64,7 +66,7 @@ export function migrateDecodedSave(candidate: unknown): SaveMigrationResult {
       throw new UnsupportedFutureSaveSubsystemError(sourceSchema, 'Civilization', civilization.version)
     }
     const farming = civilization.farming
-    if (isRecord(farming) && typeof farming.version === 'number' && farming.version > 2) {
+    if (isRecord(farming) && typeof farming.version === 'number' && farming.version > 9) {
       throw new UnsupportedFutureSaveSubsystemError(sourceSchema, 'Farming', farming.version)
     }
   }
@@ -142,9 +144,7 @@ export function migrateDecodedSave(candidate: unknown): SaveMigrationResult {
   )
   appliedSteps.push('dense-facility-arrays')
   if (legacyFormat) ensureSimulationMathematicsParity(save)
-  if (!development22 && migrateFarmingContinuousClock(save)) {
-    appliedSteps.push('continuous-farming-clock')
-  }
+  if (migrateFarmingVillage(save)) appliedSteps.push('land-and-food-village')
   const numericRepair = repairNumericSave(save)
   packSettingsFlags(save)
   // Materialize packed defaults now, rather than changing the graph on its next load.
@@ -166,16 +166,16 @@ export function migrateDecodedSave(candidate: unknown): SaveMigrationResult {
   }
 }
 
-/** Version the clock without applying owned time, settling work or granting awards.
- * Validate the old carrier before generic numeric repair can reinterpret it. */
-function migrateFarmingContinuousClock(save: SaveRecord): boolean {
+/** Preserve the entire old receipt while translating the village into land and food. */
+function migrateFarmingVillage(save: SaveRecord): boolean {
   const civilization = save.civilization
   if (!isRecord(civilization) || civilization.version !== 5) return false
-  const farming = civilization.farming
-  if (!isRecord(farming) || farming.version !== 1) return false
-  const issue = validateFarming(farming, 1)
+  const previous = civilization.farming
+  if (!isRecord(previous) || previous.version === 9) return false
+  const issue = validateCivilizationSave(civilization)
   if (issue) throw new Error(issue)
-  civilization.farming = { ...farming, version: 2 }
+  const farming = previous.version === 8 ? migrateSeasonalFarming(previous as unknown as SeasonalFarmingState) : previous.version === 7 ? migratePreferredFarming(previous as unknown as PreferredFarmingState) : previous.version === 6 ? migrateManagedFarming(previous as unknown as ManagedFarmingState) : previous.version === 5 ? migrateAutomaticFarming(previous as unknown as AutomaticFarmingState) : previous.version === 4 ? migrateAssignedFarming(previous as unknown as AssignedFarmingState) : migrateLegacyFarming(previous as unknown as LegacyFarmingState)
+  save.civilization = replaceForagerWithFarming(civilization as unknown as CivilizationState, farming)
   return true
 }
 

@@ -1,6 +1,6 @@
 # Current Simulations specification — 8 October 2026
 
-**Status: 14 October Forager simplification implemented locally; see the latest section below. Earlier economy and focus specifications are historical where they conflict.**
+**Status: 21 October seasonal population disasters and inline worker/capacity spacing implemented locally. The latest section supersedes timed stock/health disasters and the temporary staffing line below facility names. Player review and native-device validation remain. Forager remains the visual reference.**
 
 This is the canonical record of the user's current requested Simulations screen.
 It accompanies the [audited UI style guide](../ui-style-guide.md). Source commit
@@ -1405,3 +1405,513 @@ The existing Infinity dock was captured for reference. The 320px German label
 needed a scoped word-wrap correction; its final pixels and desktop 100% were
 rechecked. No new layout pattern or smaller text was introduced. Mobile native
 hosts, screen-reader delivery and fluent translation review remain unverified.
+
+## Local Farming preview — 21 October 2026
+
+Matthew requested Farming Villages re-enabled in the local preview. The normal
+Forager handoff and Debug era jump are restored to their pre-cap behavior.
+The existing prerequisites, three-person handoff, and Farming simulation remain
+in place. This local change has not been released.
+
+Verified in a disposable browser installation: Debug can select Farming Villages,
+the jump saves successfully, and the Farming screen advances Fields and Woodlot
+production. TypeScript and lint pass. The ordinary sixth-Catalyst handoff, mobile,
+long locales and native hosts were not rechecked for this local restoration.
+
+### Locked Hideworking placeholder — 21 October 2026
+
+Before the first completed Hunting cycle, the current Forager rules now show a
+Hideworking placeholder in Craft with “Complete one Hunting cycle to unlock.”
+The row reuses the Settlement prerequisite text roles and activity panel inset.
+It has no purchase or priority control; the existing activity and Craft radios
+appear when the normal unlock condition is met. Legacy rules retain their
+existing unlock presentation. No gameplay requirement is changed.
+
+The locked state was inspected on desktop and at 360px. Locale catalogs,
+TypeScript and lint pass. Other scales, long-locale rendering and native hosts
+remain unverified.
+Unlock transition verified in the same disposable session: the placeholder stayed
+visible during the first hunt, then became the ordinary Hideworking activity and
+Craft priority control immediately after one Hunting completion.
+
+### Sequential Forager reveals — 21 October 2026
+
+Correction: only the next production step is previewed. Toolmaking first shows
+“Complete one Gathering cycle to unlock.” Once Toolmaking is unlocked, Hunting
+can appear with its existing purchase/prerequisite row. Hideworking remains
+hidden until Hunting is actually unlocked; it then shows the one-Hunting-cycle
+prerequisite until the first hunt completes. This supersedes the earlier
+immediate Hideworking placeholder. The simulation unlock rules are unchanged.
+Verified sequential reveal in a disposable running game: initially only the
+Toolmaking placeholder is shown; after Gathering, Toolmaking and locked Hunting
+are visible with Hideworking absent; unlocking Hunting reveals the Hideworking
+prerequisite. TypeScript, lint and locale checks pass.
+
+## Independent era replacement — 21 October 2026
+
+Matthew approved replacing the previous era outright. Starting Farming discards
+Forager population, resources, equipment and unfinished jobs immediately. Every
+new village begins in Farming with three founders, no housing/upgrades and zero
+Food, Materials, Tools or Goods. There is no settlement phase, retained-camp
+panel, inherited income or previous-era simulation. The Farming seasonal clock
+starts at zero. Existing global rewards and the Forager award history are kept.
+Completing Farming also stops it immediately and discards unfinished village
+jobs; First Cities is still not implemented.
+
+Farming subsystem version 3 removes the former transfer/income fields. Valid v1
+and v2 villages migrate without changing their earned stocks, housing, upgrades,
+paid village jobs, elapsed time or awards. Their old Forager state is cleared and
+its income is removed. Old pending Forager handoffs enter Farming immediately;
+old pending village finishes become complete immediately. Invalid legacy input
+is rejected before any source state can be discarded. The root save schema stays
+21; older readers reject the newer Farming subsystem.
+
+Rewards remain six normal Forager milestones to reach Farming, with the existing
+optional later population milestones still available while staying in Forager,
+and six Farming milestones. No Catalyst/Fracture balance change is included.
+
+Verification: actual browser import of a ready Forager save with running work,
+normal Begin Farming activation, immediate three-person village with empty
+stores and no retained-camp UI. Desktop English and 360px German at 130% Interface
+size inspected using the existing Research activity/Infinity dock patterns.
+A disposable full-arc probe completed standalone Farming in 9,450 simulated
+seconds (four manual Granary purchases, zero Fractures), awarded all six Farming
+Catalysts and preserved the completed village through serialization. The same
+probe verified identical starts from 160 and 10,000 Forager people. All 34 approved
+save-safety cases pass, including three old-village migration cases; TypeScript,
+lint, locale validation/compilation and production web build pass. Native hosts
+and other Interface scales were not rechecked. These are local uncommitted changes.
+
+
+## 21 October 2026 - Farming matched to Forager presentation
+
+Matthew requested that Farming match Forager's progress and upgrade styling and
+reduce clutter. Farming now uses Forager's inline Catalyst track, count, season
+clock and upward-opening settings composition. The header, compact icon-only
+stock row, title/crew/recipe activity rows and purchase grid share the Forager
+patterns. Purchases follow activities; the locked Granary shows its prerequisite
+and the shared Buy control. An empty Village column is omitted.
+
+Repeated activity icons, the extra housing/trade header, the visible weathering
+bar on Homes, and the main-list completed-upgrade catalogue are removed. Housing,
+trade, completed upgrades and resource names remain in settings; weathering
+remains in Homes' disclosure. Integer values use the same compact formatting as
+Forager, while fractional worker allocations remain explicit. Economy, unlocks,
+input receipts and rewards are unchanged by this presentation correction.
+
+Checked against the running Forager reference in the isolated browser: fresh
+Farming, a developed village with a paid repair, running/waiting rows, locked
+purchase, keyboard-opened settings and Granary details, and the final completed
+upgrade detail. Desktop default and German at 130% Interface size were inspected,
+including a measured 360 CSS-pixel game viewport with no horizontal overflow.
+Native hosts, separate text enlargement, RTL and other Interface sizes are not
+verified for this correction. TypeScript, lint and the production build pass.
+
+
+## 21 October 2026 - Farming rebuilt around land, food and population
+
+Matthew authorized a complete replacement of Farming, keeping Forager's clean
+presentation and gradual introduction of concepts. Nothing in the previous
+Farming economy was protected. The requested direction is permanent land
+expansion, assigned workers, housing capacity, seasonal food support, food
+reserves, passive burials and roughly twice Forager's duration.
+
+### Playable rules
+
+- Each independent run starts with three residents in one House, one fisher and
+  two workers clearing woodland. No old Forager jobs or income remain.
+- Woodland clears one permanent plot and supplies Materials. Its crew continues
+  to the next plot. Further clearing takes longer and yields more Materials.
+- Manual purchases spend Materials, Tools and (for buildings) a free plot.
+  Houses provide three places; food production determines actual population.
+- Food sources are Fishing, Barley, Wheat and Herding. Fields and pastures are
+  permanent purchases with four worker spaces each. Fishing starts with three
+  spaces; Nets adds three. Sheep provide steadier food; Cattle improves Herding.
+- Workers stay assigned. Full-row disclosures contain direct count entry,
+  single-worker controls, Assign available, and an atomic transfer from another
+  job. Moving between food jobs does not introduce a temporary unassigned dip.
+  The last food producer cannot be removed without another food job taking over.
+- Each resident uses one Food per simulation minute. Food production supports
+  growth immediately, limited by housing. No birth or arrival queue exists.
+- Seasons last 30 simulation minutes. Barley Food per worker/minute is 5/6/7/2;
+  Wheat 4/9/12/1; Fishing 4/3.5/4/3; Herding 3.5/4/4/3.5. Cattle boosts Herding
+  25%; Irrigation boosts both crops 25%. Fractures retain the existing 5% bonus.
+- Without a Granary, surplus food is not stored. Each Granary adds 3,000 reserve
+  capacity. Surplus fills it; a production shortfall drains it. Reserves support
+  existing residents only, so a tiny reserve cannot create a population spike.
+- When no reserve remains, a food-driven population drop is recorded once as
+  starvation deaths. Work assignments reduce from non-food jobs first. Every
+  eight seasons a generation is recorded as natural deaths and immediately
+  replaced, without changing population or worker assignments. Both feed one
+  passive Burials statistic; deaths do not grant production or reward bonuses.
+- The six population milestones are 6/12/24/48/96/192. Rewards retain the existing
+  Catalyst eligibility checks, and earned milestones persist through shortages.
+  At 192 the player can finish the village. First Cities remains unavailable.
+- Stored Time preserves the remaining bank when a new resident is available to
+  assign or the completion action is ready. Active game time otherwise continues.
+- Stored Time's selectable cap is 8× initially, 12× after completing Forager,
+  and 16× after reaching Farming's final population milestone. These caps come
+  from saved era progress, including migrated villages. Finishing Farming ends
+  its decision pause so Stored Time can still accelerate the rest of the game.
+
+### Presentation and persistence
+
+The current Forager header, compact icon/quantity stock row, two-column activity
+layout, purchase cards, full-row disclosures and inline Catalyst/season dock are
+reused. Food is a continuous rate and has no fabricated harvest bar. Woodland and
+Workshop show their owned cycle, payment/output and adjacent timer. Work controls,
+seasonal yield details, reserve explanation and burial breakdown are disclosed
+on demand. Only unlocked activities and the next relevant purchases appear.
+There are no priority radios, automatic building plan, weathering meter, shipment
+chain, detached upgrade catalogue or extra food inventories in this replacement.
+Purchase benefits distinguish housing/work spaces from actual recruited workers.
+
+Farming schema 4 retains every old version 1-3 village as an immutable recovery
+receipt. Houses, fields, pasture, stores and applicable upgrades are translated;
+unused Goods return their base Materials, paid inputs are refunded, and invested
+work is credited once against new jobs. Existing Catalyst history and completion
+remain owned. New paid jobs retain their quoted costs, duration and outputs after
+later tuning. The old scheduler is retained only as migration validation rules.
+
+### Pacing evidence and verification
+
+A disposable real-engine benchmark with zero Fractures, prompt housing purchases
+and Leadership reached the current Forager gate in 700.33 simulation minutes.
+Two provisional Farming policies reached 192 in 1,315.67 minutes (Barley-led) and
+1,623.67 minutes (mixed crops), or 1.88 and 2.32 times that baseline. These are
+optimistic scripted tuning comparisons, not promised wall times or proof of fun.
+The policies make frequent workforce adjustments; actual player cadence needs
+playtesting. No timers were added solely to force a two-hour legacy target.
+
+The approved save-safety suite currently passes 35 cases, including version 1-3
+conversion, the full legacy receipt, refunded inputs, invested work, and a new
+paid checkpoint's save/reload. A disposable engine probe also exercised reserve
+exhaustion, starvation once, natural turnover, equivalent partitioned work and
+reloads. TypeScript, lint, translation structure checks, all locale compilation
+and a production build pass.
+
+Rendered-game checks used isolated development saves. They covered the opening
+clearing, Workshop and first field, moving workers directly between jobs,
+housing-driven growth, Granary/Nets/Cattle/Irrigation purchases, Herding output,
+winter reserve exhaustion and one-time starvation accounting, and natural
+turnover without workforce loss. At spring growth, Stored Time stopped spending
+with unassigned residents and resumed after assigning them. The 192-resident
+completion action reached the completed-era screen.
+
+The Forager reference and Farming were compared at the same desktop width and
+150% Interface size; default 100% and minimum 80% were also inspected. German at
+130% was checked at measured 360px and 320px game widths and in 800px by 360px
+landscape. There was no horizontal overflow; ordinary targets measured at least
+44px within browser subpixel rounding. Native Enter/Space opened and closed job
+details. The final mobile purchase and the resource key at the end of the
+scrollable settings panel were reachable. Screenshots are retained in the local
+ignored output directory.
+
+These checks do not establish native iOS/Android/Steam acceptance, separate OS
+text enlargement or browser zoom, screen-reader quality, RTL or reduced-motion
+behavior. Longer ordinary playtesting remains necessary to judge pacing and
+workforce-management effort. No native build or deployment was performed.
+
+The subsequent era-speed correction was checked in the running game: a fresh
+save exposes an 8× cap, a Farming save accepts and spends Stored Time at 12×,
+and reaching/finishing Farming exposes 16×. After the finish action, 16× spends
+Stored Time normally instead of remaining caught in the village decision pause.
+The approved 35-case save-safety suite, lint and production build passed.
+
+## 21 October 2026 - Automatic crews and minimal presentation
+
+Matthew approved automatic stable crews, one crop and livestock, removing
+Fishing and the separate Cattle choice, and retaining seasons/storage as the
+food-planning decisions. He explicitly rejected paragraph-length explanations
+in ordinary disclosures. This preference is also in the mandatory UI core.
+
+- Start with three residents, one planted Field and two workers clearing land.
+  Further fields and pastures are purchased. No assignment controls remain.
+- Fields and pastures each supply four job spaces. Food jobs fill automatically,
+  reserving up to two residents for construction. When population cannot fill
+  every food job, the split follows the number of crop/pasture spaces. This
+  allocation changes with population or buildings, never to chase a season's
+  highest yield. It therefore leaves a real value in winter preparation.
+- Remaining residents clear woodland, except one Workshop worker per 32
+  residents (rounded up). Workshops make enough Tools for the largest unlocked
+  purchase, with a minimum four-Tool buffer, then wait. Already-paid work finishes
+  and preserves its quote. This avoids consuming building Materials to create
+  thousands of unused Tools.
+- Crops produce 4/9/12/1 Food per worker/minute across spring/summer/autumn/winter.
+  Livestock produces 3.5/4/4/3.5. Irrigation retains its 25% crop bonus. Additional
+  Pastures expand livestock directly; there is no Cattle purchase or Fishing.
+- Houses, food reserves, starvation, passive natural turnover, milestones and
+  8×/12×/16× Stored Time caps retain their roles. Automatic recruitment/staffing
+  no longer pauses Stored Time. Only the final completion decision does.
+- Clearing starts at 570 worker-seconds, retaining the increasing plot-cost
+  curve. Two simple purchase policies reach 192 in 1,320.67 and 1,508 simulation
+  minutes, versus the measured 700.33-minute Forager baseline: 1.89× and 2.15×.
+  They make 78 and 82 purchases and zero worker assignments. These are tuning
+  comparisons, not a promise of elapsed play time or optimal strategies.
+
+Rows show name, automatic crew/current capacity, and output. Food disclosures
+contain only a full-crew quantity and four seasonal yields. Work disclosures
+contain named recipe quantities and a short waiting state. Purchases show costs
+and capacity/production effects; their details show yields or one named benefit.
+The header shows the signed food balance and reserve duration during a shortage.
+Settings contain numerical facts and the compact resource key, with no repeated
+assignment, growth, transfer or reserve paragraphs.
+
+Schema 5 archives the full previous schema-4 village. Both crops combine into
+Fields, paid Woodland/Workshop receipts survive, and retired Nets/Cattle return
+their Materials and Tools. Versions 1-3 still retain their original archival
+receipt during direct conversion. No global rewards are reset.
+
+Verification: the running game was checked from the opening through Field,
+Pasture, House and Granary purchases, automatic crew growth, surplus storage,
+the signed winter deficit/reserve countdown, schema-4 import and era completion.
+Food disclosures contain only the full-crew quantity and seasonal comparison;
+Enter/Space activation and the compact settings/resource key were exercised.
+German at 130% Interface size was inspected at 360px, 320px and 800×360 landscape;
+desktop 80%, 100% and 150% were also checked. No horizontal overflow was observed,
+and mobile disclosure/purchase targets measured at least 44px within subpixel
+rounding. The same native-device, separate text-enlargement, RTL and reduced-motion
+limits noted above remain unverified. The approved save-safety suite now has
+36 passing cases, including lossless schema-4 conversion and continued paid work
+after save/reload. Lint, translation checks and production build pass.
+
+## 21 October 2026 - Logging camps and automatic Stored Time return
+
+Matthew approved purchasable Logging camps with one free starter camp and
+automatic staffing. Each camp provides eight clearing jobs. They cost Materials
+and Tools, with increasing prices, and sit on the forest frontier rather than
+using a cleared building plot. Clearing still awards Materials and one new plot
+per completed cycle. Its paid receipt survives buying another camp; additional
+workers shorten the remaining time without restarting or paying twice.
+
+Food jobs retain their existing allocation. The Workshop retains its small crew;
+the remaining workforce fills clearing jobs up to camp capacity. Unfilled labour
+is shown as Idle, so insufficient camps are visible without an explanatory panel.
+Schema 6 gives old villages enough camps for their existing clearing workforce,
+preserves paid work and stock, and archives the original schema-5 village.
+The illustrative purchase policy finishes in 1,578.33 simulation minutes
+(2.25 times the earlier Forager reference), buying 15 total camps and making
+96 purchases overall. This is a tuning sample, not a promised play time.
+
+Offline Time now has an On return selector: Off, Last speed, Max speed. Off is
+the default. The choice and last manually selected rate are stored in the save.
+Last speed resumes that rate up to the currently unlocked cap; Max speed uses
+the current 8/12/16× cap. Selecting an enabled mode applies it immediately when
+the bank is usable. Pausing/backgrounding still stops consumption, then an
+eligible return applies the preference after away time is credited. Empty or
+flagged banks do not resume. Manual reset pauses the current boost without
+discarding the preference. The final Farming decision still protects the bank.
+
+The autumn crop peak is unchanged. It represents harvest availability, not
+faster autumn growth, and is a simplified fictional seasonal model rather than
+a universal real-world crop calendar. No additional explanatory UI was added.
+
+Verification: the running game showed 8/8 becoming 16/16 clearing workers after
+one camp purchase, with Idle falling by eight and the same paid cycle continuing.
+Max speed resumed at 12× after importing the exported preference with its active
+slider paused. Last speed retained a manually selected 5×. German at 130% in a
+360px viewport showed the camp purchase and return selector without horizontal
+overflow and with 44px targets. The approved suite has 39 passing cases covering
+schema-5 conversion and the existing once-only away-credit case with all three
+resume modes. Native background/return and separate OS text enlargement remain
+unverified.
+
+
+## 21 October 2026 - Preferred jobs, recovery and village disasters
+
+Matthew approved job limits rather than direct worker assignments: in a 7/8
+crew display the controls change the eight. He also approved gradual recovery,
+limited occasional disasters, and shamans as a workforce tradeoff.
+
+- Each activity has a persistent desired-job limit from zero to its building
+  capacity. Its row displays actual crew / desired jobs; minus, numeric entry
+  and plus edit only the limit. Building capacity is a short disclosure fact.
+  Additional Fields, Pastures and Logging camps add their new job spaces to the
+  limit; a new Shrine opens four spaces and requests one Shaman by default.
+- Available people fill food jobs first, sharing an undersupplied workforce
+  proportionally between requested crop/herding jobs. The allocator never
+  increases the player's limits to prevent hunger. Shamans, the Workshop and
+  Woodland then fill in that order. A stocked/input-blocked Workshop releases
+  its people; funded work remains intact. Shamans fill only useful prevention
+  places, so jobs beyond the prevention cap remain unfilled. Other surplus
+  residents remain Idle. No fixed low/normal/high priority controls were added.
+- Population no longer jumps to production's support level. Sustained production
+  sufficient for one more resident allows one arrival per 120 simulation seconds,
+  within housing capacity. Losing that surplus resets incomplete growth. There
+  is no arrival queue. The header shows the next arrival's remaining time.
+- Reserves cover negative food balance first. Once empty, each 30 unmet Food
+  causes one starvation death; ongoing smaller populations consume less. Surplus Food
+  repays accumulated hunger before storage or recovery. Switching job limits
+  alone cannot clear hunger. At least one resident remains so the
+  village can recover. Every resident still consumes one Food per minute.
+- Crops produce 5/11/9/1 per worker/minute over spring/summer/autumn/winter;
+  livestock produces 3.5/4/3.5/3. Irrigation retains its 25% crop bonus. Seasons
+  remain predictable; there are no random weather production multipliers.
+- At each season end, make one disaster roll for the season that just finished:
+  spring 10%, summer 5%, autumn 15%, winter 25%. A triggered flood, fire or
+  sickness kills 15% of current residents, rounded up while retaining one
+  resident. These population disasters replace the old stock losses and
+  temporary livestock health effect. Growth resumes at the existing gradual
+  rate when housing and food permit; job limits and buildings remain intact.
+- A Shrine unlocks at four Houses, costs 90 Materials / 8 Tools initially, takes
+  one plot, and offers four Shaman places. Each active Shaman provides prevention
+  equal to six divided by population, capped at 75% overall (one per 24 residents
+  gives 25%). Prevention fully averts an event. A short event line appears for
+  half a season and the latest event remains in village settings. The event RNG,
+  season clock, disaster deaths and event receipt persist across saves and
+  offline/Stored Time advancement, with no reroll on reload.
+- Schema 7 preserves complete schema-6 villages in an archival receipt, as with
+  older migration receipts. Existing stock, owned buildings, paid cycles, past
+  deaths and earned rewards survive. Initial limits retain old food crews and
+  full camp capacity; a later purchase is the player's explicit expansion.
+- Clearing starts at 500 worker-seconds. An illustrative purchase/preference
+  policy reached 192 residents in 1,332 simulation minutes, versus the earlier
+  current-Forager measurement of 700.33: 1.90 times. It used 95 purchases and
+  73 job-limit edits. This is a pacing sample, not an optimal strategy, ordinary
+  play-time promise, or proof across every random event sequence.
+
+Presentation uses the existing Forager activity and purchase compositions,
+Bots/Research density, and the Infinity-style settings dock. The requested
+numeric job controls are the local addition: the desired number is editable
+in the crew count, with a quiet pair of inline minus/plus controls. Targets stay
+44px; no assignment dialog or explanatory paragraph is added.
+The Shrine reuses the existing Hall artwork without drawing a new symbol.
+
+Verification so far: the approved save-safety suite passes 40 cases, including
+schema-6 migration, unchanged paid work, partial recovery and persistent event
+state through the real publication/reload boundary. A disposable long-duration
+probe checked 20,000-second partition equivalence across seasons, hunger,
+recovery and disasters, and was used for the pacing sample. Running-game checks
+covered job buttons and numeric entry, food-to-Woodland reallocation, a Shrine's
+plot/payment/crew, one-at-a-time recovery, starvation, a fire with exact stock
+loss, averted disaster, sickness output, and actual export/import retaining the
+event and limits. Final responsive checks are recorded below.
+
+
+Final running-game checks also covered entering from Forager, the completed
+192-resident action, empty/filled job limits, and new housing showing a fresh
+arrival countdown rather than retroactive growth. The Forager reference was
+compared at the same default desktop width. Desktop Interface sizes 80%, 100%
+and 150% were inspected; German at 130% was inspected at actual 360px and 320px
+widths and at 800x360 landscape. There was no horizontal overflow. Job controls
+measured 44px within browser subpixel rounding; lower job controls, the final
+purchase and the settings resource key were reachable. Native Enter/Space
+opened disclosures and numeric entry committed on Enter. The new symbols reuse
+existing artwork. The approved 40-case save-safety suite, lint, translation
+checks and production build pass. Native devices, separate OS text enlargement,
+RTL and reduced-motion behavior remain unverified. Longer player-driven balance
+review remains; no build was deployed.
+
+
+### Job-control visual correction (21 October)
+
+Matthew rejected the generic filled adjustment buttons. They used the default
+secondary-button palette and added a redundant Jobs row, making routine controls
+visually louder and activities taller. The correction keeps the crew count's
+editable denominator and places minus/plus in one compact, dark segmented
+surface at the trailing edge, using the existing Research quantity-control
+colours. The desired number itself is edited in the crew count; no duplicate
+numeric field or Jobs label remains. Native buttons and
+number input retain 44px targets, visible focus and existing command semantics.
+
+Verified actual minus adjustment, numeric entry without toggling the disclosure,
+and Enter/Space disclosure operation. Desktop 80/100/150% and German at 130% in
+360px and 320px browser layouts were inspected; the latter had no horizontal
+overflow and 44px targets within rounding. Lint and production build pass.
+This is a local visual correction awaiting player review, not a newly approved
+shared style. Native hosts and other accessibility modes remain unverified.
+
+
+### Existing buttons on the left (21 October, supersedes the custom controls above)
+
+Matthew rejected introducing another button style and then requested the controls
+on the left. Minus/plus now use the existing Button variant="purchase", with the
+same shared font role and touch bounds as the village Buy buttons. The custom
+segmented frame, fills, colours, borders, hover/pressed/disabled/focus overrides
+have been removed. Only positioning and spacing remain local. Buttons precede
+the activity in both the visual layout and keyboard order. Their stacking keeps
+pointer activation separate from the activity disclosure.
+
+The rendered adjustment and Buy buttons matched in background colour/image,
+foreground, border, radius, font family/size/weight, padding and shadow. Actual
+plus/minus changed desired jobs without toggling the disclosure. Desktop and
+320px German 130% layouts retained readable rows and 44px targets. Lint/build
+pass; native hosts remain unverified.
+
+### Village control feedback and progress alignment - 21 October 2026
+
+Village commands track pending work by job or purchase, rather than disabling the entire panel. The affected control guards duplicate submission while the runtime serializes independent commands. Failure styling applies only to the affected purchase. Work progress bars and timers occupy the content column to the right of the shared left-hand buttons. Verified job changes in the running game and progress alignment at desktop and 320 CSS-pixel width without horizontal overflow; lint and production build pass. Native hosts were not checked for this adjustment.
+
+The final alignment uses two real columns in each job summary: fixed square shared buttons are centred in the left column, while title, crew, recipe and progress stay in the right column. Buttons do not stretch with row height. Their measured default size is 44 by 44 CSS pixels on desktop and at 320 CSS pixels. Clicking the embedded buttons preserves disclosure state; Enter and Space on the summary still toggle its details.
+
+The final compact-row correction removes the header's extra 44px minimum and sizes recipe icons to their text role. The editable count retains a full-sized hit target without inflating the visible line. For ordinary rows, text starts at the square buttons' top edge and the progress track ends at their bottom edge; verified with matching DOM coordinates at desktop 100%, desktop 150%, and mobile 320px at 100%. German at 130% remains readable without horizontal overflow and allows additional lines where required. Numeric edits and job buttons were exercised in the game.
+
+Matthew approved the compact work-row alignment and requested consistent top alignment across the remaining village panels. Food and Shaman text now begins at the controls' top edge; purchase summaries explicitly pack their content from the top. Controls remain square and top anchored when translated content wraps. Verified all five job heading positions against button tops on desktop and at 320 CSS pixels, and exercised a crop decrement.
+
+### Separate housing and workforce indicators - 21 October 2026
+
+Following Matthew's approval, the village header uses the existing house icon for current residents / housing capacity, then the worker icon with an explicit working count. Idle residents are a separate orange indicator, hidden at zero. Working comes from current assignments rather than desired job limits; working plus idle equals population. Reused existing house/worker artwork and the orange accent token. Verified the live 24/36 example changing between 24 working with no idle indicator and 21 working with 3 idle, plus 320px mobile wrapping. The working label is translated for every supported locale. No simulation or save format changes.
+
+Matthew then simplified workforce presentation to worker icon + working / idle counts, with no visible Working or Idle labels. Only the idle number is orange; the zero-idle suffix remains hidden. Localized labels remain for accessibility. Housing remains separately displayed under the house icon. Verified the live header as house 24/36 and worker 21/3.
+
+The burial total now uses a small skull instead of the visible Burials heading, as requested by Matthew. Its name remains in the resource key and accessible label. The original editable SVG is `source-assets/skill-icons/farming/farmingBurials.svg`; checked the runtime silhouette at desktop and 320px mobile size. Facility count explanation remains a design proposal: current workers / enabled jobs, with separate concise named facts in the disclosure and building capacity kept distinct. No facility changes were made for that proposal.
+
+### Visible facility capacity - 21 October 2026
+
+At Matthew's request, every built facility now shows its staffing and building cap below its name. The worker icon retains actual workers / editable enabled jobs; the house icon immediately to its right shows the maximum jobs supported by that facility. Capacity is visible without expanding details and uses the existing canonical workplace capacity. The recipe shares the second line when space permits; translated/enlarged content wraps naturally. Square shared buttons and top alignment remain, with ordinary work tracks ending at their bottom edge. Verified all five facility caps on desktop and 320px mobile, direct count entry and +/- changes without altering capacity, a Field purchase changing capacity 24 to 28, desktop 150% alignment, German 130% at 360px without horizontal overflow, and disclosure Enter/Space. Native hosts were not checked.
+
+## 21 October 2026 - Season-end population disasters and restored worker placement
+
+Matthew requested that disasters kill a population percentage, with a different roll chance at each season end. He approved Spring 10%, Summer 5%, Autumn 15% and Winter 25%, with 15% population loss on a hit. One seeded roll occurs at the end of the season that just finished. Flood, fire and sickness now share the population-loss effect, replacing stock losses and temporary livestock penalties. Deaths round up, with one resident retained so the village can recover. Shamans still make a separate prevention roll using their current staffing; prevention avoids the entire loss. A casualty resets partial growth, after which the normal two-minute-per-resident recovery applies when food and housing permit. Buildings, desired jobs and paid work are preserved. The skull total includes a distinct disaster-deaths counter alongside natural and starvation deaths.
+
+The season clock and persisted RNG position prevent repeat rolls at a restored season boundary. Schema 8 archives the entire schema-7 village, preserves existing residents, job preferences, stocks, funded cycles, hunger, growth and reward history, and retires its old timed disaster schedule/health effect. Active stock-loss receipts are no longer presented as new population-loss events. Older schemas still migrate directly to the current rules. Village settings show all four seasonal chances and the 15% loss. The existing approved migration/publication case covers V7 migration and the saved random stream after an actual casualty.
+
+Workers and the always-visible building cap have returned beside each facility name. The spacing issue was a three-character visual field reserved even for one-digit job limits; it now fits the actual digit count, uses tabular numerals, and retains its full-sized edit target. One card gap separates worker/job and building-capacity groups. This restores a single compact heading, with the recipe trailing and the progress/timer below; fixed square buttons, top alignment and bottom-aligned work tracks remain. The temporary second-line staffing layout is superseded.
+
+Validation in this revision includes live casualties at an Autumn boundary (24 to 20 residents, burials +4), an actual export/import retaining that result, shaman prevention with no casualties, the same seeded threshold missing Summer but hitting Spring, and gradual recovery. A disposable numerical investigation verified all four seasonal thresholds, no mid-season casualties, one-resident retention, exact 20,000-second whole/chunked/save-reloaded outcomes, and non-consuming Stored Time forecasting. The canonical job signature now uses fixed workplace order so save serialization cannot change its clock anchor merely by sorting object keys. Native devices and OS text enlargement remain unverified.
+
+Final browser layout checks also covered Interface 80/100/150%, English 320px mobile, German 130% at 360px, 800x360 landscape, editable one/two-digit job targets, Enter/Space disclosures, the final purchase and the final expanded-settings resource key. No horizontal overflow was observed. The approved save-safety suite passes all 41 cases; final lint, production build/boundary and all locale compilation checks pass. The disposable numerical helper was removed. Native hosts, OS text enlargement and reduced-motion behavior were not revalidated in this revision.
+
+
+### Facility workers and enabled jobs - 21 October 2026
+
+Matthew requested a simpler split in each facility heading: the worker icon now shows only the actual crew; the building icon shows editable enabled jobs / maximum building capacity. The existing minus/plus buttons and numeric entry still change enabled jobs. Current staffing remains independently calculated. This replaces the earlier worker actual/desired plus separate building-cap display without changing the simulation or save format. Reuses the existing Forager row and shared inline resource amounts. Verified all five facility rows in the running isolated preview at desktop and a narrow 450-CSS-pixel mobile layout, including a Woodland example with 10 actual workers and 15/32 enabled jobs, direct numeric entry with Enter, and decrement. TypeScript and project lint pass. 360px and smaller widths, other Interface/text scales, long locales and native hosts were not rechecked for this narrow change.
+
+
+### Food stock in the header - 21 October 2026
+
+Matthew requested stored Food in place of the signed net Food/minute header value. The Food icon now shows the canonical Food stock using the same whole-number formatter as Materials and Tools. Production and consumption remain in Village settings, and facility production rates and reserve duration remain unchanged. Verified the live opening village shows Food 0 while settings retain production 27/min and consumption 3/min. TypeScript and project lint pass. This is a value/accessible-name change with no new layout or simulation rules; further sizes/locales/native hosts were not rechecked. The crossed-tools jobs icon remains a proposal; a short Jobs label beside enabled jobs/capacity is only a new presentation suggestion, not an implemented or approved replacement.
+
+
+### Jobs label trial - 21 October 2026
+
+Matthew agreed to try a short localized Jobs label in place of the crossed-tools symbol. Facility headings now read name, worker icon/current crew, separator, Jobs enabled/maximum. The enabled count retains direct entry and the existing minus/plus controls. Shared inline quantity formatting and control-gap spacing are retained. Verified the live opening village as Crops: 1 worker, Jobs 1/4 and Woodland: 2 workers, Jobs 8/8. TypeScript and project lint pass. Mobile, other Interface/text scales, long locales and native hosts were not rechecked for this narrow label trial. This authorizes the local trial, not a shared icon convention.
+
+
+### Stable growth countdown typography - 21 October 2026
+
+Matthew reported that the growth timer was missing the established equally spaced digits and moving the header as it counted down. Farming header values now use the existing --font-family-numeric token as well as tabular-nums. The growth countdown has a localized content-sized grid slot covering its minute/second formats, with hidden sizing samples excluded from accessibility. The adjacent Food total therefore stays in place at digit and format changes; cycle timers retain their approved natural current-text width. No new font or countdown formatter was introduced. In a separate disposable village, actual readings 1m 52s, 1m 27s and 48.6s kept the timer at 46.758px and the Food group at x=492.461px, including the minute-to-seconds transition. TypeScript and project lint pass. The persistent player save was not changed for verification. Other Interface/text scales, long locales, mobile and native hosts were not rechecked for this narrow correction.
+
+
+## 21 October 2026 - Earned Shaman protection and guaranteed seasonal disasters
+
+Matthew explicitly requested guaranteed disasters at every season end from the start, including before a Shrine exists. There is no grace period or Shrine-unlock exemption. This supersedes the different seasonal base chances and the instantaneous Shaman prevention roll.
+
+Actual Shaman staffing earns protection over simulation time: rate = min(1, actual Shamans / (population * 0.10)) / season duration. Ten percent staffing throughout a full season earns 100%; five percent earns 50%. Earning rate is capped at ten percent staffing. Staffing/population changes affect only future work, and already-earned protection remains when Shamans leave their jobs. At season end the one disaster check has chance 1 minus earned protection, then protection resets for the new season. Flood, fire and sickness retain the same 15% rounded-up population loss, preserving at least one resident. Paid jobs, buildings, job preferences, reward history and gradual recovery remain intact. Useful automatic Shaman staffing is now capped at ceil(population * 0.10).
+
+The Shaman row shows localized Disaster reduction below its heading. Village settings show current earned reduction and remaining season-end risk, replacing the obsolete four-season odds table. Existing compact row controls, numeric typography and square targets remain.
+
+Schema 9 stores earned protection and its continuous clock anchor. Schema-8 villages are archived in full, retain their existing resources, population, jobs, preferences, event/RNG position and clocks, and start with zero newly earned protection for their current partial season. Older migration paths still preserve their own archives. The existing approved save-safety migration table now includes a schema-8 fixture and verifies earned protection through publication/reload and continued advancement, without adding gameplay balance tests. All 42 save-safety cases, TypeScript, project lint, locale extraction/translation/compilation and production build/Store boundary pass. The build retains its existing chunk-size warning.
+
+Actual isolated-browser checks: no-Shaman and no-Shrine seasons caused a 60-to-51 population loss; a fully protected season was averted with no deaths; 75% earned reduction showed 25% risk and retained that protection after Shamans stopped working; 5% staffing across the season showed 50% reduction/50% risk; the 50% in-progress state survived the actual UI export/import flow. The 75% seeded check also produced its possible casualty and reset protection for the next season. Desktop English and German 130% at a measured 360-CSS-pixel viewport were inspected with no horizontal overflow; the Shaman label wraps within its row. Ordinary native hosts, other scales, OS text enlargement and long-run pacing remain unverified. The player's main preview remains the normal persistent host at 127.0.0.1:5173; QA used a separate disposable server.
+
+
+### Averted-disaster message in the Shaman box - 21 October 2026
+
+Matthew clarified that the averted-disaster status belongs to the right of the square job buttons, beneath Disaster reduction, without increasing the row height. It now occupies the existing content column using the dense supporting text role, with its bottom aligned to the buttons. Narrow layouts keep one line with an ellipsis; the full localized receipt remains in Village settings and accessible status text. This supersedes the full-width footer placement. The half-season display duration and casualty-banner placement remain unchanged. An actual prevented season in the isolated game kept the row at 59.206 CSS pixels before and after the message appeared; the status and buttons share the same bottom coordinate. Desktop and measured 360-CSS-pixel mobile were visually checked, with no horizontal overflow or extra row height, and Enter disclosure activation preserved the status. TypeScript and project lint pass. Other scales/locales/native hosts were not rechecked for this narrow correction.
+
+
+### Full-width Disasters section - 21 October 2026
+
+Matthew requested a full-width Disasters section visible from the start because season-end disasters are a core mechanic. It appears above Food/Work and shows a season-progress bar with time remaining until the next disaster check. Shamans move out of Work into this section once a Shrine exists. Matthew clarified that earned disaster reduction belongs on the Shaman row: its green progress bar now sits to the right of the square job buttons, bottom-aligned with them, rather than as an independent section bar. Current staffing and editable Jobs remain in the row header. Recent casualty and averted-event receipts share the Disasters section. No simulation or save changes. Reuses Bots/Research compact row typography, shared Progress semantics and existing civilization tracks; the full-width grouping is the requested local composition.
+Verified in the isolated running game before a Shrine exists (0% reduction absent from standalone bars, season boundary caused population 60 to 51), and with a staffed Shrine at roughly 50% earned protection. At desktop 100% and measured 360px English, the Shaman row remains 59.206px high and the defense track shares the buttons bottom coordinate. German 130% at 360px wraps the Shaman heading while keeping controls top anchored and has no horizontal overflow. Enter disclosure activation was checked. TypeScript, project lint, all locale compilation and translation completeness checks pass. Other Interface sizes, native hosts, OS text enlargement and reduced motion were not rechecked. The player save was not used for fixture imports.

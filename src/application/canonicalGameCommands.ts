@@ -1,9 +1,9 @@
 import { activeReworkChallenge } from '../simulation/reworkChallenges'
-import { buyFarmingGranary, setFarmingFocus, completeFarmingAge } from '../simulation/farming'
+import { startFarming, buyFarmingGranary, buyFarmingPurchase, completeFarmingAge, setFarmingJobs } from '../simulation/farming'
 import { buyCivilizationChieftain, setCivilizationChieftain, buyCivilizationHunting, buyCivilizationHousing, setCivilizationFocus, equipCivilizationWorkers } from '../simulation/civilization'
 import { chooseGameplayReworkMigration, hasRetiredGameplayProgress, type ReworkMigrationChoice } from '../simulation/gameplayRework'
 import { purchaseDiscovery, type DiscoveryPurchase } from '../simulation/discovery'
-import { isOfflineBoostMultiplier, offlineBoost, withOfflineBoost } from '../simulation/offlineBoost'
+import { isOfflineBoostAutoResume, isOfflineBoostMultiplier, maximumOfflineBoostMultiplier, offlineBoost, resumeOfflineBoost, withOfflineBoost, type OfflineBoostAutoResume } from '../simulation/offlineBoost'
 import { clearSpeedrunBest, SPEEDRUN_MILESTONES, type SpeedrunMilestoneId } from '../simulation/speedrunStatistics'
 import { isBlankSlateActive } from '../simulation/infinityChallenges'
 import { isFinitePositiveNumber } from '../core/finiteNonNegativeNumber'
@@ -15,6 +15,8 @@ import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffe
 import {
   isStoredTimeAccuracyPreset,
   type CanonicalFacilityId,
+  type FarmingPurchase,
+  type FarmingWorkplace,
   type CanonicalGameStateV1,
   type CanonicalSkillPresetAutomationSlot,
   type CanonicalSkillPresetSlot,
@@ -117,7 +119,8 @@ export type CanonicalGameCommand =
   | { readonly kind: 'civilization.enter-farming' }
   | { readonly kind: 'civilization.build-granary' }
   | { readonly kind: 'civilization.complete-farming' }
-  | { readonly kind: 'civilization.farming-focus'; readonly focus: string }
+  | { readonly kind: 'civilization.farming-purchase'; readonly purchase: FarmingPurchase; readonly quantity?: number | 'max' }
+  | { readonly kind: 'civilization.farming-jobs'; readonly workplace: FarmingWorkplace; readonly count: number }
   | { readonly kind: 'civilization.unlock-hunting' }
   | { readonly kind: 'civilization.buy-chieftain' }
   | { readonly kind: 'civilization.set-chieftain'; readonly enabled: boolean }
@@ -325,6 +328,7 @@ export type CanonicalGameCommand =
       readonly requestedSeconds: number
     }
   | { readonly kind: 'time.set-offline-boost-multiplier'; readonly multiplier: number }
+  | { readonly kind: 'time.set-offline-auto-resume'; readonly mode: OfflineBoostAutoResume }
   | {
       readonly kind: 'time.set-stored-time-preset'
       readonly preset: StoredTimeAccuracyPreset
@@ -358,6 +362,8 @@ export type CanonicalGameCommandCode =
   | 'OFFLINE-BOOST-INVALID-ENABLED'
   | 'OFFLINE-BOOST-UNAVAILABLE'
   | 'offline-boost:updated'
+  | 'offline-resume:updated'
+  | 'OFFLINE-RESUME-INVALID'
   | `statistics:${string}`
   | 'quantum-leap-boundary-unavailable'
   | 'research-tuning-carrier-unavailable'
@@ -557,10 +563,11 @@ export interface CanonicalGameCommandSupport {
 }
 
 export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
-  'civilization.enter-farming': { supported: false, authority: 'Forager internal release endpoint' },
+  'civilization.enter-farming': { supported: true, authority: 'startFarming', requires: ['runtime-evaluation-port'] },
   'civilization.build-granary': { supported: true, authority: 'buyFarmingGranary', requires: ['runtime-evaluation-port'] },
   'civilization.complete-farming': { supported: true, authority: 'completeFarmingAge', requires: ['runtime-evaluation-port'] },
-  'civilization.farming-focus': { supported: true, authority: 'setFarmingFocus', requires: ['runtime-evaluation-port'] },
+  'civilization.farming-purchase': { supported: true, authority: 'buyFarmingPurchase', requires: ['runtime-evaluation-port'] },
+  'civilization.farming-jobs': { supported: true, authority: 'setFarmingJobs', requires: ['runtime-evaluation-port'] },
   'civilization.buy-chieftain': { supported: true, authority: 'buyCivilizationChieftain', requires: ['runtime-evaluation-port'] },
   'civilization.set-chieftain': { supported: true, authority: 'setCivilizationChieftain', requires: ['runtime-evaluation-port'] },
   'civilization.unlock-hunting': { supported: true, authority: 'buyCivilizationHunting', requires: ['runtime-evaluation-port'] },
@@ -826,6 +833,7 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
     authority: 'canonical persisted Stored Time accuracy preference',
   },
   'time.set-offline-boost-multiplier': { supported: true, authority: 'canonical foreground Offline Time speed', requires: ['stored-time-cheater-carrier'] },
+  'time.set-offline-auto-resume': { supported: true, authority: 'saved Offline Time resume preference', requires: ['stored-time-cheater-carrier'] },
   'settings.set-processing-interval': {
     supported: true,
     authority: 'canonical persisted active gameplay cadence preference',
@@ -913,17 +921,17 @@ export function routeCanonicalGameCommand(
       return finalizeAccepted(state, chooseGameplayReworkMigration(state, command.choice), true, 'rework:migrated', carriers, options.runtimeEvaluation)
     }
     case 'civilization.enter-farming':
-      return rejectDomain(state, carriers, 'civilization:era-unavailable', command.kind, 'Farming Villages is not available in this build.')
     case 'civilization.build-granary':
     case 'civilization.complete-farming':
-    case 'civilization.farming-focus':
+    case 'civilization.farming-purchase':
+    case 'civilization.farming-jobs':
     case 'civilization.buy-chieftain':
     case 'civilization.set-chieftain':
     case 'civilization.unlock-hunting':
     case 'civilization.buy-housing':
     case 'civilization.set-focus':
     case 'civilization.equip-worker': {
-      const next = command.kind === 'civilization.buy-chieftain' ? buyCivilizationChieftain(state) : command.kind === 'civilization.set-chieftain' ? setCivilizationChieftain(state,command.enabled) : command.kind === 'civilization.unlock-hunting' ? buyCivilizationHunting(state) : command.kind === 'civilization.buy-housing' ? (['tent','camp'].includes(command.building) ? buyCivilizationHousing(state,command.building) : null) : command.kind === 'civilization.build-granary' ? buyFarmingGranary(state) : command.kind === 'civilization.complete-farming' ? completeFarmingAge(state) : command.kind === 'civilization.farming-focus' ? setFarmingFocus(state, command.focus) : command.kind === 'civilization.set-focus' ? setCivilizationFocus(state, command.focus) : equipCivilizationWorkers(state, command.count)
+      const next = command.kind === 'civilization.farming-jobs' ? setFarmingJobs(state, command.workplace, command.count) : command.kind === 'civilization.buy-chieftain' ? buyCivilizationChieftain(state) : command.kind === 'civilization.set-chieftain' ? setCivilizationChieftain(state,command.enabled) : command.kind === 'civilization.unlock-hunting' ? buyCivilizationHunting(state) : command.kind === 'civilization.buy-housing' ? (['tent','camp'].includes(command.building) ? buyCivilizationHousing(state,command.building) : null) : command.kind === 'civilization.enter-farming' ? startFarming(state) : command.kind === 'civilization.build-granary' ? buyFarmingGranary(state) : command.kind === 'civilization.complete-farming' ? completeFarmingAge(state) : command.kind === 'civilization.farming-purchase' ? buyFarmingPurchase(state, command.purchase, command.quantity) : command.kind === 'civilization.set-focus' ? setCivilizationFocus(state, command.focus) : equipCivilizationWorkers(state, command.count)
       if (!next) return rejectDomain(state, carriers, 'civilization:action-unavailable', command.kind, 'Civilization action unavailable.')
       return finalizeAccepted(state, next, true, 'civilization:updated', carriers, options.runtimeEvaluation)
     }
@@ -2232,14 +2240,24 @@ export function routeCanonicalGameCommand(
       )
     }
 
+    case 'time.set-offline-auto-resume': {
+      if (!isOfflineBoostAutoResume(command.mode)) return rejectDomain(state, carriers, 'OFFLINE-RESUME-INVALID', command.kind, 'Choose a resume setting.')
+      const changed = (state.timeline.offlineBoostAutoResume ?? 'off') !== command.mode
+      const selected = { ...state, timeline: { ...state.timeline, offlineBoostAutoResume: command.mode } }
+      const next = command.mode === 'off' ? selected : resumeOfflineBoost(selected, carriers.storedTimeCheater === false)
+      return finalizeAccepted(state, next, changed || next.timeline.offlineBoost?.multiplier !== state.timeline.offlineBoost?.multiplier,
+        'offline-resume:updated', carriers, options.runtimeEvaluation, EMPTY_ISSUES, false)
+    }
+
     case 'time.set-offline-boost-multiplier': {
-      if (!isOfflineBoostMultiplier(command.multiplier)) {
-        return rejectDomain(state, carriers, 'OFFLINE-BOOST-INVALID-MULTIPLIER', command.kind, 'Choose a whole-number multiplier from 1 to 8.')
+      const maximum = maximumOfflineBoostMultiplier(state.civilization)
+      if (!isOfflineBoostMultiplier(command.multiplier, maximum)) {
+        return rejectDomain(state, carriers, 'OFFLINE-BOOST-INVALID-MULTIPLIER', command.kind, `Choose a whole-number multiplier from 1 to ${maximum}.`)
       }
       if (command.multiplier > 1 && (
         carriers.storedTimeCheater !== false || state.timeline.storedTimeAvailableSeconds <= 0
       )) return rejectDomain(state, carriers, 'OFFLINE-BOOST-UNAVAILABLE', command.kind, 'Stored Time is unavailable.')
-      const changed = offlineBoost(state.timeline).multiplier !== command.multiplier
+      const changed = offlineBoost(state.timeline, maximum).multiplier !== command.multiplier || state.timeline.offlineBoostResumeMultiplier !== command.multiplier
       return finalizeAccepted(state, changed ? withOfflineBoost(state, { multiplier: command.multiplier }) : state, changed,
         'offline-boost:updated', carriers, options.runtimeEvaluation, EMPTY_ISSUES, false)
     }

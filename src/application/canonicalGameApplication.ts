@@ -615,7 +615,7 @@ export class CanonicalGameApplicationFacade {
       return rejectedStoredTimeCommit(before, seconds, 'CANONICAL_EVENT_INTERVAL_THREW',
         error instanceof Error ? error.message : String(error))
     }
-    if (budget <= 0) return rejectedStoredTimeCommit(before, seconds, 'FARMING-MANUAL-ACTION-REQUIRED', 'Build the required Granary or complete the village before spending more Stored Time.')
+    if (budget <= 0) return rejectedStoredTimeCommit(before, seconds, 'FARMING-MANUAL-ACTION-REQUIRED', 'Complete the village to continue.')
     const result = this.storedTimeJobRunner !== undefined
       ? await this.commitStoredTimeInJob(envelope, budget, cancelRequested)
       : await this.commitStoredTimeSynchronously(envelope, budget, cancelRequested)

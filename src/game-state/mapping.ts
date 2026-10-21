@@ -1,7 +1,7 @@
 import { hydrateCivilization } from '../simulation/civilization'
 import { initializeGameplayRework } from '../simulation/gameplayRework'
 import { SKILL_PRESET_COUNT } from './skillPresetSlots'
-import { DEFAULT_OFFLINE_BOOST_MULTIPLIER } from '../simulation/offlineBoost'
+import { DEFAULT_OFFLINE_BOOST_MULTIPLIER, isOfflineBoostAutoResume, isOfflineBoostMultiplier, resumeOfflineBoost } from '../simulation/offlineBoost'
 import { readSwarmGrants } from '../simulation/swarmAugments'
 import { EMPTY_DISCOVERY } from '../simulation/discovery'
 import { type SpeedrunStatistics } from '../simulation/speedrunStatistics'
@@ -465,6 +465,8 @@ export function hydrateGameState(
         dreamProgression.doubleTime,
       )
       return {
+      ...(isOfflineBoostAutoResume(source.offlineBoostAutoResume) ? { offlineBoostAutoResume: source.offlineBoostAutoResume } : {}),
+      ...(isOfflineBoostMultiplier(source.offlineBoostResumeMultiplier, 16) ? { offlineBoostResumeMultiplier: source.offlineBoostResumeMultiplier } : {}),
       ...(source.offlineBoostMultiplier === undefined ? {} : { offlineBoost: {
         // A loaded save always starts at regular speed.
         multiplier: DEFAULT_OFFLINE_BOOST_MULTIPLIER,
@@ -711,7 +713,7 @@ export function hydrateGameState(
       ),
     },
   }
-  return new HydratedGameStateV1(initializeGameplayRework(state), prepared)
+  return new HydratedGameStateV1(resumeOfflineBoost(initializeGameplayRework(state)), prepared)
 }
 
 export function dehydrateGameState(
@@ -1027,6 +1029,10 @@ export function dehydrateGameState(
   source.processingStoredTimePreset =
     state.timeline.processing.storedTimePreset
   if (state.timeline.offlineBoost !== undefined) source.offlineBoostMultiplier = state.timeline.offlineBoost.multiplier
+  if (state.timeline.offlineBoostAutoResume !== undefined) source.offlineBoostAutoResume = state.timeline.offlineBoostAutoResume
+  else delete source.offlineBoostAutoResume
+  if (state.timeline.offlineBoostResumeMultiplier !== undefined) source.offlineBoostResumeMultiplier = state.timeline.offlineBoostResumeMultiplier
+  else delete source.offlineBoostResumeMultiplier
   dreamProgression.doubleTimeOwned =
     state.timeline.doubleTime.unlocked
   dreamProgression.doDoubleTime = false

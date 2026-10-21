@@ -1,6 +1,10 @@
 import { defineMessages } from 'react-intl'
 
 export const offlineTimeMessages = defineMessages({
+  autoResume: { id: 'offline-time.auto-resume', defaultMessage: 'On return' },
+  autoResumeOff: { id: 'offline-time.auto-resume-off', defaultMessage: 'Off' },
+  autoResumeLast: { id: 'offline-time.auto-resume-last', defaultMessage: 'Last speed' },
+  autoResumeMax: { id: 'offline-time.auto-resume-max', defaultMessage: 'Max speed' },
   capacityCost: { id: 'offline-time.capacity-cost', defaultMessage: 'Cost' },
   capacityResult: { id: 'offline-time.capacity-result', defaultMessage: 'New capacity' },
   capacityMaxed: { id: 'offline-time.capacity-maxed', defaultMessage: 'Maxed' },
@@ -18,7 +22,7 @@ export const offlineTimeMessages = defineMessages({
   boostDrain: { id: 'offline-time.boost-drain', defaultMessage: '{seconds}s per second' },
   boostDurationLabel: { id: 'offline-time.boost-duration-label', defaultMessage: 'Boost duration' },
   boostDetails: { id: 'offline-time.boost-details', defaultMessage: 'Details' },
-  boostStack: { id: 'offline-time.boost-stack', defaultMessage: 'Move the slider above 1× to use stored time. Only extra time uses the bank. Double Time stacks separately. Empty storage, backgrounding and manual resets return the slider to 1×.' },
+  boostStack: { id: 'offline-time.boost-stack', defaultMessage: 'Only extra time uses the bank. Double Time stacks separately.' },
   quickAmounts: { id: 'offline-time.quick-amounts', defaultMessage: 'Quick actions (minutes)', description: 'Three device-local quick action amounts.' },
   quickSlot: { id: 'offline-time.quick-slot', defaultMessage: 'Action {slot}', description: 'Label for a numbered quick time action.' },
   maxStorage: {

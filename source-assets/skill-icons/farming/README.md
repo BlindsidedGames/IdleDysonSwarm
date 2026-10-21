@@ -18,3 +18,14 @@ for (const file of await readdir('source-assets/skill-icons/farming')) {
 }
 JS
 ```
+
+## Burials - 21 October 2026
+
+Matthew requested a small skull for the burial counter. `farmingBurials.svg` is an original flat white skull with transparent eye, nose and tooth cutouts, following the existing Forager/Farming silhouette vocabulary. No existing skull master was present in the repository or archived sprite names. Runtime export uses the command above. Candidate artwork awaits visual review in the running village.
+
+
+## Jobs proposal - 21 October 2026
+
+`farmingJobs.svg` combines a hoe with the exact approved mallet path from `../forager/foragerTools.svg`. The mallet geometry is reused rather than redrawn; a transparent cutout separates the crossed handles at small sizes. It is a candidate for the enabled jobs / capacity indicator, shown in the live preview for Matthew to review. Housing continues using Homes, and the Tools resource keeps the single mallet. This composition is not yet an approved shared icon convention. Export uses the command above.
+
+Matthew subsequently requested a localized Jobs label trial in place of this candidate icon. The active facility count uses the label; the vector remains available as the earlier proposal.

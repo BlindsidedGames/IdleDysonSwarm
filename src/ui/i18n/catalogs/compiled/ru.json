@@ -1113,12 +1113,6 @@
       "value": "Сохранение пищи"
     }
   ],
-  "civilization.foragerGenerator": [
-    {
-      "type": 0,
-      "value": "Лагерь собирателей"
-    }
-  ],
   "civilization.fractureRule": [
     {
       "type": 0,
@@ -1157,6 +1151,12 @@
     {
       "type": 0,
       "value": "Обработка шкур"
+    }
+  ],
+  "civilization.hideworkingPrerequisite": [
+    {
+      "type": 0,
+      "value": "Завершите один цикл охоты, чтобы разблокировать."
     }
   ],
   "civilization.hireChieftain": [
@@ -1441,6 +1441,12 @@
     {
       "type": 0,
       "value": "Изготовление орудий"
+    }
+  ],
+  "civilization.toolmakingPrerequisite": [
+    {
+      "type": 0,
+      "value": "Завершите один цикл собирательства, чтобы разблокировать."
     }
   ],
   "civilization.tools": [
@@ -5315,24 +5321,6 @@
       "value": "value"
     }
   ],
-  "farming.automatic": [
-    {
-      "type": 0,
-      "value": "Строятся автоматически по плану деревни."
-    }
-  ],
-  "farming.averageLabor": [
-    {
-      "type": 0,
-      "value": "Работа распределяется во времени. Приблизительные средние значения могут содержать дроби; общее число рабочих учитывает целых людей."
-    }
-  ],
-  "farming.balanced": [
-    {
-      "type": 0,
-      "value": "Баланс"
-    }
-  ],
   "farming.begin": [
     {
       "type": 0,
@@ -5345,96 +5333,10 @@
       "value": "Эпохи охотников и собирателей и земледельческих деревень завершены. Продолжение скоро."
     }
   ],
-  "farming.boost": [
-    {
-      "type": 0,
-      "value": "Реальные расколы: +"
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": "%"
-    }
-  ],
-  "farming.build": [
-    {
-      "type": 0,
-      "value": "Построить зернохранилище"
-    }
-  ],
   "farming.buy": [
     {
       "type": 0,
       "value": "Купить"
-    }
-  ],
-  "farming.cap": [
-    {
-      "type": 0,
-      "value": "Хранилище заполнено; поля ждут расхода еды или строительства зернохранилища."
-    }
-  ],
-  "farming.capacity": [
-    {
-      "type": 0,
-      "value": "Запас еды"
-    }
-  ],
-  "farming.closed": [
-    {
-      "type": 0,
-      "value": "Закрыто"
-    }
-  ],
-  "farming.compactStorage": [
-    {
-      "type": 0,
-      "value": "160 хранения"
-    }
-  ],
-  "farming.complete": [
-    {
-      "type": 0,
-      "value": "Деревня основана"
-    }
-  ],
-  "farming.connection": [
-    {
-      "type": 0,
-      "value": "Торговые связи"
-    }
-  ],
-  "farming.constructed": [
-    {
-      "type": 0,
-      "value": "Построенные улучшения"
-    }
-  ],
-  "farming.crew": [
-    {
-      "type": 0,
-      "value": "Средняя выделенная рабочая сила"
-    }
-  ],
-  "farming.cultivationEffect": [
-    {
-      "type": 0,
-      "value": "Будущие урожаи полей дают на 20% больше еды. После водопровода рост износа жилья снижается ещё на 20%."
-    }
-  ],
-  "farming.cultivationNeeded": [
-    {
-      "type": 0,
-      "value": "Построен водопровод"
-    }
-  ],
-  "farming.done": [
-    {
-      "type": 0,
-      "value": "Построено"
     }
   ],
   "farming.era": [
@@ -5443,42 +5345,10 @@
       "value": "Земледельческие деревни"
     }
   ],
-  "farming.export": [
-    {
-      "type": 1,
-      "value": "workers"
-    },
-    {
-      "type": 0,
-      "value": " оставшихся рабочих поставляют "
-    },
-    {
-      "type": 1,
-      "value": "food"
-    },
-    {
-      "type": 0,
-      "value": " еды и "
-    },
-    {
-      "type": 1,
-      "value": "materials"
-    },
-    {
-      "type": 0,
-      "value": " материалов за минуту симуляции, до реальных бонусов раскола. Старые запасы остаются в лагере."
-    }
-  ],
   "farming.failed": [
     {
       "type": 0,
       "value": "Действие не удалось. Повторите попытку."
-    }
-  ],
-  "farming.fields": [
-    {
-      "type": 0,
-      "value": "Поля"
     }
   ],
   "farming.finish": [
@@ -5487,248 +5357,22 @@
       "value": "Основать деревню"
     }
   ],
-  "farming.finished": [
-    {
-      "type": 0,
-      "value": "Шесть жилых домов, шесть торговых связей и все три улучшения для подготовки к городам завершены. Деревня готова к первым городам; следующая эпоха пока недоступна."
-    }
-  ],
-  "farming.finite": [
-    {
-      "type": 0,
-      "value": "Построено; повторяющегося строительного цикла нет."
-    }
-  ],
-  "farming.firstHarvest": [
-    {
-      "type": 0,
-      "value": "Первый урожай"
-    }
-  ],
-  "farming.focus": [
-    {
-      "type": 0,
-      "value": "Приоритет работников"
-    }
-  ],
-  "farming.focusEffect": [
-    {
-      "type": 0,
-      "value": "Припасы предпочитает запасы с низким содержанием, но повышает износ. Рост предпочитает строительство и восстановление. Путешествия предпочитает поставки после общего зала; до него распределение сбалансировано."
-    }
-  ],
-  "farming.fullFood": [
-    {
-      "type": 0,
-      "value": "Еда: "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " / "
-    },
-    {
-      "type": 1,
-      "value": "capacity"
-    }
-  ],
-  "farming.goods": [
-    {
-      "type": 0,
-      "value": "Товары"
-    }
-  ],
-  "farming.granaries": [
-    {
-      "type": 0,
-      "value": "Зернохранилища"
-    }
-  ],
   "farming.granary": [
     {
       "type": 0,
       "value": "Зернохранилище"
     }
   ],
-  "farming.granaryDetails": [
-    {
-      "type": 0,
-      "value": "Стоимость и сведения об амбаре"
-    }
-  ],
-  "farming.granaryEffect": [
-    {
-      "type": 0,
-      "value": "Каждое зернохранилище добавляет 160 вместимости для еды. Это мгновенная ручная покупка; будущий ремонт сохраняет резерв материалов и инструментов."
-    }
-  ],
-  "farming.granaryFirstHome": [
-    {
-      "type": 0,
-      "value": "Доступно после постройки первого дома."
-    }
-  ],
-  "farming.granaryInactive": [
-    {
-      "type": 0,
-      "value": "Покупки закрыты, пока деревня завершает оплаченную работу."
-    }
-  ],
-  "farming.granaryInputs": [
-    {
-      "type": 0,
-      "value": "Нужно больше материалов или инструментов. Покупка мгновенная."
-    }
-  ],
-  "farming.granaryMaximum": [
-    {
-      "type": 0,
-      "value": "Достигнут предел амбаров."
-    }
-  ],
-  "farming.granaryRepairReserve": [
-    {
-      "type": 0,
-      "value": "Материалы и инструменты зарезервированы для предстоящего ремонта дома."
-    }
-  ],
-  "farming.growth": [
-    {
-      "type": 0,
-      "value": "Рост"
-    }
-  ],
-  "farming.guildEffect": [
-    {
-      "type": 0,
-      "value": "Будущие партии дают 3 товара за 6 материалов и 63 человеко-секунды; уже оплаченные партии сохраняют исходный рецепт."
-    }
-  ],
-  "farming.guildNeeded": [
-    {
-      "type": 0,
-      "value": "Зал, пять построенных домов и три торговые связи"
-    }
-  ],
-  "farming.guildWorkshop": [
-    {
-      "type": 0,
-      "value": "Мастерская гильдии"
-    }
-  ],
-  "farming.hall": [
-    {
-      "type": 0,
-      "value": "Общий зал"
-    }
-  ],
-  "farming.hallNeeded": [
-    {
-      "type": 0,
-      "value": "Четыре дома, пастбище и водоснабжение"
-    }
-  ],
   "farming.handoff": [
     {
       "type": 0,
-      "value": "Три основателя переходят в новую деревню. Оставшийся лагерь сохраняет запасы и поставляет еду и материалы. Оплаченная работа завершается до передачи."
-    }
-  ],
-  "farming.home": [
-    {
-      "type": 0,
-      "value": "Дом "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "farming.homeEffect": [
-    {
-      "type": 0,
-      "value": "Каждый обеспеченный дом добавляет двух жителей. При износе 100 обеспечение теряется; ремонт требует исходные материалы, инструменты и труд."
-    }
-  ],
-  "farming.homes": [
-    {
-      "type": 0,
-      "value": "Дома"
-    }
-  ],
-  "farming.homesCount": [
-    {
-      "type": 0,
-      "value": "Обеспеченные дома"
-    }
-  ],
-  "farming.housingWeathering": [
-    {
-      "type": 0,
-      "value": "Износ жилья"
+      "value": "Земледелие заменяет лагерь собирателей тремя основателями и пустыми запасами. Незавершённая работа отменяется. Заработанные катализаторы сохраняются."
     }
   ],
   "farming.inputs": [
     {
       "type": 0,
       "value": "Затраты за цикл"
-    }
-  ],
-  "farming.intensiveCultivation": [
-    {
-      "type": 0,
-      "value": "Интенсивное земледелие"
-    }
-  ],
-  "farming.kiln": [
-    {
-      "type": 0,
-      "value": "Печь"
-    }
-  ],
-  "farming.kilnNeeded": [
-    {
-      "type": 0,
-      "value": "Печь построена"
-    }
-  ],
-  "farming.limit": [
-    {
-      "type": 0,
-      "value": "Предел"
-    }
-  ],
-  "farming.locked": [
-    {
-      "type": 0,
-      "value": "Закрыто"
-    }
-  ],
-  "farming.lost": [
-    {
-      "type": 0,
-      "value": "Дом потерял обеспечение. Ремонт вернёт его жителей; основатели остаются."
-    }
-  ],
-  "farming.manual": [
-    {
-      "type": 0,
-      "value": "Постройте зернохранилище для продолжения. Запасённое время останавливается здесь, сохраняя оставшийся запас."
-    }
-  ],
-  "farming.marketEffect": [
-    {
-      "type": 0,
-      "value": "Будущие поставки требуют 1 512 человеко-секунд и возвращают 100 материалов. Шесть домов и шесть связей завершают подготовку к городам."
-    }
-  ],
-  "farming.marketNeeded": [
-    {
-      "type": 0,
-      "value": "Интенсивное земледелие, мастерская гильдии, пять построенных домов и три торговые связи"
     }
   ],
   "farming.missingInputs": [
@@ -5741,38 +5385,10 @@
       "value": "inputs"
     }
   ],
-  "farming.need": [
-    {
-      "type": 0,
-      "value": "Нужно"
-    }
-  ],
-  "farming.needsInputs": [
-    {
-      "type": 0,
-      "value": "Не хватает"
-    }
-  ],
-  "farming.next": [
-    {
-      "type": 0,
-      "value": "Текущий план: "
-    },
-    {
-      "type": 1,
-      "value": "name"
-    }
-  ],
   "farming.nextPrice": [
     {
       "type": 0,
       "value": "Следующая цена"
-    }
-  ],
-  "farming.oneGranary": [
-    {
-      "type": 0,
-      "value": "Одно зернохранилище"
     }
   ],
   "farming.outputs": [
@@ -5791,62 +5407,10 @@
       "value": "value"
     }
   ],
-  "farming.paid": [
-    {
-      "type": 0,
-      "value": "Ресурсы уже зарезервированы. Смена приоритета распределяет труд без повторной оплаты."
-    }
-  ],
-  "farming.paidStatus": [
-    {
-      "type": 0,
-      "value": "Оплаченный цикл"
-    }
-  ],
-  "farming.pasture": [
-    {
-      "type": 0,
-      "value": "Пастбище"
-    }
-  ],
-  "farming.pendingFinish": [
-    {
-      "type": 0,
-      "value": "Завершаются оплаченные циклы деревни."
-    }
-  ],
   "farming.pendingSkill": [
     {
       "type": 0,
       "value": "Эта веха ждёт доступного выбора в существующем дереве навыков или места в запасе катализаторов."
-    }
-  ],
-  "farming.production": [
-    {
-      "type": 0,
-      "value": "Производство"
-    }
-  ],
-  "farming.repair": [
-    {
-      "type": 0,
-      "value": "Ремонт дома "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "farming.reserved": [
-    {
-      "type": 0,
-      "value": "В резерве"
-    }
-  ],
-  "farming.risk": [
-    {
-      "type": 0,
-      "value": "Жильё под угрозой"
     }
   ],
   "farming.settings": [
@@ -5855,146 +5419,354 @@
       "value": "Настройки деревни"
     }
   ],
-  "farming.settling": [
-    {
-      "type": 0,
-      "value": "Оплаченная работа лагеря собирателей завершается до начала деревни."
-    }
-  ],
-  "farming.ship": [
-    {
-      "type": 0,
-      "value": "Торговая поставка"
-    }
-  ],
   "farming.shop": [
     {
       "type": 0,
       "value": "Покупки"
     }
   ],
-  "farming.skillLimit": [
+  "farming.village.averted": [
     {
       "type": 0,
-      "value": "Особые расколы земледельческих деревень пока не созданы. Эти шесть вех используют существующий запас катализаторов и доступные навыки. Неиспользованные катализаторы не ускоряют симуляцию."
+      "value": "Беда миновала. Духи приписывают заслугу себе."
     }
   ],
-  "farming.source": [
+  "farming.village.balance": [
     {
       "type": 0,
-      "value": "Сохранённый лагерь собирателей"
+      "value": "Баланс еды"
     }
   ],
-  "farming.stage": [
+  "farming.village.burials": [
     {
       "type": 0,
-      "value": "Развитие деревни"
+      "value": "Захоронения"
     }
   ],
-  "farming.storageGain": [
+  "farming.village.consumption": [
     {
       "type": 0,
-      "value": "+160 к хранению еды за покупку · Всего: "
+      "value": "Потребление"
+    }
+  ],
+  "farming.village.crops": [
+    {
+      "type": 0,
+      "value": "Посевы"
+    }
+  ],
+  "farming.village.disasterDeaths": [
+    {
+      "type": 0,
+      "value": "Бедствия"
+    }
+  ],
+  "farming.village.disasterLoss": [
+    {
+      "type": 0,
+      "value": "Потеря населения"
+    }
+  ],
+  "farming.village.disasterRisk": [
+    {
+      "type": 0,
+      "value": "Риск в конце сезона"
+    }
+  ],
+  "farming.village.fewerJobs": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": меньше мест"
+    }
+  ],
+  "farming.village.field": [
+    {
+      "type": 0,
+      "value": "Поле"
+    }
+  ],
+  "farming.village.fire": [
+    {
+      "type": 0,
+      "value": "Пожар: население −"
     },
     {
       "type": 1,
       "value": "value"
     }
   ],
-  "farming.supplies": [
+  "farming.village.flood": [
     {
       "type": 0,
-      "value": "Запасы"
+      "value": "Наводнение: население −"
+    },
+    {
+      "type": 1,
+      "value": "value"
     }
   ],
-  "farming.townMarket": [
+  "farming.village.food": [
     {
       "type": 0,
-      "value": "Городской рынок"
+      "value": "Еда"
     }
   ],
-  "farming.travel": [
+  "farming.village.fullCrew": [
     {
       "type": 0,
-      "value": "Путешествия"
+      "value": "Полный состав"
     }
   ],
-  "farming.upcoming": [
+  "farming.village.growth": [
     {
       "type": 0,
-      "value": "Пока недоступно"
+      "value": "Рост"
     }
   ],
-  "farming.village": [
+  "farming.village.herding": [
     {
       "type": 0,
-      "value": "Деревня"
+      "value": "Животноводство"
     }
   ],
-  "farming.waiting": [
+  "farming.village.house": [
     {
       "type": 0,
-      "value": "Ожидание полезного спроса или достаточных ресурсов."
+      "value": "Дом"
     }
   ],
-  "farming.waterworks": [
+  "farming.village.housing": [
     {
       "type": 0,
-      "value": "Водоснабжение"
+      "value": "Жильё"
     }
   ],
-  "farming.weatherHelp": [
+  "farming.village.idle": [
     {
       "type": 0,
-      "value": "Баланс снижает износ на 1/мин; Запасы повышают на 2/мин; Рост снижает на 4/мин; Путешествия повышают на 4/мин. Водопровод снижает рост на 40%; интенсивное земледелие снижает оставшийся рост ещё на 20%. При 75 жильё под угрозой; при 100 один дом теряет жителей, а износ сбрасывается до 40."
+      "value": "Без работы"
     }
   ],
-  "farming.weathering": [
+  "farming.village.irrigation": [
     {
       "type": 0,
-      "value": "Износ"
+      "value": "Орошение"
     }
   ],
-  "farming.woodlot": [
+  "farming.village.jobSpaces": [
     {
       "type": 0,
-      "value": "Лесной участок"
+      "value": "Вместимость зданий"
     }
   ],
-  "farming.work": [
+  "farming.village.jobs": [
+    {
+      "type": 0,
+      "value": "Места"
+    }
+  ],
+  "farming.village.jobsFor": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": места"
+    }
+  ],
+  "farming.village.land": [
+    {
+      "type": 0,
+      "value": "Свободная земля"
+    }
+  ],
+  "farming.village.lastEvent": [
+    {
+      "type": 0,
+      "value": "Последнее событие"
+    }
+  ],
+  "farming.village.loggingCamp": [
+    {
+      "type": 0,
+      "value": "Лагерь лесорубов"
+    }
+  ],
+  "farming.village.moreJobs": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": больше мест"
+    }
+  ],
+  "farming.village.natural": [
+    {
+      "type": 0,
+      "value": "Естественные смерти"
+    }
+  ],
+  "farming.village.needsGranary": [
+    {
+      "type": 0,
+      "value": "3 дома"
+    }
+  ],
+  "farming.village.needsIrrigation": [
+    {
+      "type": 0,
+      "value": "4 поля"
+    }
+  ],
+  "farming.village.needsLand": [
+    {
+      "type": 0,
+      "value": "Нет свободной земли"
+    }
+  ],
+  "farming.village.needsPasture": [
+    {
+      "type": 0,
+      "value": "2 поля · 2 дома"
+    }
+  ],
+  "farming.village.needsShrine": [
+    {
+      "type": 0,
+      "value": "4 дома"
+    }
+  ],
+  "farming.village.needsWoodland": [
+    {
+      "type": 0,
+      "value": "Расчистить лес"
+    }
+  ],
+  "farming.village.needsWorkshop": [
+    {
+      "type": 0,
+      "value": "Нужна мастерская"
+    }
+  ],
+  "farming.village.nextDisaster": [
+    {
+      "type": 0,
+      "value": "Следующее бедствие"
+    }
+  ],
+  "farming.village.noMaterials": [
+    {
+      "type": 0,
+      "value": "Нет материалов"
+    }
+  ],
+  "farming.village.pasture": [
+    {
+      "type": 0,
+      "value": "Пастбище"
+    }
+  ],
+  "farming.village.perMinute": [
     {
       "type": 1,
       "value": "value"
     },
     {
       "type": 0,
-      "value": " рабочих секунд"
+      "value": "/мин"
     }
   ],
-  "farming.workers": [
+  "farming.village.production": [
     {
       "type": 0,
-      "value": "Рабочие"
+      "value": "Производство"
+    }
+  ],
+  "farming.village.protection": [
+    {
+      "type": 0,
+      "value": "Снижение риска бедствия"
+    }
+  ],
+  "farming.village.reserve": [
+    {
+      "type": 0,
+      "value": "Запас еды"
+    }
+  ],
+  "farming.village.shaman": [
+    {
+      "type": 0,
+      "value": "Шаманы"
+    }
+  ],
+  "farming.village.shrine": [
+    {
+      "type": 0,
+      "value": "Святилище"
+    }
+  ],
+  "farming.village.sickness": [
+    {
+      "type": 0,
+      "value": "Болезнь: население −"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.village.starvation": [
+    {
+      "type": 0,
+      "value": "Голод"
+    }
+  ],
+  "farming.village.status": [
+    {
+      "type": 0,
+      "value": "Статус"
+    }
+  ],
+  "farming.village.stocked": [
+    {
+      "type": 0,
+      "value": "Запас готов"
+    }
+  ],
+  "farming.village.woodland": [
+    {
+      "type": 0,
+      "value": "Лес"
+    }
+  ],
+  "farming.village.work": [
+    {
+      "type": 0,
+      "value": "Работа"
+    }
+  ],
+  "farming.village.workingCount": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " за работой"
     }
   ],
   "farming.workshop": [
     {
       "type": 0,
       "value": "Мастерская"
-    }
-  ],
-  "farming.yield": [
-    {
-      "type": 0,
-      "value": "Поставка стоит 350 еды и 35 товаров, затем возвращает "
-    },
-    {
-      "type": 1,
-      "value": "materials"
-    },
-    {
-      "type": 0,
-      "value": " материалов и одну связь. Шесть связей, шесть жилых домов и улучшения для подготовки к городам завершают эпоху."
     }
   ],
   "gameplay.notifications.continue": [
@@ -7169,6 +6941,30 @@
       "value": "Приложение перешло в фоновый режим, обработка отменена"
     }
   ],
+  "offline-time.auto-resume": [
+    {
+      "type": 0,
+      "value": "При возвращении"
+    }
+  ],
+  "offline-time.auto-resume-last": [
+    {
+      "type": 0,
+      "value": "Последняя скорость"
+    }
+  ],
+  "offline-time.auto-resume-max": [
+    {
+      "type": 0,
+      "value": "Максимальная скорость"
+    }
+  ],
+  "offline-time.auto-resume-off": [
+    {
+      "type": 0,
+      "value": "Выкл."
+    }
+  ],
   "offline-time.balanced-preset": [
     {
       "type": 0,
@@ -7256,7 +7052,7 @@
   "offline-time.boost-stack": [
     {
       "type": 0,
-      "value": "Передвиньте ползунок выше 1×, чтобы расходовать запас времени. Только дополнительное время тратит запас. Двойное время учитывается отдельно. Пустой запас, переход в фон и ручные сбросы возвращают ползунок к 1×."
+      "value": "Запас расходуется только на дополнительное время. Двойное время действует отдельно."
     }
   ],
   "offline-time.boost-start": [

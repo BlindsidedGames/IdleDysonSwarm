@@ -1,4 +1,5 @@
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
+import { resumeOfflineBoost } from '../simulation/offlineBoost'
 import type { SimulationTransitionResult } from '../core/contracts'
 import type { DysonEntitlements } from '../simulation/canonicalDysonDerivation'
 import type { LifecycleAdapter, LifecyclePhase } from '../platform/contracts'
@@ -468,6 +469,7 @@ export class CanonicalLifecycleCoordinator {
           },
         },
       }
+      candidate.gameState = resumeOfflineBoost(candidate.gameState, !grant.cheater)
       const committed = await this.application.commitAwayReplacement(
         revisionEnvelope(snapshot),
         candidate,

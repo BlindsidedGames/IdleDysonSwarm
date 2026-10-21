@@ -12,6 +12,8 @@ export const civilizationMessages = defineMessages({
   chieftainHelp: { id:'civilization.chieftainHelp', defaultMessage:'Automatically chooses a priority for Provisioning and Craft based on growth needs and the season. Turn off to choose manually.' },
   unlockHunting: { id:'civilization.unlockHunting', defaultMessage:'Unlock Hunting' },
   huntingPrerequisite: { id:'civilization.huntingPrerequisite', defaultMessage:'Complete one Toolmaking cycle to unlock.' },
+  toolmakingPrerequisite: { id:'civilization.toolmakingPrerequisite', defaultMessage:'Complete one Gathering cycle to unlock.' },
+  hideworkingPrerequisite: { id:'civilization.hideworkingPrerequisite', defaultMessage:'Complete one Hunting cycle to unlock.' },
   huntingUnlock: { id:'civilization.huntingUnlock', defaultMessage:'Unlock Hunting for 1 Tool. Further hunts cost no Tools.' },
   population: { id:'civilization.population', defaultMessage:'Population' },
   populationGoal: { id:'civilization.populationGoal', defaultMessage:'Population {current} / {target}' },
@@ -123,5 +125,4 @@ export const civilizationMessages = defineMessages({
   upcoming: { id: 'civilization.upcoming', defaultMessage: 'Next activities' },
   continuedDevelopment: { id: 'civilization.continuedDevelopment', defaultMessage: 'Camp development {value}' },
   waiting: { id: 'civilization.waiting', defaultMessage: 'Waiting' },
-  foragerGenerator: { id: 'civilization.foragerGenerator', defaultMessage: 'Forager camp' },
 })

@@ -517,9 +517,6 @@
   "civilization.foodPreservation": {
     "defaultMessage": "Food Preservation"
   },
-  "civilization.foragerGenerator": {
-    "defaultMessage": "Forager camp"
-  },
   "civilization.fractureRule": {
     "defaultMessage": "+5% simulation speed per fractured skill. Bonuses are additive."
   },
@@ -537,6 +534,9 @@
   },
   "civilization.hideworking": {
     "defaultMessage": "Hideworking"
+  },
+  "civilization.hideworkingPrerequisite": {
+    "defaultMessage": "Complete one Hunting cycle to unlock."
   },
   "civilization.hireChieftain": {
     "defaultMessage": "Unlock Leadership"
@@ -657,6 +657,9 @@
   },
   "civilization.toolmaking": {
     "defaultMessage": "Toolmaking"
+  },
+  "civilization.toolmakingPrerequisite": {
+    "defaultMessage": "Complete one Gathering cycle to unlock."
   },
   "civilization.tools": {
     "defaultMessage": "Tools"
@@ -2220,209 +2223,38 @@
   "farming.amount": {
     "defaultMessage": "{resource}: {value}"
   },
-  "farming.automatic": {
-    "defaultMessage": "Built automatically by the village plan."
-  },
-  "farming.averageLabor": {
-    "defaultMessage": "Labor is shared over time. Approximate averages can include fractions; the worker total counts whole people."
-  },
-  "farming.balanced": {
-    "defaultMessage": "Balanced"
-  },
   "farming.begin": {
     "defaultMessage": "Begin Farming era"
   },
   "farming.betaEndpoint": {
     "defaultMessage": "Forager and Farming are complete. More coming soon."
   },
-  "farming.boost": {
-    "defaultMessage": "Actual fractures: +{value}%"
-  },
-  "farming.build": {
-    "defaultMessage": "Build Granary"
-  },
   "farming.buy": {
     "defaultMessage": "Buy"
-  },
-  "farming.cap": {
-    "defaultMessage": "Storage full; Fields pause until Food is spent or a Granary is built."
-  },
-  "farming.capacity": {
-    "defaultMessage": "Food storage"
-  },
-  "farming.closed": {
-    "defaultMessage": "Closed"
-  },
-  "farming.compactStorage": {
-    "defaultMessage": "160 storage"
-  },
-  "farming.complete": {
-    "defaultMessage": "Village established"
-  },
-  "farming.connection": {
-    "defaultMessage": "Trade connections"
-  },
-  "farming.constructed": {
-    "defaultMessage": "Constructed upgrades"
-  },
-  "farming.crew": {
-    "defaultMessage": "Average assigned labor"
-  },
-  "farming.cultivationEffect": {
-    "defaultMessage": "Future Fields harvests gain 20% Food. Positive housing Weathering falls by another 20% after Waterworks."
-  },
-  "farming.cultivationNeeded": {
-    "defaultMessage": "Waterworks established"
-  },
-  "farming.done": {
-    "defaultMessage": "Established"
   },
   "farming.era": {
     "defaultMessage": "Farming Villages"
   },
-  "farming.export": {
-    "defaultMessage": "{workers} retained workers export {food} Food and {materials} Materials per simulation minute, before actual fracture boosts. Their old stocks remain with the camp."
-  },
   "farming.failed": {
     "defaultMessage": "The action could not be saved. Try again."
-  },
-  "farming.fields": {
-    "defaultMessage": "Fields"
   },
   "farming.finish": {
     "defaultMessage": "Establish the village"
   },
-  "farming.finished": {
-    "defaultMessage": "Six supported Homes, six trade connections and all three city-readiness upgrades are established. This village is ready for First Cities; the next age is not available yet."
-  },
-  "farming.finite": {
-    "defaultMessage": "Established; no repeating construction cycle."
-  },
-  "farming.firstHarvest": {
-    "defaultMessage": "First Fields harvest"
-  },
-  "farming.focus": {
-    "defaultMessage": "Workforce focus"
-  },
-  "farming.focusEffect": {
-    "defaultMessage": "Supplies favours stock with low upkeep but adds Weathering. Growth favours building and recovery. Travel favours shipments after Hall; before Hall it uses Balanced labor."
-  },
-  "farming.fullFood": {
-    "defaultMessage": "Food: {value} / {capacity}"
-  },
-  "farming.goods": {
-    "defaultMessage": "Goods"
-  },
-  "farming.granaries": {
-    "defaultMessage": "Granaries"
-  },
   "farming.granary": {
     "defaultMessage": "Granary"
   },
-  "farming.granaryDetails": {
-    "defaultMessage": "Granary costs and details"
-  },
-  "farming.granaryEffect": {
-    "defaultMessage": "Each Granary adds 160 Food storage. It is an instant manual purchase; pending repairs keep their Materials and Tools reserve."
-  },
-  "farming.granaryFirstHome": {
-    "defaultMessage": "Available after the first Home is established."
-  },
-  "farming.granaryInactive": {
-    "defaultMessage": "Purchases are closed while the village finishes paid work."
-  },
-  "farming.granaryInputs": {
-    "defaultMessage": "More Materials or Tools needed. This purchase is instant."
-  },
-  "farming.granaryMaximum": {
-    "defaultMessage": "Maximum Granaries owned."
-  },
-  "farming.granaryRepairReserve": {
-    "defaultMessage": "Materials and Tools are reserved for a pending Home repair."
-  },
-  "farming.growth": {
-    "defaultMessage": "Growth"
-  },
-  "farming.guildEffect": {
-    "defaultMessage": "Future Goods batches produce 3 for 6 Materials and 63 worker-seconds; already funded batches keep their original recipe."
-  },
-  "farming.guildNeeded": {
-    "defaultMessage": "Hall, five Homes built and three trade connections"
-  },
-  "farming.guildWorkshop": {
-    "defaultMessage": "Guild Workshop"
-  },
-  "farming.hall": {
-    "defaultMessage": "Hall"
-  },
-  "farming.hallNeeded": {
-    "defaultMessage": "Four Homes, Pasture and Waterworks"
-  },
   "farming.handoff": {
-    "defaultMessage": "Three founders move into a new village. The remaining camp keeps its stocks and exports Food and Materials. Paid work finishes before the handoff."
-  },
-  "farming.home": {
-    "defaultMessage": "Home {value}"
-  },
-  "farming.homeEffect": {
-    "defaultMessage": "Each supported Home adds two residents. Weathering at 100 removes its support; repair uses its original Materials, Tools and labor bill."
-  },
-  "farming.homes": {
-    "defaultMessage": "Homes"
-  },
-  "farming.homesCount": {
-    "defaultMessage": "Supported Homes"
-  },
-  "farming.housingWeathering": {
-    "defaultMessage": "Housing weathering"
+    "defaultMessage": "Farming replaces your Forager camp with three founders and empty stores. Unfinished work is discarded. Earned Catalysts are kept."
   },
   "farming.inputs": {
     "defaultMessage": "Cycle cost"
   },
-  "farming.intensiveCultivation": {
-    "defaultMessage": "Intensive Cultivation"
-  },
-  "farming.kiln": {
-    "defaultMessage": "Kiln"
-  },
-  "farming.kilnNeeded": {
-    "defaultMessage": "Kiln established"
-  },
-  "farming.limit": {
-    "defaultMessage": "Limit"
-  },
-  "farming.locked": {
-    "defaultMessage": "Locked"
-  },
-  "farming.lost": {
-    "defaultMessage": "A Home lost support. Repair restores its residents; the founders remain."
-  },
-  "farming.manual": {
-    "defaultMessage": "Build a Granary to continue. Stored Time stops here and keeps the remaining bank."
-  },
-  "farming.marketEffect": {
-    "defaultMessage": "Future shipments need 1,512 worker-seconds and return 100 Materials. Six Homes and six connections finish city readiness."
-  },
-  "farming.marketNeeded": {
-    "defaultMessage": "Intensive Cultivation, Guild Workshop, five Homes built and three trade connections"
-  },
   "farming.missingInputs": {
     "defaultMessage": "Missing: {inputs}"
   },
-  "farming.need": {
-    "defaultMessage": "Need"
-  },
-  "farming.needsInputs": {
-    "defaultMessage": "Needs inputs"
-  },
-  "farming.next": {
-    "defaultMessage": "Current plan: {name}"
-  },
   "farming.nextPrice": {
     "defaultMessage": "Next price"
-  },
-  "farming.oneGranary": {
-    "defaultMessage": "One Granary"
   },
   "farming.outputs": {
     "defaultMessage": "Cycle output"
@@ -2430,98 +2262,170 @@
   "farming.owned": {
     "defaultMessage": "Owned: {value}"
   },
-  "farming.paid": {
-    "defaultMessage": "Inputs are already reserved. Changing focus moves labor without charging them again."
-  },
-  "farming.paidStatus": {
-    "defaultMessage": "Paid cycle"
-  },
-  "farming.pasture": {
-    "defaultMessage": "Pasture"
-  },
-  "farming.pendingFinish": {
-    "defaultMessage": "Finishing the village’s paid cycles."
-  },
   "farming.pendingSkill": {
     "defaultMessage": "This milestone is waiting for an eligible existing Skill tree choice or room in the Catalyst wallet."
-  },
-  "farming.production": {
-    "defaultMessage": "Production"
-  },
-  "farming.repair": {
-    "defaultMessage": "Repair Home {value}"
-  },
-  "farming.reserved": {
-    "defaultMessage": "Reserved"
-  },
-  "farming.risk": {
-    "defaultMessage": "Housing at risk"
   },
   "farming.settings": {
     "defaultMessage": "Village settings"
   },
-  "farming.settling": {
-    "defaultMessage": "Finishing paid Forager work before the village begins."
-  },
-  "farming.ship": {
-    "defaultMessage": "Trade shipment"
-  },
   "farming.shop": {
     "defaultMessage": "Purchases"
   },
-  "farming.skillLimit": {
-    "defaultMessage": "Farming-specific fractures are not authored yet. These six milestones use the existing Catalyst wallet and existing eligible Skill tree choices. Unspent Catalysts add no speed."
+  "farming.village.averted": {
+    "defaultMessage": "Disaster averted. The spirits accept the credit."
   },
-  "farming.source": {
-    "defaultMessage": "Retained Forager camp"
+  "farming.village.balance": {
+    "defaultMessage": "Food balance"
   },
-  "farming.stage": {
-    "defaultMessage": "Village progress"
+  "farming.village.burials": {
+    "defaultMessage": "Burials"
   },
-  "farming.storageGain": {
-    "defaultMessage": "+160 Food storage per purchase · Total: {value}"
+  "farming.village.consumption": {
+    "defaultMessage": "Consumption"
   },
-  "farming.supplies": {
-    "defaultMessage": "Supplies"
+  "farming.village.crops": {
+    "defaultMessage": "Crops"
   },
-  "farming.townMarket": {
-    "defaultMessage": "Town Market"
+  "farming.village.disasterDeaths": {
+    "defaultMessage": "Disasters"
   },
-  "farming.travel": {
-    "defaultMessage": "Travel"
+  "farming.village.disasterLoss": {
+    "defaultMessage": "Population loss"
   },
-  "farming.upcoming": {
-    "defaultMessage": "Not available yet"
+  "farming.village.disasterRisk": {
+    "defaultMessage": "Season-end risk"
   },
-  "farming.village": {
-    "defaultMessage": "Village"
+  "farming.village.fewerJobs": {
+    "defaultMessage": "{name}: fewer jobs"
   },
-  "farming.waiting": {
-    "defaultMessage": "Waiting for useful demand or enough inputs."
+  "farming.village.field": {
+    "defaultMessage": "Field"
   },
-  "farming.waterworks": {
-    "defaultMessage": "Waterworks"
+  "farming.village.fire": {
+    "defaultMessage": "Fire: population −{value}"
   },
-  "farming.weatherHelp": {
-    "defaultMessage": "Balanced reduces Weathering by 1/min; Supplies adds 2/min; Growth reduces 4/min; Travel adds 4/min. Waterworks cuts increases by 40%; Intensive Cultivation cuts the remaining increase by another 20%. At 75, housing is at risk; at 100, one Home loses support and Weathering resets to 40."
+  "farming.village.flood": {
+    "defaultMessage": "Flood: population −{value}"
   },
-  "farming.weathering": {
-    "defaultMessage": "Weathering"
+  "farming.village.food": {
+    "defaultMessage": "Food"
   },
-  "farming.woodlot": {
-    "defaultMessage": "Woodlot"
+  "farming.village.fullCrew": {
+    "defaultMessage": "Full crew"
   },
-  "farming.work": {
-    "defaultMessage": "{value} worker-seconds"
+  "farming.village.growth": {
+    "defaultMessage": "Growing"
   },
-  "farming.workers": {
-    "defaultMessage": "Workers"
+  "farming.village.herding": {
+    "defaultMessage": "Livestock"
+  },
+  "farming.village.house": {
+    "defaultMessage": "House"
+  },
+  "farming.village.housing": {
+    "defaultMessage": "Housing"
+  },
+  "farming.village.idle": {
+    "defaultMessage": "Idle"
+  },
+  "farming.village.irrigation": {
+    "defaultMessage": "Irrigation"
+  },
+  "farming.village.jobSpaces": {
+    "defaultMessage": "Building capacity"
+  },
+  "farming.village.jobs": {
+    "defaultMessage": "Jobs"
+  },
+  "farming.village.jobsFor": {
+    "defaultMessage": "{name}: jobs"
+  },
+  "farming.village.land": {
+    "defaultMessage": "Free land"
+  },
+  "farming.village.lastEvent": {
+    "defaultMessage": "Last event"
+  },
+  "farming.village.loggingCamp": {
+    "defaultMessage": "Logging camp"
+  },
+  "farming.village.moreJobs": {
+    "defaultMessage": "{name}: more jobs"
+  },
+  "farming.village.natural": {
+    "defaultMessage": "Natural deaths"
+  },
+  "farming.village.needsGranary": {
+    "defaultMessage": "3 Houses"
+  },
+  "farming.village.needsIrrigation": {
+    "defaultMessage": "4 Fields"
+  },
+  "farming.village.needsLand": {
+    "defaultMessage": "No free land"
+  },
+  "farming.village.needsPasture": {
+    "defaultMessage": "2 Fields · 2 Houses"
+  },
+  "farming.village.needsShrine": {
+    "defaultMessage": "4 Houses"
+  },
+  "farming.village.needsWoodland": {
+    "defaultMessage": "Clear woodland"
+  },
+  "farming.village.needsWorkshop": {
+    "defaultMessage": "Workshop required"
+  },
+  "farming.village.nextDisaster": {
+    "defaultMessage": "Next disaster"
+  },
+  "farming.village.noMaterials": {
+    "defaultMessage": "No Materials"
+  },
+  "farming.village.pasture": {
+    "defaultMessage": "Pasture"
+  },
+  "farming.village.perMinute": {
+    "defaultMessage": "{value}/min"
+  },
+  "farming.village.production": {
+    "defaultMessage": "Production"
+  },
+  "farming.village.protection": {
+    "defaultMessage": "Disaster reduction"
+  },
+  "farming.village.reserve": {
+    "defaultMessage": "Food reserve"
+  },
+  "farming.village.shaman": {
+    "defaultMessage": "Shamans"
+  },
+  "farming.village.shrine": {
+    "defaultMessage": "Shrine"
+  },
+  "farming.village.sickness": {
+    "defaultMessage": "Sickness: population −{value}"
+  },
+  "farming.village.starvation": {
+    "defaultMessage": "Starvation"
+  },
+  "farming.village.status": {
+    "defaultMessage": "Status"
+  },
+  "farming.village.stocked": {
+    "defaultMessage": "Stocked"
+  },
+  "farming.village.woodland": {
+    "defaultMessage": "Woodland"
+  },
+  "farming.village.work": {
+    "defaultMessage": "Work"
+  },
+  "farming.village.workingCount": {
+    "defaultMessage": "{value} working"
   },
   "farming.workshop": {
     "defaultMessage": "Workshop"
-  },
-  "farming.yield": {
-    "defaultMessage": "A shipment costs 350 Food and 35 Goods, then returns {materials} Materials and one connection. Six connections, six supported Homes and the city-readiness upgrades complete this age."
   },
   "gameplay.notifications.continue": {
     "defaultMessage": "Continue",
@@ -3026,6 +2930,18 @@
     "defaultMessage": "App was backgrounded processing cancelled",
     "description": "Stored Time cancellation feedback only when the app entered the background."
   },
+  "offline-time.auto-resume": {
+    "defaultMessage": "On return"
+  },
+  "offline-time.auto-resume-last": {
+    "defaultMessage": "Last speed"
+  },
+  "offline-time.auto-resume-max": {
+    "defaultMessage": "Max speed"
+  },
+  "offline-time.auto-resume-off": {
+    "defaultMessage": "Off"
+  },
   "offline-time.balanced-preset": {
     "defaultMessage": "Balanced",
     "description": "Default Stored Time accuracy preset."
@@ -3064,7 +2980,7 @@
     "defaultMessage": "Game speed"
   },
   "offline-time.boost-stack": {
-    "defaultMessage": "Move the slider above 1× to use stored time. Only extra time uses the bank. Double Time stacks separately. Empty storage, backgrounding and manual resets return the slider to 1×."
+    "defaultMessage": "Only extra time uses the bank. Double Time stacks separately."
   },
   "offline-time.boost-start": {
     "defaultMessage": "Start Boost"

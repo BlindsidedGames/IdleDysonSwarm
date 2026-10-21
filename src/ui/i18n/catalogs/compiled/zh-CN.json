@@ -1113,12 +1113,6 @@
       "value": "食物保存"
     }
   ],
-  "civilization.foragerGenerator": [
-    {
-      "type": 0,
-      "value": "采集者营地"
-    }
-  ],
   "civilization.fractureRule": [
     {
       "type": 0,
@@ -1157,6 +1151,12 @@
     {
       "type": 0,
       "value": "兽皮加工"
+    }
+  ],
+  "civilization.hideworkingPrerequisite": [
+    {
+      "type": 0,
+      "value": "完成一次狩猎循环即可解锁。"
     }
   ],
   "civilization.hireChieftain": [
@@ -1441,6 +1441,12 @@
     {
       "type": 0,
       "value": "工具制作"
+    }
+  ],
+  "civilization.toolmakingPrerequisite": [
+    {
+      "type": 0,
+      "value": "完成一次采集循环即可解锁。"
     }
   ],
   "civilization.tools": [
@@ -5315,24 +5321,6 @@
       "value": "value"
     }
   ],
-  "farming.automatic": [
-    {
-      "type": 0,
-      "value": "由村庄计划自动建造。"
-    }
-  ],
-  "farming.averageLabor": [
-    {
-      "type": 0,
-      "value": "劳动按时间分配。近似平均值可能含有小数；工人总数统计完整的人数。"
-    }
-  ],
-  "farming.balanced": [
-    {
-      "type": 0,
-      "value": "均衡"
-    }
-  ],
   "farming.begin": [
     {
       "type": 0,
@@ -5345,96 +5333,10 @@
       "value": "狩猎采集时代和农业村落已完成。更多内容即将推出。"
     }
   ],
-  "farming.boost": [
-    {
-      "type": 0,
-      "value": "实际裂变：+"
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": "%"
-    }
-  ],
-  "farming.build": [
-    {
-      "type": 0,
-      "value": "建造粮仓"
-    }
-  ],
   "farming.buy": [
     {
       "type": 0,
       "value": "购买"
-    }
-  ],
-  "farming.cap": [
-    {
-      "type": 0,
-      "value": "储存已满；农田将暂停，直到消耗食物或建造粮仓。"
-    }
-  ],
-  "farming.capacity": [
-    {
-      "type": 0,
-      "value": "食物储存"
-    }
-  ],
-  "farming.closed": [
-    {
-      "type": 0,
-      "value": "关闭"
-    }
-  ],
-  "farming.compactStorage": [
-    {
-      "type": 0,
-      "value": "160储存"
-    }
-  ],
-  "farming.complete": [
-    {
-      "type": 0,
-      "value": "村落已建立"
-    }
-  ],
-  "farming.connection": [
-    {
-      "type": 0,
-      "value": "贸易联系"
-    }
-  ],
-  "farming.constructed": [
-    {
-      "type": 0,
-      "value": "已建成的升级"
-    }
-  ],
-  "farming.crew": [
-    {
-      "type": 0,
-      "value": "平均分配劳动力"
-    }
-  ],
-  "farming.cultivationEffect": [
-    {
-      "type": 0,
-      "value": "此后的农田收获增加20%食物。在水利设施效果之后，住宅损耗的增长再减少20%。"
-    }
-  ],
-  "farming.cultivationNeeded": [
-    {
-      "type": 0,
-      "value": "已建成水利设施"
-    }
-  ],
-  "farming.done": [
-    {
-      "type": 0,
-      "value": "已建成"
     }
   ],
   "farming.era": [
@@ -5443,42 +5345,10 @@
       "value": "农业村落"
     }
   ],
-  "farming.export": [
-    {
-      "type": 1,
-      "value": "workers"
-    },
-    {
-      "type": 0,
-      "value": "名留守工人每模拟分钟输出"
-    },
-    {
-      "type": 1,
-      "value": "food"
-    },
-    {
-      "type": 0,
-      "value": "食物和"
-    },
-    {
-      "type": 1,
-      "value": "materials"
-    },
-    {
-      "type": 0,
-      "value": "材料，尚未计算实际裂变加成。原有库存保留在营地。"
-    }
-  ],
   "farming.failed": [
     {
       "type": 0,
       "value": "操作失败，请重试。"
-    }
-  ],
-  "farming.fields": [
-    {
-      "type": 0,
-      "value": "农田"
     }
   ],
   "farming.finish": [
@@ -5487,248 +5357,22 @@
       "value": "完成村落建设"
     }
   ],
-  "farming.finished": [
-    {
-      "type": 0,
-      "value": "六座得到维护的住宅、六条贸易联系和三项建城准备升级均已完成。村庄已为最初的城市做好准备；下一个时代尚未开放。"
-    }
-  ],
-  "farming.finite": [
-    {
-      "type": 0,
-      "value": "已建成；不进行重复建设周期。"
-    }
-  ],
-  "farming.firstHarvest": [
-    {
-      "type": 0,
-      "value": "首次收获"
-    }
-  ],
-  "farming.focus": [
-    {
-      "type": 0,
-      "value": "劳动力重点"
-    }
-  ],
-  "farming.focusEffect": [
-    {
-      "type": 0,
-      "value": "补给以较低维护开销优先积累库存，但会增加风化。成长优先建设和修复。远行在村会堂完成后优先运输；此前使用均衡劳动力分配。"
-    }
-  ],
-  "farming.fullFood": [
-    {
-      "type": 0,
-      "value": "食物："
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " / "
-    },
-    {
-      "type": 1,
-      "value": "capacity"
-    }
-  ],
-  "farming.goods": [
-    {
-      "type": 0,
-      "value": "货物"
-    }
-  ],
-  "farming.granaries": [
-    {
-      "type": 0,
-      "value": "粮仓"
-    }
-  ],
   "farming.granary": [
     {
       "type": 0,
       "value": "粮仓"
     }
   ],
-  "farming.granaryDetails": [
-    {
-      "type": 0,
-      "value": "粮仓成本与详情"
-    }
-  ],
-  "farming.granaryEffect": [
-    {
-      "type": 0,
-      "value": "每座粮仓增加160食物容量。这是即时手动购买；待修复房屋的材料和工具储备会被保留。"
-    }
-  ],
-  "farming.granaryFirstHome": [
-    {
-      "type": 0,
-      "value": "第一座房屋建成后可用。"
-    }
-  ],
-  "farming.granaryInactive": [
-    {
-      "type": 0,
-      "value": "村庄完成已支付的工作期间暂停购买。"
-    }
-  ],
-  "farming.granaryInputs": [
-    {
-      "type": 0,
-      "value": "需要更多材料或工具。购买立即生效。"
-    }
-  ],
-  "farming.granaryMaximum": [
-    {
-      "type": 0,
-      "value": "粮仓数量已达上限。"
-    }
-  ],
-  "farming.granaryRepairReserve": [
-    {
-      "type": 0,
-      "value": "材料和工具已为待修复的房屋预留。"
-    }
-  ],
-  "farming.growth": [
-    {
-      "type": 0,
-      "value": "发展"
-    }
-  ],
-  "farming.guildEffect": [
-    {
-      "type": 0,
-      "value": "此后的商品批次以6材料和63工秒生产3商品；已经支付的批次保留原来的配方。"
-    }
-  ],
-  "farming.guildNeeded": [
-    {
-      "type": 0,
-      "value": "会堂、已建成五座住宅和三条贸易联系"
-    }
-  ],
-  "farming.guildWorkshop": [
-    {
-      "type": 0,
-      "value": "行会工坊"
-    }
-  ],
-  "farming.hall": [
-    {
-      "type": 0,
-      "value": "村会堂"
-    }
-  ],
-  "farming.hallNeeded": [
-    {
-      "type": 0,
-      "value": "四座房屋、牧场和水利设施"
-    }
-  ],
   "farming.handoff": [
     {
       "type": 0,
-      "value": "三名奠基者进入新村落。留下的营地保留原有库存，并输出食物和材料。已支付的工作会在交接前完成。"
-    }
-  ],
-  "farming.home": [
-    {
-      "type": 0,
-      "value": "房屋 "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "farming.homeEffect": [
-    {
-      "type": 0,
-      "value": "每座有供养的房屋增加两名居民。风化达到100时失去供养；修复需要原有的材料、工具和劳动量。"
-    }
-  ],
-  "farming.homes": [
-    {
-      "type": 0,
-      "value": "房屋"
-    }
-  ],
-  "farming.homesCount": [
-    {
-      "type": 0,
-      "value": "有供养的房屋"
-    }
-  ],
-  "farming.housingWeathering": [
-    {
-      "type": 0,
-      "value": "房屋损耗"
+      "value": "农业时代将取代采集营地，以三名开拓者和空仓库开始。未完成的工作将被舍弃。已获得的催化剂会保留。"
     }
   ],
   "farming.inputs": [
     {
       "type": 0,
       "value": "每轮消耗"
-    }
-  ],
-  "farming.intensiveCultivation": [
-    {
-      "type": 0,
-      "value": "集约耕作"
-    }
-  ],
-  "farming.kiln": [
-    {
-      "type": 0,
-      "value": "窑炉"
-    }
-  ],
-  "farming.kilnNeeded": [
-    {
-      "type": 0,
-      "value": "窑炉已建成"
-    }
-  ],
-  "farming.limit": [
-    {
-      "type": 0,
-      "value": "上限"
-    }
-  ],
-  "farming.locked": [
-    {
-      "type": 0,
-      "value": "锁定"
-    }
-  ],
-  "farming.lost": [
-    {
-      "type": 0,
-      "value": "一座房屋失去供养。修复后居民会返回；奠基者始终保留。"
-    }
-  ],
-  "farming.manual": [
-    {
-      "type": 0,
-      "value": "建造粮仓以继续。储存时间会在此停止，保留剩余余额。"
-    }
-  ],
-  "farming.marketEffect": [
-    {
-      "type": 0,
-      "value": "此后的运输需要1,512工秒，并带回100材料。六座住宅和六条联系完成建城准备。"
-    }
-  ],
-  "farming.marketNeeded": [
-    {
-      "type": 0,
-      "value": "集约耕作、行会工坊、已建成五座住宅和三条贸易联系"
     }
   ],
   "farming.missingInputs": [
@@ -5741,38 +5385,10 @@
       "value": "inputs"
     }
   ],
-  "farming.need": [
-    {
-      "type": 0,
-      "value": "还需"
-    }
-  ],
-  "farming.needsInputs": [
-    {
-      "type": 0,
-      "value": "缺少投入"
-    }
-  ],
-  "farming.next": [
-    {
-      "type": 0,
-      "value": "当前计划："
-    },
-    {
-      "type": 1,
-      "value": "name"
-    }
-  ],
   "farming.nextPrice": [
     {
       "type": 0,
       "value": "下次价格"
-    }
-  ],
-  "farming.oneGranary": [
-    {
-      "type": 0,
-      "value": "一座粮仓"
     }
   ],
   "farming.outputs": [
@@ -5791,62 +5407,10 @@
       "value": "value"
     }
   ],
-  "farming.paid": [
-    {
-      "type": 0,
-      "value": "投入已经预留。更改重点会重新分配劳动力，不会再次收费。"
-    }
-  ],
-  "farming.paidStatus": [
-    {
-      "type": 0,
-      "value": "已支付的周期"
-    }
-  ],
-  "farming.pasture": [
-    {
-      "type": 0,
-      "value": "牧场"
-    }
-  ],
-  "farming.pendingFinish": [
-    {
-      "type": 0,
-      "value": "正在完成村落已支付的生产周期。"
-    }
-  ],
   "farming.pendingSkill": [
     {
       "type": 0,
       "value": "此里程碑正在等待现有技能树中符合条件的选项，或催化剂余额腾出空间。"
-    }
-  ],
-  "farming.production": [
-    {
-      "type": 0,
-      "value": "生产"
-    }
-  ],
-  "farming.repair": [
-    {
-      "type": 0,
-      "value": "修复房屋 "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "farming.reserved": [
-    {
-      "type": 0,
-      "value": "已预留"
-    }
-  ],
-  "farming.risk": [
-    {
-      "type": 0,
-      "value": "住房面临风险"
     }
   ],
   "farming.settings": [
@@ -5855,146 +5419,354 @@
       "value": "村落设置"
     }
   ],
-  "farming.settling": [
-    {
-      "type": 0,
-      "value": "正在完成采集营地已支付的工作，随后开始村落建设。"
-    }
-  ],
-  "farming.ship": [
-    {
-      "type": 0,
-      "value": "贸易运输"
-    }
-  ],
   "farming.shop": [
     {
       "type": 0,
       "value": "购买"
     }
   ],
-  "farming.skillLimit": [
+  "farming.village.averted": [
     {
       "type": 0,
-      "value": "农业村落专属裂变尚未设计。这六个里程碑使用现有催化剂余额和现有符合条件的技能树选项。未使用的催化剂不会加速。"
+      "value": "灾难已避免。神灵认为都是自己的功劳。"
     }
   ],
-  "farming.source": [
+  "farming.village.balance": [
     {
       "type": 0,
-      "value": "保留的采集营地"
+      "value": "食物收支"
     }
   ],
-  "farming.stage": [
+  "farming.village.burials": [
     {
       "type": 0,
-      "value": "村落进度"
+      "value": "安葬人数"
     }
   ],
-  "farming.storageGain": [
+  "farming.village.consumption": [
     {
       "type": 0,
-      "value": "每次购买增加160食物储存 · 总计："
+      "value": "消耗"
+    }
+  ],
+  "farming.village.crops": [
+    {
+      "type": 0,
+      "value": "作物"
+    }
+  ],
+  "farming.village.disasterDeaths": [
+    {
+      "type": 0,
+      "value": "灾害"
+    }
+  ],
+  "farming.village.disasterLoss": [
+    {
+      "type": 0,
+      "value": "人口损失"
+    }
+  ],
+  "farming.village.disasterRisk": [
+    {
+      "type": 0,
+      "value": "季末灾害概率"
+    }
+  ],
+  "farming.village.fewerJobs": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "：减少岗位"
+    }
+  ],
+  "farming.village.field": [
+    {
+      "type": 0,
+      "value": "农田"
+    }
+  ],
+  "farming.village.fire": [
+    {
+      "type": 0,
+      "value": "火灾：人口−"
     },
     {
       "type": 1,
       "value": "value"
     }
   ],
-  "farming.supplies": [
+  "farming.village.flood": [
     {
       "type": 0,
-      "value": "物资"
+      "value": "洪水：人口−"
+    },
+    {
+      "type": 1,
+      "value": "value"
     }
   ],
-  "farming.townMarket": [
+  "farming.village.food": [
     {
       "type": 0,
-      "value": "城镇市场"
+      "value": "食物"
     }
   ],
-  "farming.travel": [
+  "farming.village.fullCrew": [
     {
       "type": 0,
-      "value": "远行"
+      "value": "满员"
     }
   ],
-  "farming.upcoming": [
+  "farming.village.growth": [
     {
       "type": 0,
-      "value": "尚未开放"
+      "value": "人口增长"
     }
   ],
-  "farming.village": [
+  "farming.village.herding": [
     {
       "type": 0,
-      "value": "村落"
+      "value": "畜牧"
     }
   ],
-  "farming.waiting": [
+  "farming.village.house": [
     {
       "type": 0,
-      "value": "等待有效需求或足够投入。"
+      "value": "房屋"
     }
   ],
-  "farming.waterworks": [
+  "farming.village.housing": [
     {
       "type": 0,
-      "value": "水利设施"
+      "value": "住房容量"
     }
   ],
-  "farming.weatherHelp": [
+  "farming.village.idle": [
     {
       "type": 0,
-      "value": "均衡每分钟减少1损耗；供给每分钟增加2；发展每分钟减少4；旅行每分钟增加4。水利设施将增长减少40%；集约耕作将剩余增长再减少20%。达到75时住宅面临风险；达到100时一座住宅失去居民，损耗重置为40。"
+      "value": "空闲"
     }
   ],
-  "farming.weathering": [
+  "farming.village.irrigation": [
     {
       "type": 0,
-      "value": "风化"
+      "value": "灌溉"
     }
   ],
-  "farming.woodlot": [
+  "farming.village.jobSpaces": [
+    {
+      "type": 0,
+      "value": "建筑容量"
+    }
+  ],
+  "farming.village.jobs": [
+    {
+      "type": 0,
+      "value": "岗位"
+    }
+  ],
+  "farming.village.jobsFor": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "：岗位"
+    }
+  ],
+  "farming.village.land": [
+    {
+      "type": 0,
+      "value": "空闲土地"
+    }
+  ],
+  "farming.village.lastEvent": [
+    {
+      "type": 0,
+      "value": "最近事件"
+    }
+  ],
+  "farming.village.loggingCamp": [
+    {
+      "type": 0,
+      "value": "伐木营地"
+    }
+  ],
+  "farming.village.moreJobs": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "：增加岗位"
+    }
+  ],
+  "farming.village.natural": [
+    {
+      "type": 0,
+      "value": "自然死亡"
+    }
+  ],
+  "farming.village.needsGranary": [
+    {
+      "type": 0,
+      "value": "3座房屋"
+    }
+  ],
+  "farming.village.needsIrrigation": [
+    {
+      "type": 0,
+      "value": "4块农田"
+    }
+  ],
+  "farming.village.needsLand": [
+    {
+      "type": 0,
+      "value": "无空地"
+    }
+  ],
+  "farming.village.needsPasture": [
+    {
+      "type": 0,
+      "value": "2块农田 · 2座房屋"
+    }
+  ],
+  "farming.village.needsShrine": [
+    {
+      "type": 0,
+      "value": "4 座房屋"
+    }
+  ],
+  "farming.village.needsWoodland": [
+    {
+      "type": 0,
+      "value": "清理林地"
+    }
+  ],
+  "farming.village.needsWorkshop": [
+    {
+      "type": 0,
+      "value": "需要工坊"
+    }
+  ],
+  "farming.village.nextDisaster": [
+    {
+      "type": 0,
+      "value": "下次灾难"
+    }
+  ],
+  "farming.village.noMaterials": [
+    {
+      "type": 0,
+      "value": "无材料"
+    }
+  ],
+  "farming.village.pasture": [
+    {
+      "type": 0,
+      "value": "牧场"
+    }
+  ],
+  "farming.village.perMinute": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "/分钟"
+    }
+  ],
+  "farming.village.production": [
+    {
+      "type": 0,
+      "value": "产量"
+    }
+  ],
+  "farming.village.protection": [
+    {
+      "type": 0,
+      "value": "灾害减免"
+    }
+  ],
+  "farming.village.reserve": [
+    {
+      "type": 0,
+      "value": "食物储备"
+    }
+  ],
+  "farming.village.shaman": [
+    {
+      "type": 0,
+      "value": "萨满"
+    }
+  ],
+  "farming.village.shrine": [
+    {
+      "type": 0,
+      "value": "神龛"
+    }
+  ],
+  "farming.village.sickness": [
+    {
+      "type": 0,
+      "value": "疾病：人口−"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.village.starvation": [
+    {
+      "type": 0,
+      "value": "饿死"
+    }
+  ],
+  "farming.village.status": [
+    {
+      "type": 0,
+      "value": "状态"
+    }
+  ],
+  "farming.village.stocked": [
+    {
+      "type": 0,
+      "value": "储备充足"
+    }
+  ],
+  "farming.village.woodland": [
     {
       "type": 0,
       "value": "林地"
     }
   ],
-  "farming.work": [
+  "farming.village.work": [
+    {
+      "type": 0,
+      "value": "工作"
+    }
+  ],
+  "farming.village.workingCount": [
     {
       "type": 1,
       "value": "value"
     },
     {
       "type": 0,
-      "value": " 工人秒"
-    }
-  ],
-  "farming.workers": [
-    {
-      "type": 0,
-      "value": "工人"
+      "value": " 工作中"
     }
   ],
   "farming.workshop": [
     {
       "type": 0,
       "value": "工坊"
-    }
-  ],
-  "farming.yield": [
-    {
-      "type": 0,
-      "value": "一次运输消耗350食物和35商品，带回"
-    },
-    {
-      "type": 1,
-      "value": "materials"
-    },
-    {
-      "type": 0,
-      "value": "材料并建立一条联系。六条联系、六座得到维护的住宅和建城准备升级完成这个时代。"
     }
   ],
   "gameplay.notifications.continue": [
@@ -7169,6 +6941,30 @@
       "value": "应用已切换到后台，处理已取消"
     }
   ],
+  "offline-time.auto-resume": [
+    {
+      "type": 0,
+      "value": "返回时"
+    }
+  ],
+  "offline-time.auto-resume-last": [
+    {
+      "type": 0,
+      "value": "上次速度"
+    }
+  ],
+  "offline-time.auto-resume-max": [
+    {
+      "type": 0,
+      "value": "最高速度"
+    }
+  ],
+  "offline-time.auto-resume-off": [
+    {
+      "type": 0,
+      "value": "关闭"
+    }
+  ],
   "offline-time.balanced-preset": [
     {
       "type": 0,
@@ -7256,7 +7052,7 @@
   "offline-time.boost-stack": [
     {
       "type": 0,
-      "value": "将滑块移至 1× 以上即可使用存储时间。只有额外时间消耗储备。双倍时间独立叠加。储备耗尽、切换到后台或手动重置时，滑块会回到 1×。"
+      "value": "仅额外时间会消耗储备。双倍时间单独叠加。"
     }
   ],
   "offline-time.boost-start": [

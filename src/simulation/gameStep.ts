@@ -13,7 +13,7 @@ import { evaluateCanonicalBotCapCheckpoint } from './canonicalBotCapCheckpoint'
 import { createSimulationSummary, type SimulationPresentationSummary } from './types'
 import { addContinuous } from './numeric'
 import { settleContinuousDebit } from './conservativeSettlement'
-import { planOfflineBoost } from './offlineBoost'
+import { maximumOfflineBoostMultiplier, planOfflineBoost } from './offlineBoost'
 
 export type { ProcessingSource } from '../game-state/types'
 export type ProcessingAutomation = 'enabled' | 'suppressed'
@@ -104,7 +104,7 @@ export function advanceGame(
   if (!isFiniteNonNegativeNumber(input.baseSeconds)) {
     throw new RangeError('Game-step base seconds must be finite and non-negative.')
   }
-  const plannedFunding = input.source === 'active' ? planOfflineBoost(state.gameState.timeline, input.baseSeconds) : null
+  const plannedFunding = input.source === 'active' ? planOfflineBoost(state.gameState.timeline, input.baseSeconds, maximumOfflineBoostMultiplier(state.gameState.civilization)) : null
   let funding = plannedFunding
   if (plannedFunding && state.gameState.civilization?.farming && input.baseSeconds > 0) {
     const admittedSeconds = farmingStoredTimeBudget(state.gameState, input.baseSeconds * plannedFunding.multiplier)

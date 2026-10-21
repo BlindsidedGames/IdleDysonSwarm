@@ -644,3 +644,5 @@
 .offline-time-capacity-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--ui-control-gap); margin: 0; font-size: var(--ui-text-body); }
 .offline-time-capacity-facts dt { color: var(--color-text-secondary); }
 .offline-time-capacity-facts dd { margin: 0; color: var(--color-text-primary); font-family: var(--font-family-numeric); }
+.offline-time-auto-resume { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:var(--ui-control-gap); font-size:var(--ui-text-body); }
+.offline-time-auto-resume select { min-block-size:44px; max-inline-size:100%; padding:var(--ui-control-gap); border:1px solid var(--theme-divider); border-radius:var(--ui-control-radius); background:var(--theme-page); color:var(--color-text-primary); font:inherit; }

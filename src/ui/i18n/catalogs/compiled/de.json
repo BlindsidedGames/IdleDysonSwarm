@@ -1113,12 +1113,6 @@
       "value": "Nahrungskonservierung"
     }
   ],
-  "civilization.foragerGenerator": [
-    {
-      "type": 0,
-      "value": "Lager der Sammler"
-    }
-  ],
   "civilization.fractureRule": [
     {
       "type": 0,
@@ -1157,6 +1151,12 @@
     {
       "type": 0,
       "value": "Fellverarbeitung"
+    }
+  ],
+  "civilization.hideworkingPrerequisite": [
+    {
+      "type": 0,
+      "value": "Schließe einen Jagdzyklus ab, um dies freizuschalten."
     }
   ],
   "civilization.hireChieftain": [
@@ -1441,6 +1441,12 @@
     {
       "type": 0,
       "value": "Werkzeugherstellung"
+    }
+  ],
+  "civilization.toolmakingPrerequisite": [
+    {
+      "type": 0,
+      "value": "Schließe einen Sammelzyklus ab, um dies freizuschalten."
     }
   ],
   "civilization.tools": [
@@ -5315,24 +5321,6 @@
       "value": "value"
     }
   ],
-  "farming.automatic": [
-    {
-      "type": 0,
-      "value": "Vom Dorfplan automatisch errichtet."
-    }
-  ],
-  "farming.averageLabor": [
-    {
-      "type": 0,
-      "value": "Die Arbeit wird über die Zeit verteilt. Näherungswerte können Bruchteile enthalten; die Arbeiterzahl zählt ganze Personen."
-    }
-  ],
-  "farming.balanced": [
-    {
-      "type": 0,
-      "value": "Ausgewogen"
-    }
-  ],
   "farming.begin": [
     {
       "type": 0,
@@ -5345,96 +5333,10 @@
       "value": "Die Zeitalter der Jäger und Sammler und der Bauerndörfer sind abgeschlossen. Weitere Inhalte folgen bald."
     }
   ],
-  "farming.boost": [
-    {
-      "type": 0,
-      "value": "Tatsächliche Frakturen: +"
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": "%"
-    }
-  ],
-  "farming.build": [
-    {
-      "type": 0,
-      "value": "Kornspeicher bauen"
-    }
-  ],
   "farming.buy": [
     {
       "type": 0,
       "value": "Kaufen"
-    }
-  ],
-  "farming.cap": [
-    {
-      "type": 0,
-      "value": "Das Lager ist voll; Felder pausieren, bis Nahrung verbraucht oder ein Kornspeicher gebaut wird."
-    }
-  ],
-  "farming.capacity": [
-    {
-      "type": 0,
-      "value": "Nahrungslager"
-    }
-  ],
-  "farming.closed": [
-    {
-      "type": 0,
-      "value": "Geschlossen"
-    }
-  ],
-  "farming.compactStorage": [
-    {
-      "type": 0,
-      "value": "160 Lager"
-    }
-  ],
-  "farming.complete": [
-    {
-      "type": 0,
-      "value": "Dorf gegründet"
-    }
-  ],
-  "farming.connection": [
-    {
-      "type": 0,
-      "value": "Handelsverbindungen"
-    }
-  ],
-  "farming.constructed": [
-    {
-      "type": 0,
-      "value": "Errichtete Verbesserungen"
-    }
-  ],
-  "farming.crew": [
-    {
-      "type": 0,
-      "value": "Durchschnittlich zugewiesene Arbeit"
-    }
-  ],
-  "farming.cultivationEffect": [
-    {
-      "type": 0,
-      "value": "Künftige Feldernten bringen 20% mehr Nahrung. Nach dem Wasserwerk sinkt die Zunahme des Wohnverfalls um weitere 20%."
-    }
-  ],
-  "farming.cultivationNeeded": [
-    {
-      "type": 0,
-      "value": "Wasserwerk errichtet"
-    }
-  ],
-  "farming.done": [
-    {
-      "type": 0,
-      "value": "Errichtet"
     }
   ],
   "farming.era": [
@@ -5443,42 +5345,10 @@
       "value": "Bauerndörfer"
     }
   ],
-  "farming.export": [
-    {
-      "type": 1,
-      "value": "workers"
-    },
-    {
-      "type": 0,
-      "value": " verbleibende Arbeiter liefern "
-    },
-    {
-      "type": 1,
-      "value": "food"
-    },
-    {
-      "type": 0,
-      "value": " Nahrung und "
-    },
-    {
-      "type": 1,
-      "value": "materials"
-    },
-    {
-      "type": 0,
-      "value": " Materialien je Simulationsminute vor tatsächlichen Frakturboni. Alte Vorräte bleiben im Lager."
-    }
-  ],
   "farming.failed": [
     {
       "type": 0,
       "value": "Aktion fehlgeschlagen. Erneut versuchen."
-    }
-  ],
-  "farming.fields": [
-    {
-      "type": 0,
-      "value": "Felder"
     }
   ],
   "farming.finish": [
@@ -5487,248 +5357,22 @@
       "value": "Dorf gründen"
     }
   ],
-  "farming.finished": [
-    {
-      "type": 0,
-      "value": "Sechs bewohnte Häuser, sechs Handelsverbindungen und alle drei Stadtvorbereitungen sind abgeschlossen. Das Dorf ist bereit für die ersten Städte; das nächste Zeitalter ist noch nicht verfügbar."
-    }
-  ],
-  "farming.finite": [
-    {
-      "type": 0,
-      "value": "Errichtet; kein wiederholter Bauzyklus."
-    }
-  ],
-  "farming.firstHarvest": [
-    {
-      "type": 0,
-      "value": "Erste Feldernte"
-    }
-  ],
-  "farming.focus": [
-    {
-      "type": 0,
-      "value": "Arbeitsfokus"
-    }
-  ],
-  "farming.focusEffect": [
-    {
-      "type": 0,
-      "value": "Vorräte bevorzugt Lagerbestände mit wenig Unterhalt, erhöht aber Verwitterung. Wachstum bevorzugt Bau und Erholung. Reisen bevorzugt Lieferungen nach der Dorfhalle; vorher gilt ausgewogene Arbeit."
-    }
-  ],
-  "farming.fullFood": [
-    {
-      "type": 0,
-      "value": "Nahrung: "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " / "
-    },
-    {
-      "type": 1,
-      "value": "capacity"
-    }
-  ],
-  "farming.goods": [
-    {
-      "type": 0,
-      "value": "Waren"
-    }
-  ],
-  "farming.granaries": [
-    {
-      "type": 0,
-      "value": "Kornspeicher"
-    }
-  ],
   "farming.granary": [
     {
       "type": 0,
       "value": "Kornspeicher"
     }
   ],
-  "farming.granaryDetails": [
-    {
-      "type": 0,
-      "value": "Kornspeicher: Kosten und Details"
-    }
-  ],
-  "farming.granaryEffect": [
-    {
-      "type": 0,
-      "value": "Jeder Kornspeicher bietet 160 zusätzliche Nahrungskapazität. Der manuelle Kauf ist sofort; ausstehende Reparaturen behalten ihre Material- und Werkzeugreserve."
-    }
-  ],
-  "farming.granaryFirstHome": [
-    {
-      "type": 0,
-      "value": "Nach dem ersten errichteten Haus verfügbar."
-    }
-  ],
-  "farming.granaryInactive": [
-    {
-      "type": 0,
-      "value": "Käufe sind geschlossen, während das Dorf bezahlte Arbeiten abschließt."
-    }
-  ],
-  "farming.granaryInputs": [
-    {
-      "type": 0,
-      "value": "Mehr Materialien oder Werkzeuge benötigt. Der Kauf erfolgt sofort."
-    }
-  ],
-  "farming.granaryMaximum": [
-    {
-      "type": 0,
-      "value": "Maximale Anzahl an Kornspeichern erreicht."
-    }
-  ],
-  "farming.granaryRepairReserve": [
-    {
-      "type": 0,
-      "value": "Materialien und Werkzeuge sind für eine anstehende Hausreparatur reserviert."
-    }
-  ],
-  "farming.growth": [
-    {
-      "type": 0,
-      "value": "Wachstum"
-    }
-  ],
-  "farming.guildEffect": [
-    {
-      "type": 0,
-      "value": "Künftige Warenchargen erzeugen 3 Waren für 6 Materialien und 63 Arbeitssekunden; bereits bezahlte Chargen behalten ihr ursprüngliches Rezept."
-    }
-  ],
-  "farming.guildNeeded": [
-    {
-      "type": 0,
-      "value": "Halle, fünf gebaute Häuser und drei Handelsverbindungen"
-    }
-  ],
-  "farming.guildWorkshop": [
-    {
-      "type": 0,
-      "value": "Gildenwerkstatt"
-    }
-  ],
-  "farming.hall": [
-    {
-      "type": 0,
-      "value": "Dorfhalle"
-    }
-  ],
-  "farming.hallNeeded": [
-    {
-      "type": 0,
-      "value": "Vier Häuser, Weide und Wasserversorgung"
-    }
-  ],
   "farming.handoff": [
     {
       "type": 0,
-      "value": "Drei Gründer ziehen in ein neues Dorf. Das verbleibende Lager behält seine Vorräte und liefert Nahrung und Materialien. Bezahlte Arbeit endet vor dem Übergang."
-    }
-  ],
-  "farming.home": [
-    {
-      "type": 0,
-      "value": "Haus "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "farming.homeEffect": [
-    {
-      "type": 0,
-      "value": "Jedes versorgte Haus bringt zwei Bewohner. Bei 100 Verwitterung entfällt seine Versorgung; Reparatur benötigt die ursprüngliche Material-, Werkzeug- und Arbeitsmenge."
-    }
-  ],
-  "farming.homes": [
-    {
-      "type": 0,
-      "value": "Häuser"
-    }
-  ],
-  "farming.homesCount": [
-    {
-      "type": 0,
-      "value": "Unterstützte Häuser"
-    }
-  ],
-  "farming.housingWeathering": [
-    {
-      "type": 0,
-      "value": "Wohnraumverwitterung"
+      "value": "Der Ackerbau ersetzt dein Sammlerlager durch drei Gründer und leere Vorräte. Unfertige Arbeit verfällt. Verdiente Katalysatoren bleiben erhalten."
     }
   ],
   "farming.inputs": [
     {
       "type": 0,
       "value": "Kosten pro Zyklus"
-    }
-  ],
-  "farming.intensiveCultivation": [
-    {
-      "type": 0,
-      "value": "Intensiver Anbau"
-    }
-  ],
-  "farming.kiln": [
-    {
-      "type": 0,
-      "value": "Brennofen"
-    }
-  ],
-  "farming.kilnNeeded": [
-    {
-      "type": 0,
-      "value": "Brennofen errichtet"
-    }
-  ],
-  "farming.limit": [
-    {
-      "type": 0,
-      "value": "Limit"
-    }
-  ],
-  "farming.locked": [
-    {
-      "type": 0,
-      "value": "Gesperrt"
-    }
-  ],
-  "farming.lost": [
-    {
-      "type": 0,
-      "value": "Ein Haus hat seine Versorgung verloren. Reparatur bringt seine Bewohner zurück; die Gründer bleiben."
-    }
-  ],
-  "farming.manual": [
-    {
-      "type": 0,
-      "value": "Baue einen Kornspeicher, um fortzufahren. Gespeicherte Zeit hält hier an und bewahrt den Rest des Vorrats."
-    }
-  ],
-  "farming.marketEffect": [
-    {
-      "type": 0,
-      "value": "Künftige Lieferungen benötigen 1.512 Arbeitssekunden und bringen 100 Materialien. Sechs Häuser und sechs Verbindungen schließen die Stadtvorbereitung ab."
-    }
-  ],
-  "farming.marketNeeded": [
-    {
-      "type": 0,
-      "value": "Intensiver Anbau, Gildenwerkstatt, fünf gebaute Häuser und drei Handelsverbindungen"
     }
   ],
   "farming.missingInputs": [
@@ -5741,38 +5385,10 @@
       "value": "inputs"
     }
   ],
-  "farming.need": [
-    {
-      "type": 0,
-      "value": "Fehlt"
-    }
-  ],
-  "farming.needsInputs": [
-    {
-      "type": 0,
-      "value": "Fehlt"
-    }
-  ],
-  "farming.next": [
-    {
-      "type": 0,
-      "value": "Aktueller Plan: "
-    },
-    {
-      "type": 1,
-      "value": "name"
-    }
-  ],
   "farming.nextPrice": [
     {
       "type": 0,
       "value": "Nächster Preis"
-    }
-  ],
-  "farming.oneGranary": [
-    {
-      "type": 0,
-      "value": "Ein Kornspeicher"
     }
   ],
   "farming.outputs": [
@@ -5791,62 +5407,10 @@
       "value": "value"
     }
   ],
-  "farming.paid": [
-    {
-      "type": 0,
-      "value": "Zutaten sind bereits reserviert. Ein Schwerpunktwechsel verteilt Arbeit ohne erneute Zahlung."
-    }
-  ],
-  "farming.paidStatus": [
-    {
-      "type": 0,
-      "value": "Bezahlter Zyklus"
-    }
-  ],
-  "farming.pasture": [
-    {
-      "type": 0,
-      "value": "Weide"
-    }
-  ],
-  "farming.pendingFinish": [
-    {
-      "type": 0,
-      "value": "Bezahlte Dorfzyklen werden abgeschlossen."
-    }
-  ],
   "farming.pendingSkill": [
     {
       "type": 0,
       "value": "Dieser Meilenstein wartet auf eine verfügbare Fertigkeitsbaumwahl oder Platz im Katalysatorvorrat."
-    }
-  ],
-  "farming.production": [
-    {
-      "type": 0,
-      "value": "Produktion"
-    }
-  ],
-  "farming.repair": [
-    {
-      "type": 0,
-      "value": "Reparatur von Haus "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "farming.reserved": [
-    {
-      "type": 0,
-      "value": "Reserviert"
-    }
-  ],
-  "farming.risk": [
-    {
-      "type": 0,
-      "value": "Wohnraum gefährdet"
     }
   ],
   "farming.settings": [
@@ -5855,146 +5419,354 @@
       "value": "Dorfeinstellungen"
     }
   ],
-  "farming.settling": [
-    {
-      "type": 0,
-      "value": "Bezahlte Arbeiten des Sammlerlagers werden vor dem Dorfstart abgeschlossen."
-    }
-  ],
-  "farming.ship": [
-    {
-      "type": 0,
-      "value": "Handelslieferung"
-    }
-  ],
   "farming.shop": [
     {
       "type": 0,
       "value": "Käufe"
     }
   ],
-  "farming.skillLimit": [
+  "farming.village.averted": [
     {
       "type": 0,
-      "value": "Eigene Frakturen für Bauerndörfer sind noch nicht entworfen. Diese sechs Meilensteine nutzen den bestehenden Katalysatorvorrat und verfügbare Fertigkeiten. Unverbrauchte Katalysatoren erhöhen das Tempo nicht."
+      "value": "Unheil abgewendet. Die Geister beanspruchen das Verdienst."
     }
   ],
-  "farming.source": [
+  "farming.village.balance": [
     {
       "type": 0,
-      "value": "Verbliebenes Sammlerlager"
+      "value": "Nahrungsbilanz"
     }
   ],
-  "farming.stage": [
+  "farming.village.burials": [
     {
       "type": 0,
-      "value": "Dorffortschritt"
+      "value": "Bestattungen"
     }
   ],
-  "farming.storageGain": [
+  "farming.village.consumption": [
     {
       "type": 0,
-      "value": "+160 Nahrungslager pro Kauf · Gesamt: "
+      "value": "Verbrauch"
+    }
+  ],
+  "farming.village.crops": [
+    {
+      "type": 0,
+      "value": "Feldfrüchte"
+    }
+  ],
+  "farming.village.disasterDeaths": [
+    {
+      "type": 0,
+      "value": "Katastrophen"
+    }
+  ],
+  "farming.village.disasterLoss": [
+    {
+      "type": 0,
+      "value": "Bevölkerungsverlust"
+    }
+  ],
+  "farming.village.disasterRisk": [
+    {
+      "type": 0,
+      "value": "Risiko zum Saisonende"
+    }
+  ],
+  "farming.village.fewerJobs": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": weniger Stellen"
+    }
+  ],
+  "farming.village.field": [
+    {
+      "type": 0,
+      "value": "Feld"
+    }
+  ],
+  "farming.village.fire": [
+    {
+      "type": 0,
+      "value": "Feuer: Bevölkerung −"
     },
     {
       "type": 1,
       "value": "value"
     }
   ],
-  "farming.supplies": [
+  "farming.village.flood": [
     {
       "type": 0,
-      "value": "Vorräte"
+      "value": "Überschwemmung: Bevölkerung −"
+    },
+    {
+      "type": 1,
+      "value": "value"
     }
   ],
-  "farming.townMarket": [
+  "farming.village.food": [
     {
       "type": 0,
-      "value": "Stadtmarkt"
+      "value": "Nahrung"
     }
   ],
-  "farming.travel": [
+  "farming.village.fullCrew": [
     {
       "type": 0,
-      "value": "Reisen"
+      "value": "Volle Besetzung"
     }
   ],
-  "farming.upcoming": [
+  "farming.village.growth": [
     {
       "type": 0,
-      "value": "Noch nicht verfügbar"
+      "value": "Wachstum"
     }
   ],
-  "farming.village": [
+  "farming.village.herding": [
     {
       "type": 0,
-      "value": "Dorf"
+      "value": "Viehzucht"
     }
   ],
-  "farming.waiting": [
+  "farming.village.house": [
     {
       "type": 0,
-      "value": "Wartet auf nützlichen Bedarf oder genügend Zutaten."
+      "value": "Haus"
     }
   ],
-  "farming.waterworks": [
+  "farming.village.housing": [
     {
       "type": 0,
-      "value": "Wasserversorgung"
+      "value": "Wohnraum"
     }
   ],
-  "farming.weatherHelp": [
+  "farming.village.idle": [
     {
       "type": 0,
-      "value": "Ausgewogen senkt den Verfall um 1/min; Vorräte erhöht ihn um 2/min; Wachstum senkt ihn um 4/min; Reisen erhöht ihn um 4/min. Das Wasserwerk senkt Zunahmen um 40%; intensiver Anbau senkt die verbleibende Zunahme um weitere 20%. Bei 75 sind Häuser gefährdet; bei 100 verliert ein Haus seine Bewohner und der Verfall sinkt auf 40."
+      "value": "Untätig"
     }
   ],
-  "farming.weathering": [
+  "farming.village.irrigation": [
     {
       "type": 0,
-      "value": "Verwitterung"
+      "value": "Bewässerung"
     }
   ],
-  "farming.woodlot": [
+  "farming.village.jobSpaces": [
     {
       "type": 0,
-      "value": "Waldstück"
+      "value": "Gebäudekapazität"
     }
   ],
-  "farming.work": [
+  "farming.village.jobs": [
+    {
+      "type": 0,
+      "value": "Stellen"
+    }
+  ],
+  "farming.village.jobsFor": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": Stellen"
+    }
+  ],
+  "farming.village.land": [
+    {
+      "type": 0,
+      "value": "Freies Land"
+    }
+  ],
+  "farming.village.lastEvent": [
+    {
+      "type": 0,
+      "value": "Letztes Ereignis"
+    }
+  ],
+  "farming.village.loggingCamp": [
+    {
+      "type": 0,
+      "value": "Holzfällerlager"
+    }
+  ],
+  "farming.village.moreJobs": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": mehr Stellen"
+    }
+  ],
+  "farming.village.natural": [
+    {
+      "type": 0,
+      "value": "Natürliche Todesfälle"
+    }
+  ],
+  "farming.village.needsGranary": [
+    {
+      "type": 0,
+      "value": "3 Häuser"
+    }
+  ],
+  "farming.village.needsIrrigation": [
+    {
+      "type": 0,
+      "value": "4 Felder"
+    }
+  ],
+  "farming.village.needsLand": [
+    {
+      "type": 0,
+      "value": "Kein freies Land"
+    }
+  ],
+  "farming.village.needsPasture": [
+    {
+      "type": 0,
+      "value": "2 Felder · 2 Häuser"
+    }
+  ],
+  "farming.village.needsShrine": [
+    {
+      "type": 0,
+      "value": "4 Häuser"
+    }
+  ],
+  "farming.village.needsWoodland": [
+    {
+      "type": 0,
+      "value": "Wald roden"
+    }
+  ],
+  "farming.village.needsWorkshop": [
+    {
+      "type": 0,
+      "value": "Werkstatt benötigt"
+    }
+  ],
+  "farming.village.nextDisaster": [
+    {
+      "type": 0,
+      "value": "Nächste Katastrophe"
+    }
+  ],
+  "farming.village.noMaterials": [
+    {
+      "type": 0,
+      "value": "Keine Materialien"
+    }
+  ],
+  "farming.village.pasture": [
+    {
+      "type": 0,
+      "value": "Weide"
+    }
+  ],
+  "farming.village.perMinute": [
     {
       "type": 1,
       "value": "value"
     },
     {
       "type": 0,
-      "value": " Arbeitersekunden"
+      "value": "/min"
     }
   ],
-  "farming.workers": [
+  "farming.village.production": [
     {
       "type": 0,
-      "value": "Arbeiter"
+      "value": "Produktion"
+    }
+  ],
+  "farming.village.protection": [
+    {
+      "type": 0,
+      "value": "Katastrophenabwehr"
+    }
+  ],
+  "farming.village.reserve": [
+    {
+      "type": 0,
+      "value": "Nahrungsvorrat"
+    }
+  ],
+  "farming.village.shaman": [
+    {
+      "type": 0,
+      "value": "Schamanen"
+    }
+  ],
+  "farming.village.shrine": [
+    {
+      "type": 0,
+      "value": "Schrein"
+    }
+  ],
+  "farming.village.sickness": [
+    {
+      "type": 0,
+      "value": "Krankheit: Bevölkerung −"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "farming.village.starvation": [
+    {
+      "type": 0,
+      "value": "Hungertote"
+    }
+  ],
+  "farming.village.status": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
+  "farming.village.stocked": [
+    {
+      "type": 0,
+      "value": "Vorrat voll"
+    }
+  ],
+  "farming.village.woodland": [
+    {
+      "type": 0,
+      "value": "Waldland"
+    }
+  ],
+  "farming.village.work": [
+    {
+      "type": 0,
+      "value": "Arbeit"
+    }
+  ],
+  "farming.village.workingCount": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " bei der Arbeit"
     }
   ],
   "farming.workshop": [
     {
       "type": 0,
       "value": "Werkstatt"
-    }
-  ],
-  "farming.yield": [
-    {
-      "type": 0,
-      "value": "Eine Lieferung kostet 350 Nahrung und 35 Waren und bringt "
-    },
-    {
-      "type": 1,
-      "value": "materials"
-    },
-    {
-      "type": 0,
-      "value": " Materialien sowie eine Verbindung. Sechs Verbindungen, sechs bewohnte Häuser und die Stadtvorbereitungen schließen dieses Zeitalter ab."
     }
   ],
   "gameplay.notifications.continue": [
@@ -7169,6 +6941,30 @@
       "value": "App wurde in den Hintergrund versetzt, Verarbeitung abgebrochen"
     }
   ],
+  "offline-time.auto-resume": [
+    {
+      "type": 0,
+      "value": "Bei Rückkehr"
+    }
+  ],
+  "offline-time.auto-resume-last": [
+    {
+      "type": 0,
+      "value": "Letzte Geschwindigkeit"
+    }
+  ],
+  "offline-time.auto-resume-max": [
+    {
+      "type": 0,
+      "value": "Maximale Geschwindigkeit"
+    }
+  ],
+  "offline-time.auto-resume-off": [
+    {
+      "type": 0,
+      "value": "Aus"
+    }
+  ],
   "offline-time.balanced-preset": [
     {
       "type": 0,
@@ -7256,7 +7052,7 @@
   "offline-time.boost-stack": [
     {
       "type": 0,
-      "value": "Bewege den Regler über 1×, um gespeicherte Zeit zu nutzen. Nur zusätzliche Zeit verbraucht den Vorrat. Doppelte Zeit wirkt zusätzlich. Ein leerer Speicher, der Hintergrund und manuelle Resets setzen den Regler auf 1× zurück."
+      "value": "Nur zusätzliche Zeit verbraucht den Vorrat. Doppelte Zeit wirkt zusätzlich."
     }
   ],
   "offline-time.boost-start": [

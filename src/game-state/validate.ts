@@ -1,6 +1,7 @@
 import { getGameAssetsByKind } from '../game-data/catalog'
 import { SKILL_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 import { validateCivilization } from '../simulation/civilization'
+import { isOfflineBoostAutoResume, isOfflineBoostMultiplier, maximumOfflineBoostMultiplier } from '../simulation/offlineBoost'
 import { SKILL_PRESET_COUNT } from './skillPresetSlots'
 import { validateDiscovery } from '../simulation/discovery'
 import { validateCompletedTinkers } from '../simulation/tinkerGoalProgress'
@@ -152,11 +153,12 @@ export function validateCanonicalGameState(
   ) {
     errors.push('Stored Time accuracy preset is invalid.')
   }
+  if (state.timeline.offlineBoostAutoResume !== undefined && !isOfflineBoostAutoResume(state.timeline.offlineBoostAutoResume)) errors.push('Invalid offline auto-resume mode.')
+  if (state.timeline.offlineBoostResumeMultiplier !== undefined && !isOfflineBoostMultiplier(state.timeline.offlineBoostResumeMultiplier, 16)) errors.push('Invalid saved offline speed.')
   if (state.timeline.offlineBoost !== undefined && (
     state.timeline.offlineBoost === null ||
-    !Number.isInteger(state.timeline.offlineBoost.multiplier) ||
-    state.timeline.offlineBoost.multiplier < 1 || state.timeline.offlineBoost.multiplier > 8
-  )) errors.push('Offline boost must be a multiplier from 1 to 8.')
+    !isOfflineBoostMultiplier(state.timeline.offlineBoost.multiplier, maximumOfflineBoostMultiplier(state.civilization))
+  )) errors.push('Offline boost exceeds the speed unlocked by completed eras.')
   if (
     state.reality.workerGenerationProgress < 0 ||
     state.reality.workerGenerationProgress >= 1

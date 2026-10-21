@@ -10,9 +10,9 @@ export function activeGameSpeed(
   timeline: FrontendCanonicalProgression['timeline'],
   farming?: Readonly<FarmingState>,
 ): number {
-  if(farming&&(farming.phase==='complete'||farmingManualGate(farming)))return timeline?.doubleTime.unlocked?2:1
+  if(farming&&farmingManualGate(farming))return timeline?.doubleTime.unlocked?2:1
   const intervalSeconds = (timeline?.processing.activeIntervalMilliseconds ?? 100) / 1000
-  const boost = planOfflineBoost(time, intervalSeconds)
+  const boost = planOfflineBoost(time, intervalSeconds, time.maximumOfflineBoostMultiplier)
   return (timeline?.doubleTime.unlocked ? 2 : 1) * boost.multiplier
 }
 

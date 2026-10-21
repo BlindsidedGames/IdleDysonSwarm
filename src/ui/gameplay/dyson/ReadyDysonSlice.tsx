@@ -1590,6 +1590,8 @@ function ReadyDysonSliceContent({
                                             ].routeAvailable,
                                           setOfflineBoost:
                                             gameplay.commands.byKind['time.set-offline-boost-multiplier'].routeAvailable,
+                                          setAutoResume:
+                                            gameplay.commands.byKind['time.set-offline-auto-resume'].routeAvailable,
                                         }}
                                         dispatchPlayer={dispatchPlayer}
                                       />

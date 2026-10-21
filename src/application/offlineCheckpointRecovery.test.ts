@@ -54,8 +54,8 @@ function setup(extra: Record<string, unknown> = {}) {
 function savedBank(repository: Repository) { return repository.current.copyValidatedState().offlineTime }
 
 describe('cold-start recovery from active checkpoints', () => {
-  test('an abrupt stop after an autosave recovers a day exactly once, including upgraded capacity', async () => {
-    const harness = setup()
+  test.each([['off', 1], ['last', 5], ['max', 8]] as const)('an abrupt stop with %s resume recovers a day exactly once, including upgraded capacity', async (mode, multiplier) => {
+    const harness = setup({ offlineBoostAutoResume: mode, offlineBoostResumeMultiplier: 5 })
     const first = harness.open()
     await first.coordinator.start()
     expect(await first.app.checkpoint()).toMatchObject({ committed: true })
@@ -64,6 +64,8 @@ describe('cold-start recovery from active checkpoints', () => {
     const returned = harness.open()
     expect(await returned.coordinator.start()).toMatchObject({ committed: true, storedTimeCreditedSeconds: 86400 })
     expect(savedBank(harness.repository)).toBe(86400)
+    expect(returned.app.snapshot()).toMatchObject({ state: { gameState: { timeline: { ...(mode === 'off' ? {} : { offlineBoost: { multiplier } }), offlineBoostAutoResume: mode, offlineBoostResumeMultiplier: 5 } } } })
+    expect(harness.repository.current.copyValidatedState()).toMatchObject({ offlineBoostAutoResume: mode, offlineBoostResumeMultiplier: 5 })
     expect(harness.repository.current.copyValidatedState().idsLastActiveAtUtc).toBe(new Date(start + day).toISOString())
     expect(await returned.coordinator.handlePlatformPhase('active')).toMatchObject({ replayed: false })
     expect(await harness.open().coordinator.start()).toMatchObject({ storedTimeCreditedSeconds: 0 })

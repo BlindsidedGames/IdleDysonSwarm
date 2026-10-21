@@ -266,7 +266,7 @@ export function DebugSurface({
                 <label htmlFor={eraId}>{intl.formatMessage(messages.era)}</label>
                 <select id={eraId} value={era} disabled={pending} onChange={event => setEra(event.currentTarget.value as 'forager' | 'farming')}>
                   <option value="forager">{intl.formatMessage(civilizationMessages.era)}</option>
-                  <option value="farming" disabled>{intl.formatMessage(farmingMessages.era)}</option>
+                  <option value="farming">{intl.formatMessage(farmingMessages.era)}</option>
                 </select>
                 <ActionButton label={intl.formatMessage(messages.jumpEra)} disabled={pending} onClick={() => apply({ kind: 'jump-to-era', era }, intl.formatMessage(messages.actionSuccess))} />
               </div>

@@ -1,5 +1,5 @@
 import { simulationsAvailable } from './reworkChallenges'
-import { advanceFarming, finishForagerHandoff, validateFarming } from './farming'
+import { advanceFarming, validateFarming } from './farming'
 import type { CanonicalGameStateV1, CivilizationState, CivilizationResource, CivilizationFocus, CivilizationActivityState } from '../game-state/types'
 import { addDiscrete, DISCRETE_MAXIMUM, bitIncrement, bitDecrement } from './numeric'
 import { permanentFractureCount } from './galvanization'
@@ -222,41 +222,25 @@ function normalize(c:MutableCivilization,state:CanonicalGameStateV1,fractures:nu
  }
  return {...state,civilization:c,challenges}
 }
-/** Finish already-paid Forager work at age entry without advancing its clock. */
-export function settleForagerHandoff(state:CanonicalGameStateV1):CanonicalGameStateV1 {
- if(state.civilization?.farming?.phase!=='settling-forager')return state
- const c=clone(state.civilization!)
- for(const job of Object.values(c.activities)){
-  const receipt=job.cycleReceipt;if(!job.active||!receipt)continue
-  job.progress=receipt.seconds
-  const completed={...receipt,rate:0,remainingWork:0};delete completed.finishAt
-  job.cycleReceipt=completed
- }
- // Normal settlement owns receipt outputs, population and one-time awards.
- // Numeric-range guards still retain an output that cannot be represented.
- const result=normalize(c,state,permanentFractureCount(state))
- return Object.values(c.activities).some(j=>j.active)?result:finishForagerHandoff(result)
-}
 /** Paid receipts and their absolute deadlines survive call partitions/reloads.
  * Every completion settles before awards, automatic kits and new admissions. */
 export function advanceCivilization(state:CanonicalGameStateV1,seconds:number):CanonicalGameStateV1 {
  if(!simulationsAvailable(state))return state
  if(state.meta.reworkMigrationChoice===undefined||!Number.isFinite(seconds)||seconds<0)return state
- if(state.civilization?.farming?.phase==='settling-forager')state=settleForagerHandoff(state)
  if(seconds===0)return state
- if(state.civilization?.farming&&state.civilization.farming.phase!=='settling-forager')return advanceFarming(state,seconds)
+ if(state.civilization?.farming)return advanceFarming(state,seconds)
  const source=migrateForager(state.civilization??EMPTY_CIVILIZATION),c=clone(source)
  let end=c.elapsedSeconds+seconds
  if(!Number.isFinite(end)||end<=c.elapsedSeconds)return state
  if(!c.unlocked){for(const [id,n] of entries(CIVILIZATION_STARTER_KIT))c.resources[id]+=n;c.unlocked=true}
  const fractures=permanentFractureCount(state)
  let result=normalize(c,state,fractures)
- while(c.elapsedSeconds<end){if(c.farming&&!Object.values(c.activities).some(j=>j.active))return advanceFarming(finishForagerHandoff(result),end-c.elapsedSeconds);const due=Object.values(c.activities).filter(j=>j.active&&j.progress<j.cycleReceipt!.seconds).map(j=>j.cycleReceipt!.finishAt??Infinity)
+ while(c.elapsedSeconds<end){const due=Object.values(c.activities).filter(j=>j.active&&j.progress<j.cycleReceipt!.seconds).map(j=>j.cycleReceipt!.finishAt??Infinity)
   // Detached decimal ticks can finish a few floating-point units short of a
   // funded deadline. Settle that roundoff without changing Farming's clock.
-  if(!c.farming&&c.focusBalanceVersion===2){const tolerance=256*Number.EPSILON*Math.max(1,Math.abs(end));const near=[...due,...(c.foragerRulesVersion===2?[]:[c.nextEquipmentSeconds])].filter(t=>t>end&&t-end<=tolerance);if(near.length)end=Math.min(...near)}
-  const next=Math.min(end,c.chieftain?.enabled&&!c.farming?c.chieftain.nextDecisionSeconds:Infinity,c.farming||c.foragerRulesVersion===2?Infinity:c.nextEquipmentSeconds,c.foragerRulesVersion!==undefined&&!c.farming?(Math.floor(c.elapsedSeconds/600)+1)*600:Infinity,...due);if(next<=c.elapsedSeconds)throw Error('Civilization clock precision exhausted.');c.elapsedSeconds=next;result=normalize(c,result,fractures)}
- return c.farming&&!Object.values(c.activities).some(j=>j.active)?finishForagerHandoff(result):result
+  if(c.focusBalanceVersion===2){const tolerance=256*Number.EPSILON*Math.max(1,Math.abs(end));const near=[...due,...(c.foragerRulesVersion===2?[]:[c.nextEquipmentSeconds])].filter(t=>t>end&&t-end<=tolerance);if(near.length)end=Math.min(...near)}
+  const next=Math.min(end,c.chieftain?.enabled?c.chieftain.nextDecisionSeconds:Infinity,c.foragerRulesVersion===2?Infinity:c.nextEquipmentSeconds,c.foragerRulesVersion!==undefined?(Math.floor(c.elapsedSeconds/600)+1)*600:Infinity,...due);if(next<=c.elapsedSeconds)throw Error('Civilization clock precision exhausted.');c.elapsedSeconds=next;result=normalize(c,result,fractures)}
+ return result
 }
 export function setCivilizationFocus(state:CanonicalGameStateV1,focus:string):CanonicalGameStateV1|null {
  if(state.civilization?.farming||!['gathering','hunting','toolmaking','hideworking'].includes(focus)||state.meta.reworkMigrationChoice===undefined)return null
@@ -364,7 +348,7 @@ export function validateCivilization(value:unknown):string|null {
  if(c.craftPriority!==undefined&&!['toolmaking','hideworking'].includes(c.craftPriority))return 'Invalid Craft priority.'
  if(c.chieftain!==undefined&&(!c.chieftain||typeof c.chieftain!=='object'||typeof c.chieftain.enabled!=='boolean'||(c.chieftain.costVersion!==undefined&&c.chieftain.costVersion!==2)||!Number.isFinite(c.chieftain.nextDecisionSeconds)||c.chieftain.nextDecisionSeconds<0||!c.unlocked||c.foragerRulesVersion!==2||!civilizationHuntingUnlocked(c)))return 'Invalid Chieftain.'
  if(c.huntingUnlocked!==undefined&&(typeof c.huntingUnlocked!=='boolean'||c.huntingUnlocked&&!c.unlocked))return 'Invalid Hunting unlock.'
- if(c.farming!==undefined){const failure=validateFarming(c.farming);if(failure)return failure}
+ if(c.farming!==undefined){const failure=validateFarming(c.farming,(c.farming as unknown as {version:number}).version);if(failure)return failure}
  if((c.focusBalanceVersion!==undefined&&c.focusBalanceVersion!==2)||(c.version!==4&&c.version!==5)||(c.version===5)!==(c.farming!==undefined)||!CIVILIZATION_FOCUSES.includes(c.focus)||typeof c.unlocked!=='boolean'||!discrete(c.workers)||c.workers<1n||!discrete(c.equippedWorkers)||c.equippedWorkers>c.workers||!discrete(c.populationBaseline)||c.populationBaseline<(c.farming?0n:1n)||!discrete(c.populationGranted)||c.workers!==c.populationBaseline+c.populationGranted||!Number.isFinite(c.elapsedSeconds)||c.elapsedSeconds<0||!Number.isFinite(c.nextEquipmentSeconds)||(c.foragerRulesVersion!==2&&!c.farming&&(c.nextEquipmentSeconds<c.elapsedSeconds||c.nextEquipmentSeconds>c.elapsedSeconds+CIVILIZATION_TUNING.equipmentInterval))||!c.supplyHold||Object.entries(c.supplyHold).some(([id,v])=>!['toolmaking','hideworking','foodPreservation'].includes(id)||typeof v!=='boolean')||!c.resources||Object.keys(c.resources).length!==8||!CIVILIZATION_RESOURCES.every(id=>discrete(c.resources[id]))||!c.activities||Object.keys(c.activities).length!==12||!Array.isArray(c.awardedCatalystMilestoneIds)||new Set(c.awardedCatalystMilestoneIds).size!==c.awardedCatalystMilestoneIds.length||c.awardedCatalystMilestoneIds.some(id=>typeof id!=='string'||!validAwardId(id))||(c.legacyKnowledge!==undefined&&!discrete(c.legacyKnowledge))||(c.legacyUnlockedActivityIds!==undefined&&(!Array.isArray(c.legacyUnlockedActivityIds)||new Set(c.legacyUnlockedActivityIds).size!==c.legacyUnlockedActivityIds.length||c.legacyUnlockedActivityIds.some(id=>indexOf(id)<0))))return 'Invalid civilization resources, population, focus or milestones.'
  for(const [i,a] of CIVILIZATION_ACTIVITIES.entries()){
   const j=c.activities[a.id];if(!j||!discrete(j.completions)||!discrete(j.workers)||typeof j.active!=='boolean'||!Number.isFinite(j.progress)||j.progress<0||(!j.active&&(j.progress!==0||j.cycleReceipt!==undefined||j.legacyCycle!==undefined)))return 'Invalid civilization activity or reserved work.'
@@ -375,7 +359,7 @@ export function validateCivilization(value:unknown):string|null {
   }
   if(!a.retired&&!civilizationActivityUnlocked(c,i)&&(j.active||j.workers>0n||j.completions>0n))return 'Locked activity cannot produce.'
  }
- if(c.farming&&c.farming.phase!=='settling-forager'&&Object.values(c.activities).some(j=>j.active||j.workers>0n))return 'Retained camp cannot retain a second active job queue.'
+ if(c.farming&&(c.farming as unknown as {phase:string}).phase!=='settling-forager'&&Object.values(c.activities).some(j=>j.active||j.workers>0n))return 'A replaced era cannot retain an active job queue.'
  if(civilizationAvailableWorkers(c)<0n)return 'Workers cannot be assigned to multiple jobs.'
  if(!c.unlocked&&(c.awardedCatalystMilestoneIds.length||Object.values(c.resources).some(v=>v>0n)||Object.values(c.activities).some(j=>j.active||j.workers>0n)))return 'Locked civilization cannot hold active production.'
  return null

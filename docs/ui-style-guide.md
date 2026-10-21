@@ -59,6 +59,12 @@ Hover/title is never the only learning path. Tap/click or Enter/Space opens visi
 localized names/quantities through existing full-row disclosures or skill details.
 Preserve keyboard focus, selected states and disabled/locked semantics.
 
+Minimal game copy (Matthew, 21 October 2026): prefer recognizable icons, numbers,
+short labels and direct controls. Disclosures should expose concise names,
+recipes or comparisons, not paragraphs explaining the interface. Prose is an
+exception for a consequential choice that the controls and values cannot convey;
+do not duplicate information already visible in the row.
+
 Compare representative screenshots against the relevant reference at the same
 usable width/scale. Exercise fresh/mature, waiting/running/locked, selected,
 expanded and confirmation states; reach the last control. Check applicable

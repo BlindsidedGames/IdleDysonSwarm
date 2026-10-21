@@ -1,5 +1,5 @@
 import type { CanonicalGameStateV1 } from '../game-state/types'
-import { pauseOfflineBoost } from './offlineBoost'
+import { pauseOfflineBoost, resumeOfflineBoost } from './offlineBoost'
 import {
   applyAwayTimeGrant,
   resolveAwayTime,
@@ -233,7 +233,7 @@ export function applyAwayTimeReplay(
   return {
     state: {
       ...request.state,
-      canonical,
+      canonical: resumeOfflineBoost(canonical, !markComparisonIntegrityCompromised),
       saveReady: releasedColdStartGate
         ? true
         : request.state.saveReady,

@@ -62,7 +62,7 @@ export async function startProductionModeHost(container: HTMLElement, native: Na
     activeTimeClock: new BrowserMonotonicClock(), activeTimeScheduler: { requestFrame: cb => requestAnimationFrame(cb), cancelFrame: id => cancelAnimationFrame(Number(id)) },
     nowUtcMilliseconds: () => Date.now(), departureMarker: new BrowserDepartureMarker('mode-host'),
     hostEntitlements: entitlements, allowedExternalOrigins: COMMUNITY_EXTERNAL_ORIGINS,
-    developmentControlsAvailable: true, developmentControlsRequireEntitlement: true,
+    developmentControlsAvailable: true, developmentControlsRequireEntitlement: !import.meta.env.DEV,
     audio: createProductionAudioService(target, lifecycle), native: native ?? undefined,
     services, hostKind: environment ? target === 'electron' ? 'desktop-native' : 'mobile-native' : 'browser', releaseFooter: footer,
     reloadSafely: async () => { await controller.close(); location.reload() },

@@ -1,353 +1,537 @@
-import type { CanonicalGameStateV1, CivilizationFocus, FarmingState, FarmingResource, FarmingJob, FarmingBuilding, FarmingRecipe } from '../game-state/types'
-import { CIVILIZATION_ACTIVITIES, advanceCivilization, civilizationOpeningComplete, settleForagerHandoff } from './civilization'
-import { CIVILIZATION_TUNING } from './civilizationTuning'
+import type {
+  CanonicalGameStateV1, CivilizationState, FarmingJob, FarmingPurchase,
+  FarmingRecipe, FarmingResource, FarmingState, FarmingWorkplace, LegacyFarmingState, AssignedFarmingState, AutomaticFarmingState, ManagedFarmingState, PreferredFarmingState, SeasonalFarmingState, FarmingDisaster,
+} from '../game-state/types'
+import { EMPTY_CIVILIZATION, civilizationOpeningComplete } from './civilization'
 import { permanentFractureCount } from './galvanization'
 import { eligibleCanonicalFractureIds } from './canonicalSkillTransactions'
 import { DISCRETE_MAXIMUM } from './numeric'
 import { EMPTY_INFINITY_CHALLENGES } from './infinityChallenges'
+import { validateLegacyFarming } from './legacyFarming'
+import { validateAssignedFarming } from './assignedFarming'
 import { FARMING_TUNING as T } from './farmingTuning'
+
 export { FARMING_TUNING } from './farmingTuning'
-export const FARMING_RESOURCES: readonly FarmingResource[] = ['food','materials','tools','goods']
-export const FARMING_BUILDINGS: readonly FarmingBuilding[] = ['pasture','kiln','waterworks','hall','intensiveCultivation','guildWorkshop','townMarket']
-export const FARMING_ROWS = ['fields','woodlot','workshop','homes','pasture','kiln','waterworks','hall','intensiveCultivation','guildWorkshop','townMarket'] as const
-export type FarmingRow = typeof FARMING_ROWS[number]
-export type FarmingGoal = { kind:'home'|'repair'|'granary'|'ship'|FarmingBuilding; index?:number }
+export const FARMING_RESOURCES = ['food', 'materials', 'tools'] as const
+export const FARMING_WORKPLACES = ['crops', 'herding', 'woodland', 'workshop', 'shaman'] as const
+export const FARMING_PURCHASES = ['workshop', 'house', 'field', 'pasture', 'loggingCamp', 'granary', 'shrine', 'irrigation'] as const
+export const FARMING_SEASONS = ['spring', 'summer', 'autumn', 'winter'] as const
+const FOOD_JOBS = ['crops', 'herding'] as const
+const EPSILON = 1e-8
 type MutableFarming = { -readonly [K in keyof FarmingState]: FarmingState[K] } & {
-  resources:Record<FarmingResource,number>; jobs:Record<string,FarmingJob>;
-  homes:number[]; lostHomes:number[]; completedBuildings:FarmingBuilding[];
-  awardedCatalystIds:string[]; targets:Record<FarmingResource,number>;
+  resources: Record<FarmingResource, number>
+  assignments: Record<FarmingWorkplace, number>
+  desiredJobs: Record<FarmingWorkplace, number>
+  jobs: Partial<Record<'woodland' | 'workshop', FarmingJob>>
+  awardedCatalystIds: string[]
 }
-const clone=(f:Readonly<FarmingState>):MutableFarming=>({...f,resources:{...f.resources},targets:{...f.targets},jobs:Object.fromEntries(Object.entries(f.jobs).map(([id,j])=>[id,{...j,inputs:{...j.inputs}}])),homes:[...f.homes],lostHomes:[...f.lostHomes],completedBuildings:[...f.completedBuildings],awardedCatalystIds:[...f.awardedCatalystIds]})
-const has=(f:Readonly<FarmingState>,id:FarmingBuilding)=>f.completedBuildings.includes(id)
-export const farmingCapacity=(f:Readonly<FarmingState>)=>T.initialFoodCapacity+T.granaryCapacity*f.granaries
-export const farmingWorkers=(f:Readonly<FarmingState>)=>T.founders+T.residentsPerHome*f.homes.length
-export const farmingEffectiveFocus=(f:Readonly<FarmingState>):CivilizationFocus=>f.focus==='expeditions'&&!has(f,'hall')?'balanced':f.focus
-export const farmingComplete=(f:Readonly<FarmingState>)=>has(f,'hall')&&has(f,'intensiveCultivation')&&has(f,'guildWorkshop')&&has(f,'townMarket')&&f.shipments>=6&&f.homes.length===6
-export function farmingGoal(f:Readonly<FarmingState>):FarmingGoal {
-  if(f.lostHomes.length)return {kind:'repair',index:f.lostHomes[0]}
-  if(f.homesBuilt===0)return {kind:'home',index:0}
-  if(f.granaries===0)return {kind:'granary',index:0}
-  if(f.focus==='settlement'&&f.homesBuilt<2)return {kind:'home',index:f.homesBuilt}
-  const order:FarmingBuilding[]=f.focus==='provisioning'?['kiln','pasture']:['pasture','kiln']
-  for(const id of order)if(!has(f,id))return {kind:id}
-  if(f.homesBuilt<2)return {kind:'home',index:f.homesBuilt}
-  if(!has(f,'waterworks'))return {kind:'waterworks'}
-  if(!has(f,'intensiveCultivation'))return {kind:'intensiveCultivation'}
-  if(f.homesBuilt<4)return {kind:T.homeBills[f.homesBuilt][0]>farmingCapacity(f)?'granary':'home',index:T.homeBills[f.homesBuilt][0]>farmingCapacity(f)?f.granaries:f.homesBuilt}
-  if(!has(f,'hall'))return {kind:'hall'}
-  if(f.homesBuilt>=5&&f.shipments>=3&&!has(f,'guildWorkshop'))return {kind:'guildWorkshop'}
-  if(f.homesBuilt>=5&&f.shipments>=3&&!has(f,'townMarket'))return {kind:450>farmingCapacity(f)?'granary':'townMarket',index:f.granaries}
-  if(f.homesBuilt<6){if(f.shipments<(f.homesBuilt===4?1:3))return {kind:'ship'};return {kind:T.homeBills[f.homesBuilt][0]>farmingCapacity(f)?'granary':'home',index:T.homeBills[f.homesBuilt][0]>farmingCapacity(f)?f.granaries:f.homesBuilt}}
-  return {kind:'ship'}
+const clone = (f: Readonly<FarmingState>): MutableFarming => ({
+  ...f, resources: { ...f.resources }, assignments: { ...f.assignments }, desiredJobs: { ...f.desiredJobs },
+  jobs: Object.fromEntries(Object.entries(f.jobs).map(([id, job]) => [id, { ...job, inputs: { ...job.inputs }, outputs: { ...job.outputs } }])),
+  awardedCatalystIds: [...f.awardedCatalystIds],
+})
+const safeAdd = (a: number, b: number): number => {
+  const value = a + b
+  if (!Number.isFinite(value) || value < 0 || value > Number.MAX_SAFE_INTEGER) throw Error('Village quantity exceeds safe storage.')
+  return value
 }
-export function farmingGranaryCost(f:Readonly<FarmingState>):FarmingRecipe{return {materials:Math.ceil(35*2**f.granaries),tools:Math.ceil(4*1.75**f.granaries)}}
-export function farmingGoalRecipe(f:Readonly<FarmingState>,goal=farmingGoal(f)):{inputs:FarmingRecipe;work:number} {
-  if(goal.kind==='home'||goal.kind==='repair'){const [food,materials,tools,work]=T.homeBills[goal.index!];return {inputs:{materials,tools,...(goal.kind==='home'?{food}:{})},work}}
-  if(goal.kind==='granary')return {inputs:farmingGranaryCost(f),work:0}
-  if(goal.kind==='ship')return {inputs:{food:350,goods:35},work:has(f,'townMarket')?1512:1890}
-  return T.buildings[goal.kind]
-}
-const affordable=(f:Readonly<FarmingState>,cost:FarmingRecipe)=>Object.entries(cost).every(([id,n])=>f.resources[id as FarmingResource]+1e-8>=n!)
-function pay(f:MutableFarming,cost:FarmingRecipe):boolean {if(!affordable(f,cost))return false;for(const [id,n]of Object.entries(cost))f.resources[id as FarmingResource]=Math.max(0,f.resources[id as FarmingResource]-n!);return true}
-function repairReserve(f:Readonly<FarmingState>):FarmingRecipe {
-  const active=f.jobs.build?.kind==='repair'?f.jobs.build.index:undefined
-  const index=f.lostHomes.find(n=>n!==active)
-  return index===undefined?{}:farmingGoalRecipe(f,{kind:'repair',index}).inputs
-}
-export function farmingGranaryPurchaseStatus(f:Readonly<FarmingState>):'ready'|'inactive'|'firstHome'|'maximum'|'inputs'|'repairReserve' {
-  if(f.phase!=='farming')return 'inactive'
-  if(f.homesBuilt<1)return 'firstHome'
-  if(f.granaries>=40)return 'maximum'
-  const cost=farmingGranaryCost(f),reserve=repairReserve(f)
-  if(!affordable(f,cost))return 'inputs'
-  return FARMING_RESOURCES.every(id=>f.resources[id]+1e-8>=(cost[id]??0)+(reserve[id]??0))?'ready':'repairReserve'
-}
-export const farmingCanBuyGranary=(f:Readonly<FarmingState>):boolean=>farmingGranaryPurchaseStatus(f)==='ready'
-export const farmingManualGate=(f:Readonly<FarmingState>):boolean=>f.phase==='farming'&&(farmingComplete(f)||(farmingGoal(f).kind==='granary'&&farmingCanBuyGranary(f)))
-export function startFarming(state:CanonicalGameStateV1):CanonicalGameStateV1|null {
-  const c=state.civilization
-  if(!c||c.farming||!civilizationOpeningComplete(c)||state.meta.reworkMigrationChoice===undefined||c.workers<3n)return null
-  const baseline=c.populationBaseline<3n?c.populationBaseline:3n,workers=c.workers-3n,kits=c.equippedWorkers>workers?c.equippedWorkers-workers:0n
-  const f:FarmingState={version:2,phase:'settling-forager',focus:'balanced',elapsedSeconds:0,tickRemainder:0,resources:{food:0,materials:0,tools:0,goods:0},targets:{food:0,materials:80,tools:0,goods:0},jobs:{},homes:[],lostHomes:[],homesBuilt:0,granaries:0,shipments:0,weathering:0,firstHarvest:false,completedBuildings:[],awardedCatalystIds:[],inheritedFoodPerMinute:0,inheritedMaterialsPerMinute:0,transferredWorkers:3n,transferredEquippedWorkers:kits,skillRewardPending:false}
-  return settleForagerHandoff({...state,civilization:{...c,version:5,workers,populationBaseline:c.populationBaseline-baseline,populationGranted:c.populationGranted-(3n-baseline),equippedWorkers:c.equippedWorkers-kits,farming:f}})
-}
-/** The retained workforce becomes one no-input Gathering generator. Old stocks
- * remain owned by that camp; they are not a second village starter inventory. */
-export function finishForagerHandoff(state:CanonicalGameStateV1):CanonicalGameStateV1 {
-  const c=state.civilization!,f=c.farming!,gather=CIVILIZATION_ACTIVITIES.find(a=>a.id==='gathering')!
-  const labor=Number(c.workers)+Number(c.equippedWorkers)*CIVILIZATION_TUNING.equipmentLabor
-  const rate=(resource:'food'|'materials',units:number)=>Math.min(T.maximumExportPerMinute,labor*Number(gather.outputs[resource]??0n)*60/gather.seconds/units)
-  return {...state,civilization:{...c,activities:Object.fromEntries(Object.entries(c.activities).map(([id,j])=>[id,{...j,workers:0n}])),farming:{...f,phase:'farming',inheritedFoodPerMinute:rate('food',T.exportFoodUnits),inheritedMaterialsPerMinute:rate('materials',T.exportMaterialUnits)}}}
-}
-export function buyFarmingGranary(state:CanonicalGameStateV1):CanonicalGameStateV1|null {
-  const source=state.civilization?.farming;if(!source||!farmingCanBuyGranary(source))return null
-  const f=clone(source);if(!pay(f,farmingGranaryCost(f)))return null;f.granaries++
-  return {...state,civilization:{...state.civilization!,farming:f}}
-}
-export function setFarmingFocus(state:CanonicalGameStateV1,focus:string):CanonicalGameStateV1|null {
-  const f=state.civilization?.farming
-  if(!f||f.phase!=='farming'||!['balanced','provisioning','settlement','expeditions'].includes(focus)||focus===f.focus)return null
-  return {...state,civilization:{...state.civilization!,farming:{...f,focus:focus as CivilizationFocus}}}
-}
-export function completeFarmingAge(state:CanonicalGameStateV1):CanonicalGameStateV1|null {
-  const f=state.civilization?.farming;if(!f||f.phase!=='farming'||!farmingComplete(f))return null
-  return {...state,civilization:{...state.civilization!,farming:{...f,phase:Object.keys(f.jobs).length?'settling-village':'complete'}}}
-}
-export function farmingRowUnlocked(f:Readonly<FarmingState>,row:FarmingRow):boolean {
-  if(row==='fields'||row==='woodlot')return true
-  if(row==='workshop'||row==='homes')return f.firstHarvest
-  if(row==='pasture'||row==='kiln')return f.granaries>0
-  if(row==='waterworks')return has(f,'kiln')
-  if(row==='intensiveCultivation')return has(f,'waterworks')
-  if(row==='guildWorkshop')return has(f,'hall')&&f.homesBuilt>=5&&f.shipments>=3
-  if(row==='townMarket')return has(f,'intensiveCultivation')&&has(f,'guildWorkshop')&&f.homesBuilt>=5&&f.shipments>=3
-  return has(f,'hall')||(f.homesBuilt>=4&&has(f,'waterworks')&&has(f,'pasture'))
-}
-export function farmingJobForRow(f:Readonly<FarmingState>,row:FarmingRow):FarmingJob|undefined {
-  if(row==='fields')return f.jobs.food
-  if(row==='woodlot')return f.jobs.materials
-  if(row==='workshop')return f.jobs.tools
-  if(row==='homes')return ['home','repair'].includes(f.jobs.build?.kind??'')?f.jobs.build:undefined
-  if(row==='kiln')return f.jobs.build?.kind==='kiln'?f.jobs.build:f.jobs.goods
-  if(row==='hall')return f.jobs.build?.kind==='hall'?f.jobs.build:f.jobs.ship
-  return f.jobs.build?.kind===row?f.jobs.build:undefined
-}
-export function farmingLaborShares(f:Readonly<FarmingState>):Record<string,number> {
-  const focus=farmingEffectiveFocus(f),weights=T.weights[focus],total=Object.keys(f.jobs).reduce((sum,id)=>sum+weights[id as keyof typeof weights],0)
-  return Object.fromEntries(Object.keys(f.jobs).map(id=>[id,total?farmingWorkers(f)*(1-T.upkeep[focus])*weights[id as keyof typeof weights]/total:0]))
-}
-function paidCycle(f:MutableFarming):number {
-  const next=(f.jobSequence??Math.max(0,...Object.values(f.jobs).map(j=>j.cycle??0)))+1
-  if(!Number.isSafeInteger(next))throw Error('Farming cycle identity exhausted.')
-  f.jobSequence=next;return next
-}
-function admit(f:MutableFarming) {
-  const goal=farmingGoal(f),recipe=farmingGoalRecipe(f,goal)
-  if(goal.kind!=='granary'&&!f.jobs.build&&!f.jobs.ship&&(goal.kind!=='home'||f.firstHarvest)&&pay(f,recipe.inputs)){
-    const key=goal.kind==='ship'?'ship':'build'
-    f.jobs[key]={cycle:paidCycle(f),kind:goal.kind,...(goal.index===undefined?{}:{index:goal.index}),work:recipe.work,remainingWork:recipe.work,inputs:{...recipe.inputs},output:goal.kind==='ship'?(has(f,'townMarket')?100:80):0}
+export const farmingSpeed = (state: Readonly<CanonicalGameStateV1>): number => 1 + permanentFractureCount(state) * .05
+export const farmingWorkers = (f: Readonly<FarmingState>): number => f.population
+export const farmingHousing = (f: Readonly<Pick<FarmingState, 'houses'>>): number => f.houses * T.residentsPerHouse
+export const farmingCapacity = (f: Readonly<Pick<FarmingState, 'granaries'>>): number => f.granaries * T.granaryCapacity
+export const farmingUsedLand = (f: Readonly<Pick<FarmingState, 'houses' | 'fields' | 'pastures' | 'granaries' | 'shrines' | 'workshop'>>): number => f.houses + f.fields + f.pastures + f.granaries + f.shrines + Number(f.workshop)
+export const farmingFreeLand = (f: Readonly<FarmingState>): number => f.clearedLand - farmingUsedLand(f)
+export const farmingAssigned = (f: Readonly<Pick<FarmingState, 'assignments'>>): number => FARMING_WORKPLACES.reduce((sum, id) => sum + f.assignments[id], 0)
+export const farmingUnassigned = (f: Readonly<FarmingState>): number => f.population - farmingAssigned(f)
+export const farmingSeasonIndex = (f: Readonly<FarmingState>): number => Math.floor(f.elapsedSeconds / T.seasonSeconds) % 4
+export const farmingSeason = (f: Readonly<FarmingState>) => FARMING_SEASONS[farmingSeasonIndex(f)]
+export const farmingClearingMaterials = (f: Readonly<FarmingState>): number => T.clearingMaterials + T.clearingMaterialGrowth * (f.clearedLand - 1)
+export const farmingBurials = (f: Readonly<FarmingState>): number => f.starvationDeaths + f.naturalDeaths + f.disasterDeaths
+export const farmingComplete = (f: Readonly<FarmingState>): boolean => f.completionReached
+export const farmingManualGate = (f: Readonly<FarmingState>): boolean => f.phase !== 'complete' && f.completionReached
+
+export function farmingWorkplaceCapacity(f: Readonly<Pick<FarmingState, 'houses' | 'fields' | 'pastures' | 'workshop' | 'clearedLand' | 'loggingCamps' | 'shrines'>>, id: FarmingWorkplace): number {
+  switch (id) {
+    case 'crops': return f.fields * T.fieldWorkers
+    case 'herding': return f.pastures * T.pastureWorkers
+    case 'workshop': return f.workshop ? farmingHousing(f) : 0
+    case 'woodland': return f.clearedLand < T.maximumPlots ? f.loggingCamps * T.loggingCampWorkers : 0
+    case 'shaman': return f.shrines * T.shrineWorkers
   }
-  const target:Record<FarmingResource,number>={food:recipe.inputs.food??0,materials:recipe.inputs.materials??0,tools:recipe.inputs.tools??0,goods:recipe.inputs.goods??0}
-  if(f.jobs.build||f.jobs.ship){target.food=Math.min(farmingCapacity(f),100);target.materials=80;target.tools=8;target.goods=has(f,'kiln')?20:0}
-  target.materials+=3*Math.max(0,target.tools-f.resources.tools)+2*Math.max(0,target.goods-f.resources.goods)
-  f.targets=target
-  // Later rows can spend Materials after its row was checked. Settle those
-  // newly eligible receipts now, before elapsed time receives one labor pool.
-  let admitted:boolean
-  do {
-    admitted=false
-    for(const id of FARMING_RESOURCES){if(f.jobs[id]||f.resources[id]>=target[id]-1e-8||id==='tools'&&!f.firstHarvest||id==='goods'&&!has(f,'kiln'))continue
-      const inputs:FarmingRecipe=id==='tools'?{materials:6}:id==='goods'?{materials:has(f,'guildWorkshop')?6:4}:{}
-      const work=id==='goods'?63:42
-      const output=id==='food'?Math.min(12*(has(f,'pasture')?1.5:1)*(has(f,'waterworks')?1.25:1)*(has(f,'intensiveCultivation')?1.2:1),Math.max(0,farmingCapacity(f)-f.resources.food)):id==='materials'?8:id==='goods'&&has(f,'guildWorkshop')?3:2
-      if(output<=1e-8||!pay(f,inputs))continue
-      f.jobs[id]={cycle:paidCycle(f),kind:id,work,remainingWork:work,inputs,output};admitted=true
-    }
-  }while(admitted)
 }
-function finishJob(f:MutableFarming,key:string) {
-  const j=f.jobs[key];delete f.jobs[key]
-  if(FARMING_RESOURCES.includes(j.kind as FarmingResource)){f.resources[j.kind as FarmingResource]+=j.output;if(j.kind==='food')f.firstHarvest=true}
-  else if(j.kind==='home'){f.homes.push(j.index!);f.homesBuilt++}
-  else if(j.kind==='repair'){f.homes.push(j.index!);f.lostHomes=f.lostHomes.filter(n=>n!==j.index)}
-  else if(j.kind==='ship'){f.shipments++;f.resources.materials+=j.output}
-  else f.completedBuildings.push(j.kind as FarmingBuilding)
+/** These rates determine support as well as reserve flow; harvest animation earns nothing. */
+export function farmingFoodRate(f: Readonly<FarmingState>, speed = 1, season = farmingSeasonIndex(f)): number {
+  return FOOD_JOBS.reduce((sum, id) => sum + farmingFoodPerWorker(f, id, speed, season) * f.assignments[id], 0)
 }
-/** A segment ends only when work, funding, storage or weather changes ownership.
- * Every job uses the same interval; admissions then recalculate one labor pool.
- * Absolute saved anchors give large updates and serialized partitions the same
- * deadlines, rather than repeatedly rounding or discarding paid work. */
-function segmentSignature(f:Readonly<FarmingState>,speed:number):string {
-  return JSON.stringify([speed,f.phase,f.focus,f.homes,f.lostHomes,f.homesBuilt,f.granaries,f.shipments,f.firstHarvest,f.completedBuildings,f.targets,f.inheritedFoodPerMinute,f.inheritedMaterialsPerMinute,
-    Object.entries(f.jobs).map(([id,j])=>[id,j.kind,j.index,j.work,j.inputs,j.output,j.cycle])])
+export function farmingFoodPerWorker(f: Readonly<FarmingState>, id: FarmingWorkplace, speed = 1, season = farmingSeasonIndex(f)): number {
+  if (!FOOD_JOBS.includes(id as typeof FOOD_JOBS[number])) return 0
+  const base = T.food[id as keyof typeof T.food][season]
+  const multiplier = id === 'crops' && f.irrigation ? 1.25 : 1
+  return base * multiplier * speed
 }
-function flowRates(f:Readonly<FarmingState>,speed:number) {
-  const focus=farmingEffectiveFocus(f),weather=T.weatherPerMinute[focus]
-  return {food:f.phase==='farming'?f.inheritedFoodPerMinute*speed/60:0,
-    materials:f.phase==='farming'?f.inheritedMaterialsPerMinute*speed/60:0,
-    weather:f.phase==='farming'?weather/60*(weather>0&&has(f,'waterworks')?.6*(has(f,'intensiveCultivation')?.8:1):1):0,
-    labor:Object.fromEntries(Object.entries(farmingLaborShares(f)).map(([id,n])=>[id,n*speed]))}
+export const farmingFoodUse = (f: Readonly<FarmingState>): number => f.population * T.foodPerPersonPerMinute
+export const farmingFoodBalance = (f: Readonly<FarmingState>, speed = 1): number => farmingFoodRate(f, speed) - farmingFoodUse(f)
+export const farmingFoodSupport = (f: Readonly<FarmingState>, speed = 1): number => Math.floor((farmingFoodRate(f, speed) + EPSILON) / T.foodPerPersonPerMinute)
+export const farmingMilestoneFlags = (f: Readonly<FarmingState>): readonly boolean[] => T.populationMilestones.map(n => f.peakPopulation >= n)
+export const farmingNextPopulation = (f: Readonly<FarmingState>): number => T.populationMilestones.find(n => f.peakPopulation < n) ?? T.populationMilestones.at(-1)!
+export const farmingProtection = (f: Readonly<FarmingState>): number => f.seasonProtection
+export const farmingProtectionRate = (f: Readonly<FarmingState>): number => Math.min(1, f.assignments.shaman / (f.population * T.shamanPopulationFraction)) / T.seasonSeconds
+export const farmingGrowthRate = (f: Readonly<FarmingState>, speed = 1): number => f.phase === 'farming' && !f.completionReached && f.hungerDebt <= EPSILON && f.population < farmingHousing(f) && farmingFoodSupport(f, speed) >= f.population + 1 ? 1 / T.growthSeconds : 0
+
+function random(f: MutableFarming): number {
+  let seed = f.disasterSeed | 0
+  seed ^= seed << 13; seed ^= seed >>> 17; seed ^= seed << 5
+  f.disasterSeed = seed >>> 0
+  return f.disasterSeed / 0x1_0000_0000
 }
-function anchor(f:MutableFarming,speed:number) {
-  const signature=segmentSignature(f,speed)
-  const previous=f.continuous
-  if(previous?.signature===signature){
-    const expected=projectSegment(f,previous,f.elapsedSeconds,speed)
-    // Commands/imports can legitimately change stocks without advancing time.
-    if(expected.food===f.resources.food&&expected.materials===f.resources.materials&&expected.weather===f.weathering&&
-      Object.entries(f.jobs).every(([id,j])=>j.remainingWork===expected.work[id]))return previous
+/** One persisted random roll at the end of the season that just finished. */
+function rollSeasonDisaster(f: MutableFarming, endedSeason: number): void {
+  const kind: FarmingDisaster = (['flood', 'fire', 'sickness'] as const)[Math.floor(random(f) * 3)]
+  const prevented = random(f) < farmingProtection(f)
+  f.seasonProtection = 0
+  const loss = prevented ? 0 : Math.min(f.population - 1, Math.ceil(f.population * T.disasterPopulationLoss))
+  if (loss > 0) {
+    f.population -= loss
+    f.disasterDeaths = safeAdd(f.disasterDeaths, loss)
+    f.growthProgress = 0
   }
-  return f.continuous={since:f.elapsedSeconds,resources:{...f.resources},weathering:f.weathering,
-    jobs:Object.fromEntries(Object.entries(f.jobs).map(([id,j])=>[id,j.remainingWork])),signature}
+  f.disasters = safeAdd(f.disasters, 1)
+  f.lastDisaster = { kind, at: f.elapsedSeconds, season: FARMING_SEASONS[endedSeason], prevented, loss }
 }
-function projectSegment(f:Readonly<FarmingState>,a:NonNullable<FarmingState['continuous']>,at:number,speed:number) {
-  const dt=Math.max(0,at-a.since),r=flowRates(f,speed)
-  const due=(amount:number,initial:number,rate:number)=>rate>0?a.since+Math.max(0,amount-initial)/rate:Infinity
-  const flow=(id:'food'|'materials',limit:number)=>{
-    const initial=a.resources[id],cap=Math.max(initial,limit),rate=r[id]
-    let value=due(cap,initial,rate)<=at?cap:initial+Math.max(0,Math.min(cap-initial,rate*dt))
-    // A funding boundary is also authoritative. Absolute deadlines avoid a
-    // subtraction error leaving an already-earned input just below its bill.
-    const thresholds=[farmingGoalRecipe(f).inputs[id]??0,...(id==='materials'?[4,6]:[])]
-    for(const amount of thresholds)if(amount<=cap&&due(amount,initial,rate)<=at)value=Math.max(value,amount)
-    return value
+
+function initialFarming(): MutableFarming {
+  return {
+    version: 9, seasonProtection: 0, phase: 'farming', elapsedSeconds: 0, population: 3, peakPopulation: 3,
+    houses: 1, clearedLand: 2, loggingCamps: 1, fields: 1, pastures: 0, granaries: 0, shrines: 0,
+    workshop: false, irrigation: false,
+    assignments: { crops: 1, herding: 0, woodland: 2, workshop: 0, shaman: 0 },
+    desiredJobs: { crops: 1, herding: 0, woodland: 8, workshop: 0, shaman: 0 },
+    growthProgress: 0, hungerDebt: 0, disasterSeed: Math.floor(Math.random() * 0xffff_ffff) + 1,
+    disasters: 0, disasterDeaths: 0,
+    resources: { food: 0, materials: 0, tools: 0 }, jobs: {}, jobSequence: 0,
+    starvationDeaths: 0, naturalDeaths: 0, generations: 0, awardedCatalystIds: [],
+    skillRewardPending: false, completionReached: false, legacyWorkCredit: 0,
   }
-  let weather=Math.max(0,a.weathering+r.weather*dt)
-  if(r.weather<0&&a.since-a.weathering/r.weather<=at)weather=0
-  if(r.weather>0&&f.homes.length&&due(100,a.weathering,r.weather)<=at)weather=100
-  if(!f.homes.length&&weather>=100)weather=40+(weather-100)%60
-  const work=Object.fromEntries(Object.entries(f.jobs).map(([id])=>[id,r.labor[id]>0&&a.since+a.jobs[id]/r.labor[id]<=at?0:Math.max(0,a.jobs[id]-(r.labor[id]??0)*dt)]))
-  return {food:flow('food',farmingCapacity(f)-(f.jobs.food?.output??0)),materials:flow('materials',f.targets.materials),weather,work}
 }
-function advanceSegment(f:MutableFarming,at:number,speed:number) {
-  const p=projectSegment(f,anchor(f,speed),at,speed)
-  f.resources.food=p.food;f.resources.materials=p.materials;f.weathering=p.weather
-  for(const [id,j] of Object.entries(f.jobs))f.jobs[id]={...j,remainingWork:p.work[id]}
-  f.elapsedSeconds=at
+export function startFarming(state: CanonicalGameStateV1): CanonicalGameStateV1 | null {
+  const previous = state.civilization
+  if (!previous || previous.farming || !civilizationOpeningComplete(previous) || state.meta.reworkMigrationChoice === undefined) return null
+  const f = initialFarming()
+  settle(f, farmingSpeed(state))
+  return { ...state, civilization: replaceForagerWithFarming(previous, f) }
 }
-function nextBoundary(f:MutableFarming,speed:number):number {
-  const a=anchor(f,speed),r=flowRates(f,speed),due:number[]=[]
-  const time=(amount:number,initial:number,rate:number)=>rate>0?a.since+Math.max(0,amount-initial)/rate:Infinity
-  const boundary=(at:number)=>{
-    if(!Number.isFinite(at)||at<=f.elapsedSeconds)throw Error('Farming clock precision exhausted.')
-    due.push(at)
+/** Only global rewards cross the era boundary. No Forager production keeps running. */
+export function replaceForagerWithFarming(previous: Readonly<CivilizationState>, farming: FarmingState): CivilizationState {
+  return { ...structuredClone(EMPTY_CIVILIZATION), version: 5, unlocked: true, awardedCatalystMilestoneIds: [...previous.awardedCatalystMilestoneIds], farming }
+}
+
+export function farmingPurchaseCount(f: Readonly<FarmingState>, purchase: FarmingPurchase): number {
+  switch (purchase) {
+    case 'house': return f.houses
+    case 'field': return f.fields
+    case 'loggingCamp': return f.loggingCamps
+    case 'pasture': return f.pastures
+    case 'granary': return f.granaries
+    case 'shrine': return f.shrines
+    default: return Number(f[purchase])
   }
-  for(const id of Object.keys(f.jobs))if(r.labor[id]>0)boundary(a.since+a.jobs[id]/r.labor[id])
-  if(f.phase==='farming'){
-    if(r.weather>0&&f.homes.length)boundary(time(100,a.weathering,r.weather))
-    if(r.weather<0&&f.weathering>0)boundary(a.since-a.weathering/r.weather)
-    const foodLimit=farmingCapacity(f)-(f.jobs.food?.output??0)
-    if(f.resources.food<foodLimit&&r.food>0)boundary(time(foodLimit,a.resources.food,r.food))
-    if(f.resources.materials<f.targets.materials&&r.materials>0)boundary(time(f.targets.materials,a.resources.materials,r.materials))
-    // A continuous inflow can fund construction, manual storage, Tools or Goods
-    // before a currently running production receipt completes.
-    const costs:FarmingRecipe[]=[farmingGoalRecipe(f).inputs]
-    if(!f.jobs.tools&&f.firstHarvest&&f.resources.tools<f.targets.tools-1e-8)costs.push({materials:6})
-    if(!f.jobs.goods&&has(f,'kiln')&&f.resources.goods<f.targets.goods-1e-8)costs.push({materials:has(f,'guildWorkshop')?6:4})
-    for(const cost of costs){
-      let at=a.since,possible=true
-      for(const [id,n] of Object.entries(cost)){
-        const key=id as FarmingResource;if(f.resources[key]+1e-8>=n!)continue
-        if(key==='food'&&n!<=foodLimit&&r.food>0)at=Math.max(at,time(n!,a.resources.food,r.food))
-        else if(key==='materials'&&n!<=f.targets.materials&&r.materials>0)at=Math.max(at,time(n!,a.resources.materials,r.materials))
-        else possible=false
-      }
-      if(possible&&Object.entries(cost).some(([id,n])=>f.resources[id as FarmingResource]+1e-8<n!))boundary(at)
-    }
-  }
-  return Math.min(...due.filter(at=>at>f.elapsedSeconds))
 }
-function settleBoundary(f:MutableFarming,speed:number) {
-  // Preserve the established weather-before-paid-completion ordering.
-  if(f.weathering>=100-1e-9){const home=f.homes.pop();if(home!==undefined)f.lostHomes.push(home);f.weathering=40}
-  for(const key of Object.keys(f.jobs))if(f.jobs[key].remainingWork<=1e-9)finishJob(f,key)
-  if(f.phase==='settling-village'&&!Object.keys(f.jobs).length)f.phase='complete'
+export function farmingPurchaseUnlocked(f: Readonly<FarmingState>, purchase: FarmingPurchase): boolean {
+  switch (purchase) {
+    case 'workshop': return f.clearedLand > 2
+    case 'house': case 'field': case 'loggingCamp': return f.workshop
+    case 'pasture': return f.fields >= 2 && f.houses >= 2
+    case 'granary': return f.houses >= 3
+    case 'shrine': return f.houses >= 4
+    case 'irrigation': return f.fields >= 4
+  }
+}
+export function farmingPurchaseVisible(f: Readonly<FarmingState>, purchase: FarmingPurchase): boolean {
+  if (purchase === 'workshop') return !f.workshop
+  if (purchase === 'house' || purchase === 'field' || purchase === 'loggingCamp') return f.workshop
+  if (purchase === 'pasture') return f.workshop && f.houses >= 2
+  if (purchase === 'granary') return f.houses >= 2
+  if (purchase === 'shrine') return f.houses >= 3
+  return !f.irrigation && f.fields >= 3
+}
+export const farmingPurchaseLand = (purchase: FarmingPurchase): number => purchase === 'irrigation' || purchase === 'loggingCamp' ? 0 : 1
+export function farmingPurchaseCost(f: Readonly<FarmingState>, purchase: FarmingPurchase): FarmingRecipe {
+  const n = farmingPurchaseCount(f, purchase)
+  const cost = (materials: number, tools: number): FarmingRecipe => ({ materials: Math.ceil(materials), ...(tools ? { tools: Math.ceil(tools) } : {}) })
+  switch (purchase) {
+    case 'workshop': return cost(20, 0)
+    case 'house': { const scale = (1 + .18 * (n - 1)) ** 1.25; return cost(36 * scale, 2 * Math.sqrt(scale)) }
+    case 'loggingCamp': { const scale = (1 + .2 * (n - 1)) ** 1.2; return cost(24 * scale, 2 * Math.sqrt(scale)) }
+    case 'field': { const scale = (1 + .2 * (f.fields)) ** 1.2; return cost(24 * scale, 2 * Math.sqrt(scale)) }
+    case 'pasture': { const scale = (1 + .22 * n) ** 1.2; return cost(50 * scale, 6 * Math.sqrt(scale)) }
+    case 'granary': return cost(120 * 1.55 ** n, 10 * 1.35 ** n)
+    case 'shrine': return cost(90 * (1 + .3 * n) ** 1.2, 8 * (1 + .2 * n))
+    case 'irrigation': return cost(260, 24)
+  }
+}
+export function farmingPurchaseStatus(f: Readonly<FarmingState>, purchase: FarmingPurchase): 'ready' | 'locked' | 'land' | 'inputs' | 'owned' | 'complete' {
+  if (f.phase === 'complete' || f.completionReached) return 'complete'
+  if (['workshop', 'irrigation'].includes(purchase) && farmingPurchaseCount(f, purchase)) return 'owned'
+  if (purchase === 'house' && f.houses >= T.maximumHouses || farmingPurchaseCount(f, purchase) >= T.maximumPlots) return 'owned'
+  if (!farmingPurchaseUnlocked(f, purchase)) return 'locked'
+  if (farmingFreeLand(f) < farmingPurchaseLand(purchase)) return 'land'
+  const cost = farmingPurchaseCost(f, purchase)
+  return Object.entries(cost).every(([id, n]) => f.resources[id as FarmingResource] + EPSILON >= n!) ? 'ready' : 'inputs'
+}
+export function buyFarmingPurchase(state: CanonicalGameStateV1, purchase: FarmingPurchase, quantity: number | 'max' = 1): CanonicalGameStateV1 | null {
+  const source = state.civilization?.farming
+  if (!source || !FARMING_PURCHASES.includes(purchase) || quantity !== 'max' && (!Number.isSafeInteger(quantity) || quantity < 1 || quantity > T.maximumPlots)) return null
+  const f = clone(source)
+  let bought = 0
+  while (bought < (quantity === 'max' ? T.maximumPlots : quantity) && farmingPurchaseStatus(f, purchase) === 'ready') {
+    for (const [id, n] of Object.entries(farmingPurchaseCost(f, purchase))) f.resources[id as FarmingResource] = Math.max(0, f.resources[id as FarmingResource] - n!)
+    if (purchase === 'house') f.houses++
+    else if (purchase === 'field') { f.fields++; f.desiredJobs.crops += T.fieldWorkers }
+    else if (purchase === 'loggingCamp') { f.loggingCamps++; f.desiredJobs.woodland += T.loggingCampWorkers }
+    else if (purchase === 'pasture') { f.pastures++; f.desiredJobs.herding += T.pastureWorkers }
+    else if (purchase === 'granary') f.granaries++
+    else if (purchase === 'shrine') { f.shrines++; f.desiredJobs.shaman++ }
+    else f[purchase] = true
+    if (purchase === 'workshop') f.desiredJobs.workshop = 1
+    bought++
+    if (['workshop', 'irrigation'].includes(purchase)) break
+  }
+  if (!bought) return null
+  settle(f, farmingSpeed(state))
+  return withFarming(state, f)
+}
+export const buyFarmingGranary = (state: CanonicalGameStateV1): CanonicalGameStateV1 | null => buyFarmingPurchase(state, 'granary')
+export function setFarmingJobs(state: CanonicalGameStateV1, workplace: FarmingWorkplace, count: number): CanonicalGameStateV1 | null {
+  const source = state.civilization?.farming
+  if (!source || source.phase === 'complete' || source.completionReached || !FARMING_WORKPLACES.includes(workplace) || !Number.isSafeInteger(count) || count < 0 || count > farmingWorkplaceCapacity(source, workplace) || source.desiredJobs[workplace] === count) return null
+  const f = clone(source)
+  f.desiredJobs[workplace] = count
+  settle(f, farmingSpeed(state))
+  return withFarming(state, f)
+}
+export function completeFarmingAge(state: CanonicalGameStateV1): CanonicalGameStateV1 | null {
+  const source = state.civilization?.farming
+  if (!source || source.phase !== 'farming' || !source.completionReached) return null
+  const f = clone(source)
+  f.phase = 'complete'
+  f.jobs = {}
   delete f.continuous
-  if(f.phase==='farming'&&!farmingComplete(f))admit(f)
-  anchor(f,speed)
+  return withFarming(state, f)
 }
-export function farmingMilestoneFlags(f:Readonly<FarmingState>):readonly boolean[]{return [f.homesBuilt>=1,has(f,'pasture')||has(f,'kiln'),has(f,'waterworks'),has(f,'hall'),f.shipments>=3,farmingComplete(f)]}
-/** Earned pending awards survive weather; current readiness and Finish do not. */
-function farmingAwardFlags(f:Readonly<FarmingState>):readonly boolean[]{return farmingMilestoneFlags(f).map((yes,i)=>yes||i===5&&f.cityReadinessReached===true)}
-export function advanceFarming(state:CanonicalGameStateV1,seconds:number,stopAtManualGate=false):CanonicalGameStateV1 {
-  const source=state.civilization?.farming;if(!source||source.phase==='settling-forager'||!Number.isFinite(seconds)||seconds<=0)return state
-  const f=clone(source),speed=1+permanentFractureCount(state)*CIVILIZATION_TUNING.speedPerFracture
-  if(farmingComplete(f))f.cityReadinessReached=true
-  if(f.phase!=='complete'&&!(stopAtManualGate&&farmingManualGate(f))){
-    const end=f.elapsedSeconds+seconds+f.tickRemainder
-    if(!Number.isFinite(end)||end<=f.elapsedSeconds)throw Error('Farming clock precision exhausted.')
-    f.tickRemainder=0
-    // Old saves contain paid remaining work and unused fractional time, both owned
-    // by this village. No receipt is repaid and the old remainder is applied once.
-    if(Object.values(f.jobs).some(j=>j.remainingWork<=1e-9))settleBoundary(f,speed)
-    else if(f.phase==='farming'&&!farmingComplete(f))admit(f)
-    if(farmingComplete(f))f.cityReadinessReached=true
-    anchor(f,speed)
-    const idleWeatherPeriods=new Map<string,{at:number;cycles:number}>()
-    while(f.elapsedSeconds<end){
-      if(stopAtManualGate&&farmingManualGate(f)||!['farming','settling-village'].includes(f.phase))break
-      const due=nextBoundary(f,speed),at=Math.min(end,due)
-      advanceSegment(f,at,speed)
-      // Exact repeated idle weather states are a real periodic economy, not a
-      // per-job work bank. Partial periods still use the normal scheduler.
-      if(f.homes.length&&f.weathering>=100-1e-9&&!Object.keys(f.jobs).length){
-        const key=JSON.stringify([f.phase,f.focus,f.resources,f.targets,f.homes,f.lostHomes,f.homesBuilt,f.granaries,f.shipments,f.firstHarvest,f.completedBuildings])
-        const previous=idleWeatherPeriods.get(key),cycles=f.jobSequence??0
-        if(previous){
-          const period=f.elapsedSeconds-previous.at,count=Math.floor((end-f.elapsedSeconds)/period)
-          const skippedCycles=count*(cycles-previous.cycles)
-          if(count>0){
-            if(!Number.isSafeInteger(cycles+skippedCycles))throw Error('Farming cycle identity exhausted.')
-            f.elapsedSeconds+=count*period;f.jobSequence=cycles+skippedCycles;delete f.continuous
-          }
-        }else{
-          // Memoization capacity affects performance only, never simulation.
-          if(idleWeatherPeriods.size>=4096)idleWeatherPeriods.clear()
-          idleWeatherPeriods.set(key,{at:f.elapsedSeconds,cycles})
-        }
+
+function toolTarget(f: Readonly<FarmingState>): number {
+  return Math.max(4, ...FARMING_PURCHASES.filter(purchase => farmingPurchaseUnlocked(f, purchase)).map(purchase => farmingPurchaseCost(f, purchase).tools ?? 0))
+}
+/** Food limits are the player's responsibility; staffing never raises them to avert hunger. */
+function staffVillage(f: MutableFarming): void {
+  const cropSlots = Math.min(f.desiredJobs.crops, farmingWorkplaceCapacity(f, 'crops')), herdSlots = Math.min(f.desiredJobs.herding, farmingWorkplaceCapacity(f, 'herding'))
+  const foodSlots = cropSlots + herdSlots
+  const foodWorkers = Math.min(foodSlots, f.population)
+  let herding = foodSlots > 0 ? Math.floor(foodWorkers * herdSlots / foodSlots) : 0
+  let crops = Math.min(cropSlots, foodWorkers - herding)
+  herding = Math.min(herdSlots, foodWorkers - crops)
+  let remaining = f.population - crops - herding
+  const shaman = Math.min(remaining, f.desiredJobs.shaman, farmingWorkplaceCapacity(f, 'shaman'), Math.ceil(f.population * T.shamanPopulationFraction))
+  remaining -= shaman
+  const crafting = !!f.jobs.workshop || f.resources.tools < toolTarget(f) && f.resources.materials + EPSILON >= T.toolMaterials
+  const workshop = crafting ? Math.min(remaining, f.desiredJobs.workshop, farmingWorkplaceCapacity(f, 'workshop')) : 0
+  const woodland = Math.min(remaining - workshop, f.desiredJobs.woodland, farmingWorkplaceCapacity(f, 'woodland'))
+  f.assignments = { crops, herding, woodland, workshop, shaman }
+}
+function normalizePopulation(f: MutableFarming, speed: number): void {
+  if (f.hungerDebt >= T.starvationFoodPerDeath - EPSILON && f.population > 1) {
+    f.population--
+    f.starvationDeaths = safeAdd(f.starvationDeaths, 1)
+    f.hungerDebt = 0
+  }
+  if (f.growthProgress >= 1 - EPSILON && f.population < farmingHousing(f)) { f.population++; f.growthProgress = 0 }
+  staffVillage(f)
+  if (!farmingGrowthRate(f, speed)) f.growthProgress = 0
+  if (f.hungerDebt > 0 && f.resources.food > 0) {
+    const fed = Math.min(f.resources.food, f.hungerDebt)
+    f.resources.food -= fed
+    f.hungerDebt -= fed
+  }
+  if (f.population <= 1 || f.hungerDebt < EPSILON) f.hungerDebt = 0
+  f.peakPopulation = Math.max(f.peakPopulation, f.population)
+  if (f.peakPopulation >= T.populationMilestones.at(-1)!) f.completionReached = true
+}
+function newJob(f: MutableFarming, kind: 'woodland' | 'workshop'): FarmingJob {
+  const work = kind === 'woodland' ? T.clearingWork * (1 + T.clearingGrowth * (f.clearedLand - 1)) ** T.clearingPower : T.toolWork
+  const credit = Math.min(f.legacyWorkCredit, work)
+  f.legacyWorkCredit -= credit
+  f.jobSequence = safeAdd(f.jobSequence, 1)
+  return { kind, cycle: f.jobSequence, work, remainingWork: work - credit,
+    inputs: kind === 'woodland' ? {} : { materials: T.toolMaterials },
+    outputs: kind === 'woodland' ? { materials: farmingClearingMaterials(f) } : { tools: T.toolOutput }, land: Number(kind === 'woodland') }
+}
+function settle(f: MutableFarming, speed: number): void {
+  normalizePopulation(f, speed)
+  if (f.phase === 'complete' || f.completionReached) { delete f.continuous; return }
+  let changed: boolean
+  do {
+    changed = false
+    for (const id of ['woodland', 'workshop'] as const) {
+      const job = f.jobs[id]
+      if (job && job.remainingWork <= EPSILON) {
+        for (const [resource, n] of Object.entries(job.outputs)) f.resources[resource as FarmingResource] = safeAdd(f.resources[resource as FarmingResource], n!)
+        f.clearedLand += job.land
+        if (f.clearedLand >= T.maximumPlots) f.assignments.woodland = 0
+        delete f.jobs[id]
+        changed = true
       }
-      if(due<=at||Object.values(f.jobs).some(j=>j.remainingWork<=1e-9)||f.weathering>=100-1e-9)settleBoundary(f,speed)
-      if(farmingComplete(f))f.cityReadinessReached=true
+      if (!f.jobs[id] && f.assignments[id] > 0 && farmingWorkplaceCapacity(f, id) > 0 && (id === 'woodland' || f.resources.tools < toolTarget(f) && f.resources.materials + EPSILON >= T.toolMaterials)) {
+        if (id === 'workshop') f.resources.materials = Math.max(0, f.resources.materials - T.toolMaterials)
+        f.jobs[id] = newJob(f, id)
+        if (f.jobs[id]!.remainingWork <= EPSILON) changed = true
+      }
+    }
+  } while (changed)
+  staffVillage(f)
+}
+function segment(f: MutableFarming, speed: number): NonNullable<FarmingState['continuous']> {
+  const signature = JSON.stringify([speed, farmingSeasonIndex(f), f.population, f.houses, f.granaries, f.assignments, f.irrigation, (['woodland', 'workshop'] as const).map(id => [id, f.jobs[id]?.cycle ?? null])])
+  if (f.continuous?.signature === signature) return f.continuous
+  return f.continuous = { since: f.elapsedSeconds, food: f.resources.food, growthProgress: f.growthProgress, hungerDebt: f.hungerDebt, seasonProtection: f.seasonProtection, signature,
+    jobs: Object.fromEntries(Object.entries(f.jobs).map(([id, job]) => [id, job.remainingWork])) }
+}
+function withFarming(state: CanonicalGameStateV1, f: MutableFarming): CanonicalGameStateV1 {
+  let challenges = state.challenges ?? EMPTY_INFINITY_CHALLENGES
+  const pending = farmingMilestoneFlags(f).some((yes, i) => yes && !f.awardedCatalystIds.includes(`farming-catalyst-${i + 1}`))
+  const eligible = !pending || eligibleCanonicalFractureIds(state).length > 0
+  f.skillRewardPending = pending && (!eligible || challenges.galvanizers === DISCRETE_MAXIMUM)
+  if (eligible) for (const [i, yes] of farmingMilestoneFlags(f).entries()) {
+    const id = `farming-catalyst-${i + 1}`
+    if (yes && !f.awardedCatalystIds.includes(id) && challenges.galvanizers < DISCRETE_MAXIMUM) {
+      f.awardedCatalystIds.push(id)
+      challenges = { ...challenges, galvanizers: challenges.galvanizers + 1n, hasEarnedGalvanizer: true, unlocked: true }
     }
   }
-  let challenges=state.challenges??EMPTY_INFINITY_CHALLENGES
-  const flags=farmingAwardFlags(f),owed=flags.some((yes,i)=>yes&&!f.awardedCatalystIds.includes(`farming-catalyst-${i+1}`))
-  const eligible=owed?eligibleCanonicalFractureIds(state).length:1
-  f.skillRewardPending=owed&&(eligible===0||challenges.galvanizers===DISCRETE_MAXIMUM)
-  if(eligible>0)for(const [i,yes]of flags.entries()){const id=`farming-catalyst-${i+1}`;if(yes&&!f.awardedCatalystIds.includes(id)&&challenges.galvanizers<DISCRETE_MAXIMUM){f.awardedCatalystIds.push(id);challenges={...challenges,galvanizers:challenges.galvanizers+1n,hasEarnedGalvanizer:true,unlocked:true}}}
-  return {...state,civilization:{...state.civilization!,farming:f},challenges}
+  return { ...state, civilization: { ...state.civilization!, farming: f }, challenges }
 }
-/** Preview only this owned economy, never a real save. Admission stays atomic:
- * the existing worker receives a smaller complete request and charges it once. */
-export function farmingStoredTimeBudget(state:CanonicalGameStateV1,baseSeconds:number):number {
-  if(!state.civilization?.farming||!Number.isFinite(baseSeconds)||baseSeconds<=0)return baseSeconds
-  const gameSpeed=state.timeline.doubleTime.unlocked?2:1
-  let candidate=state,used=0,limit=baseSeconds*gameSpeed
-  if(!Number.isFinite(limit))throw new RangeError('Game-step elapsed game time must be finite.')
-  while(candidate.civilization!.farming!.phase==='settling-forager'&&used<limit){const dt=Math.min(1,limit-used);candidate=advanceCivilization(candidate,dt);used+=dt}
-  const f=candidate.civilization!.farming!
-  if(f.phase==='complete'||farmingManualGate(f))return used/gameSpeed
-  const before=f.elapsedSeconds,after=advanceFarming(candidate,limit-used,true).civilization!.farming!
-  if(farmingManualGate(after)||after.phase==='complete')return Math.min(baseSeconds,(used+Math.max(0,after.elapsedSeconds-before-f.tickRemainder))/gameSpeed)
-  return baseSeconds
-}
-export function validateFarming(value:unknown,version:1|2=2):string|null {
-  if(!value||typeof value!=='object'||Array.isArray(value))return 'Invalid Farming state.'
-  const f=value as FarmingState,n=(x:unknown)=>typeof x==='number'&&Number.isFinite(x)&&x>=0,integer=(x:unknown,max=Number.MAX_SAFE_INTEGER)=>n(x)&&Number.isInteger(x)&&Number(x)<=max
-  const clockValid=version===1?integer(f.elapsedSeconds):n(f.elapsedSeconds)
-  if(f.version!==version||!['settling-forager','farming','settling-village','complete'].includes(f.phase)||!['balanced','provisioning','settlement','expeditions'].includes(f.focus)||!clockValid||!n(f.tickRemainder)||f.tickRemainder>=1||!n(f.weathering)||f.weathering>=100||!integer(f.homesBuilt,6)||!integer(f.granaries,40)||!integer(f.shipments,6)||typeof f.firstHarvest!=='boolean'||typeof f.skillRewardPending!=='boolean'||f.transferredWorkers!==3n||typeof f.transferredEquippedWorkers!=='bigint'||f.transferredEquippedWorkers<0n||f.transferredEquippedWorkers>3n||!n(f.inheritedFoodPerMinute)||f.inheritedFoodPerMinute>T.maximumExportPerMinute||!n(f.inheritedMaterialsPerMinute)||f.inheritedMaterialsPerMinute>T.maximumExportPerMinute)return 'Invalid Farming clock, population, focus or transfer.'
-  if(f.cityReadinessReached!==undefined&&typeof f.cityReadinessReached!=='boolean')return 'Invalid Farming readiness history.'
-  if(f.jobSequence!==undefined&&!integer(f.jobSequence))return 'Invalid Farming cycle identity.'
-  if(f.continuous&&(!n(f.continuous.since)||f.continuous.since>f.elapsedSeconds||!n(f.continuous.weathering)||typeof f.continuous.signature!=='string'||!f.continuous.resources||!FARMING_RESOURCES.every(id=>n(f.continuous!.resources[id]))||!f.continuous.jobs||Object.values(f.continuous.jobs).some(x=>!n(x))))return 'Invalid Farming continuous clock.'
-  for(const values of [f.resources,f.targets])if(!values||Object.keys(values).length!==4||!FARMING_RESOURCES.every(id=>n(values[id])))return 'Invalid Farming stock or demand.'
-  if(f.resources.food+(f.jobs?.food?.output??0)>farmingCapacity(f)+1e-6)return 'Food exceeds unreserved storage.'
-  if(!Array.isArray(f.homes)||!Array.isArray(f.lostHomes)||f.homes.length+f.lostHomes.length!==f.homesBuilt||new Set([...f.homes,...f.lostHomes]).size!==f.homesBuilt||[...f.homes,...f.lostHomes].some(x=>!integer(x,5)||x>=f.homesBuilt)||!Array.isArray(f.completedBuildings)||new Set(f.completedBuildings).size!==f.completedBuildings.length||f.completedBuildings.some(id=>!FARMING_BUILDINGS.includes(id))||!Array.isArray(f.awardedCatalystIds)||new Set(f.awardedCatalystIds).size!==f.awardedCatalystIds.length||f.awardedCatalystIds.some(id=>!/^farming-catalyst-[1-6]$/.test(id)))return 'Invalid Farming housing, facilities or rewards.'
-  if(!f.jobs||Object.keys(f.jobs).some(id=>!['food','materials','tools','goods','build','ship'].includes(id))||Object.values(f.jobs).some(j=>!j||!['food','materials','tools','goods','home','repair',...FARMING_BUILDINGS,'ship'].includes(j.kind)||j.cycle!==undefined&&!integer(j.cycle)||!n(j.work)||j.work<=0||!n(j.remainingWork)||j.remainingWork>j.work||!n(j.output)||!j.inputs||Object.entries(j.inputs).some(([id,x])=>!FARMING_RESOURCES.includes(id as FarmingResource)||!n(x))||(['home','repair'].includes(j.kind)&&!integer(j.index,5))))return 'Invalid funded Farming work.'
-  const sameRecipe=(a:FarmingRecipe,b:FarmingRecipe)=>Object.keys(a).length===Object.keys(b).length&&Object.entries(a).every(([id,n])=>b[id as FarmingResource]===n)
-  for(const [key,j] of Object.entries(f.jobs)){
-    let expected:{inputs:FarmingRecipe;work:number}
-    if(key==='build'){
-      if(!['home','repair',...FARMING_BUILDINGS].includes(j.kind))return 'Invalid construction receipt.'
-      if(j.kind==='home'&&(j.index!==f.homesBuilt||!f.firstHarvest))return 'Invalid new Home receipt.'
-      if(j.kind==='repair'&&!f.lostHomes.includes(j.index!))return 'Invalid repair receipt.'
-      if(FARMING_BUILDINGS.includes(j.kind as FarmingBuilding)&&f.completedBuildings.includes(j.kind as FarmingBuilding))return 'Facility cannot be funded twice.'
-      if(['intensiveCultivation','guildWorkshop','townMarket'].includes(j.kind)&&!farmingRowUnlocked(f,j.kind as FarmingRow))return 'City-readiness prerequisites are not established.'
-      expected=farmingGoalRecipe(f,{kind:j.kind as FarmingGoal['kind'],index:j.index})
-      if(j.output!==0)return 'Construction cannot carry inventory output.'
-    }else if(key==='ship'){
-      if(j.kind!=='ship'||!has(f,'hall')||f.shipments>=6||j.output!==(has(f,'townMarket')?100:80))return 'Invalid shipment receipt.'
-      expected=farmingGoalRecipe(f,{kind:'ship'})
-    }else{
-      if(j.kind!==key||key==='tools'&&!f.firstHarvest||key==='goods'&&!has(f,'kiln'))return 'Locked or mismatched production receipt.'
-      // A paid Goods cycle keeps its original bill/output when Guild finishes.
-      const guildBatch=key==='goods'&&j.output===3&&has(f,'guildWorkshop')
-      expected={inputs:key==='tools'?{materials:6}:key==='goods'?{materials:guildBatch?6:4}:{},work:key==='goods'?63:42}
-      const max=key==='food'?12*(has(f,'pasture')?1.5:1)*(has(f,'waterworks')?1.25:1)*(has(f,'intensiveCultivation')?1.2:1):key==='materials'?8:key==='goods'&&guildBatch?3:2
-      if(j.output<=0||j.output>max||key!=='food'&&j.output!==max)return 'Invalid reserved production output.'
+/** Integrate only to real changes: jobs, seasons, reserve boundaries and generations. */
+export function advanceFarming(state: CanonicalGameStateV1, seconds: number, stopAtDecision = false): CanonicalGameStateV1 {
+  const source = state.civilization?.farming
+  if (!source || !Number.isFinite(seconds) || seconds <= 0) return state
+  const f = clone(source), speed = farmingSpeed(state)
+  if (f.phase === 'complete' || f.completionReached) return withFarming(state, f)
+  settle(f, speed)
+  const end = f.elapsedSeconds + seconds
+  if (!Number.isFinite(end) || end <= f.elapsedSeconds) throw Error('Village clock precision exhausted.')
+  while (f.elapsedSeconds < end && !f.completionReached) {
+    if (stopAtDecision && farmingManualGate(f)) break
+    const a = segment(f, speed), net = farmingFoodBalance(f, speed) / 60, cap = farmingCapacity(f)
+    const seasonEnd = (Math.floor(f.elapsedSeconds / T.seasonSeconds) + 1) * T.seasonSeconds
+    let at = Math.min(end, seasonEnd)
+    const growth = farmingGrowthRate(f, speed)
+    const healing = net > 0 && f.hungerDebt > EPSILON ? net : 0
+    const reserveNet = net - healing
+    const hunger = net < 0 && f.resources.food <= EPSILON && f.population > 1 ? -net : -healing
+    if (growth > 0) at = Math.min(at, a.since + (1 - a.growthProgress) / growth)
+    if (hunger > 0) at = Math.min(at, a.since + (T.starvationFoodPerDeath - a.hungerDebt) / hunger)
+    if (healing > 0) at = Math.min(at, a.since + a.hungerDebt / healing)
+    if (reserveNet < 0 && f.resources.food > EPSILON) at = Math.min(at, a.since + a.food / -reserveNet)
+    if (reserveNet > 0 && f.resources.food < cap - EPSILON) at = Math.min(at, a.since + (cap - a.food) / reserveNet)
+    for (const id of Object.keys(f.jobs)) {
+      const rate = f.assignments[id as 'woodland' | 'workshop'] * speed
+      if (rate > 0) at = Math.min(at, a.since + a.jobs[id as 'woodland' | 'workshop']! / rate)
     }
-    if(j.work!==expected.work||!sameRecipe(j.inputs,expected.inputs))return 'Unknown funded Farming bill.'
+    if (at <= f.elapsedSeconds) throw Error('Village boundary did not advance.')
+    const dt = at - a.since, previousFood = f.resources.food
+    f.seasonProtection = Math.min(1, a.seasonProtection + farmingProtectionRate(f) * dt)
+    f.resources.food = Math.max(0, Math.min(cap, a.food + reserveNet * dt))
+    if (f.resources.food < EPSILON) f.resources.food = 0
+    f.growthProgress = Math.min(1, a.growthProgress + growth * dt)
+    f.hungerDebt = Math.max(0, Math.min(T.starvationFoodPerDeath, a.hungerDebt + hunger * dt))
+    for (const [id, job] of Object.entries(f.jobs)) f.jobs[id as 'woodland' | 'workshop'] = { ...job, remainingWork: Math.max(0, a.jobs[id as 'woodland' | 'workshop']! - f.assignments[id as 'woodland' | 'workshop'] * speed * dt) }
+    f.elapsedSeconds = at
+    const seasonEnded = at === seasonEnd
+    if (seasonEnded) rollSeasonDisaster(f, (Math.floor(seasonEnd / T.seasonSeconds) - 1) % FARMING_SEASONS.length)
+    const generation = Math.floor(at / (T.seasonSeconds * T.generationSeasons))
+    if (generation > f.generations) {
+      f.naturalDeaths = safeAdd(f.naturalDeaths, f.population * (generation - f.generations))
+      f.generations = generation
+    }
+    const boundary = seasonEnded || at !== end || f.growthProgress >= 1 - EPSILON || f.hungerDebt >= T.starvationFoodPerDeath - EPSILON || healing > 0 && f.hungerDebt < EPSILON || (previousFood > 0 && f.resources.food === 0) || (previousFood < cap && f.resources.food === cap) || Object.values(f.jobs).some(job => job.remainingWork <= EPSILON)
+    settle(f, speed)
+    if (boundary) delete f.continuous
   }
-  if((f.phase==='settling-forager'||f.phase==='complete')&&Object.keys(f.jobs).length)return 'Inactive village cannot own unfinished work.'
-  if(f.phase==='complete'&&!farmingComplete(f))return 'Village completion requires city-readiness upgrades, six supported Homes and connections.'
+  return withFarming(state, f)
+}
+/** Preserve unused Stored Time at the final village decision. */
+export function farmingStoredTimeBudget(state: CanonicalGameStateV1, baseSeconds: number): number {
+  const f = state.civilization?.farming
+  if (!f || f.phase === 'complete' || !Number.isFinite(baseSeconds) || baseSeconds <= 0) return baseSeconds
+  if (farmingManualGate(f)) return 0
+  const speed = state.timeline.doubleTime.unlocked ? 2 : 1
+  const after = advanceFarming(state, baseSeconds * speed, true).civilization!.farming!
+  return Math.min(baseSeconds, Math.max(0, after.elapsedSeconds - f.elapsedSeconds) / speed)
+}
+
+/** Preserve the old source exactly, refund paid inputs, and carry invested work once. */
+export function migrateLegacyFarming(previous: LegacyFarmingState): FarmingState {
+  const issue = validateLegacyFarming(previous, previous.version)
+  if (issue) throw Error(issue)
+  const f = initialFarming()
+  f.legacyVillage = structuredClone(previous)
+  f.elapsedSeconds = previous.elapsedSeconds + previous.tickRemainder
+  f.generations = Math.floor(f.elapsedSeconds / (T.seasonSeconds * T.generationSeasons))
+  f.houses = 1 + previous.homesBuilt
+  f.fields = Math.max(1, previous.firstHarvest ? Math.ceil(previous.homesBuilt / 2) : 1) + Number(previous.completedBuildings.includes('intensiveCultivation'))
+  f.pastures = Number(previous.completedBuildings.includes('pasture'))
+  f.granaries = previous.granaries
+  f.workshop = previous.firstHarvest
+  f.irrigation = previous.completedBuildings.includes('waterworks')
+  f.clearedLand = farmingUsedLand(f)
+  f.resources = { food: previous.resources.food, materials: previous.resources.materials + previous.resources.goods * 2, tools: previous.resources.tools }
+  for (const job of Object.values(previous.jobs)) {
+    for (const [id, n] of Object.entries(job.inputs)) {
+      if (id === 'goods') f.resources.materials = safeAdd(f.resources.materials, n! * 2)
+      else f.resources[id as FarmingResource] = safeAdd(f.resources[id as FarmingResource], n!)
+    }
+    f.legacyWorkCredit = safeAdd(f.legacyWorkCredit, job.work - job.remainingWork)
+  }
+  // Preserve refundable Food even when the old prototype had no Granary yet.
+  if (f.resources.food > farmingCapacity(f)) {
+    f.granaries = Math.ceil(f.resources.food / T.granaryCapacity)
+    f.clearedLand = Math.max(f.clearedLand, farmingUsedLand(f))
+  }
+  f.population = Math.min(farmingHousing(f), 3 + previous.homes.length * 2)
+  f.desiredJobs = { crops: f.fields * T.fieldWorkers, herding: f.pastures * T.pastureWorkers, woodland: f.loggingCamps * T.loggingCampWorkers, workshop: Number(f.workshop), shaman: 0 }
+  f.disasterSeed = migrationSeed(f.elapsedSeconds, f.population)
+  staffVillage(f)
+  f.peakPopulation = Math.max(f.population, ...previous.awardedCatalystIds.map(id => T.populationMilestones[Number(id.split('-').at(-1)) - 1] ?? 0))
+  f.awardedCatalystIds = [...previous.awardedCatalystIds]
+  f.skillRewardPending = previous.skillRewardPending
+  f.completionReached = previous.phase === 'complete' || previous.phase === 'settling-village'
+  f.phase = f.completionReached ? 'complete' : 'farming'
+  return f
+}
+
+/** Keep the complete manual village receipt and every paid cycle. */
+export function migrateAssignedFarming(previous: AssignedFarmingState): FarmingState {
+  const issue = validateAssignedFarming(previous)
+  if (issue) throw Error(issue)
+  const { version: _version, barleyFields, wheatFields, nets, cattle, assignments: _assignments, continuous: _continuous, ...retained } = previous
+  const f: MutableFarming = { ...initialFarming(), ...retained, version: 9, loggingCamps: Math.max(1, Math.ceil(previous.assignments.woodland / T.loggingCampWorkers)), fields: Math.max(1, barleyFields + wheatFields),
+    previousVillage: structuredClone(previous), resources: { ...previous.resources },
+    assignments: { crops: 0, herding: 0, woodland: 0, workshop: 0, shaman: 0 },
+    jobs: structuredClone(previous.jobs), awardedCatalystIds: [...previous.awardedCatalystIds] }
+  f.clearedLand = Math.max(f.clearedLand, farmingUsedLand(f))
+  // Retired upgrades return their complete purchase costs.
+  if (nets) { f.resources.materials += 120; f.resources.tools += 12 }
+  if (cattle) { f.resources.materials += 180; f.resources.tools += 18 }
+  f.desiredJobs = { crops: f.fields * T.fieldWorkers, herding: f.pastures * T.pastureWorkers, woodland: f.loggingCamps * T.loggingCampWorkers, workshop: Number(f.workshop), shaman: 0 }
+  f.disasterSeed = migrationSeed(previous.elapsedSeconds, previous.population)
+  staffVillage(f)
+  return f
+}
+
+/** Existing clearing crews retain enough camps; their paid work and stocks are untouched. */
+export function migrateAutomaticFarming(previous: AutomaticFarmingState): FarmingState {
+  const issue = validateFarming(previous, 5)
+  if (issue) throw Error(issue)
+  return migrateManagedFarming({ ...previous, version: 6, loggingCamps: Math.max(1, Math.ceil(previous.assignments.woodland / T.loggingCampWorkers)), previousAutomaticVillage: structuredClone(previous) }, false)
+}
+
+const migrationSeed = (elapsed: number, population: number) => ((Math.floor(elapsed) ^ (population * 2654435761)) >>> 0) || 1
+function withJobPreferences(previous: ManagedFarmingState): PreferredFarmingState {
+  const { continuous: _continuous, ...retained } = previous
+  return { ...retained, version: 7, shrines: 0,
+    assignments: { ...previous.assignments, shaman: 0 },
+    desiredJobs: { ...previous.assignments, woodland: previous.loggingCamps * T.loggingCampWorkers, shaman: 0 },
+    growthProgress: 0, hungerDebt: 0, disasterSeed: migrationSeed(previous.elapsedSeconds, previous.population),
+    nextDisasterSeconds: previous.elapsedSeconds + T.seasonSeconds * 3, sicknessUntil: 0, disasters: 0 }
+}
+export function migrateManagedFarming(previous: ManagedFarmingState, archive = true): FarmingState {
+  const issue = validateFarming(previous, 6)
+  if (issue) throw Error(issue)
+  return migratePreferredFarming({ ...withJobPreferences(previous), ...(archive ? { previousManagedVillage: structuredClone(previous) } : {}) }, false)
+}
+
+/** Keep the old disaster receipt, RNG position, crews and funded work losslessly. */
+export function migratePreferredFarming(previous: PreferredFarmingState, archive = true): FarmingState {
+  const issue = validateFarming(previous, 7)
+  if (issue) throw Error(issue)
+  const { version: _version, nextDisasterSeconds: _nextDisaster, sicknessUntil: _sickness,
+    lastDisaster: _lastDisaster, continuous: _continuous, ...retained } = structuredClone(previous)
+  return { ...retained, version: 9, seasonProtection: 0, disasterDeaths: 0,
+    ...(archive ? { previousPreferredVillage: structuredClone(previous) } : {}) }
+}
+
+/** Existing V8 villages retain their full source, clocks, population and paid work. */
+export function migrateSeasonalFarming(previous: SeasonalFarmingState): FarmingState {
+  const issue = validateFarming(previous, 8)
+  if (issue) throw Error(issue)
+  const { continuous: _continuous, ...retained } = structuredClone(previous)
+  return { ...retained, version: 9, seasonProtection: 0, previousSeasonalVillage: structuredClone(previous) }
+}
+
+export function validateFarming(value: unknown, version = 9): string | null {
+  if (version === 9) {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return 'Invalid protected village.'
+    const f = value as FarmingState
+    const protection = (n: unknown): n is number => typeof n === 'number' && Number.isFinite(n) && n >= 0 && n <= 1
+    if (f.version !== 9 || !protection(f.seasonProtection) || f.seasonProtection > (f.elapsedSeconds % T.seasonSeconds) / T.seasonSeconds + EPSILON) return 'Invalid earned village protection.'
+    if (f.continuous && !protection(f.continuous.seasonProtection)) return 'Invalid village protection anchor.'
+    if (f.previousSeasonalVillage && validateFarming(f.previousSeasonalVillage, 8)) return 'Invalid previous seasonal village.'
+    return validateFarming({ ...f, version: 8 }, 8)
+  }
+  if (version >= 1 && version <= 3) return validateLegacyFarming(value, version as 1 | 2 | 3)
+  if (version === 4) return validateAssignedFarming(value)
+  if (version === 5) {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return 'Invalid automatic village.'
+    const previous = value as AutomaticFarmingState
+    return validateFarming({ ...previous, version: 6, loggingCamps: Math.ceil(T.maximumHouses * T.residentsPerHouse / T.loggingCampWorkers) }, 6)
+  }
+  if (version === 6) {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return 'Invalid managed village.'
+    const previous = value as ManagedFarmingState
+    if (previous.version !== 6 || !previous.assignments || Object.keys(previous.assignments).length !== 4 || previous.assignments.crops + previous.assignments.herding < 1) return 'Invalid managed village assignments.'
+    const issue = validateFarming(withJobPreferences(previous), 7)
+    if (issue) return issue
+    const a = previous.continuous
+    if (a && (!Number.isFinite(a.since) || a.since < 0 || a.since > previous.elapsedSeconds || !Number.isFinite(a.food) || a.food < 0 || typeof a.signature !== 'string' || !a.jobs || Object.values(a.jobs).some(x => !Number.isFinite(x) || x < 0))) return 'Invalid managed village clock anchor.'
+    return null
+  }
+  if (version === 8) {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return 'Invalid seasonal village.'
+    const current = value as SeasonalFarmingState
+    if (current.version !== 8 || !Number.isSafeInteger(current.disasterDeaths) || current.disasterDeaths < 0) return 'Invalid village disaster deaths.'
+    const last = current.lastDisaster
+    if (last && (!['flood', 'fire', 'sickness'].includes(last.kind) || !Number.isFinite(last.at) || last.at <= 0 || last.at > current.elapsedSeconds || !Number.isInteger(last.at / T.seasonSeconds) || last.season !== FARMING_SEASONS[(last.at / T.seasonSeconds - 1) % FARMING_SEASONS.length] || !Number.isSafeInteger(last.loss) || last.loss < 0 || typeof last.prevented !== 'boolean' || last.prevented && last.loss !== 0 || last.loss > current.disasterDeaths)) return 'Invalid seasonal disaster receipt.'
+    if (current.previousPreferredVillage && validateFarming(current.previousPreferredVillage, 7)) return 'Invalid previous preferred village.'
+    // Share structural checks while keeping the retired timer and stock-loss
+    // receipt validator intact for archived V7 saves.
+    return validateFarming({ ...current, version: 7, nextDisasterSeconds: current.elapsedSeconds + T.seasonSeconds, sicknessUntil: 0, lastDisaster: undefined }, 7)
+  }
+  if (!value || typeof value !== 'object' || Array.isArray(value) || version !== 7) return 'Invalid Farming state version.'
+  const f = value as PreferredFarmingState
+  const n = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v) && v >= 0 && v <= Number.MAX_SAFE_INTEGER
+  const integer = (v: unknown): v is number => n(v) && Number.isSafeInteger(v)
+  if (f.version !== 7 || !['farming', 'complete'].includes(f.phase) || !n(f.elapsedSeconds)) return 'Invalid Farming clock or phase.'
+  for (const key of ['population', 'peakPopulation', 'houses', 'clearedLand', 'loggingCamps', 'fields', 'pastures', 'granaries', 'shrines', 'jobSequence', 'starvationDeaths', 'naturalDeaths', 'generations', 'disasters', 'disasterSeed'] as const) if (!integer(f[key])) return `Invalid village ${key}.`
+  if (f.loggingCamps < 1 || f.houses < 1 || f.houses > T.maximumHouses || f.clearedLand > T.maximumPlots || f.population < 1 || f.population > farmingHousing(f) || f.peakPopulation < f.population || f.peakPopulation > T.maximumHouses * T.residentsPerHouse || farmingUsedLand(f) > f.clearedLand) return 'Invalid village population or land.'
+  for (const key of ['workshop', 'irrigation', 'skillRewardPending', 'completionReached'] as const) if (typeof f[key] !== 'boolean') return 'Invalid village unlock.'
+  if (!f.desiredJobs || Object.keys(f.desiredJobs).length !== FARMING_WORKPLACES.length || !FARMING_WORKPLACES.every(id => integer(f.desiredJobs[id]) && f.desiredJobs[id] <= (id === 'woodland' ? f.loggingCamps * T.loggingCampWorkers : farmingWorkplaceCapacity(f, id)))) return 'Invalid village job limits.'
+  if (!f.assignments || Object.keys(f.assignments).length !== FARMING_WORKPLACES.length || !FARMING_WORKPLACES.every(id => integer(f.assignments[id]) && f.assignments[id] <= Math.min(f.desiredJobs[id], farmingWorkplaceCapacity(f, id))) || farmingAssigned(f) > f.population) return 'Invalid village worker assignment.'
+  if (!n(f.growthProgress) || f.growthProgress > 1 || !n(f.hungerDebt) || f.hungerDebt > T.starvationFoodPerDeath || !n(f.nextDisasterSeconds) || f.nextDisasterSeconds <= f.elapsedSeconds || !n(f.sicknessUntil) || f.disasterSeed < 1 || f.disasterSeed > 0xffff_ffff) return 'Invalid village population or disaster clock.'
+  if (f.lastDisaster && (!['spoilage', 'fire', 'sickness'].includes(f.lastDisaster.kind) || !n(f.lastDisaster.at) || f.lastDisaster.at > f.elapsedSeconds || !n(f.lastDisaster.loss) || typeof f.lastDisaster.prevented !== 'boolean')) return 'Invalid village disaster receipt.'
+  if (!f.resources || Object.keys(f.resources).length !== FARMING_RESOURCES.length || !FARMING_RESOURCES.every(id => n(f.resources[id])) || f.resources.food > farmingCapacity(f) + EPSILON) return 'Invalid village reserve.'
+  if (!n(f.legacyWorkCredit) || f.generations !== Math.floor(f.elapsedSeconds / (T.seasonSeconds * T.generationSeasons))) return 'Invalid village generation or work credit.'
+  if (!Array.isArray(f.awardedCatalystIds) || new Set(f.awardedCatalystIds).size !== f.awardedCatalystIds.length || f.awardedCatalystIds.some(id => !/^farming-catalyst-[1-6]$/.test(id))) return 'Invalid village reward history.'
+  if (!f.jobs || Object.keys(f.jobs).some(id => id !== 'woodland' && id !== 'workshop')) return 'Invalid village work queue.'
+  for (const [id, job] of Object.entries(f.jobs)) {
+    if (!job || job.kind !== id || !integer(job.cycle) || job.cycle < 1 || job.cycle > f.jobSequence || !n(job.work) || job.work <= 0 || !n(job.remainingWork) || job.remainingWork > job.work || !job.inputs || !job.outputs) return 'Invalid paid village job.'
+    const woodland = id === 'woodland'
+    // Funded work owns its quoted duration and output, including after tuning changes.
+    if (job.land !== Number(woodland) || woodland && (Object.keys(job.inputs).length || Object.keys(job.outputs).length !== 1 || !n(job.outputs.materials) || job.outputs.materials <= 0) || !woodland && (!f.workshop || Object.keys(job.inputs).length !== 1 || !n(job.inputs.materials) || job.inputs.materials <= 0 || Object.keys(job.outputs).length !== 1 || !n(job.outputs.tools) || job.outputs.tools <= 0)) return 'Unknown village job receipt.'
+  }
+  if (f.phase === 'complete' && (!f.completionReached || Object.keys(f.jobs).length)) return 'Unfinished village cannot be complete.'
+  if (f.legacyVillage && validateLegacyFarming(f.legacyVillage, f.legacyVillage.version)) return 'Invalid archived village receipt.'
+  if (f.previousAutomaticVillage && validateFarming(f.previousAutomaticVillage, 5)) return 'Invalid previous automatic village.'
+  if (f.previousVillage && validateAssignedFarming(f.previousVillage)) return 'Invalid archived assigned village.'
+  if (f.previousManagedVillage && validateFarming(f.previousManagedVillage, 6)) return 'Invalid previous managed village.'
+  if (f.continuous && (!n(f.continuous.since) || f.continuous.since > f.elapsedSeconds || !n(f.continuous.food) || !n(f.continuous.growthProgress) || f.continuous.growthProgress > 1 || !n(f.continuous.hungerDebt) || f.continuous.hungerDebt > T.starvationFoodPerDeath || typeof f.continuous.signature !== 'string' || !f.continuous.jobs || Object.values(f.continuous.jobs).some(x => !n(x)))) return 'Invalid village clock anchor.'
   return null
 }

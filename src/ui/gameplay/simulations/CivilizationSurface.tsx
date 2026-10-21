@@ -8,7 +8,7 @@ import type { EnabledLocale } from '../../i18n/localeRegistry'
 import { formatGameCountdown, formatWholeGameNumber } from '../../i18n/formatters'
 import { Button, Progress, ProgressControlsPanel, InlineResourceAmount } from '../../components'
 import {
-  CIVILIZATION_ACTIVITIES, CIVILIZATION_RESOURCES, FORAGER_AUTOMATIC,
+  CIVILIZATION_ACTIVITIES, FORAGER_AUTOMATIC,
   EMPTY_CIVILIZATION, allocateCivilizationWorkers, civilizationActivityUnlocked,
   civilizationEffectiveWorkers, civilizationSeasonOutputs, civilizationSpeed, civilizationJobWaiting, civilizationActivityInputs, civilizationCycle,
   nextCivilizationCatalyst, civilizationMilestoneProgress, civilizationOpeningComplete,
@@ -17,7 +17,6 @@ import {
 import { realTimeDuration, realTimeRate } from '../effectiveSpeed'
 import { readyDysonMessages } from '../dyson/messages'
 import { CivilizationSymbol, SeasonSymbol } from './CivilizationSymbol'
-import { foragerEraPresentation } from './civilizationEraPresentation'
 import { civilizationMessages as m } from './civilizationMessages'
 import { farmingMessages as fm } from './farmingMessages'
 import { CivilizationCycleProgress } from './CivilizationCycleProgress'
@@ -27,12 +26,12 @@ import './simulations.css'
 import './civilization.css'
 
 type Dispatch = (command: CanonicalPlayerCommand) => Promise<UiRuntimePlayerCommandResult>
-type Props = { activeEraId?: string; gameplay: DeepReadonly<FrontendGameplaySnapshot>; locale: EnabledLocale; gameSpeed: number; dispatchPlayer: Dispatch }
+type Props = { gameplay: DeepReadonly<FrontendGameplaySnapshot>; locale: EnabledLocale; gameSpeed: number; dispatchPlayer: Dispatch }
 export function CivilizationSurface(props: Props) {
   if (!props.gameplay.visibility.simulations.routeUnlocked) return null
   return props.gameplay.progression.civilization?.farming ? <FarmingSurface {...props} /> : <ForagerSurface {...props} />
 }
-export function ForagerSurface({ gameplay, locale, gameSpeed, dispatchPlayer, activeEraId = 'forager' }: Props) {
+export function ForagerSurface({ gameplay, locale, gameSpeed, dispatchPlayer }: Props) {
   const intl = useIntl(), purchaseId = useId(), settingsId = useId()
   const [settingsOpen, setSettingsOpen] = useState(false)
   const initial = { ...EMPTY_CIVILIZATION, unlocked: true, resources: { ...EMPTY_CIVILIZATION.resources, shelters: 1n } }, initialCrews = allocateCivilizationWorkers(initial)
@@ -63,9 +62,8 @@ export function ForagerSurface({ gameplay, locale, gameSpeed, dispatchPlayer, ac
   const seasonLabel = intl.formatMessage(season === 'autumn' && americanEnglish ? m.fall : m[season])
   const seasonTime = duration(600 - state.elapsedSeconds % 600)
   const priority = state.priority ?? 'gathering', huntingUnlocked = civilizationHuntingUnlocked(state)
+  const toolmakingUnlocked = civilizationActivityUnlocked(state, CIVILIZATION_ACTIVITIES.findIndex(activity => activity.id === 'toolmaking'))
   const priorityAvailable = { provisioning: huntingUnlocked, craft: huntingUnlocked && civilizationActivityUnlocked(state, CIVILIZATION_ACTIVITIES.findIndex(activity => activity.id === 'hideworking')) }
-  const eraView = foragerEraPresentation(state, activeEraId)
-  if (eraView.kind === 'generator') return <article className="civilization-retained-generator" data-feeds-era={eraView.feedsEraId} aria-label={intl.formatMessage(m.foragerGenerator)}><header><strong>{intl.formatMessage(m.foragerGenerator)}</strong>{iconAmount('worker', eraView.source.workers)}</header><dl className="civilization-balances">{CIVILIZATION_RESOURCES.map(id => balance(id))}</dl></article>
   return <section className="simulations-surface civilization-surface" data-era="information" aria-label={intl.formatMessage(m.era)}>
     <div className="civilization-era-header"><header className="civilization-heading"><h2>{intl.formatMessage(m.era)}</h2><strong className="civilization-fracture">{intl.formatMessage(m.fractures, { value: intl.formatNumber(fractures * 0.05, { style: 'percent', maximumFractionDigits: 0 }) })}</strong></header></div>
     <div className="civilization-scroll">
@@ -76,6 +74,7 @@ export function ForagerSurface({ gameplay, locale, gameSpeed, dispatchPlayer, ac
           {CIVILIZATION_ACTIVITIES.map((definition, index) => {
             if (definition.section !== section || !FORAGER_AUTOMATIC.includes(definition.id)) return null
             if (definition.id === 'hunting' && !huntingUnlocked) {
+              if (!toolmakingUnlocked) return null
               const available = state.activities.toolmaking.completions > 0n, affordable = state.resources.tools >= 1n
               return <li key={definition.id}><section className="farming-granary civilization-hunting-purchase"><details><summary id={`${purchaseId}-hunting`}>
                 <div className="farming-purchase-title"><CivilizationSymbol resource="hides" /><strong>{intl.formatMessage(m.hunting)}</strong></div>
@@ -84,7 +83,17 @@ export function ForagerSurface({ gameplay, locale, gameSpeed, dispatchPlayer, ac
                 <Button variant="purchase" state={pending ? 'pending' : failed ? 'failure' : 'idle'} disabled={pending || !available || !affordable} aria-describedby={`${purchaseId}-hunting`} aria-label={intl.formatMessage(m.unlockHunting)} onClick={() => void action({ kind: 'civilization.unlock-hunting' })}>{intl.formatMessage(fm.buy)}</Button>
               </section></li>
             }
-            if (!civilizationActivityUnlocked(state, index)) return null
+            if (!civilizationActivityUnlocked(state, index)) {
+              const prerequisite = definition.id === 'toolmaking' ? m.toolmakingPrerequisite
+                : definition.id === 'hideworking' && huntingUnlocked ? m.hideworkingPrerequisite : null
+              if (prerequisite && state.foragerRulesVersion === 2) {
+                return <li key={definition.id}><article className="civilization-activity civilization-locked-activity" data-activity-id={definition.id} data-status="locked">
+                  <div className="farming-purchase-title"><strong>{intl.formatMessage(m[definition.id])}</strong></div>
+                  <div className="farming-purchase-values">{intl.formatMessage(prerequisite)}</div>
+                </article></li>
+              }
+              return null
+            }
             const job = state.activities[definition.id], cycle = civilizationCycle(state, index), speed = civilizationSpeed(state, index, fractures), waiting = civilizationJobWaiting(state, index)
             const costs = civilizationActivityInputs(state, index), isChoice = priorityAvailable[section]
             const status = waiting.reason === 'demand' ? intl.formatMessage(m.waitingDemand) : waiting.reason === 'workers' ? intl.formatMessage(m.waitingWorkers) : waiting.reason === 'housing' ? intl.formatMessage(m.waitingHousing) : waiting.reason === 'range' ? intl.formatMessage(m.waitingRange) : waiting.reason === 'inputs' ? intl.formatMessage(m.waitingInputs, { name: intl.formatList(waiting.missing.map(resourceName)) }) : duration((cycle.seconds - job.progress) / speed)
@@ -133,9 +142,10 @@ export function ForagerSurface({ gameplay, locale, gameSpeed, dispatchPlayer, ac
     </div>
     <footer className="simulations-surface__footer civilization-dock">
       <ProgressControlsPanel className="civilization-control-panel forager-control-panel ui-progress-controls-panel--production-summary" ariaLabel={intl.formatMessage(m.eraSettings)} expanded={settingsOpen} controlsId={settingsId} settingsLabel={intl.formatMessage(m.eraSettings)} onExpandedChange={setSettingsOpen}
-        summary={<div className="forager-dock-summary"><div className="forager-dock-progress">{civilizationOpeningComplete(state) ? <Button variant="purchase" fullWidth disabled onClick={() => void action({ kind: 'civilization.enter-farming' })}>{intl.formatMessage(fm.begin)}</Button> : <div className="forager-catalyst-goal"><CivilizationSymbol resource="catalyst" /><div className="civilization-cycle-progress civilization-cycle-progress--animated"><Progress label={intl.formatMessage(m.nextCatalyst)} value={goal.progress} valueText={intl.formatMessage(m.populationGoal, { current: number(state.workers), target: number(milestone.requires.population) })} /><div className="civilization-cycle-track" aria-hidden="true"><span className="civilization-cycle-fill" style={{ transform: `scaleX(${goal.progress})` }} /></div></div><InlineResourceAmount leadingSymbol={<CivilizationSymbol resource="worker" />} value={`${number(state.workers)} / ${number(milestone.requires.population)}`} /></div>}</div><span className="forager-season-clock" role="img" aria-label={`${seasonLabel}. ${intl.formatMessage(m.seasonRemaining, { time: seasonTime })}`} title={seasonLabel}><InlineResourceAmount leadingSymbol={<SeasonSymbol season={season} />} value={seasonTime} /></span></div>}>
+        summary={<div className="forager-dock-summary"><div className="forager-dock-progress">{civilizationOpeningComplete(state) ? <Button variant="purchase" fullWidth disabled={pending} onClick={() => void action({ kind: 'civilization.enter-farming' })}>{intl.formatMessage(fm.begin)}</Button> : <div className="forager-catalyst-goal"><CivilizationSymbol resource="catalyst" /><div className="civilization-cycle-progress civilization-cycle-progress--animated"><Progress label={intl.formatMessage(m.nextCatalyst)} value={goal.progress} valueText={intl.formatMessage(m.populationGoal, { current: number(state.workers), target: number(milestone.requires.population) })} /><div className="civilization-cycle-track" aria-hidden="true"><span className="civilization-cycle-fill" style={{ transform: `scaleX(${goal.progress})` }} /></div></div><InlineResourceAmount leadingSymbol={<CivilizationSymbol resource="worker" />} value={`${number(state.workers)} / ${number(milestone.requires.population)}`} /></div>}</div><span className="forager-season-clock" role="img" aria-label={`${seasonLabel}. ${intl.formatMessage(m.seasonRemaining, { time: seasonTime })}`} title={seasonLabel}><InlineResourceAmount leadingSymbol={<SeasonSymbol season={season} />} value={seasonTime} /></span></div>}>
         <div className="forager-season-details"><strong><SeasonSymbol season={season} /> {seasonLabel}</strong><span>{intl.formatMessage(m.seasonRemaining, { time: seasonTime })}</span><p className="forager-season-yields">{(['gathering', 'hunting'] as const).map(activity => <span key={activity}>{intl.formatMessage(m[activity])}: {Object.entries(civilizationSeasonOutputs(state, activity)).map(([id, amount]) => <span key={id}>{iconAmount(id as CivilizationResource, amount!)}</span>)}</span>)}</p></div>
         {failed && <p role="alert">{intl.formatMessage(m.failed)}</p>}
+        {civilizationOpeningComplete(state) && <p>{intl.formatMessage(fm.handoff)}</p>}
         <section className="forager-resource-key"><h3>{intl.formatMessage(readyDysonMessages.resources)}</h3><ul><li><CivilizationSymbol resource="worker" />{intl.formatMessage(m.population)}</li>{stockOrder.map(id => <li key={id}><CivilizationSymbol resource={id} />{resourceName(id)}</li>)}</ul></section>
       </ProgressControlsPanel>
     </footer>

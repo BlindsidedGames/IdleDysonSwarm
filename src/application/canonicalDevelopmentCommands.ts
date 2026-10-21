@@ -1,5 +1,6 @@
 import { EMPTY_INFINITY_CHALLENGES } from '../simulation/infinityChallenges'
 import { EMPTY_CIVILIZATION } from '../simulation/civilization'
+import { startFarming } from '../simulation/farming'
 import { DEBUG_OVERFLOW_COST, qualifiesForDebug } from '../simulation/speedrunStatistics'
 import type { DomainTransition } from '../core/contracts'
 import {
@@ -117,10 +118,15 @@ export function applyDevelopmentAction(
   const state = candidate.gameState
   switch (action.kind) {
     case 'jump-to-era': {
-      if (action.era !== 'forager') return invalidDevelopmentAction('Simulation era')
+      if (!['forager', 'farming'].includes(action.era)) return invalidDevelopmentAction('Simulation era')
       if (state.meta.reworkMigrationChoice === undefined) return { accepted: false, code: 'CANONICAL-DEVELOPMENT-ERA-MIGRATION', reason: 'Choose a rework migration before jumping to an era.' }
       const fresh = { ...state, challenges: { ...(state.challenges ?? EMPTY_INFINITY_CHALLENGES), openingCompleted: true }, civilization: structuredClone(EMPTY_CIVILIZATION) }
-      return replaceDevelopmentState(candidate, fresh)
+      if (action.era === 'forager') return replaceDevelopmentState(candidate, fresh)
+      const entry = { ...fresh, civilization: { ...fresh.civilization, unlocked: true,
+        workers: 160n, populationBaseline: 160n,
+        awardedCatalystMilestoneIds: Array.from({ length: 6 }, (_, i) => `forager-catalyst-${i + 1}`) } }
+      const farming = startFarming(entry)
+      return farming ? replaceDevelopmentState(candidate, farming) : invalidDevelopmentAction('Simulation era')
     }
     case 'add-discoveries':
       if (!state.discovery?.unlocked || !isDevelopmentDiscreteAmount(action.amount)) return invalidDevelopmentAction('Discovery completions')

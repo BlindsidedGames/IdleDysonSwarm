@@ -2369,20 +2369,6 @@
       "value": "]"
     }
   ],
-  "civilization.foragerGenerator": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ƒǿǿřȧȧɠḗḗř ƈȧȧḿƥ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
   "civilization.fractureRule": [
     {
       "type": 0,
@@ -2465,6 +2451,20 @@
     {
       "type": 0,
       "value": "Ħīḓḗḗẇǿǿřķīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.hideworkingPrerequisite": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿḿƥŀḗḗŧḗḗ ǿǿƞḗḗ Ħŭŭƞŧīƞɠ ƈẏƈŀḗḗ ŧǿǿ ŭŭƞŀǿǿƈķ."
     },
     {
       "type": 0,
@@ -3069,6 +3069,20 @@
     {
       "type": 0,
       "value": "Ŧǿǿǿǿŀḿȧȧķīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "civilization.toolmakingPrerequisite": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿḿƥŀḗḗŧḗḗ ǿǿƞḗḗ Ɠȧȧŧħḗḗřīƞɠ ƈẏƈŀḗḗ ŧǿǿ ŭŭƞŀǿǿƈķ."
     },
     {
       "type": 0,
@@ -10355,48 +10369,6 @@
       "value": "]"
     }
   ],
-  "farming.automatic": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ɓŭŭīŀŧ ȧȧŭŭŧǿǿḿȧȧŧīƈȧȧŀŀẏ ƀẏ ŧħḗḗ ṽīŀŀȧȧɠḗḗ ƥŀȧȧƞ."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.averageLabor": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ŀȧȧƀǿǿř īş şħȧȧřḗḗḓ ǿǿṽḗḗř ŧīḿḗḗ. Ȧƥƥřǿǿẋīḿȧȧŧḗḗ ȧȧṽḗḗřȧȧɠḗḗş ƈȧȧƞ īƞƈŀŭŭḓḗḗ ƒřȧȧƈŧīǿǿƞş; ŧħḗḗ ẇǿǿřķḗḗř ŧǿǿŧȧȧŀ ƈǿǿŭŭƞŧş ẇħǿǿŀḗḗ ƥḗḗǿǿƥŀḗḗ."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.balanced": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ɓȧȧŀȧȧƞƈḗḗḓ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
   "farming.begin": [
     {
       "type": 0,
@@ -10425,42 +10397,6 @@
       "value": "]"
     }
   ],
-  "farming.boost": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ȧƈŧŭŭȧȧŀ ƒřȧȧƈŧŭŭřḗḗş: +"
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": "%"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.build": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ɓŭŭīŀḓ Ɠřȧȧƞȧȧřẏ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
   "farming.buy": [
     {
       "type": 0,
@@ -10469,160 +10405,6 @@
     {
       "type": 0,
       "value": "Ɓŭŭẏ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.cap": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Şŧǿǿřȧȧɠḗḗ ƒŭŭŀŀ; Ƒīḗḗŀḓş ƥȧȧŭŭşḗḗ ŭŭƞŧīŀ Ƒǿǿǿǿḓ īş şƥḗḗƞŧ ǿǿř ȧȧ Ɠřȧȧƞȧȧřẏ īş ƀŭŭīŀŧ."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.capacity": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ƒǿǿǿǿḓ şŧǿǿřȧȧɠḗḗ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.closed": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ƈŀǿǿşḗḗḓ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.compactStorage": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "160 şŧǿǿřȧȧɠḗḗ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.complete": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ṽīŀŀȧȧɠḗḗ ḗḗşŧȧȧƀŀīşħḗḗḓ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.connection": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ŧřȧȧḓḗḗ ƈǿǿƞƞḗḗƈŧīǿǿƞş"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.constructed": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ƈǿǿƞşŧřŭŭƈŧḗḗḓ ŭŭƥɠřȧȧḓḗḗş"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.crew": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ȧṽḗḗřȧȧɠḗḗ ȧȧşşīɠƞḗḗḓ ŀȧȧƀǿǿř"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.cultivationEffect": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ƒŭŭŧŭŭřḗḗ Ƒīḗḗŀḓş ħȧȧřṽḗḗşŧş ɠȧȧīƞ 20% Ƒǿǿǿǿḓ. Ƥǿǿşīŧīṽḗḗ ħǿǿŭŭşīƞɠ Ẇḗḗȧȧŧħḗḗřīƞɠ ƒȧȧŀŀş ƀẏ ȧȧƞǿǿŧħḗḗř 20% ȧȧƒŧḗḗř Ẇȧȧŧḗḗřẇǿǿřķş."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.cultivationNeeded": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ẇȧȧŧḗḗřẇǿǿřķş ḗḗşŧȧȧƀŀīşħḗḗḓ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.done": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ḗşŧȧȧƀŀīşħḗḗḓ"
     },
     {
       "type": 0,
@@ -10643,40 +10425,6 @@
       "value": "]"
     }
   ],
-  "farming.export": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 1,
-      "value": "workers"
-    },
-    {
-      "type": 0,
-      "value": " řḗḗŧȧȧīƞḗḗḓ ẇǿǿřķḗḗřş ḗḗẋƥǿǿřŧ "
-    },
-    {
-      "type": 1,
-      "value": "food"
-    },
-    {
-      "type": 0,
-      "value": " Ƒǿǿǿǿḓ ȧȧƞḓ "
-    },
-    {
-      "type": 1,
-      "value": "materials"
-    },
-    {
-      "type": 0,
-      "value": " Ḿȧȧŧḗḗřīȧȧŀş ƥḗḗř şīḿŭŭŀȧȧŧīǿǿƞ ḿīƞŭŭŧḗḗ, ƀḗḗƒǿǿřḗḗ ȧȧƈŧŭŭȧȧŀ ƒřȧȧƈŧŭŭřḗḗ ƀǿǿǿǿşŧş. Ŧħḗḗīř ǿǿŀḓ şŧǿǿƈķş řḗḗḿȧȧīƞ ẇīŧħ ŧħḗḗ ƈȧȧḿƥ."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
   "farming.failed": [
     {
       "type": 0,
@@ -10685,20 +10433,6 @@
     {
       "type": 0,
       "value": "Ŧħḗḗ ȧȧƈŧīǿǿƞ ƈǿǿŭŭŀḓ ƞǿǿŧ ƀḗḗ şȧȧṽḗḗḓ. Ŧřẏ ȧȧɠȧȧīƞ."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.fields": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ƒīḗḗŀḓş"
     },
     {
       "type": 0,
@@ -10719,130 +10453,6 @@
       "value": "]"
     }
   ],
-  "farming.finished": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Şīẋ şŭŭƥƥǿǿřŧḗḗḓ Ħǿǿḿḗḗş, şīẋ ŧřȧȧḓḗḗ ƈǿǿƞƞḗḗƈŧīǿǿƞş ȧȧƞḓ ȧȧŀŀ ŧħřḗḗḗḗ ƈīŧẏ-řḗḗȧȧḓīƞḗḗşş ŭŭƥɠřȧȧḓḗḗş ȧȧřḗḗ ḗḗşŧȧȧƀŀīşħḗḗḓ. Ŧħīş ṽīŀŀȧȧɠḗḗ īş řḗḗȧȧḓẏ ƒǿǿř Ƒīřşŧ Ƈīŧīḗḗş; ŧħḗḗ ƞḗḗẋŧ ȧȧɠḗḗ īş ƞǿǿŧ ȧȧṽȧȧīŀȧȧƀŀḗḗ ẏḗḗŧ."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.finite": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ḗşŧȧȧƀŀīşħḗḗḓ; ƞǿǿ řḗḗƥḗḗȧȧŧīƞɠ ƈǿǿƞşŧřŭŭƈŧīǿǿƞ ƈẏƈŀḗḗ."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.firstHarvest": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ƒīřşŧ Ƒīḗḗŀḓş ħȧȧřṽḗḗşŧ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.focus": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ẇǿǿřķƒǿǿřƈḗḗ ƒǿǿƈŭŭş"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.focusEffect": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Şŭŭƥƥŀīḗḗş ƒȧȧṽǿǿŭŭřş şŧǿǿƈķ ẇīŧħ ŀǿǿẇ ŭŭƥķḗḗḗḗƥ ƀŭŭŧ ȧȧḓḓş Ẇḗḗȧȧŧħḗḗřīƞɠ. Ɠřǿǿẇŧħ ƒȧȧṽǿǿŭŭřş ƀŭŭīŀḓīƞɠ ȧȧƞḓ řḗḗƈǿǿṽḗḗřẏ. Ŧřȧȧṽḗḗŀ ƒȧȧṽǿǿŭŭřş şħīƥḿḗḗƞŧş ȧȧƒŧḗḗř Ħȧȧŀŀ; ƀḗḗƒǿǿřḗḗ Ħȧȧŀŀ īŧ ŭŭşḗḗş Ɓȧȧŀȧȧƞƈḗḗḓ ŀȧȧƀǿǿř."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.fullFood": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ƒǿǿǿǿḓ: "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " / "
-    },
-    {
-      "type": 1,
-      "value": "capacity"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.goods": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ɠǿǿǿǿḓş"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.granaries": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ɠřȧȧƞȧȧřīḗḗş"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
   "farming.granary": [
     {
       "type": 0,
@@ -10857,188 +10467,6 @@
       "value": "]"
     }
   ],
-  "farming.granaryDetails": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ɠřȧȧƞȧȧřẏ ƈǿǿşŧş ȧȧƞḓ ḓḗḗŧȧȧīŀş"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.granaryEffect": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ḗȧȧƈħ Ɠřȧȧƞȧȧřẏ ȧȧḓḓş 160 Ƒǿǿǿǿḓ şŧǿǿřȧȧɠḗḗ. Īŧ īş ȧȧƞ īƞşŧȧȧƞŧ ḿȧȧƞŭŭȧȧŀ ƥŭŭřƈħȧȧşḗḗ; ƥḗḗƞḓīƞɠ řḗḗƥȧȧīřş ķḗḗḗḗƥ ŧħḗḗīř Ḿȧȧŧḗḗřīȧȧŀş ȧȧƞḓ Ŧǿǿǿǿŀş řḗḗşḗḗřṽḗḗ."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.granaryFirstHome": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ȧṽȧȧīŀȧȧƀŀḗḗ ȧȧƒŧḗḗř ŧħḗḗ ƒīřşŧ Ħǿǿḿḗḗ īş ḗḗşŧȧȧƀŀīşħḗḗḓ."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.granaryInactive": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ƥŭŭřƈħȧȧşḗḗş ȧȧřḗḗ ƈŀǿǿşḗḗḓ ẇħīŀḗḗ ŧħḗḗ ṽīŀŀȧȧɠḗḗ ƒīƞīşħḗḗş ƥȧȧīḓ ẇǿǿřķ."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.granaryInputs": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ḿǿǿřḗḗ Ḿȧȧŧḗḗřīȧȧŀş ǿǿř Ŧǿǿǿǿŀş ƞḗḗḗḗḓḗḗḓ. Ŧħīş ƥŭŭřƈħȧȧşḗḗ īş īƞşŧȧȧƞŧ."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.granaryMaximum": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ḿȧȧẋīḿŭŭḿ Ɠřȧȧƞȧȧřīḗḗş ǿǿẇƞḗḗḓ."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.granaryRepairReserve": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ḿȧȧŧḗḗřīȧȧŀş ȧȧƞḓ Ŧǿǿǿǿŀş ȧȧřḗḗ řḗḗşḗḗřṽḗḗḓ ƒǿǿř ȧȧ ƥḗḗƞḓīƞɠ Ħǿǿḿḗḗ řḗḗƥȧȧīř."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.growth": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ɠřǿǿẇŧħ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.guildEffect": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ƒŭŭŧŭŭřḗḗ Ɠǿǿǿǿḓş ƀȧȧŧƈħḗḗş ƥřǿǿḓŭŭƈḗḗ 3 ƒǿǿř 6 Ḿȧȧŧḗḗřīȧȧŀş ȧȧƞḓ 63 ẇǿǿřķḗḗř-şḗḗƈǿǿƞḓş; ȧȧŀřḗḗȧȧḓẏ ƒŭŭƞḓḗḗḓ ƀȧȧŧƈħḗḗş ķḗḗḗḗƥ ŧħḗḗīř ǿǿřīɠīƞȧȧŀ řḗḗƈīƥḗḗ."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.guildNeeded": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ħȧȧŀŀ, ƒīṽḗḗ Ħǿǿḿḗḗş ƀŭŭīŀŧ ȧȧƞḓ ŧħřḗḗḗḗ ŧřȧȧḓḗḗ ƈǿǿƞƞḗḗƈŧīǿǿƞş"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.guildWorkshop": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ɠŭŭīŀḓ Ẇǿǿřķşħǿǿƥ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.hall": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ħȧȧŀŀ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.hallNeeded": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ƒǿǿŭŭř Ħǿǿḿḗḗş, Ƥȧȧşŧŭŭřḗḗ ȧȧƞḓ Ẇȧȧŧḗḗřẇǿǿřķş"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
   "farming.handoff": [
     {
       "type": 0,
@@ -11046,81 +10474,7 @@
     },
     {
       "type": 0,
-      "value": "Ŧħřḗḗḗḗ ƒǿǿŭŭƞḓḗḗřş ḿǿǿṽḗḗ īƞŧǿǿ ȧȧ ƞḗḗẇ ṽīŀŀȧȧɠḗḗ. Ŧħḗḗ řḗḗḿȧȧīƞīƞɠ ƈȧȧḿƥ ķḗḗḗḗƥş īŧş şŧǿǿƈķş ȧȧƞḓ ḗḗẋƥǿǿřŧş Ƒǿǿǿǿḓ ȧȧƞḓ Ḿȧȧŧḗḗřīȧȧŀş. Ƥȧȧīḓ ẇǿǿřķ ƒīƞīşħḗḗş ƀḗḗƒǿǿřḗḗ ŧħḗḗ ħȧȧƞḓǿǿƒƒ."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.home": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ħǿǿḿḗḗ "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.homeEffect": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ḗȧȧƈħ şŭŭƥƥǿǿřŧḗḗḓ Ħǿǿḿḗḗ ȧȧḓḓş ŧẇǿǿ řḗḗşīḓḗḗƞŧş. Ẇḗḗȧȧŧħḗḗřīƞɠ ȧȧŧ 100 řḗḗḿǿǿṽḗḗş īŧş şŭŭƥƥǿǿřŧ; řḗḗƥȧȧīř ŭŭşḗḗş īŧş ǿǿřīɠīƞȧȧŀ Ḿȧȧŧḗḗřīȧȧŀş, Ŧǿǿǿǿŀş ȧȧƞḓ ŀȧȧƀǿǿř ƀīŀŀ."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.homes": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ħǿǿḿḗḗş"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.homesCount": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Şŭŭƥƥǿǿřŧḗḗḓ Ħǿǿḿḗḗş"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.housingWeathering": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ħǿǿŭŭşīƞɠ ẇḗḗȧȧŧħḗḗřīƞɠ"
+      "value": "Ƒȧȧřḿīƞɠ řḗḗƥŀȧȧƈḗḗş ẏǿǿŭŭř Ƒǿǿřȧȧɠḗḗř ƈȧȧḿƥ ẇīŧħ ŧħřḗḗḗḗ ƒǿǿŭŭƞḓḗḗřş ȧȧƞḓ ḗḗḿƥŧẏ şŧǿǿřḗḗş. Ŭƞƒīƞīşħḗḗḓ ẇǿǿřķ īş ḓīşƈȧȧřḓḗḗḓ. Ḗȧȧřƞḗḗḓ Ƈȧȧŧȧȧŀẏşŧş ȧȧřḗḗ ķḗḗƥŧ."
     },
     {
       "type": 0,
@@ -11135,132 +10489,6 @@
     {
       "type": 0,
       "value": "Ƈẏƈŀḗḗ ƈǿǿşŧ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.intensiveCultivation": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Īƞŧḗḗƞşīṽḗḗ Ƈŭŭŀŧīṽȧȧŧīǿǿƞ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.kiln": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ķīŀƞ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.kilnNeeded": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ķīŀƞ ḗḗşŧȧȧƀŀīşħḗḗḓ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.limit": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ŀīḿīŧ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.locked": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ŀǿǿƈķḗḗḓ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.lost": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ȧ Ħǿǿḿḗḗ ŀǿǿşŧ şŭŭƥƥǿǿřŧ. Řḗḗƥȧȧīř řḗḗşŧǿǿřḗḗş īŧş řḗḗşīḓḗḗƞŧş; ŧħḗḗ ƒǿǿŭŭƞḓḗḗřş řḗḗḿȧȧīƞ."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.manual": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ɓŭŭīŀḓ ȧȧ Ɠřȧȧƞȧȧřẏ ŧǿǿ ƈǿǿƞŧīƞŭŭḗḗ. Şŧǿǿřḗḗḓ Ŧīḿḗḗ şŧǿǿƥş ħḗḗřḗḗ ȧȧƞḓ ķḗḗḗḗƥş ŧħḗḗ řḗḗḿȧȧīƞīƞɠ ƀȧȧƞķ."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.marketEffect": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ƒŭŭŧŭŭřḗḗ şħīƥḿḗḗƞŧş ƞḗḗḗḗḓ 1,512 ẇǿǿřķḗḗř-şḗḗƈǿǿƞḓş ȧȧƞḓ řḗḗŧŭŭřƞ 100 Ḿȧȧŧḗḗřīȧȧŀş. Şīẋ Ħǿǿḿḗḗş ȧȧƞḓ şīẋ ƈǿǿƞƞḗḗƈŧīǿǿƞş ƒīƞīşħ ƈīŧẏ řḗḗȧȧḓīƞḗḗşş."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.marketNeeded": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Īƞŧḗḗƞşīṽḗḗ Ƈŭŭŀŧīṽȧȧŧīǿǿƞ, Ɠŭŭīŀḓ Ẇǿǿřķşħǿǿƥ, ƒīṽḗḗ Ħǿǿḿḗḗş ƀŭŭīŀŧ ȧȧƞḓ ŧħřḗḗḗḗ ŧřȧȧḓḗḗ ƈǿǿƞƞḗḗƈŧīǿǿƞş"
     },
     {
       "type": 0,
@@ -11285,52 +10513,6 @@
       "value": "]"
     }
   ],
-  "farming.need": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ƞḗḗḗḗḓ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.needsInputs": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ƞḗḗḗḗḓş īƞƥŭŭŧş"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.next": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ƈŭŭřřḗḗƞŧ ƥŀȧȧƞ: "
-    },
-    {
-      "type": 1,
-      "value": "name"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
   "farming.nextPrice": [
     {
       "type": 0,
@@ -11339,20 +10521,6 @@
     {
       "type": 0,
       "value": "Ƞḗḗẋŧ ƥřīƈḗḗ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.oneGranary": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ǿƞḗḗ Ɠřȧȧƞȧȧřẏ"
     },
     {
       "type": 0,
@@ -11391,62 +10559,6 @@
       "value": "]"
     }
   ],
-  "farming.paid": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Īƞƥŭŭŧş ȧȧřḗḗ ȧȧŀřḗḗȧȧḓẏ řḗḗşḗḗřṽḗḗḓ. Ƈħȧȧƞɠīƞɠ ƒǿǿƈŭŭş ḿǿǿṽḗḗş ŀȧȧƀǿǿř ẇīŧħǿǿŭŭŧ ƈħȧȧřɠīƞɠ ŧħḗḗḿ ȧȧɠȧȧīƞ."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.paidStatus": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ƥȧȧīḓ ƈẏƈŀḗḗ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.pasture": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ƥȧȧşŧŭŭřḗḗ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.pendingFinish": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ƒīƞīşħīƞɠ ŧħḗḗ ṽīŀŀȧȧɠḗḗ’ş ƥȧȧīḓ ƈẏƈŀḗḗş."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
   "farming.pendingSkill": [
     {
       "type": 0,
@@ -11455,66 +10567,6 @@
     {
       "type": 0,
       "value": "Ŧħīş ḿīŀḗḗşŧǿǿƞḗḗ īş ẇȧȧīŧīƞɠ ƒǿǿř ȧȧƞ ḗḗŀīɠīƀŀḗḗ ḗḗẋīşŧīƞɠ Şķīŀŀ ŧřḗḗḗḗ ƈħǿǿīƈḗḗ ǿǿř řǿǿǿǿḿ īƞ ŧħḗḗ Ƈȧȧŧȧȧŀẏşŧ ẇȧȧŀŀḗḗŧ."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.production": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ƥřǿǿḓŭŭƈŧīǿǿƞ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.repair": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Řḗḗƥȧȧīř Ħǿǿḿḗḗ "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.reserved": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Řḗḗşḗḗřṽḗḗḓ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.risk": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ħǿǿŭŭşīƞɠ ȧȧŧ řīşķ"
     },
     {
       "type": 0,
@@ -11535,34 +10587,6 @@
       "value": "]"
     }
   ],
-  "farming.settling": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ƒīƞīşħīƞɠ ƥȧȧīḓ Ƒǿǿřȧȧɠḗḗř ẇǿǿřķ ƀḗḗƒǿǿřḗḗ ŧħḗḗ ṽīŀŀȧȧɠḗḗ ƀḗḗɠīƞş."
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.ship": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ŧřȧȧḓḗḗ şħīƥḿḗḗƞŧ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
   "farming.shop": [
     {
       "type": 0,
@@ -11577,56 +10601,158 @@
       "value": "]"
     }
   ],
-  "farming.skillLimit": [
+  "farming.village.averted": [
     {
       "type": 0,
       "value": "["
     },
     {
       "type": 0,
-      "value": "Ƒȧȧřḿīƞɠ-şƥḗḗƈīƒīƈ ƒřȧȧƈŧŭŭřḗḗş ȧȧřḗḗ ƞǿǿŧ ȧȧŭŭŧħǿǿřḗḗḓ ẏḗḗŧ. Ŧħḗḗşḗḗ şīẋ ḿīŀḗḗşŧǿǿƞḗḗş ŭŭşḗḗ ŧħḗḗ ḗḗẋīşŧīƞɠ Ƈȧȧŧȧȧŀẏşŧ ẇȧȧŀŀḗḗŧ ȧȧƞḓ ḗḗẋīşŧīƞɠ ḗḗŀīɠīƀŀḗḗ Şķīŀŀ ŧřḗḗḗḗ ƈħǿǿīƈḗḗş. Ŭƞşƥḗḗƞŧ Ƈȧȧŧȧȧŀẏşŧş ȧȧḓḓ ƞǿǿ şƥḗḗḗḗḓ."
+      "value": "Ḓīşȧȧşŧḗḗř ȧȧṽḗḗřŧḗḗḓ. Ŧħḗḗ şƥīřīŧş ȧȧƈƈḗḗƥŧ ŧħḗḗ ƈřḗḗḓīŧ."
     },
     {
       "type": 0,
       "value": "]"
     }
   ],
-  "farming.source": [
+  "farming.village.balance": [
     {
       "type": 0,
       "value": "["
     },
     {
       "type": 0,
-      "value": "Řḗḗŧȧȧīƞḗḗḓ Ƒǿǿřȧȧɠḗḗř ƈȧȧḿƥ"
+      "value": "Ƒǿǿǿǿḓ ƀȧȧŀȧȧƞƈḗḗ"
     },
     {
       "type": 0,
       "value": "]"
     }
   ],
-  "farming.stage": [
+  "farming.village.burials": [
     {
       "type": 0,
       "value": "["
     },
     {
       "type": 0,
-      "value": "Ṽīŀŀȧȧɠḗḗ ƥřǿǿɠřḗḗşş"
+      "value": "Ɓŭŭřīȧȧŀş"
     },
     {
       "type": 0,
       "value": "]"
     }
   ],
-  "farming.storageGain": [
+  "farming.village.consumption": [
     {
       "type": 0,
       "value": "["
     },
     {
       "type": 0,
-      "value": "+160 Ƒǿǿǿǿḓ şŧǿǿřȧȧɠḗḗ ƥḗḗř ƥŭŭřƈħȧȧşḗḗ · Ŧǿǿŧȧȧŀ: "
+      "value": "Ƈǿǿƞşŭŭḿƥŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.crops": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈřǿǿƥş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.disasterDeaths": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓīşȧȧşŧḗḗřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.disasterLoss": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥǿǿƥŭŭŀȧȧŧīǿǿƞ ŀǿǿşş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.disasterRisk": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şḗḗȧȧşǿǿƞ-ḗḗƞḓ řīşķ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.fewerJobs": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": ƒḗḗẇḗḗř ĵǿǿƀş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.field": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒīḗḗŀḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.fire": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒīřḗḗ: ƥǿǿƥŭŭŀȧȧŧīǿǿƞ −"
     },
     {
       "type": 1,
@@ -11637,147 +10763,397 @@
       "value": "]"
     }
   ],
-  "farming.supplies": [
+  "farming.village.flood": [
     {
       "type": 0,
       "value": "["
     },
     {
       "type": 0,
-      "value": "Şŭŭƥƥŀīḗḗş"
+      "value": "Ƒŀǿǿǿǿḓ: ƥǿǿƥŭŭŀȧȧŧīǿǿƞ −"
+    },
+    {
+      "type": 1,
+      "value": "value"
     },
     {
       "type": 0,
       "value": "]"
     }
   ],
-  "farming.townMarket": [
+  "farming.village.food": [
     {
       "type": 0,
       "value": "["
     },
     {
       "type": 0,
-      "value": "Ŧǿǿẇƞ Ḿȧȧřķḗḗŧ"
+      "value": "Ƒǿǿǿǿḓ"
     },
     {
       "type": 0,
       "value": "]"
     }
   ],
-  "farming.travel": [
+  "farming.village.fullCrew": [
     {
       "type": 0,
       "value": "["
     },
     {
       "type": 0,
-      "value": "Ŧřȧȧṽḗḗŀ"
+      "value": "Ƒŭŭŀŀ ƈřḗḗẇ"
     },
     {
       "type": 0,
       "value": "]"
     }
   ],
-  "farming.upcoming": [
+  "farming.village.growth": [
     {
       "type": 0,
       "value": "["
     },
     {
       "type": 0,
-      "value": "Ƞǿǿŧ ȧȧṽȧȧīŀȧȧƀŀḗḗ ẏḗḗŧ"
+      "value": "Ɠřǿǿẇīƞɠ"
     },
     {
       "type": 0,
       "value": "]"
     }
   ],
-  "farming.village": [
+  "farming.village.herding": [
     {
       "type": 0,
       "value": "["
     },
     {
       "type": 0,
-      "value": "Ṽīŀŀȧȧɠḗḗ"
+      "value": "Ŀīṽḗḗşŧǿǿƈķ"
     },
     {
       "type": 0,
       "value": "]"
     }
   ],
-  "farming.waiting": [
+  "farming.village.house": [
     {
       "type": 0,
       "value": "["
     },
     {
       "type": 0,
-      "value": "Ẇȧȧīŧīƞɠ ƒǿǿř ŭŭşḗḗƒŭŭŀ ḓḗḗḿȧȧƞḓ ǿǿř ḗḗƞǿǿŭŭɠħ īƞƥŭŭŧş."
+      "value": "Ħǿǿŭŭşḗḗ"
     },
     {
       "type": 0,
       "value": "]"
     }
   ],
-  "farming.waterworks": [
+  "farming.village.housing": [
     {
       "type": 0,
       "value": "["
     },
     {
       "type": 0,
-      "value": "Ẇȧȧŧḗḗřẇǿǿřķş"
+      "value": "Ħǿǿŭŭşīƞɠ"
     },
     {
       "type": 0,
       "value": "]"
     }
   ],
-  "farming.weatherHelp": [
+  "farming.village.idle": [
     {
       "type": 0,
       "value": "["
     },
     {
       "type": 0,
-      "value": "Ɓȧȧŀȧȧƞƈḗḗḓ řḗḗḓŭŭƈḗḗş Ẇḗḗȧȧŧħḗḗřīƞɠ ƀẏ 1/ḿīƞ; Şŭŭƥƥŀīḗḗş ȧȧḓḓş 2/ḿīƞ; Ɠřǿǿẇŧħ řḗḗḓŭŭƈḗḗş 4/ḿīƞ; Ŧřȧȧṽḗḗŀ ȧȧḓḓş 4/ḿīƞ. Ẇȧȧŧḗḗřẇǿǿřķş ƈŭŭŧş īƞƈřḗḗȧȧşḗḗş ƀẏ 40%; Īƞŧḗḗƞşīṽḗḗ Ƈŭŭŀŧīṽȧȧŧīǿǿƞ ƈŭŭŧş ŧħḗḗ řḗḗḿȧȧīƞīƞɠ īƞƈřḗḗȧȧşḗḗ ƀẏ ȧȧƞǿǿŧħḗḗř 20%. Ȧŧ 75, ħǿǿŭŭşīƞɠ īş ȧȧŧ řīşķ; ȧȧŧ 100, ǿǿƞḗḗ Ħǿǿḿḗḗ ŀǿǿşḗḗş şŭŭƥƥǿǿřŧ ȧȧƞḓ Ẇḗḗȧȧŧħḗḗřīƞɠ řḗḗşḗḗŧş ŧǿǿ 40."
+      "value": "Īḓŀḗḗ"
     },
     {
       "type": 0,
       "value": "]"
     }
   ],
-  "farming.weathering": [
+  "farming.village.irrigation": [
     {
       "type": 0,
       "value": "["
     },
     {
       "type": 0,
-      "value": "Ẇḗḗȧȧŧħḗḗřīƞɠ"
+      "value": "Īřřīɠȧȧŧīǿǿƞ"
     },
     {
       "type": 0,
       "value": "]"
     }
   ],
-  "farming.woodlot": [
+  "farming.village.jobSpaces": [
     {
       "type": 0,
       "value": "["
     },
     {
       "type": 0,
-      "value": "Ẇǿǿǿǿḓŀǿǿŧ"
+      "value": "Ɓŭŭīŀḓīƞɠ ƈȧȧƥȧȧƈīŧẏ"
     },
     {
       "type": 0,
       "value": "]"
     }
   ],
-  "farming.work": [
+  "farming.village.jobs": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ĵǿǿƀş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.jobsFor": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": ĵǿǿƀş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.land": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒřḗḗḗḗ ŀȧȧƞḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.lastEvent": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŀȧȧşŧ ḗḗṽḗḗƞŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.loggingCamp": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŀǿǿɠɠīƞɠ ƈȧȧḿƥ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.moreJobs": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": ": ḿǿǿřḗḗ ĵǿǿƀş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.natural": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞȧȧŧŭŭřȧȧŀ ḓḗḗȧȧŧħş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.needsGranary": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "3 Ħǿǿŭŭşḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.needsIrrigation": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "4 Ƒīḗḗŀḓş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.needsLand": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞǿǿ ƒřḗḗḗḗ ŀȧȧƞḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.needsPasture": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "2 Ƒīḗḗŀḓş · 2 Ħǿǿŭŭşḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.needsShrine": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "4 Ħǿǿŭŭşḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.needsWoodland": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈŀḗḗȧȧř ẇǿǿǿǿḓŀȧȧƞḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.needsWorkshop": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿřķşħǿǿƥ řḗḗɋŭŭīřḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.nextDisaster": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞḗḗẋŧ ḓīşȧȧşŧḗḗř"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.noMaterials": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞǿǿ Ḿȧȧŧḗḗřīȧȧŀş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.pasture": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥȧȧşŧŭŭřḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.perMinute": [
     {
       "type": 0,
       "value": "["
@@ -11788,21 +11164,183 @@
     },
     {
       "type": 0,
-      "value": " ẇǿǿřķḗḗř-şḗḗƈǿǿƞḓş"
+      "value": "/ḿīƞ"
     },
     {
       "type": 0,
       "value": "]"
     }
   ],
-  "farming.workers": [
+  "farming.village.production": [
     {
       "type": 0,
       "value": "["
     },
     {
       "type": 0,
-      "value": "Ẇǿǿřķḗḗřş"
+      "value": "Ƥřǿǿḓŭŭƈŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.protection": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓīşȧȧşŧḗḗř řḗḗḓŭŭƈŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.reserve": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒǿǿǿǿḓ řḗḗşḗḗřṽḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.shaman": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şħȧȧḿȧȧƞş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.shrine": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şħřīƞḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.sickness": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şīƈķƞḗḗşş: ƥǿǿƥŭŭŀȧȧŧīǿǿƞ −"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.starvation": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧřṽȧȧŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.status": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧŧŭŭş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.stocked": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧǿǿƈķḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.woodland": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿǿǿḓŀȧȧƞḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.work": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿřķ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.workingCount": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " ẇǿǿřķīƞɠ"
     },
     {
       "type": 0,
@@ -11817,28 +11355,6 @@
     {
       "type": 0,
       "value": "Ẇǿǿřķşħǿǿƥ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "farming.yield": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ȧ şħīƥḿḗḗƞŧ ƈǿǿşŧş 350 Ƒǿǿǿǿḓ ȧȧƞḓ 35 Ɠǿǿǿǿḓş, ŧħḗḗƞ řḗḗŧŭŭřƞş "
-    },
-    {
-      "type": 1,
-      "value": "materials"
-    },
-    {
-      "type": 0,
-      "value": " Ḿȧȧŧḗḗřīȧȧŀş ȧȧƞḓ ǿǿƞḗḗ ƈǿǿƞƞḗḗƈŧīǿǿƞ. Şīẋ ƈǿǿƞƞḗḗƈŧīǿǿƞş, şīẋ şŭŭƥƥǿǿřŧḗḗḓ Ħǿǿḿḗḗş ȧȧƞḓ ŧħḗḗ ƈīŧẏ-řḗḗȧȧḓīƞḗḗşş ŭŭƥɠřȧȧḓḗḗş ƈǿǿḿƥŀḗḗŧḗḗ ŧħīş ȧȧɠḗḗ."
     },
     {
       "type": 0,
@@ -14113,6 +13629,62 @@
       "value": "]"
     }
   ],
+  "offline-time.auto-resume": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ǿƞ řḗḗŧŭŭřƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "offline-time.auto-resume-last": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŀȧȧşŧ şƥḗḗḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "offline-time.auto-resume-max": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿȧȧẋ şƥḗḗḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "offline-time.auto-resume-off": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ǿƒƒ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "offline-time.balanced-preset": [
     {
       "type": 0,
@@ -14300,7 +13872,7 @@
     },
     {
       "type": 0,
-      "value": "Ḿǿǿṽḗḗ ŧħḗḗ şŀīḓḗḗř ȧȧƀǿǿṽḗḗ 1× ŧǿǿ ŭŭşḗḗ şŧǿǿřḗḗḓ ŧīḿḗḗ. Ǿƞŀẏ ḗḗẋŧřȧȧ ŧīḿḗḗ ŭŭşḗḗş ŧħḗḗ ƀȧȧƞķ. Ḓǿǿŭŭƀŀḗḗ Ŧīḿḗḗ şŧȧȧƈķş şḗḗƥȧȧřȧȧŧḗḗŀẏ. Ḗḿƥŧẏ şŧǿǿřȧȧɠḗḗ, ƀȧȧƈķɠřǿǿŭŭƞḓīƞɠ ȧȧƞḓ ḿȧȧƞŭŭȧȧŀ řḗḗşḗḗŧş řḗḗŧŭŭřƞ ŧħḗḗ şŀīḓḗḗř ŧǿǿ 1×."
+      "value": "Ǿƞŀẏ ḗḗẋŧřȧȧ ŧīḿḗḗ ŭŭşḗḗş ŧħḗḗ ƀȧȧƞķ. Ḓǿǿŭŭƀŀḗḗ Ŧīḿḗḗ şŧȧȧƈķş şḗḗƥȧȧřȧȧŧḗḗŀẏ."
     },
     {
       "type": 0,

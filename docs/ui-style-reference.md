@@ -491,6 +491,12 @@ remaining space, without the previous 7ch minimum or widest-observed timer
 reservation. Unit-format transitions may change width. Preserve the existing
 control gap; no punctuation wrapper or new font asset is needed.
 
+Farming growth-header exception (Matthew, 21 October 2026): header quantities
+use the same numeric font token, and its growth countdown reserves the widest
+applicable localized minute/second format so surrounding resource totals do not
+move while it ticks. This reservation is local to that header status; ordinary
+cycle timers retain natural current-text width.
+
 Reference comparison: Bots numeric formatting and the existing Simulations
 cycle timer typography. This is an approved shared display convention, with no
 new layout exception or changed touch/keyboard action. Browser preview access

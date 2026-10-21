@@ -3,15 +3,16 @@ import { useIntl } from 'react-intl'
 import type { FrontendCanonicalResources, FrontendGameplayPreviews } from '../../../application/frontendSnapshot'
 import type { CanonicalPlayerCommand } from '../../../application/canonicalPlayerCommands'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
-import { DEFAULT_OFFLINE_BOOST, MAXIMUM_OFFLINE_BOOST_MULTIPLIER } from '../../../simulation/offlineBoost'
+import { DEFAULT_OFFLINE_BOOST } from '../../../simulation/offlineBoost'
+import type { OfflineBoostAutoResume } from '../../../simulation/offlineBoost'
 import { Button } from '../../components'
 import { formatGameCountdown, formatGameDuration } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import { offlineTimeMessages as messages } from './messages'
 import './offlineTime.css'
 
-type OfflineTimeCommand = Extract<CanonicalPlayerCommand, { readonly kind: 'time.upgrade-stored-capacity' | 'time.set-offline-boost-multiplier' }>
-export interface OfflineTimeCommandAvailability { readonly upgradeStoredCapacity: boolean; readonly setOfflineBoost: boolean }
+type OfflineTimeCommand = Extract<CanonicalPlayerCommand, { readonly kind: 'time.upgrade-stored-capacity' | 'time.set-offline-boost-multiplier' | 'time.set-offline-auto-resume' }>
+export interface OfflineTimeCommandAvailability { readonly upgradeStoredCapacity: boolean; readonly setOfflineBoost: boolean; readonly setAutoResume: boolean }
 export interface OfflineTimeSurfaceProps {
   readonly locale: EnabledLocale
   readonly resources: FrontendCanonicalResources['time']
@@ -81,11 +82,16 @@ export function OfflineTimeSurface({ locale, resources, previews, storedTimeChea
         </div>
         <div className="offline-time-boost-control">
           <output htmlFor="offline-boost-speed" aria-label={intl.formatMessage(messages.boostSpeed)}>{boost.multiplier === 1 ? intl.formatMessage(messages.boostRegular) : `${boost.multiplier}×`}</output>
-          <input id="offline-boost-speed" type="range" min={1} max={MAXIMUM_OFFLINE_BOOST_MULTIPLIER} step={1} value={boost.multiplier} disabled={disabled}
+          <input id="offline-boost-speed" type="range" min={1} max={resources.maximumOfflineBoostMultiplier} step={1} value={boost.multiplier} disabled={disabled}
             aria-labelledby="offline-boost-label"
             aria-valuetext={boost.multiplier === 1 ? intl.formatMessage(messages.boostRegular) : `${boost.multiplier}×`}
             onChange={event => void select(event.currentTarget.valueAsNumber)} />
         </div>
+        <label className="offline-time-auto-resume"><span>{intl.formatMessage(messages.autoResume)}</span><select value={resources.offlineBoostAutoResume ?? 'off'} disabled={pending || !commandAvailability.setAutoResume} onChange={event => void act({ kind: 'time.set-offline-auto-resume', mode: event.target.value as OfflineBoostAutoResume })}>
+          <option value="off">{intl.formatMessage(messages.autoResumeOff)}</option>
+          <option value="last">{intl.formatMessage(messages.autoResumeLast)}</option>
+          <option value="max">{intl.formatMessage(messages.autoResumeMax)}</option>
+        </select></label>
         {boost.multiplier > 1 && <dl className="offline-time-boost-facts">
           <div><dt>{intl.formatMessage(messages.boostDrainLabel)}</dt><dd>{intl.formatMessage(messages.boostDrain, { seconds: boost.multiplier - 1 })}</dd></div>
           <div><dt>{intl.formatMessage(messages.boostDurationLabel)}</dt><dd>{formatGameCountdown(locale, bank / (boost.multiplier - 1))}</dd></div>
