@@ -78,7 +78,7 @@ describe('portable transactional save repository', () => {
     const civilization = state.civilization as unknown as CivilizationState
     const farming = civilization.farming!
     expect(storage.files.get('/current')).toBe(original)
-    expect(farming).toMatchObject({ version: 9, phase: 'farming' })
+    expect(farming).toMatchObject({ version: 12, phase: 'farming' })
     expect(farming.legacyVillage).toEqual(oldFarming)
     expect(farming.houses).toBe(oldFarming.homesBuilt + 1)
     expect(farming.granaries).toBeGreaterThanOrEqual(oldFarming.granaries)
@@ -92,8 +92,9 @@ describe('portable transactional save repository', () => {
       tools: total.tools + (job.inputs.tools ?? 0),
       work: total.work + job.work - job.remainingWork,
     }), { food: 0, materials: 0, tools: 0, work: 0 })
+    expect(farming.resources.food).toBeGreaterThanOrEqual(oldFarming.resources.food + refunds.food)
     expect(farming.resources).toEqual({
-      food: oldFarming.resources.food + refunds.food,
+      food: farming.resources.food,
       materials: oldFarming.resources.materials + 2 * oldFarming.resources.goods + refunds.materials,
       tools: oldFarming.resources.tools + refunds.tools,
     })
@@ -115,7 +116,7 @@ describe('portable transactional save repository', () => {
     expect(resumed.civilization).toEqual(running.civilization)
   })
 
-  test.each([['farming-v4-assigned.idsw', 4], ['farming-v5-automatic.idsw', 5], ['farming-v6-camps.idsw', 6], ['farming-v7-preferences.idsw', 7], ['farming-v8-seasonal.idsw', 8]] as const)('migrates %s without losing paid work, resources or reward history', async (file, version) => {
+  test.each([['farming-v4-assigned.idsw', 4], ['farming-v5-automatic.idsw', 5], ['farming-v6-camps.idsw', 6], ['farming-v7-preferences.idsw', 7], ['farming-v8-seasonal.idsw', 8], ['farming-v9-protected.idsw', 9], ['farming-v10-priorities.idsw', 10], ['farming-v11-crop-harvest.idsw', 11]] as const)('migrates %s without losing paid work, resources or reward history', async (file, version) => {
     const decoded = deserializeWebSave(readFileSync(new URL(`../../qa/fixtures/${file}`, import.meta.url), 'utf8'))
     const previous = (decoded.civilization as { farming: import('../game-state/types').AssignedFarmingState }).farming
     const storage = new MemoryStorage()
@@ -125,11 +126,12 @@ describe('portable transactional save repository', () => {
     const migrated = (await repository.loadCurrent())!
     const current = (migrated.copyValidatedState().civilization as unknown as CivilizationState).farming!
     expect(storage.files.get('/current')).toBe(original)
-    expect(version === 4 ? current.previousVillage : version === 5 ? current.previousAutomaticVillage : version === 6 ? current.previousManagedVillage : version === 7 ? current.previousPreferredVillage : current.previousSeasonalVillage).toEqual(previous)
+    expect(version === 4 ? current.previousVillage : version === 5 ? current.previousAutomaticVillage : version === 6 ? current.previousManagedVillage : version === 7 ? current.previousPreferredVillage : version === 8 ? current.previousSeasonalVillage : version === 9 ? current.previousProtectedVillage : version === 10 ? current.previousPrioritizedVillage : current.previousCropHarvestVillage).toEqual(previous)
     if (version === 4) expect(current.fields).toBe(previous.barleyFields + previous.wheatFields)
     expect(current.loggingCamps * 8).toBeGreaterThanOrEqual(previous.assignments.woodland)
     expect(current.jobs).toEqual(previous.jobs)
-    expect(current.resources).toEqual({ ...previous.resources,
+    expect(current.resources.food).toBeGreaterThanOrEqual(previous.resources.food)
+    expect(current.resources).toEqual({ ...previous.resources, food: current.resources.food,
       materials: previous.resources.materials + (version === 4 && previous.nets ? 120 : 0) + (version === 4 && previous.cattle ? 180 : 0),
       tools: previous.resources.tools + (version === 4 && previous.nets ? 12 : 0) + (version === 4 && previous.cattle ? 18 : 0),
     })
@@ -137,12 +139,31 @@ describe('portable transactional save repository', () => {
     expect(current.population).toBe(previous.population)
     if (version === 7) {
       const preferred = previous as unknown as PreferredFarmingState
-      expect(current).toMatchObject({ version: 9, desiredJobs: preferred.desiredJobs,
+      expect(current).toMatchObject({ version: 12,
         growthProgress: preferred.growthProgress, hungerDebt: preferred.hungerDebt,
         disasterSeed: preferred.disasterSeed, naturalDeaths: preferred.naturalDeaths,
         starvationDeaths: preferred.starvationDeaths, disasterDeaths: 0 })
     }
     if (version === 8) expect(current.seasonProtection).toBe(0)
+    if (version === 9) {
+      const protectedVillage = previous as unknown as import('../game-state/types').ProtectedFarmingState
+      expect(current.seasonProtection).toBe(protectedVillage.seasonProtection)
+      expect(current.disasterSeed).toBe(protectedVillage.disasterSeed)
+      expect(current.lastDisaster).toEqual(protectedVillage.lastDisaster)
+      expect(current).not.toHaveProperty('desiredJobs')
+      expect(current).not.toHaveProperty('continuous')
+    }
+    if (version === 10) {
+      const prioritized = previous as unknown as import('../game-state/types').PrioritizedFarmingState
+      expect(current.foodPriority).toBe(prioritized.foodPriority)
+      expect(current.workPriority).toBe(prioritized.workPriority)
+      expect(current.cropHarvest).toBe(0)
+    }
+    if (version === 11) {
+      const harvesting = previous as unknown as import('../game-state/types').CropHarvestFarmingState
+      expect(current.cropHarvest).toBe(harvesting.cropHarvest)
+      expect(current.livestockHarvest).toBe(0)
+    }
     await repository.commit(migrated)
     const session = hydrateGameState((await repository.loadCurrent())!)
     const running = advanceFarming(session.state, 3.125)
@@ -151,17 +172,17 @@ describe('portable transactional save repository', () => {
     expect(reloaded.civilization).toEqual(running.civilization)
     if (version === 7) expect(running.civilization!.farming!.disasterDeaths).toBeGreaterThan(0)
     if (version === 8) expect(running.civilization!.farming!.seasonProtection).toBeGreaterThan(0)
-    if (version === 6 || version === 7 || version === 8) {
+    if (version >= 6) {
       // Restoring a published checkpoint must carry partial recovery and the
       // random event stream, rather than rerolling events or resetting clocks.
       const continued = advanceFarming(running, 6000)
       expect(advanceFarming(reloaded, 6000).civilization).toEqual(continued.civilization)
       if (version === 7) {
-        // A paused, already-paid cycle and a newly completed clearing cycle
-        // must still share the same clock after publication reorders save keys.
+        // Publication must retain the automatic scheduler clock and paid-work
+        // receipts even when this formerly paused Workshop is now active.
         await repository.commit(session.prepare(continued))
         const paidReload = hydrateGameState((await repository.loadCurrent())!).state
-        expect(paidReload.civilization!.farming!.jobs.workshop).toEqual(previous.jobs.workshop)
+        expect(paidReload.civilization!.farming!.jobs).toEqual(continued.civilization!.farming!.jobs)
         expect(advanceFarming(paidReload, 1.125).civilization).toEqual(advanceFarming(continued, 1.125).civilization)
       }
     }

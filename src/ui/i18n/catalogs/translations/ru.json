@@ -646,7 +646,7 @@
   "farming.pendingSkill": "Эта веха ждёт доступного выбора в существующем дереве навыков или места в запасе катализаторов.",
   "farming.settings": "Настройки деревни",
   "farming.shop": "Покупки",
-  "farming.village.averted": "Беда миновала. Духи приписывают заслугу себе.",
+  "farming.village.averted": "Катастрофа предотвращена",
   "farming.village.balance": "Баланс еды",
   "farming.village.burials": "Захоронения",
   "farming.village.consumption": "Потребление",
@@ -2718,5 +2718,15 @@
   "wiki.topic-navigation": "Темы Вики",
   "wiki.topics": "Темы",
   "wiki.transcendence.overview": "При <value>4e242 ботах</value> выполните Трансценденцию во вкладке Avocato, чтобы сбросить прежние слои и получить <value>одно очко Трансценденции</value>. Потратьте там очко на <value>Открыть Открытие</value>, чтобы навсегда заменить Науку и Исследование. Имеющаяся Наука и уровни исследований не сохраняются.",
-  "wiki.transcendence.overview-title": "За пределами роя"
+  "wiki.transcendence.overview-title": "За пределами роя",
+  "gameplay.notifications.catalyst-earned": "+{count} {count, plural, one {катализатор} other {катализаторов}}",
+  "gameplay.notifications.first-catalyst-title": "Ваш первый катализатор",
+  "gameplay.notifications.first-catalyst-body": "Вы получили {count, plural, one {катализатор} other {{count} катализаторов}}. Потратьте их в разделе навыков, чтобы навсегда расколоть базовый навык. Расколотые навыки остаются активными, не требуют очков навыков, а их недостатки отключаются.",
+  "gameplay.notifications.view-skills": "Открыть навыки",
+  "farming.village.resident-loss": "{count, plural, one {# житель} other {# жителей}} ({percent})",
+  "farming.village.shaman-training": "Обучение шаманов",
+  "farming.village.protection-maximum": "Защита от катастроф · макс. {value}",
+  "farming.village.population-requirement": "{value} жителей",
+  "farming.village.growth-paused": "Рост приостановлен",
+  "farming.village.food-lasts": "Запас еды на {time}"
 }

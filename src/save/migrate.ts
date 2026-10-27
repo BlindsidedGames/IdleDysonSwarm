@@ -1,6 +1,6 @@
-import { migrateLegacyFarming, migrateAssignedFarming, migrateAutomaticFarming, migrateManagedFarming, migratePreferredFarming, migrateSeasonalFarming, replaceForagerWithFarming } from '../simulation/farming'
+import { migrateLegacyFarming, migrateAssignedFarming, migrateAutomaticFarming, migrateManagedFarming, migratePreferredFarming, migrateSeasonalFarming, migrateProtectedFarming, migratePrioritizedFarming, migrateCropHarvestFarming, replaceForagerWithFarming } from '../simulation/farming'
 import { validateCivilizationSave } from '../simulation/civilization'
-import type { CivilizationState, LegacyFarmingState, AssignedFarmingState, AutomaticFarmingState, ManagedFarmingState, PreferredFarmingState, SeasonalFarmingState } from '../game-state/types'
+import type { CivilizationState, LegacyFarmingState, AssignedFarmingState, AutomaticFarmingState, ManagedFarmingState, PreferredFarmingState, SeasonalFarmingState, ProtectedFarmingState, PrioritizedFarmingState, CropHarvestFarmingState } from '../game-state/types'
 import { SKILL_PRESET_COUNT } from '../game-state/skillPresetSlots'
 import { EMPTY_DISCOVERY } from '../simulation/discovery'
 import { isSubskill } from '../simulation/skillSubskills'
@@ -66,7 +66,7 @@ export function migrateDecodedSave(candidate: unknown): SaveMigrationResult {
       throw new UnsupportedFutureSaveSubsystemError(sourceSchema, 'Civilization', civilization.version)
     }
     const farming = civilization.farming
-    if (isRecord(farming) && typeof farming.version === 'number' && farming.version > 9) {
+    if (isRecord(farming) && typeof farming.version === 'number' && farming.version > 12) {
       throw new UnsupportedFutureSaveSubsystemError(sourceSchema, 'Farming', farming.version)
     }
   }
@@ -171,10 +171,10 @@ function migrateFarmingVillage(save: SaveRecord): boolean {
   const civilization = save.civilization
   if (!isRecord(civilization) || civilization.version !== 5) return false
   const previous = civilization.farming
-  if (!isRecord(previous) || previous.version === 9) return false
+  if (!isRecord(previous) || previous.version === 12) return false
   const issue = validateCivilizationSave(civilization)
   if (issue) throw new Error(issue)
-  const farming = previous.version === 8 ? migrateSeasonalFarming(previous as unknown as SeasonalFarmingState) : previous.version === 7 ? migratePreferredFarming(previous as unknown as PreferredFarmingState) : previous.version === 6 ? migrateManagedFarming(previous as unknown as ManagedFarmingState) : previous.version === 5 ? migrateAutomaticFarming(previous as unknown as AutomaticFarmingState) : previous.version === 4 ? migrateAssignedFarming(previous as unknown as AssignedFarmingState) : migrateLegacyFarming(previous as unknown as LegacyFarmingState)
+  const farming = previous.version === 11 ? migrateCropHarvestFarming(previous as unknown as CropHarvestFarmingState) : previous.version === 10 ? migratePrioritizedFarming(previous as unknown as PrioritizedFarmingState) : previous.version === 9 ? migrateProtectedFarming(previous as unknown as ProtectedFarmingState) : previous.version === 8 ? migrateSeasonalFarming(previous as unknown as SeasonalFarmingState) : previous.version === 7 ? migratePreferredFarming(previous as unknown as PreferredFarmingState) : previous.version === 6 ? migrateManagedFarming(previous as unknown as ManagedFarmingState) : previous.version === 5 ? migrateAutomaticFarming(previous as unknown as AutomaticFarmingState) : previous.version === 4 ? migrateAssignedFarming(previous as unknown as AssignedFarmingState) : migrateLegacyFarming(previous as unknown as LegacyFarmingState)
   save.civilization = replaceForagerWithFarming(civilization as unknown as CivilizationState, farming)
   return true
 }

@@ -646,7 +646,7 @@
   "farming.pendingSkill": "Este hito espera una opción disponible del árbol de habilidades o espacio en la reserva de catalizadores.",
   "farming.settings": "Ajustes de la aldea",
   "farming.shop": "Compras",
-  "farming.village.averted": "Desastre evitado. Los espíritus se llevan el mérito.",
+  "farming.village.averted": "Desastre evitado",
   "farming.village.balance": "Balance de alimentos",
   "farming.village.burials": "Entierros",
   "farming.village.consumption": "Consumo",
@@ -2718,5 +2718,15 @@
   "wiki.topic-navigation": "Temas de la Wiki",
   "wiki.topics": "Temas",
   "wiki.transcendence.overview": "Con <value>4e242 bots</value>, Trasciende en Avocato para reiniciar las capas anteriores y ganar <value>un punto de Trascendencia</value>. Gasta un punto en <value>Desbloquear Descubrimiento</value> en esa pestaña para reemplazar Ciencia e Investigación permanentemente. La Ciencia y los niveles de investigación existentes no se conservan.",
-  "wiki.transcendence.overview-title": "Más allá del enjambre"
+  "wiki.transcendence.overview-title": "Más allá del enjambre",
+  "gameplay.notifications.catalyst-earned": "+{count} {count, plural, one {catalizador} other {catalizadores}}",
+  "gameplay.notifications.first-catalyst-title": "Tu primer catalizador",
+  "gameplay.notifications.first-catalyst-body": "Obtuviste {count, plural, one {un catalizador} other {{count} catalizadores}}. Gástalos en Habilidades para fracturar permanentemente una habilidad base. Las habilidades fracturadas permanecen activas sin usar puntos de habilidad y sus desventajas se desactivan.",
+  "gameplay.notifications.view-skills": "Ver habilidades",
+  "farming.village.resident-loss": "{count, plural, one {# habitante} other {# habitantes}} ({percent})",
+  "farming.village.shaman-training": "Formación de chamanes",
+  "farming.village.protection-maximum": "Reducción de desastres · máx. {value}",
+  "farming.village.population-requirement": "{value} habitantes",
+  "farming.village.growth-paused": "Crecimiento en pausa",
+  "farming.village.food-lasts": "Comida para {time}"
 }

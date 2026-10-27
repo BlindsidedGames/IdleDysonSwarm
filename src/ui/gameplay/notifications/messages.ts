@@ -1,6 +1,10 @@
 import { defineMessages } from 'react-intl'
 
 export const gameplayNotificationMessages = defineMessages({
+  catalystEarned: { id: 'gameplay.notifications.catalyst-earned', defaultMessage: '+{count} {count, plural, one {Catalyst} other {Catalysts}}', description: 'Timed notice for newly awarded Simulation catalysts.' },
+  firstCatalystTitle: { id: 'gameplay.notifications.first-catalyst-title', defaultMessage: 'Your first Catalyst', description: 'First catalyst reward popup heading.' },
+  firstCatalystBody: { id: 'gameplay.notifications.first-catalyst-body', defaultMessage: 'You earned {count, plural, one {a Catalyst} other {{count} Catalysts}}. Spend Catalysts in Skills to permanently fracture a base skill. Fractured skills stay active without using Skill Points and have their downsides disabled.', description: 'Explains the purpose of the first awarded catalysts.' },
+  viewSkills: { id: 'gameplay.notifications.view-skills', defaultMessage: 'View Skills', description: 'Open Skills from the first catalyst popup.' },
   continue: {
     id: 'gameplay.notifications.continue',
     defaultMessage: 'Continue',

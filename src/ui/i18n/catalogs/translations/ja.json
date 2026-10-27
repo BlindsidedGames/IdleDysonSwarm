@@ -646,7 +646,7 @@
   "farming.pendingSkill": "この節目は既存のスキルツリーに対象の選択肢が現れるか、触媒の保有量に空きができるまで待機します。",
   "farming.settings": "集落の設定",
   "farming.shop": "購入",
-  "farming.village.averted": "災害を回避。精霊たちは自分のおかげだと言っています。",
+  "farming.village.averted": "災害を回避",
   "farming.village.balance": "食料収支",
   "farming.village.burials": "埋葬者数",
   "farming.village.consumption": "消費量",
@@ -2718,5 +2718,15 @@
   "wiki.topic-navigation": "Wikiのトピック",
   "wiki.topics": "トピック",
   "wiki.transcendence.overview": "ボット数が<value>4e242ボット</value>に達したら、Avocatoタブから超越して以前の層をリセットし、<value>超越ポイントを1</value>獲得できます。そのタブで1ポイントを使い<value>発見を解放</value>すると、科学と研究を永続的に置き換えます。既存の科学と研究レベルは引き継がれません。",
-  "wiki.transcendence.overview-title": "スウォームのその先へ"
+  "wiki.transcendence.overview-title": "スウォームのその先へ",
+  "gameplay.notifications.catalyst-earned": "+{count} {count, plural, one {個の触媒} other {個の触媒}}",
+  "gameplay.notifications.first-catalyst-title": "初めての触媒",
+  "gameplay.notifications.first-catalyst-body": "獲得報酬は{count, plural, one {触媒1個} other {{count}個の触媒}}です。スキル画面で触媒を使うと、基本スキルを永久にフラクチャーできます。フラクチャーしたスキルはスキルポイントを消費せず常に有効になり、デメリットも無効になります。",
+  "gameplay.notifications.view-skills": "スキルを見る",
+  "farming.village.resident-loss": "{count, plural, one {#人の住民} other {#人の住民}}（{percent}）",
+  "farming.village.shaman-training": "シャーマンの訓練",
+  "farming.village.protection-maximum": "災害軽減 · 最大{value}",
+  "farming.village.population-requirement": "{value}人",
+  "farming.village.growth-paused": "人口増加は停止中",
+  "farming.village.food-lasts": "食料の残り時間：{time}"
 }

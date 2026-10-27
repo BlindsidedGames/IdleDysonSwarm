@@ -13,7 +13,7 @@ import hall from '../../assets/skill-icons/farmingHall.webp'
 
 export type FarmingSymbolId = FarmingResource | FarmingPurchase | 'worker' | 'land' | 'burials' | 'jobs'
 const icons = { jobs, burials, land: woodland, loggingCamp: woodland, house: homes, field: fields,
-  granary, pasture, shrine: hall, irrigation: waterworks }
+  granary, pasture, shrine: hall, shamanTraining: hall, irrigation: waterworks }
 export function FarmingSymbol({ resource }: { resource: FarmingSymbolId }) {
   if (resource === 'food' || resource === 'materials' || resource === 'tools' || resource === 'worker') return <CivilizationSymbol resource={resource} />
   if (resource === 'workshop') return <CivilizationSymbol resource="tools" />

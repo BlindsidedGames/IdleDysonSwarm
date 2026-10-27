@@ -333,28 +333,21 @@
 .civilization-visible-stock > div { justify-content: flex-start; gap: .16em; }
 
 
-/* Farming keeps Forager's rows; assignments live in their full-row disclosures. */
+/* Farming uses Forager's priority rows; buildings provide job capacity. */
 .village-job-details { display:grid; gap:var(--ui-card-gap); }
-.farming-surface .civilization-activity { position:relative; --village-control-size:max(44px,var(--target-minimum)); --village-control-width:calc(2 * var(--village-control-size) + var(--ui-control-gap)); }
-.farming-surface .civilization-job > summary { display:grid; grid-template-columns:var(--village-control-width) minmax(0,1fr); gap:var(--ui-card-gap); align-items:stretch; }
-.village-job-content { min-inline-size:0; min-block-size:var(--village-control-size); display:flex; flex-direction:column; justify-content:flex-start; }
-.village-job-content:has(> .civilization-cycle) { justify-content:space-between; }
-.village-job-content > .civilization-cycle { align-items:end; }
+.farming-surface .civilization-activity { position:relative; }
+.farming-surface .civilization-job > summary { display:block; }
+.farming-surface .civilization-activity[data-priority-choice] { grid-template-columns:max(44px,var(--target-minimum)) minmax(0,1fr); }
+.farming-surface .civilization-activity[data-priority-choice] > .civilization-job { min-inline-size:0; }
+.village-job-content { min-inline-size:0; min-block-size:max(44px,var(--target-minimum)); display:flex; flex-direction:column; justify-content:space-between; }
+.farming-surface .civilization-cycle { align-items:end; }
 .farming-surface .civilization-job-header { --civilization-recipe-icon-size:.92em; min-block-size:0; align-content:start; row-gap:0; padding-inline-end:1em; margin-block-end:0; }
 .village-job-staffing { display:inline-flex; align-items:center; gap:var(--ui-card-gap); font-size:calc(.8rem * var(--game-text-scale)); line-height:1.12; }
 .farming-surface .civilization-job-timer { line-height:1.12; }
 .farming-surface .civilization-job-recipe { font-size:calc(.8rem * var(--game-text-scale)); line-height:1; }
 .farming-surface .civilization-job-header :is(.civilization-start-cost, .civilization-output) > span { display:inline-flex; }
 .farming-surface .civilization-job > summary > .civilization-chevron { inset-inline-end:var(--game-card-content-inset); inset-block-start:var(--game-card-content-inset); }
-/* Layout and touch bounds only; shared purchase buttons own every visual state. */
-.village-job-controls { display:grid; grid-template-columns:repeat(2,var(--village-control-size)); grid-template-rows:var(--village-control-size); align-self:start; gap:var(--ui-control-gap); inline-size:var(--village-control-width); }
-.village-job-limit > .ui-resource-value__content { gap:var(--ui-control-gap); }
 .village-crew-count { display:inline-flex; align-items:center; gap:.16em; font-size:calc(.8rem * var(--game-text-scale)); font-weight:var(--font-weight-semibold); }
-/* Keep the numeric hit target full-sized without making the text line 44px tall. */
-.village-job-count-field { --village-count-target:max(var(--village-control-size),var(--village-count-width)); position:relative; display:inline-block; inline-size:var(--village-count-width); block-size:1.12em; }
-.village-job-count { position:absolute; inset-block-start:0; inset-inline-start:calc((var(--village-count-width) - var(--village-count-target)) / 2); appearance:textfield; box-sizing:border-box; inline-size:var(--village-count-target); block-size:var(--village-control-size); padding:0 0 calc(var(--village-control-size) - 1.12em) calc((var(--village-count-target) - var(--village-count-width)) / 2); text-align:start; font:inherit; font-variant-numeric:tabular-nums; line-height:1.12; color:inherit; background:transparent; border:0; border-radius:.2rem; }
-.village-job-count::-webkit-inner-spin-button, .village-job-count::-webkit-outer-spin-button { appearance:none; margin:0; }
-.village-job-count:focus-visible { outline:3px solid var(--color-focus); outline-offset:-3px; }
 .village-event { font-size:var(--ui-text-body); margin:0 0 var(--ui-card-gap); }
 .village-season-yields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--ui-card-gap); padding:0; margin:0; list-style:none; font-size:var(--ui-text-body); }
 .village-season-yields li { display:flex; flex-wrap:wrap; align-items:center; gap:var(--ui-control-gap); }
@@ -372,13 +365,12 @@
 .village-growth-timer > * { grid-area:1 / 1; }
 .village-growth-timer-sample { visibility:hidden; }
 
-.village-disasters { margin-block-end:var(--ui-section-gap); }
+.village-disasters { position:relative; margin-block-end:var(--ui-section-gap); }
 .village-disasters h3 { margin:0 0 var(--ui-card-gap); font-size:var(--ui-text-section-title); }
 .village-disaster-progress { display:grid; gap:var(--ui-card-gap); }
 .village-disaster-meter { position:relative; display:grid; gap:var(--ui-related-copy-gap); }
 .village-disaster-meter progress { position:absolute; inline-size:1px; block-size:1px; overflow:hidden; clip-path:inset(50%); }
 .village-disaster-defense .civilization-cycle-fill { background:var(--color-positive); }
-.village-job-content:has(> .village-shaman-defense) { justify-content:space-between; }
 .village-shaman-defense { gap:0; }
 .village-shaman-defense .ui-progress { gap:0; font-size:calc(.67rem * var(--game-text-scale)); }
 .village-shaman-defense .ui-progress__header { padding-inline-end:0; line-height:1.12; }
@@ -386,5 +378,30 @@
 .village-shaman-defense .ui-progress__value { font-family:var(--font-family-numeric); }
 .village-disaster-progress .ui-progress { font-size:calc(.8rem * var(--game-text-scale)); }
 .village-disaster-progress .ui-progress__value { font-family:var(--font-family-numeric); font-variant-numeric:tabular-nums; }
-.village-disaster-event { margin:var(--ui-card-gap) 0 0; font-size:var(--ui-text-body); }
+.village-disaster-event { position:absolute; inset-inline:0; inset-block-end:100%; margin:0 0 var(--ui-related-copy-gap); overflow:hidden; font-size:var(--ui-text-body); line-height:1.25; text-overflow:ellipsis; white-space:nowrap; }
 .civilization-activities.village-disaster-shamans { grid-template-columns:minmax(0,1fr); margin-block-start:var(--ui-card-gap); }
+
+/* Seasonal quantities and clocks retain their width through formatter transitions. */
+.farming-surface .civilization-icon-amount, .farming-surface .village-job-staffing { font-family:var(--font-family-numeric); font-variant-numeric:tabular-nums; }
+.farming-surface .village-food-amount, .civilization-job-timer[data-stable] { display:inline-grid; text-align:end; }
+.village-food-amount > *, .civilization-job-timer[data-stable] > * { grid-area:1 / 1; }
+.village-food-value { justify-self:end; }
+.village-number-sample { visibility:hidden; }
+
+/* Burials open by click/tap or keyboard; the breakdown never depends on hover. */
+.village-visually-hidden { position:absolute; inline-size:1px; block-size:1px; overflow:hidden; clip-path:inset(50%); }
+.village-burials-toggle { display:flex; align-items:center; gap:.16em; min-inline-size:44px; min-block-size:44px; cursor:pointer; padding:0; border:0; background:transparent; color:inherit; font:inherit; }
+.village-burials-toggle:focus-visible { outline:2px solid var(--color-focus); outline-offset:2px; }
+.village-burial-breakdown { inline-size:min(100%,20rem); margin-block-end:var(--ui-card-gap); padding:var(--ui-panel-inset); border:1px solid var(--theme-divider); border-radius:var(--ui-control-radius); background:var(--theme-panel); }
+.village-disaster-loss { margin-block-start:var(--ui-related-copy-gap); }
+
+/* Match app-wide heading and metadata roles in both playable eras. */
+.civilization-heading h2 { font-size:var(--ui-text-page-title); }
+.civilization-path h3 { font-size:var(--ui-text-section-title); }
+.village-shaman-defense .ui-progress { font-size:var(--ui-text-meta); }
+
+/* House and Granary keep population and storage beside the building decisions. */
+.village-building-total { margin-inline-start:auto; font-size:var(--ui-text-body); font-family:var(--font-family-numeric); }
+.village-building-meter { min-inline-size:0; display:grid; gap:var(--ui-related-copy-gap); font-size:var(--ui-text-body); }
+.village-building-meter .civilization-cycle-fill { background-color:var(--theme-accent); }
+.village-shaman-defense .civilization-cycle-fill { background-color:var(--color-positive); }

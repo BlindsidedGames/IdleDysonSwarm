@@ -18,6 +18,7 @@ interface Props {
   readonly value: number
   readonly maximum: number
   readonly valueText: string
+  readonly timerSamples?: readonly string[]
   readonly timerText: string
   readonly sampleSeconds: number
   readonly cycleKey: string
@@ -45,7 +46,7 @@ interface PresentationSample {
  * interpolation even when several completions happen between publications.
  */
 export function CivilizationCycleProgress({
-  label, value, maximum, valueText, timerText, sampleSeconds, cycleKey,
+  label, value, maximum, valueText, timerText, timerSamples, sampleSeconds, cycleKey,
   gameSpeed, active, cycleRate, locale,
 }: Props) {
   const intl = useIntl()
@@ -125,7 +126,8 @@ export function CivilizationCycleProgress({
         <span ref={fillRef} className="civilization-cycle-fill" style={{ transform: `scaleX(${solid ? 1 : fraction})` }} />
       </div>
     </div>
-    <span className="civilization-job-timer" aria-label={valueText} title={valueText}>
+    <span className="civilization-job-timer" data-stable={timerSamples && !solid || undefined} aria-label={valueText} title={valueText}>
+      {!solid && timerSamples?.map(sample => <span className="village-number-sample" aria-hidden="true" key={sample}>{sample}</span>)}
       <span>{visibleTimer}</span>
     </span>
   </div>

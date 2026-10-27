@@ -5428,7 +5428,7 @@
   "farming.village.averted": [
     {
       "type": 0,
-      "value": "Désastre évité. Les esprits en prennent le mérite."
+      "value": "Catastrophe évitée"
     }
   ],
   "farming.village.balance": [
@@ -5515,6 +5515,16 @@
       "value": "Nourriture"
     }
   ],
+  "farming.village.food-lasts": [
+    {
+      "type": 0,
+      "value": "Réserves pour "
+    },
+    {
+      "type": 1,
+      "value": "time"
+    }
+  ],
   "farming.village.fullCrew": [
     {
       "type": 0,
@@ -5525,6 +5535,12 @@
     {
       "type": 0,
       "value": "Croissance"
+    }
+  ],
+  "farming.village.growth-paused": [
+    {
+      "type": 0,
+      "value": "Croissance en pause"
     }
   ],
   "farming.village.herding": [
@@ -5683,6 +5699,16 @@
       "value": "/min"
     }
   ],
+  "farming.village.population-requirement": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " habitants"
+    }
+  ],
   "farming.village.production": [
     {
       "type": 0,
@@ -5695,16 +5721,76 @@
       "value": "Réduction des catastrophes"
     }
   ],
+  "farming.village.protection-maximum": [
+    {
+      "type": 0,
+      "value": "Réduction des catastrophes · max. "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
   "farming.village.reserve": [
     {
       "type": 0,
       "value": "Réserve de nourriture"
     }
   ],
+  "farming.village.resident-loss": [
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " habitant"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " habitants"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": " ("
+    },
+    {
+      "type": 1,
+      "value": "percent"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "farming.village.shaman": [
     {
       "type": 0,
       "value": "Chamans"
+    }
+  ],
+  "farming.village.shaman-training": [
+    {
+      "type": 0,
+      "value": "Formation des chamans"
     }
   ],
   "farming.village.shrine": [
@@ -5767,6 +5853,44 @@
     {
       "type": 0,
       "value": "Atelier"
+    }
+  ],
+  "gameplay.notifications.catalyst-earned": [
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 0,
+              "value": "catalyseur"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 0,
+              "value": "catalyseurs"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
     }
   ],
   "gameplay.notifications.continue": [
@@ -5879,10 +6003,60 @@
       "value": " Matière étrange"
     }
   ],
+  "gameplay.notifications.first-catalyst-body": [
+    {
+      "type": 0,
+      "value": "Vous avez gagné "
+    },
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 0,
+              "value": "un catalyseur"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 1,
+              "value": "count"
+            },
+            {
+              "type": 0,
+              "value": " catalyseurs"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ". Dépensez-les dans Compétences pour fracturer définitivement une compétence de base. Les compétences fracturées restent actives sans utiliser de points de compétence, et leurs inconvénients sont désactivés."
+    }
+  ],
+  "gameplay.notifications.first-catalyst-title": [
+    {
+      "type": 0,
+      "value": "Votre premier catalyseur"
+    }
+  ],
   "gameplay.notifications.view-countermeasures": [
     {
       "type": 0,
       "value": "Voir les contre-mesures"
+    }
+  ],
+  "gameplay.notifications.view-skills": [
+    {
+      "type": 0,
+      "value": "Voir les compétences"
     }
   ],
   "infinity.automatic-reset": [

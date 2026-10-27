@@ -5428,7 +5428,7 @@
   "farming.village.averted": [
     {
       "type": 0,
-      "value": "Unheil abgewendet. Die Geister beanspruchen das Verdienst."
+      "value": "Katastrophe abgewendet"
     }
   ],
   "farming.village.balance": [
@@ -5515,6 +5515,16 @@
       "value": "Nahrung"
     }
   ],
+  "farming.village.food-lasts": [
+    {
+      "type": 0,
+      "value": "Vorrat reicht "
+    },
+    {
+      "type": 1,
+      "value": "time"
+    }
+  ],
   "farming.village.fullCrew": [
     {
       "type": 0,
@@ -5525,6 +5535,12 @@
     {
       "type": 0,
       "value": "Wachstum"
+    }
+  ],
+  "farming.village.growth-paused": [
+    {
+      "type": 0,
+      "value": "Wachstum pausiert"
     }
   ],
   "farming.village.herding": [
@@ -5683,6 +5699,16 @@
       "value": "/min"
     }
   ],
+  "farming.village.population-requirement": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Bevölkerung"
+    }
+  ],
   "farming.village.production": [
     {
       "type": 0,
@@ -5695,16 +5721,76 @@
       "value": "Katastrophenabwehr"
     }
   ],
+  "farming.village.protection-maximum": [
+    {
+      "type": 0,
+      "value": "Katastrophenabwehr · max. "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
   "farming.village.reserve": [
     {
       "type": 0,
       "value": "Nahrungsvorrat"
     }
   ],
+  "farming.village.resident-loss": [
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Bewohner"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Bewohner"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": " ("
+    },
+    {
+      "type": 1,
+      "value": "percent"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "farming.village.shaman": [
     {
       "type": 0,
       "value": "Schamanen"
+    }
+  ],
+  "farming.village.shaman-training": [
+    {
+      "type": 0,
+      "value": "Schamanenausbildung"
     }
   ],
   "farming.village.shrine": [
@@ -5767,6 +5853,44 @@
     {
       "type": 0,
       "value": "Werkstatt"
+    }
+  ],
+  "gameplay.notifications.catalyst-earned": [
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 0,
+              "value": "Katalysator"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 0,
+              "value": "Katalysatoren"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
     }
   ],
   "gameplay.notifications.continue": [
@@ -5879,10 +6003,60 @@
       "value": " Seltsame Materie"
     }
   ],
+  "gameplay.notifications.first-catalyst-body": [
+    {
+      "type": 0,
+      "value": "Du hast "
+    },
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 0,
+              "value": "einen Katalysator"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 1,
+              "value": "count"
+            },
+            {
+              "type": 0,
+              "value": " Katalysatoren"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": " erhalten. Gib Katalysatoren unter Skills aus, um einen Basis-Skill dauerhaft zu brechen. Gebrochene Skills bleiben aktiv, ohne Skillpunkte zu verbrauchen, und ihre Nachteile werden deaktiviert."
+    }
+  ],
+  "gameplay.notifications.first-catalyst-title": [
+    {
+      "type": 0,
+      "value": "Dein erster Katalysator"
+    }
+  ],
   "gameplay.notifications.view-countermeasures": [
     {
       "type": 0,
       "value": "Gegenmaßnahmen ansehen"
+    }
+  ],
+  "gameplay.notifications.view-skills": [
+    {
+      "type": 0,
+      "value": "Skills ansehen"
     }
   ],
   "infinity.automatic-reset": [

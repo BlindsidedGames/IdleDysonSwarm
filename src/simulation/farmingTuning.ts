@@ -3,6 +3,7 @@ export const FARMING_TUNING = Object.freeze({
   seasonSeconds: 1_800,
   generationSeasons: 8,
   foodPerPersonPerMinute: 1,
+  baseStorageSeasons: 1,
   residentsPerHouse: 3,
   fieldWorkers: 4,
   loggingCampWorkers: 8,
@@ -12,6 +13,8 @@ export const FARMING_TUNING = Object.freeze({
   starvationFoodPerDeath: 30,
   shrineWorkers: 4,
   shamanPopulationFraction: .10,
+  protectionCaps: [.50, .65, .80, 1] as const,
+  protectionPopulationRequirements: [24, 48, 96] as const,
   disasterPopulationLoss: .15,
   populationMilestones: [6, 12, 24, 48, 96, 192] as const,
   food: {

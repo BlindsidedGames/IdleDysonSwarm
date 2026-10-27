@@ -646,7 +646,7 @@
   "farming.pendingSkill": "Ce jalon attend un choix disponible dans l’arbre de compétences ou de la place dans la réserve de catalyseurs.",
   "farming.settings": "Paramètres du village",
   "farming.shop": "Achats",
-  "farming.village.averted": "Désastre évité. Les esprits en prennent le mérite.",
+  "farming.village.averted": "Catastrophe évitée",
   "farming.village.balance": "Bilan alimentaire",
   "farming.village.burials": "Sépultures",
   "farming.village.consumption": "Consommation",
@@ -2718,5 +2718,15 @@
   "wiki.topic-navigation": "Sujets du wiki",
   "wiki.topics": "Sujets",
   "wiki.transcendence.overview": "À <value>4e242 bots</value>, Transcendez dans Avocato pour réinitialiser les couches précédentes et gagner <value>un point de Transcendance</value>. Dépensez un point pour <value>Débloquer Découverte</value> dans cet onglet afin de remplacer définitivement Science et Recherche. La Science et les niveaux de recherche existants ne sont pas conservés.",
-  "wiki.transcendence.overview-title": "Au-delà de l’essaim"
+  "wiki.transcendence.overview-title": "Au-delà de l’essaim",
+  "gameplay.notifications.catalyst-earned": "+{count} {count, plural, one {catalyseur} other {catalyseurs}}",
+  "gameplay.notifications.first-catalyst-title": "Votre premier catalyseur",
+  "gameplay.notifications.first-catalyst-body": "Vous avez gagné {count, plural, one {un catalyseur} other {{count} catalyseurs}}. Dépensez-les dans Compétences pour fracturer définitivement une compétence de base. Les compétences fracturées restent actives sans utiliser de points de compétence, et leurs inconvénients sont désactivés.",
+  "gameplay.notifications.view-skills": "Voir les compétences",
+  "farming.village.resident-loss": "{count, plural, one {# habitant} other {# habitants}} ({percent})",
+  "farming.village.shaman-training": "Formation des chamans",
+  "farming.village.protection-maximum": "Réduction des catastrophes · max. {value}",
+  "farming.village.population-requirement": "{value} habitants",
+  "farming.village.growth-paused": "Croissance en pause",
+  "farming.village.food-lasts": "Réserves pour {time}"
 }

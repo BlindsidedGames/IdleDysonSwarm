@@ -646,7 +646,7 @@
   "farming.pendingSkill": "Dieser Meilenstein wartet auf eine verfügbare Fertigkeitsbaumwahl oder Platz im Katalysatorvorrat.",
   "farming.settings": "Dorfeinstellungen",
   "farming.shop": "Käufe",
-  "farming.village.averted": "Unheil abgewendet. Die Geister beanspruchen das Verdienst.",
+  "farming.village.averted": "Katastrophe abgewendet",
   "farming.village.balance": "Nahrungsbilanz",
   "farming.village.burials": "Bestattungen",
   "farming.village.consumption": "Verbrauch",
@@ -2718,5 +2718,15 @@
   "wiki.topic-navigation": "Wiki-Themen",
   "wiki.topics": "Themen",
   "wiki.transcendence.overview": "Bei <value>4e242 Bots</value> kannst du in Avocato transzendieren, frühere Ebenen zurücksetzen und <value>einen Transzendenzpunkt</value> erhalten. Gib dort einen Punkt für <value>Entdeckung freischalten</value> aus, um Wissenschaft und Forschung dauerhaft zu ersetzen. Vorhandene Wissenschaft und Forschungsstufen werden nicht übertragen.",
-  "wiki.transcendence.overview-title": "Jenseits des Schwarms"
+  "wiki.transcendence.overview-title": "Jenseits des Schwarms",
+  "gameplay.notifications.catalyst-earned": "+{count} {count, plural, one {Katalysator} other {Katalysatoren}}",
+  "gameplay.notifications.first-catalyst-title": "Dein erster Katalysator",
+  "gameplay.notifications.first-catalyst-body": "Du hast {count, plural, one {einen Katalysator} other {{count} Katalysatoren}} erhalten. Gib Katalysatoren unter Skills aus, um einen Basis-Skill dauerhaft zu brechen. Gebrochene Skills bleiben aktiv, ohne Skillpunkte zu verbrauchen, und ihre Nachteile werden deaktiviert.",
+  "gameplay.notifications.view-skills": "Skills ansehen",
+  "farming.village.resident-loss": "{count, plural, one {# Bewohner} other {# Bewohner}} ({percent})",
+  "farming.village.shaman-training": "Schamanenausbildung",
+  "farming.village.protection-maximum": "Katastrophenabwehr · max. {value}",
+  "farming.village.population-requirement": "{value} Bevölkerung",
+  "farming.village.growth-paused": "Wachstum pausiert",
+  "farming.village.food-lasts": "Vorrat reicht {time}"
 }

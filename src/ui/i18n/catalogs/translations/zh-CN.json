@@ -646,7 +646,7 @@
   "farming.pendingSkill": "此里程碑正在等待现有技能树中符合条件的选项，或催化剂余额腾出空间。",
   "farming.settings": "村落设置",
   "farming.shop": "购买",
-  "farming.village.averted": "灾难已避免。神灵认为都是自己的功劳。",
+  "farming.village.averted": "已避免灾害",
   "farming.village.balance": "食物收支",
   "farming.village.burials": "安葬人数",
   "farming.village.consumption": "消耗",
@@ -2718,5 +2718,15 @@
   "wiki.topic-navigation": "百科主题导航",
   "wiki.topics": "主题",
   "wiki.transcendence.overview": "达到 <value>4e242 机器人</value>时，在 Avocato 标签页进行超越，重置此前层级并获得<value>一个超越点数</value>。在该标签页花费一点<value>解锁探索</value>，永久替代科学和研究。现有科学和研究等级不会保留。",
-  "wiki.transcendence.overview-title": "超越蜂群"
+  "wiki.transcendence.overview-title": "超越蜂群",
+  "gameplay.notifications.catalyst-earned": "+{count} {count, plural, one {个催化剂} other {个催化剂}}",
+  "gameplay.notifications.first-catalyst-title": "你的第一个催化剂",
+  "gameplay.notifications.first-catalyst-body": "你获得了{count, plural, one {一个催化剂} other {{count}个催化剂}}。在技能界面消耗催化剂，即可永久裂化一个基础技能。裂化后的技能保持生效，不占用技能点，且其负面效果将被禁用。",
+  "gameplay.notifications.view-skills": "查看技能",
+  "farming.village.resident-loss": "{count, plural, one {#名居民} other {#名居民}}（{percent}）",
+  "farming.village.shaman-training": "萨满训练",
+  "farming.village.protection-maximum": "灾害减免 · 上限{value}",
+  "farming.village.population-requirement": "{value} 名居民",
+  "farming.village.growth-paused": "人口增长暂停",
+  "farming.village.food-lasts": "食物可维持{time}"
 }

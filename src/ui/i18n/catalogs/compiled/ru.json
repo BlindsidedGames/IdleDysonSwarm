@@ -5428,7 +5428,7 @@
   "farming.village.averted": [
     {
       "type": 0,
-      "value": "Беда миновала. Духи приписывают заслугу себе."
+      "value": "Катастрофа предотвращена"
     }
   ],
   "farming.village.balance": [
@@ -5515,6 +5515,16 @@
       "value": "Еда"
     }
   ],
+  "farming.village.food-lasts": [
+    {
+      "type": 0,
+      "value": "Запас еды на "
+    },
+    {
+      "type": 1,
+      "value": "time"
+    }
+  ],
   "farming.village.fullCrew": [
     {
       "type": 0,
@@ -5525,6 +5535,12 @@
     {
       "type": 0,
       "value": "Рост"
+    }
+  ],
+  "farming.village.growth-paused": [
+    {
+      "type": 0,
+      "value": "Рост приостановлен"
     }
   ],
   "farming.village.herding": [
@@ -5683,6 +5699,16 @@
       "value": "/мин"
     }
   ],
+  "farming.village.population-requirement": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " жителей"
+    }
+  ],
   "farming.village.production": [
     {
       "type": 0,
@@ -5695,16 +5721,76 @@
       "value": "Снижение риска бедствия"
     }
   ],
+  "farming.village.protection-maximum": [
+    {
+      "type": 0,
+      "value": "Защита от катастроф · макс. "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
   "farming.village.reserve": [
     {
       "type": 0,
       "value": "Запас еды"
     }
   ],
+  "farming.village.resident-loss": [
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " житель"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " жителей"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": " ("
+    },
+    {
+      "type": 1,
+      "value": "percent"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "farming.village.shaman": [
     {
       "type": 0,
       "value": "Шаманы"
+    }
+  ],
+  "farming.village.shaman-training": [
+    {
+      "type": 0,
+      "value": "Обучение шаманов"
     }
   ],
   "farming.village.shrine": [
@@ -5767,6 +5853,44 @@
     {
       "type": 0,
       "value": "Мастерская"
+    }
+  ],
+  "gameplay.notifications.catalyst-earned": [
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 0,
+              "value": "катализатор"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 0,
+              "value": "катализаторов"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
     }
   ],
   "gameplay.notifications.continue": [
@@ -5879,10 +6003,60 @@
       "value": " Странной материи"
     }
   ],
+  "gameplay.notifications.first-catalyst-body": [
+    {
+      "type": 0,
+      "value": "Вы получили "
+    },
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 0,
+              "value": "катализатор"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 1,
+              "value": "count"
+            },
+            {
+              "type": 0,
+              "value": " катализаторов"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ". Потратьте их в разделе навыков, чтобы навсегда расколоть базовый навык. Расколотые навыки остаются активными, не требуют очков навыков, а их недостатки отключаются."
+    }
+  ],
+  "gameplay.notifications.first-catalyst-title": [
+    {
+      "type": 0,
+      "value": "Ваш первый катализатор"
+    }
+  ],
   "gameplay.notifications.view-countermeasures": [
     {
       "type": 0,
       "value": "Посмотреть контрмеры"
+    }
+  ],
+  "gameplay.notifications.view-skills": [
+    {
+      "type": 0,
+      "value": "Открыть навыки"
     }
   ],
   "infinity.automatic-reset": [

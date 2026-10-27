@@ -646,7 +646,7 @@
   "farming.pendingSkill": "Este marco aguarda uma opção disponível na árvore de habilidades ou espaço na reserva de catalisadores.",
   "farming.settings": "Configurações da aldeia",
   "farming.shop": "Compras",
-  "farming.village.averted": "Desastre evitado. Os espíritos levam o crédito.",
+  "farming.village.averted": "Desastre evitado",
   "farming.village.balance": "Saldo de alimentos",
   "farming.village.burials": "Sepultamentos",
   "farming.village.consumption": "Consumo",
@@ -2718,5 +2718,15 @@
   "wiki.topic-navigation": "Tópicos da Wiki",
   "wiki.topics": "Tópicos",
   "wiki.transcendence.overview": "Com <value>4e242 bots</value>, Transcenda em Avocato para reiniciar as camadas anteriores e ganhar <value>um ponto de Transcendência</value>. Gaste um ponto em <value>Desbloquear Descoberta</value> nessa aba para substituir Ciência e Pesquisa permanentemente. Ciência e níveis de pesquisa existentes não são mantidos.",
-  "wiki.transcendence.overview-title": "Além do enxame"
+  "wiki.transcendence.overview-title": "Além do enxame",
+  "gameplay.notifications.catalyst-earned": "+{count} {count, plural, one {catalisador} other {catalisadores}}",
+  "gameplay.notifications.first-catalyst-title": "Seu primeiro catalisador",
+  "gameplay.notifications.first-catalyst-body": "Você ganhou {count, plural, one {um catalisador} other {{count} catalisadores}}. Gaste-os em Habilidades para fraturar permanentemente uma habilidade base. Habilidades fraturadas permanecem ativas sem usar pontos de habilidade e suas desvantagens são desativadas.",
+  "gameplay.notifications.view-skills": "Ver habilidades",
+  "farming.village.resident-loss": "{count, plural, one {# habitante} other {# habitantes}} ({percent})",
+  "farming.village.shaman-training": "Treinamento de xamãs",
+  "farming.village.protection-maximum": "Redução de desastres · máx. {value}",
+  "farming.village.population-requirement": "{value} habitantes",
+  "farming.village.growth-paused": "Crescimento pausado",
+  "farming.village.food-lasts": "Comida para {time}"
 }

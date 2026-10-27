@@ -1,6 +1,6 @@
 import type {
   CanonicalGameStateV1, CivilizationState, FarmingJob, FarmingPurchase,
-  FarmingRecipe, FarmingResource, FarmingState, FarmingWorkplace, LegacyFarmingState, AssignedFarmingState, AutomaticFarmingState, ManagedFarmingState, PreferredFarmingState, SeasonalFarmingState, FarmingDisaster,
+  FarmingRecipe, FarmingResource, FarmingState, FarmingWorkplace, LegacyFarmingState, AssignedFarmingState, AutomaticFarmingState, ManagedFarmingState, PreferredFarmingState, SeasonalFarmingState, ProtectedFarmingState, PrioritizedFarmingState, CropHarvestFarmingState, FarmingDisaster,
 } from '../game-state/types'
 import { EMPTY_CIVILIZATION, civilizationOpeningComplete } from './civilization'
 import { permanentFractureCount } from './galvanization'
@@ -14,19 +14,18 @@ import { FARMING_TUNING as T } from './farmingTuning'
 export { FARMING_TUNING } from './farmingTuning'
 export const FARMING_RESOURCES = ['food', 'materials', 'tools'] as const
 export const FARMING_WORKPLACES = ['crops', 'herding', 'woodland', 'workshop', 'shaman'] as const
-export const FARMING_PURCHASES = ['workshop', 'house', 'field', 'pasture', 'loggingCamp', 'granary', 'shrine', 'irrigation'] as const
+export const FARMING_PURCHASES = ['workshop', 'house', 'field', 'pasture', 'loggingCamp', 'granary', 'shrine', 'irrigation', 'shamanTraining'] as const
 export const FARMING_SEASONS = ['spring', 'summer', 'autumn', 'winter'] as const
 const FOOD_JOBS = ['crops', 'herding'] as const
 const EPSILON = 1e-8
 type MutableFarming = { -readonly [K in keyof FarmingState]: FarmingState[K] } & {
   resources: Record<FarmingResource, number>
   assignments: Record<FarmingWorkplace, number>
-  desiredJobs: Record<FarmingWorkplace, number>
   jobs: Partial<Record<'woodland' | 'workshop', FarmingJob>>
   awardedCatalystIds: string[]
 }
 const clone = (f: Readonly<FarmingState>): MutableFarming => ({
-  ...f, resources: { ...f.resources }, assignments: { ...f.assignments }, desiredJobs: { ...f.desiredJobs },
+  ...f, resources: { ...f.resources }, assignments: { ...f.assignments },
   jobs: Object.fromEntries(Object.entries(f.jobs).map(([id, job]) => [id, { ...job, inputs: { ...job.inputs }, outputs: { ...job.outputs } }])),
   awardedCatalystIds: [...f.awardedCatalystIds],
 })
@@ -38,7 +37,8 @@ const safeAdd = (a: number, b: number): number => {
 export const farmingSpeed = (state: Readonly<CanonicalGameStateV1>): number => 1 + permanentFractureCount(state) * .05
 export const farmingWorkers = (f: Readonly<FarmingState>): number => f.population
 export const farmingHousing = (f: Readonly<Pick<FarmingState, 'houses'>>): number => f.houses * T.residentsPerHouse
-export const farmingCapacity = (f: Readonly<Pick<FarmingState, 'granaries'>>): number => f.granaries * T.granaryCapacity
+const legacyFarmingCapacity = (f: Readonly<Pick<FarmingState, 'granaries'>>): number => f.granaries * T.granaryCapacity
+export const farmingCapacity = (f: Readonly<Pick<FarmingState, 'granaries' | 'houses'>>): number => farmingHousing(f) * T.foodPerPersonPerMinute * T.seasonSeconds / 60 * T.baseStorageSeasons + legacyFarmingCapacity(f)
 export const farmingUsedLand = (f: Readonly<Pick<FarmingState, 'houses' | 'fields' | 'pastures' | 'granaries' | 'shrines' | 'workshop'>>): number => f.houses + f.fields + f.pastures + f.granaries + f.shrines + Number(f.workshop)
 export const farmingFreeLand = (f: Readonly<FarmingState>): number => f.clearedLand - farmingUsedLand(f)
 export const farmingAssigned = (f: Readonly<Pick<FarmingState, 'assignments'>>): number => FARMING_WORKPLACES.reduce((sum, id) => sum + f.assignments[id], 0)
@@ -59,7 +59,7 @@ export function farmingWorkplaceCapacity(f: Readonly<Pick<FarmingState, 'houses'
     case 'shaman': return f.shrines * T.shrineWorkers
   }
 }
-/** These rates determine support as well as reserve flow; harvest animation earns nothing. */
+/** Average production guides staffing; crop output is held separately until harvest. */
 export function farmingFoodRate(f: Readonly<FarmingState>, speed = 1, season = farmingSeasonIndex(f)): number {
   return FOOD_JOBS.reduce((sum, id) => sum + farmingFoodPerWorker(f, id, speed, season) * f.assignments[id], 0)
 }
@@ -70,13 +70,25 @@ export function farmingFoodPerWorker(f: Readonly<FarmingState>, id: FarmingWorkp
   return base * multiplier * speed
 }
 export const farmingFoodUse = (f: Readonly<FarmingState>): number => f.population * T.foodPerPersonPerMinute
-export const farmingFoodBalance = (f: Readonly<FarmingState>, speed = 1): number => farmingFoodRate(f, speed) - farmingFoodUse(f)
+export const farmingFoodBalance = (f: Readonly<FarmingState>): number => -farmingFoodUse(f)
 export const farmingFoodSupport = (f: Readonly<FarmingState>, speed = 1): number => Math.floor((farmingFoodRate(f, speed) + EPSILON) / T.foodPerPersonPerMinute)
 export const farmingMilestoneFlags = (f: Readonly<FarmingState>): readonly boolean[] => T.populationMilestones.map(n => f.peakPopulation >= n)
 export const farmingNextPopulation = (f: Readonly<FarmingState>): number => T.populationMilestones.find(n => f.peakPopulation < n) ?? T.populationMilestones.at(-1)!
 export const farmingProtection = (f: Readonly<FarmingState>): number => f.seasonProtection
-export const farmingProtectionRate = (f: Readonly<FarmingState>): number => Math.min(1, f.assignments.shaman / (f.population * T.shamanPopulationFraction)) / T.seasonSeconds
-export const farmingGrowthRate = (f: Readonly<FarmingState>, speed = 1): number => f.phase === 'farming' && !f.completionReached && f.hungerDebt <= EPSILON && f.population < farmingHousing(f) && farmingFoodSupport(f, speed) >= f.population + 1 ? 1 / T.growthSeconds : 0
+export const farmingProtectionLimit = (f: Readonly<FarmingState>): number => T.protectionCaps[f.protectionUpgrades ?? 0]
+export const farmingProtectionRate = (f: Readonly<FarmingState>): number => farmingProtectionLimit(f) * Math.min(1, f.assignments.shaman / (f.population * T.shamanPopulationFraction)) / T.seasonSeconds
+/** Exact time until the pantry can support one more resident through this harvest. */
+function growthWait(f: Readonly<FarmingState>, speed: number): number {
+  if (f.phase !== 'farming' || f.completionReached || f.hungerDebt > EPSILON || f.population >= farmingHousing(f) || farmingFoodSupport(f, speed) < f.population + 1) return Infinity
+  const remaining = T.seasonSeconds - f.elapsedSeconds % T.seasonSeconds
+  const extraResidentUse = (f.population + 1) * T.foodPerPersonPerMinute
+  const deficit = extraResidentUse / 60
+  const missing = deficit * remaining - f.resources.food
+  if (missing <= EPSILON) return 0
+  const marginRate = farmingFoodBalance(f) / 60 + deficit
+  return marginRate > 0 ? missing / marginRate : Infinity
+}
+export const farmingGrowthRate = (f: Readonly<FarmingState>, speed = 1): number => growthWait(f, speed) === 0 ? 1 / T.growthSeconds : 0
 
 function random(f: MutableFarming): number {
   let seed = f.disasterSeed | 0
@@ -101,14 +113,13 @@ function rollSeasonDisaster(f: MutableFarming, endedSeason: number): void {
 
 function initialFarming(): MutableFarming {
   return {
-    version: 9, seasonProtection: 0, phase: 'farming', elapsedSeconds: 0, population: 3, peakPopulation: 3,
+    version: 12, cropHarvest: 0, livestockHarvest: 0, foodPriority: 'crops', workPriority: 'woodland', seasonProtection: 0, phase: 'farming', elapsedSeconds: 0, population: 3, peakPopulation: 3,
     houses: 1, clearedLand: 2, loggingCamps: 1, fields: 1, pastures: 0, granaries: 0, shrines: 0,
     workshop: false, irrigation: false,
     assignments: { crops: 1, herding: 0, woodland: 2, workshop: 0, shaman: 0 },
-    desiredJobs: { crops: 1, herding: 0, woodland: 8, workshop: 0, shaman: 0 },
     growthProgress: 0, hungerDebt: 0, disasterSeed: Math.floor(Math.random() * 0xffff_ffff) + 1,
     disasters: 0, disasterDeaths: 0,
-    resources: { food: 0, materials: 0, tools: 0 }, jobs: {}, jobSequence: 0,
+    resources: { food: T.residentsPerHouse * T.foodPerPersonPerMinute * T.seasonSeconds / 60 * T.baseStorageSeasons, materials: 0, tools: 0 }, jobs: {}, jobSequence: 0,
     starvationDeaths: 0, naturalDeaths: 0, generations: 0, awardedCatalystIds: [],
     skillRewardPending: false, completionReached: false, legacyWorkCredit: 0,
   }
@@ -132,6 +143,7 @@ export function farmingPurchaseCount(f: Readonly<FarmingState>, purchase: Farmin
     case 'loggingCamp': return f.loggingCamps
     case 'pasture': return f.pastures
     case 'granary': return f.granaries
+    case 'shamanTraining': return f.protectionUpgrades ?? 0
     case 'shrine': return f.shrines
     default: return Number(f[purchase])
   }
@@ -143,10 +155,12 @@ export function farmingPurchaseUnlocked(f: Readonly<FarmingState>, purchase: Far
     case 'pasture': return f.fields >= 2 && f.houses >= 2
     case 'granary': return f.houses >= 3
     case 'shrine': return f.houses >= 4
+    case 'shamanTraining': return (f.protectionUpgrades ?? 0) < 3 && f.peakPopulation >= T.protectionPopulationRequirements[f.protectionUpgrades ?? 0]
     case 'irrigation': return f.fields >= 4
   }
 }
 export function farmingPurchaseVisible(f: Readonly<FarmingState>, purchase: FarmingPurchase): boolean {
+  if (purchase === 'shamanTraining') return f.shrines > 0 && (f.protectionUpgrades ?? 0) < 3
   if (purchase === 'workshop') return !f.workshop
   if (purchase === 'house' || purchase === 'field' || purchase === 'loggingCamp') return f.workshop
   if (purchase === 'pasture') return f.workshop && f.houses >= 2
@@ -154,7 +168,7 @@ export function farmingPurchaseVisible(f: Readonly<FarmingState>, purchase: Farm
   if (purchase === 'shrine') return f.houses >= 3
   return !f.irrigation && f.fields >= 3
 }
-export const farmingPurchaseLand = (purchase: FarmingPurchase): number => purchase === 'irrigation' || purchase === 'loggingCamp' ? 0 : 1
+export const farmingPurchaseLand = (purchase: FarmingPurchase): number => purchase === 'irrigation' || purchase === 'loggingCamp' || purchase === 'shamanTraining' ? 0 : 1
 export function farmingPurchaseCost(f: Readonly<FarmingState>, purchase: FarmingPurchase): FarmingRecipe {
   const n = farmingPurchaseCount(f, purchase)
   const cost = (materials: number, tools: number): FarmingRecipe => ({ materials: Math.ceil(materials), ...(tools ? { tools: Math.ceil(tools) } : {}) })
@@ -166,11 +180,13 @@ export function farmingPurchaseCost(f: Readonly<FarmingState>, purchase: Farming
     case 'pasture': { const scale = (1 + .22 * n) ** 1.2; return cost(50 * scale, 6 * Math.sqrt(scale)) }
     case 'granary': return cost(120 * 1.55 ** n, 10 * 1.35 ** n)
     case 'shrine': return cost(90 * (1 + .3 * n) ** 1.2, 8 * (1 + .2 * n))
+    case 'shamanTraining': return cost(120 * 2 ** n, 10 * 2 ** n)
     case 'irrigation': return cost(260, 24)
   }
 }
 export function farmingPurchaseStatus(f: Readonly<FarmingState>, purchase: FarmingPurchase): 'ready' | 'locked' | 'land' | 'inputs' | 'owned' | 'complete' {
   if (f.phase === 'complete' || f.completionReached) return 'complete'
+  if (purchase === 'shamanTraining' && (f.protectionUpgrades ?? 0) >= 3) return 'owned'
   if (['workshop', 'irrigation'].includes(purchase) && farmingPurchaseCount(f, purchase)) return 'owned'
   if (purchase === 'house' && f.houses >= T.maximumHouses || farmingPurchaseCount(f, purchase) >= T.maximumPlots) return 'owned'
   if (!farmingPurchaseUnlocked(f, purchase)) return 'locked'
@@ -186,13 +202,13 @@ export function buyFarmingPurchase(state: CanonicalGameStateV1, purchase: Farmin
   while (bought < (quantity === 'max' ? T.maximumPlots : quantity) && farmingPurchaseStatus(f, purchase) === 'ready') {
     for (const [id, n] of Object.entries(farmingPurchaseCost(f, purchase))) f.resources[id as FarmingResource] = Math.max(0, f.resources[id as FarmingResource] - n!)
     if (purchase === 'house') f.houses++
-    else if (purchase === 'field') { f.fields++; f.desiredJobs.crops += T.fieldWorkers }
-    else if (purchase === 'loggingCamp') { f.loggingCamps++; f.desiredJobs.woodland += T.loggingCampWorkers }
-    else if (purchase === 'pasture') { f.pastures++; f.desiredJobs.herding += T.pastureWorkers }
+    else if (purchase === 'field') f.fields++
+    else if (purchase === 'loggingCamp') f.loggingCamps++
+    else if (purchase === 'pasture') f.pastures++
     else if (purchase === 'granary') f.granaries++
-    else if (purchase === 'shrine') { f.shrines++; f.desiredJobs.shaman++ }
+    else if (purchase === 'shrine') f.shrines++
+    else if (purchase === 'shamanTraining') f.protectionUpgrades = (f.protectionUpgrades ?? 0) + 1
     else f[purchase] = true
-    if (purchase === 'workshop') f.desiredJobs.workshop = 1
     bought++
     if (['workshop', 'irrigation'].includes(purchase)) break
   }
@@ -201,11 +217,14 @@ export function buyFarmingPurchase(state: CanonicalGameStateV1, purchase: Farmin
   return withFarming(state, f)
 }
 export const buyFarmingGranary = (state: CanonicalGameStateV1): CanonicalGameStateV1 | null => buyFarmingPurchase(state, 'granary')
-export function setFarmingJobs(state: CanonicalGameStateV1, workplace: FarmingWorkplace, count: number): CanonicalGameStateV1 | null {
+export function setFarmingPriority(state: CanonicalGameStateV1, workplace: FarmingWorkplace): CanonicalGameStateV1 | null {
   const source = state.civilization?.farming
-  if (!source || source.phase === 'complete' || source.completionReached || !FARMING_WORKPLACES.includes(workplace) || !Number.isSafeInteger(count) || count < 0 || count > farmingWorkplaceCapacity(source, workplace) || source.desiredJobs[workplace] === count) return null
+  if (!source || source.phase === 'complete' || source.completionReached || !FARMING_WORKPLACES.includes(workplace) || farmingWorkplaceCapacity(source, workplace) === 0) return null
+  const food = workplace === 'crops' || workplace === 'herding'
+  if ((food ? source.foodPriority : source.workPriority) === workplace) return null
   const f = clone(source)
-  f.desiredJobs[workplace] = count
+  if (workplace === 'crops' || workplace === 'herding') f.foodPriority = workplace
+  else f.workPriority = workplace
   settle(f, farmingSpeed(state))
   return withFarming(state, f)
 }
@@ -213,6 +232,7 @@ export function completeFarmingAge(state: CanonicalGameStateV1): CanonicalGameSt
   const source = state.civilization?.farming
   if (!source || source.phase !== 'farming' || !source.completionReached) return null
   const f = clone(source)
+  collectSeasonHarvest(f)
   f.phase = 'complete'
   f.jobs = {}
   delete f.continuous
@@ -222,21 +242,49 @@ export function completeFarmingAge(state: CanonicalGameStateV1): CanonicalGameSt
 function toolTarget(f: Readonly<FarmingState>): number {
   return Math.max(4, ...FARMING_PURCHASES.filter(purchase => farmingPurchaseUnlocked(f, purchase)).map(purchase => farmingPurchaseCost(f, purchase).tools ?? 0))
 }
-/** Food limits are the player's responsibility; staffing never raises them to avert hunger. */
-function staffVillage(f: MutableFarming): void {
-  const cropSlots = Math.min(f.desiredJobs.crops, farmingWorkplaceCapacity(f, 'crops')), herdSlots = Math.min(f.desiredJobs.herding, farmingWorkplaceCapacity(f, 'herding'))
-  const foodSlots = cropSlots + herdSlots
-  const foodWorkers = Math.min(foodSlots, f.population)
-  let herding = foodSlots > 0 ? Math.floor(foodWorkers * herdSlots / foodSlots) : 0
-  let crops = Math.min(cropSlots, foodWorkers - herding)
-  herding = Math.min(herdSlots, foodWorkers - crops)
-  let remaining = f.population - crops - herding
-  const shaman = Math.min(remaining, f.desiredJobs.shaman, farmingWorkplaceCapacity(f, 'shaman'), Math.ceil(f.population * T.shamanPopulationFraction))
-  remaining -= shaman
+/** Prefer one food job 2:1, spilling into the other when building capacity is full. */
+function foodCrew(f: Readonly<FarmingState>, count: number): { crops: number; herding: number } {
+  const preferred = f.foodPriority, other = preferred === 'crops' ? 'herding' : 'crops'
+  const first = Math.min(farmingWorkplaceCapacity(f, preferred), Math.max(count - farmingWorkplaceCapacity(f, other), Math.floor((2 * count + 1) / 3)))
+  return preferred === 'crops' ? { crops: first, herding: count - first } : { crops: count - first, herding: first }
+}
+/** Allocate only the food crew needed for residents and growth, then share spare labor. */
+function staffVillage(f: MutableFarming, speed: number): void {
+  const requiredFood = Math.min(farmingHousing(f), f.population + 1) * T.foodPerPersonPerMinute
+  let low = 0, high = Math.min(f.population, farmingWorkplaceCapacity(f, 'crops') + farmingWorkplaceCapacity(f, 'herding'))
+  while (low < high) {
+    const mid = Math.floor((low + high) / 2), crew = foodCrew(f, mid)
+    const production = crew.crops * farmingFoodPerWorker(f, 'crops', speed) + crew.herding * farmingFoodPerWorker(f, 'herding', speed)
+    if (production + EPSILON >= requiredFood) high = mid
+    else low = mid + 1
+  }
+  const food = foodCrew(f, low)
   const crafting = !!f.jobs.workshop || f.resources.tools < toolTarget(f) && f.resources.materials + EPSILON >= T.toolMaterials
-  const workshop = crafting ? Math.min(remaining, f.desiredJobs.workshop, farmingWorkplaceCapacity(f, 'workshop')) : 0
-  const woodland = Math.min(remaining - workshop, f.desiredJobs.woodland, farmingWorkplaceCapacity(f, 'woodland'))
-  f.assignments = { crops, herding, woodland, workshop, shaman }
+  const capacities = {
+    woodland: farmingWorkplaceCapacity(f, 'woodland'),
+    workshop: crafting ? farmingWorkplaceCapacity(f, 'workshop') : 0,
+    shaman: Math.min(farmingWorkplaceCapacity(f, 'shaman'), Math.ceil(f.population * T.shamanPopulationFraction)),
+  }
+  const crew = { woodland: 0, workshop: 0, shaman: 0 }
+  let remaining = f.population - low
+  let available = (['woodland', 'workshop', 'shaman'] as const).filter(id => capacities[id] > 0)
+  // Saturated buildings release their unused share before largest-remainder rounding.
+  while (remaining > 0 && available.length > 0) {
+    const weight = (id: typeof available[number]) => id === f.workPriority ? 2 : 1
+    const total = available.reduce((sum, id) => sum + weight(id), 0)
+    const saturated = available.filter(id => remaining * weight(id) >= capacities[id] * total)
+    if (saturated.length) {
+      for (const id of saturated) { crew[id] = capacities[id]; remaining -= capacities[id] }
+      available = available.filter(id => !saturated.includes(id))
+      continue
+    }
+    const shares = available.map(id => ({ id, amount: Math.floor(remaining * weight(id) / total), remainder: remaining * weight(id) % total }))
+    const spare = remaining - shares.reduce((sum, share) => sum + share.amount, 0)
+    shares.sort((a, b) => b.remainder - a.remainder || weight(b.id) - weight(a.id) || FARMING_WORKPLACES.indexOf(a.id) - FARMING_WORKPLACES.indexOf(b.id))
+    for (const [index, share] of shares.entries()) crew[share.id] = share.amount + Number(index < spare)
+    break
+  }
+  f.assignments = { ...food, ...crew }
 }
 function normalizePopulation(f: MutableFarming, speed: number): void {
   if (f.hungerDebt >= T.starvationFoodPerDeath - EPSILON && f.population > 1) {
@@ -245,8 +293,8 @@ function normalizePopulation(f: MutableFarming, speed: number): void {
     f.hungerDebt = 0
   }
   if (f.growthProgress >= 1 - EPSILON && f.population < farmingHousing(f)) { f.population++; f.growthProgress = 0 }
-  staffVillage(f)
-  if (!farmingGrowthRate(f, speed)) f.growthProgress = 0
+  staffVillage(f, speed)
+  if (f.population >= farmingHousing(f) || f.hungerDebt > EPSILON) f.growthProgress = 0
   if (f.hungerDebt > 0 && f.resources.food > 0) {
     const fed = Math.min(f.resources.food, f.hungerDebt)
     f.resources.food -= fed
@@ -271,6 +319,8 @@ function settle(f: MutableFarming, speed: number): void {
   let changed: boolean
   do {
     changed = false
+    // A completed clearing can fund a Workshop immediately at this same boundary.
+    staffVillage(f, speed)
     for (const id of ['woodland', 'workshop'] as const) {
       const job = f.jobs[id]
       if (job && job.remainingWork <= EPSILON) {
@@ -287,12 +337,12 @@ function settle(f: MutableFarming, speed: number): void {
       }
     }
   } while (changed)
-  staffVillage(f)
+  staffVillage(f, speed)
 }
 function segment(f: MutableFarming, speed: number): NonNullable<FarmingState['continuous']> {
-  const signature = JSON.stringify([speed, farmingSeasonIndex(f), f.population, f.houses, f.granaries, f.assignments, f.irrigation, (['woodland', 'workshop'] as const).map(id => [id, f.jobs[id]?.cycle ?? null])])
+  const signature = JSON.stringify([speed, farmingSeasonIndex(f), f.population, f.houses, f.granaries, f.assignments, f.irrigation, f.protectionUpgrades ?? 0, farmingGrowthRate(f, speed), (['woodland', 'workshop'] as const).map(id => [id, f.jobs[id]?.cycle ?? null])])
   if (f.continuous?.signature === signature) return f.continuous
-  return f.continuous = { since: f.elapsedSeconds, food: f.resources.food, growthProgress: f.growthProgress, hungerDebt: f.hungerDebt, seasonProtection: f.seasonProtection, signature,
+  return f.continuous = { since: f.elapsedSeconds, food: f.resources.food, growthProgress: f.growthProgress, hungerDebt: f.hungerDebt, seasonProtection: f.seasonProtection, cropHarvest: f.cropHarvest, livestockHarvest: f.livestockHarvest, signature,
     jobs: Object.fromEntries(Object.entries(f.jobs).map(([id, job]) => [id, job.remainingWork])) }
 }
 function withFarming(state: CanonicalGameStateV1, f: MutableFarming): CanonicalGameStateV1 {
@@ -320,10 +370,12 @@ export function advanceFarming(state: CanonicalGameStateV1, seconds: number, sto
   if (!Number.isFinite(end) || end <= f.elapsedSeconds) throw Error('Village clock precision exhausted.')
   while (f.elapsedSeconds < end && !f.completionReached) {
     if (stopAtDecision && farmingManualGate(f)) break
-    const a = segment(f, speed), net = farmingFoodBalance(f, speed) / 60, cap = farmingCapacity(f)
+    const a = segment(f, speed), net = farmingFoodBalance(f) / 60, cap = farmingCapacity(f)
     const seasonEnd = (Math.floor(f.elapsedSeconds / T.seasonSeconds) + 1) * T.seasonSeconds
     let at = Math.min(end, seasonEnd)
     const growth = farmingGrowthRate(f, speed)
+    const growthReadyAt = f.elapsedSeconds + growthWait(f, speed)
+    if (growth === 0 && growthReadyAt > f.elapsedSeconds && growthReadyAt < seasonEnd) at = Math.min(at, growthReadyAt)
     const healing = net > 0 && f.hungerDebt > EPSILON ? net : 0
     const reserveNet = net - healing
     const hunger = net < 0 && f.resources.food <= EPSILON && f.population > 1 ? -net : -healing
@@ -338,7 +390,9 @@ export function advanceFarming(state: CanonicalGameStateV1, seconds: number, sto
     }
     if (at <= f.elapsedSeconds) throw Error('Village boundary did not advance.')
     const dt = at - a.since, previousFood = f.resources.food
-    f.seasonProtection = Math.min(1, a.seasonProtection + farmingProtectionRate(f) * dt)
+    f.cropHarvest = safeAdd(a.cropHarvest, farmingFoodPerWorker(f, 'crops', speed) * f.assignments.crops * dt / 60)
+    f.livestockHarvest = safeAdd(a.livestockHarvest, farmingFoodPerWorker(f, 'herding', speed) * f.assignments.herding * dt / 60)
+    f.seasonProtection = Math.min(Math.max(farmingProtectionLimit(f), a.seasonProtection), a.seasonProtection + farmingProtectionRate(f) * dt)
     f.resources.food = Math.max(0, Math.min(cap, a.food + reserveNet * dt))
     if (f.resources.food < EPSILON) f.resources.food = 0
     f.growthProgress = Math.min(1, a.growthProgress + growth * dt)
@@ -346,13 +400,16 @@ export function advanceFarming(state: CanonicalGameStateV1, seconds: number, sto
     for (const [id, job] of Object.entries(f.jobs)) f.jobs[id as 'woodland' | 'workshop'] = { ...job, remainingWork: Math.max(0, a.jobs[id as 'woodland' | 'workshop']! - f.assignments[id as 'woodland' | 'workshop'] * speed * dt) }
     f.elapsedSeconds = at
     const seasonEnded = at === seasonEnd
-    if (seasonEnded) rollSeasonDisaster(f, (Math.floor(seasonEnd / T.seasonSeconds) - 1) % FARMING_SEASONS.length)
+    if (seasonEnded) {
+      collectSeasonHarvest(f)
+      rollSeasonDisaster(f, (Math.floor(seasonEnd / T.seasonSeconds) - 1) % FARMING_SEASONS.length)
+    }
     const generation = Math.floor(at / (T.seasonSeconds * T.generationSeasons))
     if (generation > f.generations) {
       f.naturalDeaths = safeAdd(f.naturalDeaths, f.population * (generation - f.generations))
       f.generations = generation
     }
-    const boundary = seasonEnded || at !== end || f.growthProgress >= 1 - EPSILON || f.hungerDebt >= T.starvationFoodPerDeath - EPSILON || healing > 0 && f.hungerDebt < EPSILON || (previousFood > 0 && f.resources.food === 0) || (previousFood < cap && f.resources.food === cap) || Object.values(f.jobs).some(job => job.remainingWork <= EPSILON)
+    const boundary = seasonEnded || at === growthReadyAt || at !== end || f.growthProgress >= 1 - EPSILON || f.hungerDebt >= T.starvationFoodPerDeath - EPSILON || healing > 0 && f.hungerDebt < EPSILON || (previousFood > 0 && f.resources.food === 0) || (previousFood < cap && f.resources.food === cap) || Object.values(f.jobs).some(job => job.remainingWork <= EPSILON)
     settle(f, speed)
     if (boundary) delete f.continuous
   }
@@ -397,14 +454,14 @@ export function migrateLegacyFarming(previous: LegacyFarmingState): FarmingState
     f.clearedLand = Math.max(f.clearedLand, farmingUsedLand(f))
   }
   f.population = Math.min(farmingHousing(f), 3 + previous.homes.length * 2)
-  f.desiredJobs = { crops: f.fields * T.fieldWorkers, herding: f.pastures * T.pastureWorkers, woodland: f.loggingCamps * T.loggingCampWorkers, workshop: Number(f.workshop), shaman: 0 }
   f.disasterSeed = migrationSeed(f.elapsedSeconds, f.population)
-  staffVillage(f)
+  staffVillage(f, 1)
   f.peakPopulation = Math.max(f.population, ...previous.awardedCatalystIds.map(id => T.populationMilestones[Number(id.split('-').at(-1)) - 1] ?? 0))
   f.awardedCatalystIds = [...previous.awardedCatalystIds]
   f.skillRewardPending = previous.skillRewardPending
   f.completionReached = previous.phase === 'complete' || previous.phase === 'settling-village'
   f.phase = f.completionReached ? 'complete' : 'farming'
+  f.resources.food = migrationFood(f)
   return f
 }
 
@@ -413,7 +470,7 @@ export function migrateAssignedFarming(previous: AssignedFarmingState): FarmingS
   const issue = validateAssignedFarming(previous)
   if (issue) throw Error(issue)
   const { version: _version, barleyFields, wheatFields, nets, cattle, assignments: _assignments, continuous: _continuous, ...retained } = previous
-  const f: MutableFarming = { ...initialFarming(), ...retained, version: 9, loggingCamps: Math.max(1, Math.ceil(previous.assignments.woodland / T.loggingCampWorkers)), fields: Math.max(1, barleyFields + wheatFields),
+  const f: MutableFarming = { ...initialFarming(), ...retained, version: 12, loggingCamps: Math.max(1, Math.ceil(previous.assignments.woodland / T.loggingCampWorkers)), fields: Math.max(1, barleyFields + wheatFields),
     previousVillage: structuredClone(previous), resources: { ...previous.resources },
     assignments: { crops: 0, herding: 0, woodland: 0, workshop: 0, shaman: 0 },
     jobs: structuredClone(previous.jobs), awardedCatalystIds: [...previous.awardedCatalystIds] }
@@ -421,9 +478,9 @@ export function migrateAssignedFarming(previous: AssignedFarmingState): FarmingS
   // Retired upgrades return their complete purchase costs.
   if (nets) { f.resources.materials += 120; f.resources.tools += 12 }
   if (cattle) { f.resources.materials += 180; f.resources.tools += 18 }
-  f.desiredJobs = { crops: f.fields * T.fieldWorkers, herding: f.pastures * T.pastureWorkers, woodland: f.loggingCamps * T.loggingCampWorkers, workshop: Number(f.workshop), shaman: 0 }
   f.disasterSeed = migrationSeed(previous.elapsedSeconds, previous.population)
-  staffVillage(f)
+  staffVillage(f, 1)
+  f.resources.food = migrationFood(f)
   return f
 }
 
@@ -455,8 +512,8 @@ export function migratePreferredFarming(previous: PreferredFarmingState, archive
   if (issue) throw Error(issue)
   const { version: _version, nextDisasterSeconds: _nextDisaster, sicknessUntil: _sickness,
     lastDisaster: _lastDisaster, continuous: _continuous, ...retained } = structuredClone(previous)
-  return { ...retained, version: 9, seasonProtection: 0, disasterDeaths: 0,
-    ...(archive ? { previousPreferredVillage: structuredClone(previous) } : {}) }
+  return migrateProtectedFarming({ ...retained, version: 9, seasonProtection: 0, disasterDeaths: 0,
+    ...(archive ? { previousPreferredVillage: structuredClone(previous) } : {}) }, false)
 }
 
 /** Existing V8 villages retain their full source, clocks, population and paid work. */
@@ -464,13 +521,83 @@ export function migrateSeasonalFarming(previous: SeasonalFarmingState): FarmingS
   const issue = validateFarming(previous, 8)
   if (issue) throw Error(issue)
   const { continuous: _continuous, ...retained } = structuredClone(previous)
-  return { ...retained, version: 9, seasonProtection: 0, previousSeasonalVillage: structuredClone(previous) }
+  return migrateProtectedFarming({ ...retained, version: 9, seasonProtection: 0, previousSeasonalVillage: structuredClone(previous) }, false)
 }
 
-export function validateFarming(value: unknown, version = 9): string | null {
+/** Archive manual limits, retain invested progress, and begin automatic staffing without earning time. */
+export function migrateProtectedFarming(previous: ProtectedFarmingState, archive = true): FarmingState {
+  const issue = validateFarming(previous, 9)
+  if (issue) throw Error(issue)
+  const { desiredJobs: _desiredJobs, continuous: _continuous, ...retained } = structuredClone(previous)
+  // Preserve crews until the first simulation boundary has the canonical fracture speed.
+  return migratePrioritizedFarming({ ...retained, version: 10, foodPriority: 'crops', workPriority: 'woodland',
+    ...(archive ? { previousProtectedVillage: structuredClone(previous) } : {}) }, false)
+}
+
+/** Migration adds only missing bridge provisions; past crop work was already paid. */
+export function migratePrioritizedFarming(previous: PrioritizedFarmingState, archive = true): FarmingState {
+  const issue = validateFarming(previous, 10)
+  if (issue) throw Error(issue)
+  const { continuous: _continuous, ...retained } = structuredClone(previous)
+  return migrateCropHarvestFarming({ ...retained, version: 11, cropHarvest: 0, resources: { ...retained.resources, food: migrationFood(previous) },
+    ...(archive ? { previousPrioritizedVillage: structuredClone(previous) } : {}) }, false)
+}
+
+function migrationFood(previous: Pick<PrioritizedFarmingState, 'elapsedSeconds' | 'phase' | 'completionReached' | 'population' | 'resources'>): number {
+  const remaining = T.seasonSeconds - previous.elapsedSeconds % T.seasonSeconds
+  const bridge = previous.phase === 'complete' || previous.completionReached ? 0 : previous.population * T.foodPerPersonPerMinute * remaining / 60
+  return Math.max(previous.resources.food, bridge)
+}
+
+/** Preserve the short-lived crops-only preview while moving livestock to seasonal payout. */
+export function migrateCropHarvestFarming(previous: CropHarvestFarmingState, archive = true): FarmingState {
+  const issue = validateFarming(previous, 11)
+  if (issue) throw Error(issue)
+  const { continuous: _continuous, ...retained } = structuredClone(previous)
+  return { ...retained, version: 12, livestockHarvest: 0, resources: { ...retained.resources, food: migrationFood(previous) },
+    ...(archive ? { previousCropHarvestVillage: structuredClone(previous) } : {}) }
+}
+
+function collectSeasonHarvest(f: MutableFarming): void {
+  const harvest = safeAdd(f.cropHarvest, f.livestockHarvest)
+  const fed = Math.min(harvest, f.hungerDebt)
+  f.hungerDebt -= fed
+  f.resources.food = Math.min(farmingCapacity(f), safeAdd(f.resources.food, harvest - fed))
+  f.cropHarvest = 0
+  f.livestockHarvest = 0
+}
+
+export function validateFarming(value: unknown, version = 12): string | null {
+  if (version === 12) {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return 'Invalid seasonal food village.'
+    const f = value as FarmingState
+    if (f.protectionUpgrades !== undefined && (!Number.isInteger(f.protectionUpgrades) || f.protectionUpgrades < 0 || f.protectionUpgrades > 3)) return 'Invalid Shaman training level.'
+    if (f.version !== 12 || !Number.isFinite(f.livestockHarvest) || f.livestockHarvest < 0 || f.livestockHarvest > Number.MAX_SAFE_INTEGER) return 'Invalid livestock harvest.'
+    if (f.continuous && (!Number.isFinite(f.continuous.livestockHarvest) || f.continuous.livestockHarvest < 0 || f.continuous.livestockHarvest > f.livestockHarvest + EPSILON)) return 'Invalid livestock harvest anchor.'
+    if (f.previousCropHarvestVillage && validateFarming(f.previousCropHarvestVillage, 11)) return 'Invalid previous crop harvest village.'
+    return validateFarming({ ...f, version: 11 }, 11)
+  }
+  if (version === 11) {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return 'Invalid harvest village.'
+    const f = value as CropHarvestFarmingState
+    if (f.version !== 11 || !Number.isFinite(f.cropHarvest) || f.cropHarvest < 0 || f.cropHarvest > Number.MAX_SAFE_INTEGER) return 'Invalid accumulated harvest.'
+    if (f.continuous && (!Number.isFinite(f.continuous.cropHarvest) || f.continuous.cropHarvest < 0 || f.continuous.cropHarvest > f.cropHarvest + EPSILON)) return 'Invalid harvest anchor.'
+    if (!f.resources || !Number.isFinite(f.resources.food) || f.resources.food < 0 || f.resources.food > farmingCapacity(f) + EPSILON) return 'Invalid village food storage.'
+    if (f.previousPrioritizedVillage && validateFarming(f.previousPrioritizedVillage, 10)) return 'Invalid previous prioritized village.'
+    // Earlier versions had no base pantry; validate their shared structure separately.
+    const old = { ...f, version: 10, resources: { ...f.resources, food: Math.min(f.resources.food, legacyFarmingCapacity(f)) } }
+    return validateFarming(old, 10)
+  }
+  if (version === 10) {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return 'Invalid automatic priority village.'
+    const f = value as PrioritizedFarmingState
+    if (f.version !== 10 || !['crops', 'herding'].includes(f.foodPriority) || !['woodland', 'workshop', 'shaman'].includes(f.workPriority)) return 'Invalid village priorities.'
+    if (f.previousProtectedVillage && validateFarming(f.previousProtectedVillage, 9)) return 'Invalid previous protected village.'
+    return validateFarming({ ...f, version: 9, desiredJobs: Object.fromEntries(FARMING_WORKPLACES.map(id => [id, id === 'woodland' ? f.loggingCamps * T.loggingCampWorkers : farmingWorkplaceCapacity(f, id)])) }, 9)
+  }
   if (version === 9) {
     if (!value || typeof value !== 'object' || Array.isArray(value)) return 'Invalid protected village.'
-    const f = value as FarmingState
+    const f = value as ProtectedFarmingState
     const protection = (n: unknown): n is number => typeof n === 'number' && Number.isFinite(n) && n >= 0 && n <= 1
     if (f.version !== 9 || !protection(f.seasonProtection) || f.seasonProtection > (f.elapsedSeconds % T.seasonSeconds) / T.seasonSeconds + EPSILON) return 'Invalid earned village protection.'
     if (f.continuous && !protection(f.continuous.seasonProtection)) return 'Invalid village protection anchor.'
@@ -517,7 +644,7 @@ export function validateFarming(value: unknown, version = 9): string | null {
   if (!f.assignments || Object.keys(f.assignments).length !== FARMING_WORKPLACES.length || !FARMING_WORKPLACES.every(id => integer(f.assignments[id]) && f.assignments[id] <= Math.min(f.desiredJobs[id], farmingWorkplaceCapacity(f, id))) || farmingAssigned(f) > f.population) return 'Invalid village worker assignment.'
   if (!n(f.growthProgress) || f.growthProgress > 1 || !n(f.hungerDebt) || f.hungerDebt > T.starvationFoodPerDeath || !n(f.nextDisasterSeconds) || f.nextDisasterSeconds <= f.elapsedSeconds || !n(f.sicknessUntil) || f.disasterSeed < 1 || f.disasterSeed > 0xffff_ffff) return 'Invalid village population or disaster clock.'
   if (f.lastDisaster && (!['spoilage', 'fire', 'sickness'].includes(f.lastDisaster.kind) || !n(f.lastDisaster.at) || f.lastDisaster.at > f.elapsedSeconds || !n(f.lastDisaster.loss) || typeof f.lastDisaster.prevented !== 'boolean')) return 'Invalid village disaster receipt.'
-  if (!f.resources || Object.keys(f.resources).length !== FARMING_RESOURCES.length || !FARMING_RESOURCES.every(id => n(f.resources[id])) || f.resources.food > farmingCapacity(f) + EPSILON) return 'Invalid village reserve.'
+  if (!f.resources || Object.keys(f.resources).length !== FARMING_RESOURCES.length || !FARMING_RESOURCES.every(id => n(f.resources[id])) || f.resources.food > legacyFarmingCapacity(f) + EPSILON) return 'Invalid village reserve.'
   if (!n(f.legacyWorkCredit) || f.generations !== Math.floor(f.elapsedSeconds / (T.seasonSeconds * T.generationSeasons))) return 'Invalid village generation or work credit.'
   if (!Array.isArray(f.awardedCatalystIds) || new Set(f.awardedCatalystIds).size !== f.awardedCatalystIds.length || f.awardedCatalystIds.some(id => !/^farming-catalyst-[1-6]$/.test(id))) return 'Invalid village reward history.'
   if (!f.jobs || Object.keys(f.jobs).some(id => id !== 'woodland' && id !== 'workshop')) return 'Invalid village work queue.'

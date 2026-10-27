@@ -23,6 +23,8 @@ type DisasterEvent = Extract<
   { readonly kind: 'automatic-dream-disaster' }
 >
 
+type CatalystEvent = Extract<CanonicalRuntimePresentationEvent, { readonly kind: 'catalyst-earned' }>
+
 type PresetConflict = Extract<CanonicalRuntimePresentationEvent, { readonly kind: 'skill-preset-conflict' }>
 type VisiblePresentationEvent = Exclude<CanonicalRuntimePresentationEvent, { readonly kind: 'skill-preset-conflict-resolved' }>
 
@@ -49,6 +51,7 @@ function automaticConflictIdentity(event: PresetConflict): string {
 type QueuedNotice =
   | Extract<CanonicalRuntimePresentationEvent, { readonly kind: 'skill-preset-conflict' }>
   | DisasterEvent
+  | CatalystEvent
   | {
       readonly kind: 'coalesced-dream-disaster'
       readonly sequence: number
@@ -70,6 +73,7 @@ export interface GameplayNotificationHostProps {
   readonly skillState?: PresetConflictSkillState
   readonly onEventsAccepted?: (sessionRevision: number, throughSequence: number) => void
   readonly onViewReality: () => void
+  readonly onViewSkills: () => void
 }
 
 export function GameplayNotificationHost({
@@ -80,6 +84,7 @@ export function GameplayNotificationHost({
   showPresetApplicationNotices,
   skillState,
   onViewReality,
+  onViewSkills,
   onEventsAccepted,
 }: GameplayNotificationHostProps) {
   const intl = useIntl()
@@ -159,15 +164,16 @@ export function GameplayNotificationHost({
   }, [])
   const viewReality = useCallback(() => {
     dismiss()
-    onViewReality()
-  }, [dismiss, onViewReality])
+    if (queue[0]?.kind === 'catalyst-earned') onViewSkills()
+    else onViewReality()
+  }, [dismiss, onViewReality, onViewSkills, queue])
   const active = queue[0]
 
   return (
     <div ref={attachHost} className="gameplay-notification-host" data-active={active !== undefined || undefined}>
-      {active?.kind === 'automatic-dream-disaster' &&
+      {(active?.kind === 'automatic-dream-disaster' || active?.kind === 'catalyst-earned') &&
       active.firstLifetimeOccurrence ? (
-        <FirstDisasterDialog
+        <FirstGameplayNoticeDialog
           key={active.sequence}
           portalHost={portalHost}
           event={active}
@@ -188,6 +194,10 @@ export function GameplayNotificationHost({
   )
 }
 
+function isDisasterNotice(notice: QueuedNotice): notice is DisasterEvent | Extract<QueuedNotice, { kind: 'coalesced-dream-disaster' }> {
+  return notice.kind === 'automatic-dream-disaster' || notice.kind === 'coalesced-dream-disaster'
+}
+
 function mergePendingNotices(
   current: readonly QueuedNotice[],
   additions: readonly QueuedNotice[],
@@ -197,10 +207,10 @@ function mergePendingNotices(
     const previous = merged.at(-1)
     if (
       merged.length > 1 &&
-      addition.kind !== 'skill-preset-conflict' &&
+      isDisasterNotice(addition) &&
       !(addition.kind === 'automatic-dream-disaster' && addition.firstLifetimeOccurrence) &&
       previous !== undefined &&
-      previous.kind !== 'skill-preset-conflict' &&
+      isDisasterNotice(previous) &&
       !(previous.kind === 'automatic-dream-disaster' && previous.firstLifetimeOccurrence) &&
       previous.cause === addition.cause
     ) {
@@ -245,14 +255,14 @@ function buildQueuedNotices(
       if (showPresetApplicationNotices) queue.push(event)
       continue
     }
-    if (event.firstLifetimeOccurrence) {
+    if (event.kind === 'catalyst-earned' || event.firstLifetimeOccurrence) {
       queue.push(event)
       continue
     }
     const previous = queue.at(-1)
     if (
       previous !== undefined &&
-      previous.kind !== 'skill-preset-conflict' &&
+      isDisasterNotice(previous) &&
       !(previous.kind === 'automatic-dream-disaster' && previous.firstLifetimeOccurrence) &&
       previous.cause === event.cause
     ) {
@@ -310,7 +320,7 @@ function TimedNotification({
   )
 }
 
-function FirstDisasterDialog({
+function FirstGameplayNoticeDialog({
   portalHost,
   event,
   locale,
@@ -318,7 +328,7 @@ function FirstDisasterDialog({
   onViewReality,
 }: {
   readonly portalHost: HTMLElement | null
-  readonly event: DisasterEvent
+  readonly event: DisasterEvent | CatalystEvent
   readonly locale: EnabledLocale
   readonly onDismiss: () => void
   readonly onEventsAccepted?: (sessionRevision: number, throughSequence: number) => void
@@ -388,7 +398,7 @@ function FirstDisasterDialog({
       <div
         ref={dialogRef}
         className="gameplay-disaster-dialog"
-        data-simulation-era={event.preResetEra}
+        data-simulation-era={event.kind === 'catalyst-earned' ? 'information' : event.preResetEra}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
@@ -396,9 +406,9 @@ function FirstDisasterDialog({
         onKeyDown={onKeyDown}
       >
         <div className="gameplay-disaster-dialog__era-glow" aria-hidden="true" />
-        <h2 id={titleId}>{disasterTitle(event.cause, intl)}</h2>
+        <h2 id={titleId}>{event.kind === 'catalyst-earned' ? intl.formatMessage(messages.firstCatalystTitle) : disasterTitle(event.cause, intl)}</h2>
         <p id={descriptionId}>
-          {intl.formatMessage(dialogMessage(event.cause), {
+          {event.kind === 'catalyst-earned' ? intl.formatMessage(messages.firstCatalystBody, { count: event.count }) : intl.formatMessage(dialogMessage(event.cause), {
             reward: formatGameNumber(locale, event.strangeMatterGranted),
           })}
         </p>
@@ -407,7 +417,7 @@ function FirstDisasterDialog({
             {intl.formatMessage(messages.continue)}
           </button>
           <button type="button" onClick={onViewReality}>
-            {intl.formatMessage(messages.viewCountermeasures)}
+            {intl.formatMessage(event.kind === 'catalyst-earned' ? messages.viewSkills : messages.viewCountermeasures)}
           </button>
         </div>
       </div>
@@ -421,6 +431,7 @@ function noticeText(
   locale: EnabledLocale,
   intl: IntlShape,
 ): string {
+  if (notice.kind === 'catalyst-earned') return intl.formatMessage(messages.catalystEarned, { count: notice.count })
   if (notice.kind === 'skill-preset-conflict') {
     return intl.formatMessage(readyDysonMessages.presetPartiallyApplied, {
       presetName: notice.presetName,

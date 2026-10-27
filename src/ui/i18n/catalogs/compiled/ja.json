@@ -5428,7 +5428,7 @@
   "farming.village.averted": [
     {
       "type": 0,
-      "value": "災害を回避。精霊たちは自分のおかげだと言っています。"
+      "value": "災害を回避"
     }
   ],
   "farming.village.balance": [
@@ -5515,6 +5515,16 @@
       "value": "食料"
     }
   ],
+  "farming.village.food-lasts": [
+    {
+      "type": 0,
+      "value": "食料の残り時間："
+    },
+    {
+      "type": 1,
+      "value": "time"
+    }
+  ],
   "farming.village.fullCrew": [
     {
       "type": 0,
@@ -5525,6 +5535,12 @@
     {
       "type": 0,
       "value": "人口増加"
+    }
+  ],
+  "farming.village.growth-paused": [
+    {
+      "type": 0,
+      "value": "人口増加は停止中"
     }
   ],
   "farming.village.herding": [
@@ -5683,6 +5699,16 @@
       "value": "/分"
     }
   ],
+  "farming.village.population-requirement": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "人"
+    }
+  ],
   "farming.village.production": [
     {
       "type": 0,
@@ -5695,16 +5721,76 @@
       "value": "災害リスク軽減"
     }
   ],
+  "farming.village.protection-maximum": [
+    {
+      "type": 0,
+      "value": "災害軽減 · 最大"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
   "farming.village.reserve": [
     {
       "type": 0,
       "value": "食料備蓄"
     }
   ],
+  "farming.village.resident-loss": [
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": "人の住民"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": "人の住民"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": "（"
+    },
+    {
+      "type": 1,
+      "value": "percent"
+    },
+    {
+      "type": 0,
+      "value": "）"
+    }
+  ],
   "farming.village.shaman": [
     {
       "type": 0,
       "value": "シャーマン"
+    }
+  ],
+  "farming.village.shaman-training": [
+    {
+      "type": 0,
+      "value": "シャーマンの訓練"
     }
   ],
   "farming.village.shrine": [
@@ -5767,6 +5853,44 @@
     {
       "type": 0,
       "value": "工房"
+    }
+  ],
+  "gameplay.notifications.catalyst-earned": [
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 0,
+              "value": "個の触媒"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 0,
+              "value": "個の触媒"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
     }
   ],
   "gameplay.notifications.continue": [
@@ -5879,10 +6003,60 @@
       "value": " を獲得"
     }
   ],
+  "gameplay.notifications.first-catalyst-body": [
+    {
+      "type": 0,
+      "value": "獲得報酬は"
+    },
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 0,
+              "value": "触媒1個"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 1,
+              "value": "count"
+            },
+            {
+              "type": 0,
+              "value": "個の触媒"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": "です。スキル画面で触媒を使うと、基本スキルを永久にフラクチャーできます。フラクチャーしたスキルはスキルポイントを消費せず常に有効になり、デメリットも無効になります。"
+    }
+  ],
+  "gameplay.notifications.first-catalyst-title": [
+    {
+      "type": 0,
+      "value": "初めての触媒"
+    }
+  ],
   "gameplay.notifications.view-countermeasures": [
     {
       "type": 0,
       "value": "対抗策を見る"
+    }
+  ],
+  "gameplay.notifications.view-skills": [
+    {
+      "type": 0,
+      "value": "スキルを見る"
     }
   ],
   "infinity.automatic-reset": [

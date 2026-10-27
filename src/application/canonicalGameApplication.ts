@@ -540,13 +540,17 @@ export class CanonicalGameApplicationFacade {
   ): Promise<CanonicalPlayerDispatchResult> {
     const presetPriorityChange = envelope.command.kind === 'skill.set-auto-assignment' ||
       envelope.command.kind === 'skill.set-preset-assignment'
-    if (presetPriorityChange || envelope.command.kind.startsWith('civilization.') || envelope.command.kind === 'rework.choose-migration' || envelope.command.kind === 'discovery.purchase' || envelope.command.kind === 'skill.galvanize' || envelope.command.kind === 'avocado.request-overflow-reset' ||
+    const civilizationTransition = envelope.command.kind === 'civilization.enter-farming' ||
+      envelope.command.kind === 'civilization.complete-farming'
+    // Routine village actions use the same in-memory updates and checkpoints as
+    // other gameplay. Only an era handoff needs to finish saving before display.
+    if (presetPriorityChange || civilizationTransition || envelope.command.kind === 'rework.choose-migration' || envelope.command.kind === 'discovery.purchase' || envelope.command.kind === 'skill.galvanize' || envelope.command.kind === 'avocado.request-overflow-reset' ||
         envelope.command.kind === 'challenge.enter' || envelope.command.kind === 'challenge.enter-no-science' || envelope.command.kind === 'challenge.enter-trial-and-error' || envelope.command.kind === 'challenge.enter-blank-slate' || envelope.command.kind === 'challenge.abandon') {
       const result = await this.application.dispatchCommitFirst(
         envelope.command.kind === 'rework.choose-migration' && migrationAwayState !== undefined
           ? { ...envelope, command: { kind: 'internal.choose-rework-with-away-state', state: migrationAwayState, choice: envelope.command.choice } }
           : envelope,
-        presetPriorityChange ? 'skill-preset' : envelope.command.kind.startsWith('civilization.') ? 'civilization-purchase' : envelope.command.kind === 'rework.choose-migration' ? 'rework-migration' : envelope.command.kind === 'discovery.purchase' ? 'discovery-purchase' : envelope.command.kind === 'skill.galvanize' ? 'galvanization' : 'bot-cap')
+        presetPriorityChange ? 'skill-preset' : civilizationTransition ? 'civilization-purchase' : envelope.command.kind === 'rework.choose-migration' ? 'rework-migration' : envelope.command.kind === 'discovery.purchase' ? 'discovery-purchase' : envelope.command.kind === 'skill.galvanize' ? 'galvanization' : 'bot-cap')
       return {
         kind: 'transition',
         transition: result.committed ? result.transition : {
@@ -1244,7 +1248,10 @@ export function createCanonicalGameEngineDefinition(
         Object.assign(candidate, { gameState: before })
         return { accepted: true, changed: false }
       }
-      if (result.accepted && result.changed) Object.assign(candidate, { gameState: observeSpeedruns(candidate.gameState, Date.now(), false, false, command.kind === 'avocado.request-overflow-reset') })
+      if (result.accepted && result.changed) {
+        if (!debugAction) appendCatalystPresentationEvent(candidate, before)
+        Object.assign(candidate, { gameState: observeSpeedruns(candidate.gameState, Date.now(), false, false, command.kind === 'avocado.request-overflow-reset') })
+      }
       else Object.assign(candidate, { gameState: before })
       return result
     },
@@ -1486,6 +1493,7 @@ function advanceActive(
     return reject('CANONICAL-ACTIVE-TIME-INVALID', 'Active time must be finite and non-negative.')
   }
   if (milliseconds === 0) return { accepted: true, changed: false }
+  const before = candidate.gameState
   const result = advanceGame(
     eventCarrier(candidate),
     {
@@ -1505,6 +1513,7 @@ function advanceActive(
   }
   replaceEventCarrier(candidate, result.state)
   appendDisasterPresentationEvents(candidate, result.summary.disasterEvents)
+  appendCatalystPresentationEvent(candidate, before)
   return { accepted: true, changed: true }
 }
 
@@ -1519,6 +1528,7 @@ function advanceActiveContinuous(
     return reject('CANONICAL-ACTIVE-TIME-INVALID', 'Active time must be finite and non-negative.')
   }
   if (milliseconds === 0) return { accepted: true, changed: false }
+  const before = candidate.gameState
   const result = advanceGame(
     eventCarrier(candidate),
     {
@@ -1535,6 +1545,7 @@ function advanceActiveContinuous(
   }
   replaceEventCarrier(candidate, result.state)
   appendDisasterPresentationEvents(candidate, result.summary.disasterEvents)
+  appendCatalystPresentationEvent(candidate, before)
   return { accepted: true, changed: true }
 }
 
@@ -1556,6 +1567,15 @@ function activeAdvanceMeasurement(
             Math.max(0, consumedBaseSeconds * 1000),
           ),
   }
+}
+
+function appendCatalystPresentationEvent(state: CanonicalRuntimeState, before: CanonicalRuntimeState['gameState']): void {
+  const countAwards = (game: CanonicalRuntimeState['gameState']) =>
+    (game.civilization?.awardedCatalystMilestoneIds.length ?? 0) + (game.civilization?.farming?.awardedCatalystIds.length ?? 0)
+  const previous = countAwards(before), totalEarned = countAwards(state.gameState)
+  if (totalEarned <= previous || state.presentationEvents.some(event => event.kind === 'catalyst-earned' && event.totalEarned === totalEarned)) return
+  appendPresentationEvent(state, sequence => ({ kind: 'catalyst-earned', sequence,
+    count: totalEarned - previous, totalEarned, firstLifetimeOccurrence: previous === 0 && before.challenges?.hasEarnedGalvanizer !== true }))
 }
 
 function appendDisasterPresentationEvents(
@@ -2026,6 +2046,10 @@ function validatePresentationEvents(
       return 'CANONICAL-PRESENTATION-EVENTS-INVALID'
     }
     previousSequence = event.sequence
+    if (event.kind === 'catalyst-earned') {
+      if (!Number.isSafeInteger(event.count) || event.count < 1 || !Number.isSafeInteger(event.totalEarned) || event.totalEarned < event.count || typeof event.firstLifetimeOccurrence !== 'boolean') return 'CANONICAL-PRESENTATION-EVENTS-INVALID'
+      continue
+    }
     if (event.kind === 'skill-preset-conflict-resolved') {
       if (!Number.isInteger(event.slot) || event.slot < 1 || event.slot > 10) {
         return 'CANONICAL-PRESENTATION-EVENTS-INVALID'

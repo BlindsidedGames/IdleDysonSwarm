@@ -41,6 +41,13 @@ export interface CanonicalRuntimeSkillPresetApplicationOutcome
 
 export type CanonicalRuntimePresentationEvent =
   | {
+      readonly kind: 'catalyst-earned'
+      readonly sequence: number
+      readonly count: number
+      readonly totalEarned: number
+      readonly firstLifetimeOccurrence: boolean
+    }
+  | {
       readonly kind: 'skill-preset-conflict'
       readonly sequence: number
       readonly presetName: string

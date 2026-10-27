@@ -95,7 +95,7 @@ export interface LegacyFarmingState {
 export type FarmingResource = 'food' | 'materials' | 'tools'
 export type FarmingRecipe = Readonly<Partial<Record<FarmingResource, number>>>
 export type FarmingWorkplace = 'crops' | 'herding' | 'woodland' | 'workshop' | 'shaman'
-export type FarmingPurchase = 'house' | 'field' | 'pasture' | 'workshop' | 'granary' | 'irrigation' | 'loggingCamp' | 'shrine'
+export type FarmingPurchase = 'house' | 'field' | 'pasture' | 'workshop' | 'granary' | 'irrigation' | 'loggingCamp' | 'shrine' | 'shamanTraining'
 export interface FarmingJob {
   readonly cycle: number
   readonly kind: 'woodland' | 'workshop'
@@ -252,11 +252,37 @@ export interface SeasonalFarmingState extends Omit<PreferredFarmingState, 'versi
 }
 
 /** Protection is earned by actual Shaman staffing throughout the current season. */
-export interface FarmingState extends Omit<SeasonalFarmingState, 'version' | 'continuous'> {
+export interface ProtectedFarmingState extends Omit<SeasonalFarmingState, 'version' | 'continuous'> {
   readonly version: 9
   readonly seasonProtection: number
   readonly previousSeasonalVillage?: SeasonalFarmingState
   readonly continuous?: NonNullable<PreferredFarmingState['continuous']> & { readonly seasonProtection: number }
+}
+
+/** Buildings supply capacity; player priorities guide automatic allocation. */
+export interface PrioritizedFarmingState extends Omit<ProtectedFarmingState, 'version' | 'desiredJobs'> {
+  readonly version: 10
+  readonly foodPriority: 'crops' | 'herding'
+  readonly workPriority: 'woodland' | 'workshop' | 'shaman'
+  readonly previousProtectedVillage?: ProtectedFarmingState
+}
+
+/** Crop work is accumulated separately from edible stored food until harvest. */
+export interface CropHarvestFarmingState extends Omit<PrioritizedFarmingState, 'version' | 'continuous'> {
+  readonly version: 11
+  readonly cropHarvest: number
+  readonly previousPrioritizedVillage?: PrioritizedFarmingState
+  readonly continuous?: NonNullable<PrioritizedFarmingState['continuous']> & { readonly cropHarvest: number }
+}
+
+/** Both food workplaces pay their accumulated production at the season boundary. */
+export interface FarmingState extends Omit<CropHarvestFarmingState, 'version' | 'continuous'> {
+  readonly version: 12
+  /** Absent in earlier V12 saves; starts at the basic protection limit. */
+  readonly protectionUpgrades?: number
+  readonly livestockHarvest: number
+  readonly previousCropHarvestVillage?: CropHarvestFarmingState
+  readonly continuous?: NonNullable<CropHarvestFarmingState['continuous']> & { readonly livestockHarvest: number }
 }
 
 export interface CivilizationState {

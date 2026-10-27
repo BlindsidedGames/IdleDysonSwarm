@@ -2272,7 +2272,7 @@
     "defaultMessage": "Purchases"
   },
   "farming.village.averted": {
-    "defaultMessage": "Disaster averted. The spirits accept the credit."
+    "defaultMessage": "Disaster averted"
   },
   "farming.village.balance": {
     "defaultMessage": "Food balance"
@@ -2310,11 +2310,17 @@
   "farming.village.food": {
     "defaultMessage": "Food"
   },
+  "farming.village.food-lasts": {
+    "defaultMessage": "Food lasts {time}"
+  },
   "farming.village.fullCrew": {
     "defaultMessage": "Full crew"
   },
   "farming.village.growth": {
     "defaultMessage": "Growing"
+  },
+  "farming.village.growth-paused": {
+    "defaultMessage": "Growth paused"
   },
   "farming.village.herding": {
     "defaultMessage": "Livestock"
@@ -2388,17 +2394,29 @@
   "farming.village.perMinute": {
     "defaultMessage": "{value}/min"
   },
+  "farming.village.population-requirement": {
+    "defaultMessage": "{value} population"
+  },
   "farming.village.production": {
     "defaultMessage": "Production"
   },
   "farming.village.protection": {
     "defaultMessage": "Disaster reduction"
   },
+  "farming.village.protection-maximum": {
+    "defaultMessage": "Disaster reduction · max {value}"
+  },
   "farming.village.reserve": {
     "defaultMessage": "Food reserve"
   },
+  "farming.village.resident-loss": {
+    "defaultMessage": "{count, plural, one {# resident} other {# residents}} ({percent})"
+  },
   "farming.village.shaman": {
     "defaultMessage": "Shamans"
+  },
+  "farming.village.shaman-training": {
+    "defaultMessage": "Shaman training"
   },
   "farming.village.shrine": {
     "defaultMessage": "Shrine"
@@ -2426,6 +2444,10 @@
   },
   "farming.workshop": {
     "defaultMessage": "Workshop"
+  },
+  "gameplay.notifications.catalyst-earned": {
+    "defaultMessage": "+{count} {count, plural, one {Catalyst} other {Catalysts}}",
+    "description": "Timed notice for newly awarded Simulation catalysts."
   },
   "gameplay.notifications.continue": {
     "defaultMessage": "Continue",
@@ -2463,9 +2485,21 @@
     "defaultMessage": "{cause} reset {count} Simulations · +{reward} Strange Matter",
     "description": "Timed notification for coalesced repeat automatic disasters."
   },
+  "gameplay.notifications.first-catalyst-body": {
+    "defaultMessage": "You earned {count, plural, one {a Catalyst} other {{count} Catalysts}}. Spend Catalysts in Skills to permanently fracture a base skill. Fractured skills stay active without using Skill Points and have their downsides disabled.",
+    "description": "Explains the purpose of the first awarded catalysts."
+  },
+  "gameplay.notifications.first-catalyst-title": {
+    "defaultMessage": "Your first Catalyst",
+    "description": "First catalyst reward popup heading."
+  },
   "gameplay.notifications.view-countermeasures": {
     "defaultMessage": "View Countermeasures",
     "description": "Dismisses a disaster dialog and opens the Reality tab."
+  },
+  "gameplay.notifications.view-skills": {
+    "defaultMessage": "View Skills",
+    "description": "Open Skills from the first catalyst popup."
   },
   "infinity.automatic-reset": {
     "defaultMessage": "Auto Infinity",

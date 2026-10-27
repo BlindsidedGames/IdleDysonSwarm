@@ -1693,6 +1693,7 @@ function ReadyDysonSliceContent({
           showPresetApplicationNotices={showSkillPresetApplicationNotices}
           skillState={gameplay.progression.skills}
           onViewReality={() => navigateTo('simulations')}
+          onViewSkills={() => navigateTo('skills')}
         />
       }
       resources={{

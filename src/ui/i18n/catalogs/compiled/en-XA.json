@@ -10608,7 +10608,7 @@
     },
     {
       "type": 0,
-      "value": "Ḓīşȧȧşŧḗḗř ȧȧṽḗḗřŧḗḗḓ. Ŧħḗḗ şƥīřīŧş ȧȧƈƈḗḗƥŧ ŧħḗḗ ƈřḗḗḓīŧ."
+      "value": "Ḓīşȧȧşŧḗḗř ȧȧṽḗḗřŧḗḗḓ"
     },
     {
       "type": 0,
@@ -10795,6 +10795,24 @@
       "value": "]"
     }
   ],
+  "farming.village.food-lasts": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒǿǿǿǿḓ ŀȧȧşŧş "
+    },
+    {
+      "type": 1,
+      "value": "time"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "farming.village.fullCrew": [
     {
       "type": 0,
@@ -10817,6 +10835,20 @@
     {
       "type": 0,
       "value": "Ɠřǿǿẇīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.growth-paused": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠřǿǿẇŧħ ƥȧȧŭŭşḗḗḓ"
     },
     {
       "type": 0,
@@ -11171,6 +11203,24 @@
       "value": "]"
     }
   ],
+  "farming.village.population-requirement": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " ƥǿǿƥŭŭŀȧȧŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "farming.village.production": [
     {
       "type": 0,
@@ -11199,6 +11249,24 @@
       "value": "]"
     }
   ],
+  "farming.village.protection-maximum": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓīşȧȧşŧḗḗř řḗḗḓŭŭƈŧīǿǿƞ · ḿȧȧẋ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "farming.village.reserve": [
     {
       "type": 0,
@@ -11213,6 +11281,58 @@
       "value": "]"
     }
   ],
+  "farming.village.resident-loss": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " řḗḗşīḓḗḗƞŧ"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " řḗḗşīḓḗḗƞŧş"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": " ("
+    },
+    {
+      "type": 1,
+      "value": "percent"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "farming.village.shaman": [
     {
       "type": 0,
@@ -11221,6 +11341,20 @@
     {
       "type": 0,
       "value": "Şħȧȧḿȧȧƞş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "farming.village.shaman-training": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şħȧȧḿȧȧƞ ŧřȧȧīƞīƞɠ"
     },
     {
       "type": 0,
@@ -11355,6 +11489,52 @@
     {
       "type": 0,
       "value": "Ẇǿǿřķşħǿǿƥ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "gameplay.notifications.catalyst-earned": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 0,
+              "value": "Ƈȧȧŧȧȧŀẏşŧ"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 0,
+              "value": "Ƈȧȧŧȧȧŀẏşŧş"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
     },
     {
       "type": 0,
@@ -11543,6 +11723,66 @@
       "value": "]"
     }
   ],
+  "gameplay.notifications.first-catalyst-body": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẏǿǿŭŭ ḗḗȧȧřƞḗḗḓ "
+    },
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 0,
+              "value": "ȧȧ Ƈȧȧŧȧȧŀẏşŧ"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 1,
+              "value": "count"
+            },
+            {
+              "type": 0,
+              "value": " Ƈȧȧŧȧȧŀẏşŧş"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ". Şƥḗḗƞḓ Ƈȧȧŧȧȧŀẏşŧş īƞ Şķīŀŀş ŧǿǿ ƥḗḗřḿȧȧƞḗḗƞŧŀẏ ƒřȧȧƈŧŭŭřḗḗ ȧȧ ƀȧȧşḗḗ şķīŀŀ. Ƒřȧȧƈŧŭŭřḗḗḓ şķīŀŀş şŧȧȧẏ ȧȧƈŧīṽḗḗ ẇīŧħǿǿŭŭŧ ŭŭşīƞɠ Şķīŀŀ Ƥǿǿīƞŧş ȧȧƞḓ ħȧȧṽḗḗ ŧħḗḗīř ḓǿǿẇƞşīḓḗḗş ḓīşȧȧƀŀḗḗḓ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "gameplay.notifications.first-catalyst-title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẏǿǿŭŭř ƒīřşŧ Ƈȧȧŧȧȧŀẏşŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "gameplay.notifications.view-countermeasures": [
     {
       "type": 0,
@@ -11551,6 +11791,20 @@
     {
       "type": 0,
       "value": "Ṽīḗḗẇ Ƈǿǿŭŭƞŧḗḗřḿḗḗȧȧşŭŭřḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "gameplay.notifications.view-skills": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ṽīḗḗẇ Şķīŀŀş"
     },
     {
       "type": 0,
