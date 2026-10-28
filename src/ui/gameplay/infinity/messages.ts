@@ -121,6 +121,32 @@ export const infinityMessages = defineMessages({
     defaultMessage: 'Last Infinity: {value} IP/min',
     description: 'Infinity Point reward rate from the last completed Infinity.',
   },
+  liveRate: {
+    id: 'infinity.rate.live',
+    defaultMessage: 'Current: {value} IP/min',
+    description: 'Infinity Point reward per minute elapsed in the current run.',
+  },
+  runPeakTime: {
+    id: 'infinity.rate.run-peak-time',
+    defaultMessage: 'Peak: {value} IP/min at {time}',
+    description: 'Highest rate this Infinity and its time on the 1x reset clock.',
+  },
+  elapsedTime: {
+    id: 'infinity.elapsed-time',
+    defaultMessage: 'Time in this Infinity: {value}',
+    description: 'Accessible label for the elapsed time beside Auto Infinity.',
+  },
+  runPeakRate: {
+    id: 'infinity.rate.run-peak',
+    defaultMessage: 'Peak: {value} IP/min at {reward} IP',
+    description: 'Highest Infinity Point reward rate recorded in the current run.',
+  },
+  resetGoal: { id: 'infinity.goal.resetGoal', defaultMessage: 'Reset target', description: 'Infinity automatic reset target control.' },
+  ipGoal: { id: 'infinity.goal.ipGoal', defaultMessage: 'IP', description: 'Infinity automatic reset target control.' },
+  timeGoal: { id: 'infinity.goal.timeGoal', defaultMessage: 'Time', description: 'Infinity automatic reset target control.' },
+  timeTarget: { id: 'infinity.goal.timeTarget', defaultMessage: 'Time at 1× (seconds)', description: 'Infinity automatic reset target control.' },
+  timeTargetInvalid: { id: 'infinity.goal.timeTargetInvalid', defaultMessage: 'Enter a time of at least 1 second.', description: 'Infinity automatic reset target control.' },
+  goalFailed: { id: 'infinity.goal.goalFailed', defaultMessage: 'The reset target was not changed.', description: 'Infinity automatic reset target control.' },
   peakRate: {
     id: 'infinity.rate.peak',
     defaultMessage: 'Recommended: {rate} IP/min at {reward} IP',
@@ -150,6 +176,16 @@ export const infinityMessages = defineMessages({
     id: 'infinity.break-target.failed',
     defaultMessage: 'The Infinity target was not changed.',
     description: 'Failure feedback for a rejected Auto Infinity target.',
+  },
+  timeBonusCurrent: {
+    id: 'infinity.time-bonus.current',
+    defaultMessage: 'Time bonus ×{value}',
+    description: 'Current IP reward time multiplier in the Infinity settings.',
+  },
+  timeBonusReward: {
+    id: 'infinity.time-bonus.reward',
+    defaultMessage: '{base} → {reward} IP',
+    description: 'IP before and after the current time bonus.',
   },
   secretTitle: {
     id: 'infinity.shop.secret.title',

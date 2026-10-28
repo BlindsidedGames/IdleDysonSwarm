@@ -1,3 +1,4 @@
+import { quantumTimeBonusCost, INFINITY_TIME_BONUS_MAX_LEVEL } from './infinityTimeBonus'
 import { initializeSwarmGrants } from './swarmAugments'
 import {
   isSafeNonNegativeInteger,
@@ -24,6 +25,7 @@ export const QUANTUM_UPGRADE_IDS = [
   'BreakTheLoop',
   'QuantumEntanglement',
   'Automation',
+  'TimeBonus',
   'Secrets',
   'Division',
   'Avocado',
@@ -69,6 +71,7 @@ const QUANTUM_UPGRADE_SECTION_DEFINITIONS = Object.freeze([
       'DoubleIP',
       'BotMultitasking',
       'Automation',
+      'TimeBonus',
       'BreakTheLoop',
       'Secrets',
       'Division',
@@ -118,7 +121,7 @@ export interface QuantumUpgradeDefinition {
   readonly costScaling: 'flat' | 'exponential'
   readonly repeatable: boolean
   readonly maximumPurchases: bigint | null
-  readonly source: 'unity-asset' | 'unity-fallback'
+  readonly source: 'unity-asset' | 'unity-fallback' | 'game'
 }
 
 export type QuantumUpgradePurchaseCode =
@@ -162,6 +165,7 @@ const FALLBACK_COSTS: Readonly<
   BreakTheLoop: 6n,
   QuantumEntanglement: 12n,
   Automation: 1n,
+  TimeBonus: 1_000n,
   Secrets: 1n,
   Division: 2n,
   Avocado: 42n,
@@ -227,6 +231,7 @@ export function quantumUpgradeCost(
   const definition = definitions.get(id)
   if (definition === undefined) return DISCRETE_MAXIMUM
   const purchases = quantumUpgradePurchaseCount(state, id)
+  if (id === 'TimeBonus') return quantumTimeBonusCost(Number(purchases))
   if (definition.costScaling === 'flat' || purchases === 0n) {
     return definition.baseCost
   }
@@ -389,6 +394,7 @@ export function quantumUpgradePrerequisitesMet(
   state: Readonly<CanonicalGameStateV1>,
   id: QuantumUpgradeId,
 ): boolean {
+  if (id === 'TimeBonus') return state.quantum.unlocks.automation && state.quantum.unlocks.breakTheLoop
   if (id === 'BirchPlanets') {
     return state.quantum.unlocks.matrioshkaBrains
   }
@@ -425,6 +431,8 @@ export function quantumUpgradePurchaseCount(
   id: QuantumUpgradeId,
 ): bigint {
   switch (id) {
+    case 'TimeBonus':
+      return BigInt(state.quantum.timeBonusLevel ?? 0)
     case 'Division':
       return state.quantum.divisionsPurchased
     case 'Secrets':
@@ -459,6 +467,11 @@ function applyQuantumUpgradeEffect(
   state: Readonly<CanonicalGameStateV1>,
   id: QuantumUpgradeId,
 ): CanonicalGameStateV1 | null {
+  if (id === 'TimeBonus') {
+    const level = state.quantum.timeBonusLevel ?? 0
+    if (level >= INFINITY_TIME_BONUS_MAX_LEVEL) return null
+    return { ...state, quantum: { ...state.quantum, timeBonusLevel: level + 1 } }
+  }
   if (id === 'Secrets') {
     if (
       state.quantum.permanentSecrets >=
@@ -672,6 +685,10 @@ function loadQuantumUpgradeDefinitions(): ReadonlyMap<
       source: 'unity-asset',
     })
   }
+  definitions.set('TimeBonus', {
+    id: 'TimeBonus', baseCost: 1_000n, costScaling: 'exponential', repeatable: true,
+    maximumPurchases: BigInt(INFINITY_TIME_BONUS_MAX_LEVEL), source: 'game',
+  })
   for (const id of QUANTUM_UPGRADE_IDS) {
     if (definitions.has(id)) continue
     definitions.set(id, {

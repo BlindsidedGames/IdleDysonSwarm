@@ -493,6 +493,38 @@
       "value": "不使用科学或研究完成一次量子轮次。"
     }
   ],
+  "challenges.opening.complete": [
+    {
+      "type": 0,
+      "value": "已完成"
+    }
+  ],
+  "challenges.opening.progress": [
+    {
+      "type": 0,
+      "value": "进行中 · "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 10 个目标"
+    }
+  ],
+  "challenges.opening.rule": [
+    {
+      "type": 0,
+      "value": "完成机器人标签页的全部 10 个目标。"
+    }
+  ],
+  "challenges.opening.title": [
+    {
+      "type": 0,
+      "value": "起步"
+    }
+  ],
   "challenges.quantumAbandonRestart": [
     {
       "type": 0,
@@ -4373,6 +4405,44 @@
       "value": "在车库里手工组装"
     }
   ],
+  "gameplay.notifications.catalyst-earned": [
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 0,
+              "value": "催化剂"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 0,
+              "value": "催化剂"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    }
+  ],
   "gameplay.notifications.continue": [
     {
       "type": 0,
@@ -4483,10 +4553,60 @@
       "value": " 奇异物质"
     }
   ],
+  "gameplay.notifications.first-catalyst-body": [
+    {
+      "type": 0,
+      "value": "你获得了"
+    },
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 0,
+              "value": "一个催化剂"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 1,
+              "value": "count"
+            },
+            {
+              "type": 0,
+              "value": " 个催化剂"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": "。在技能页面消耗催化剂，可永久裂解基础技能。裂解的技能无需技能点即可保持生效，其负面效果也会被禁用。"
+    }
+  ],
+  "gameplay.notifications.first-catalyst-title": [
+    {
+      "type": 0,
+      "value": "你的第一个催化剂"
+    }
+  ],
   "gameplay.notifications.view-countermeasures": [
     {
       "type": 0,
       "value": "查看反制措施"
+    }
+  ],
+  "gameplay.notifications.view-skills": [
+    {
+      "type": 0,
+      "value": "查看技能"
     }
   ],
   "infinity.automatic-reset": [
@@ -4541,6 +4661,52 @@
     {
       "type": 0,
       "value": "设置目标"
+    }
+  ],
+  "infinity.elapsed-time": [
+    {
+      "type": 0,
+      "value": "本次无限用时："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "infinity.goal.goalFailed": [
+    {
+      "type": 0,
+      "value": "重置目标未更改。"
+    }
+  ],
+  "infinity.goal.ipGoal": [
+    {
+      "type": 0,
+      "value": "IP"
+    }
+  ],
+  "infinity.goal.resetGoal": [
+    {
+      "type": 0,
+      "value": "重置目标"
+    }
+  ],
+  "infinity.goal.timeGoal": [
+    {
+      "type": 0,
+      "value": "时间"
+    }
+  ],
+  "infinity.goal.timeTarget": [
+    {
+      "type": 0,
+      "value": "1× 速度下的时间（秒）"
+    }
+  ],
+  "infinity.goal.timeTargetInvalid": [
+    {
+      "type": 0,
+      "value": "请输入至少 1 秒的时间。"
     }
   ],
   "infinity.manual-reset": [
@@ -4699,6 +4865,20 @@
       "value": " IP/分钟"
     }
   ],
+  "infinity.rate.live": [
+    {
+      "type": 0,
+      "value": "当前："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " IP/分钟"
+    }
+  ],
   "infinity.rate.peak": [
     {
       "type": 0,
@@ -4719,6 +4899,46 @@
     {
       "type": 0,
       "value": " IP"
+    }
+  ],
+  "infinity.rate.run-peak": [
+    {
+      "type": 0,
+      "value": "峰值："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " IP/分钟，达到时为 "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " IP"
+    }
+  ],
+  "infinity.rate.run-peak-time": [
+    {
+      "type": 0,
+      "value": "峰值："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " IP/分钟，出现在 "
+    },
+    {
+      "type": 1,
+      "value": "time"
     }
   ],
   "infinity.region": [
@@ -4947,6 +5167,34 @@
     {
       "type": 0,
       "value": "初始拥有 10 台服务器"
+    }
+  ],
+  "infinity.time-bonus.current": [
+    {
+      "type": 0,
+      "value": "时间加成 ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "infinity.time-bonus.reward": [
+    {
+      "type": 1,
+      "value": "base"
+    },
+    {
+      "type": 0,
+      "value": " → "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " IP"
     }
   ],
   "navigation.avocato": [
@@ -6113,6 +6361,48 @@
       "value": "）"
     }
   ],
+  "quantum.time-bonus.details.close": [
+    {
+      "type": 0,
+      "value": "关闭"
+    }
+  ],
+  "quantum.time-bonus.details.current": [
+    {
+      "type": 0,
+      "value": "当前"
+    }
+  ],
+  "quantum.time-bonus.details.next": [
+    {
+      "type": 0,
+      "value": "下一级"
+    }
+  ],
+  "quantum.time-bonus.details.note": [
+    {
+      "type": 0,
+      "value": "IP 倍率。每次无限都会重新开始。时间按 1× 速度计算。"
+    }
+  ],
+  "quantum.time-bonus.details.now": [
+    {
+      "type": 0,
+      "value": "此刻"
+    }
+  ],
+  "quantum.time-bonus.details.time": [
+    {
+      "type": 0,
+      "value": "本轮用时"
+    }
+  ],
+  "quantum.time-bonus.details.title": [
+    {
+      "type": 0,
+      "value": "时间加成"
+    }
+  ],
   "quantum.unavailable": [
     {
       "type": 0,
@@ -6357,6 +6647,40 @@
     {
       "type": 0,
       "value": "Terra"
+    }
+  ],
+  "quantum.upgrade.time-bonus.description": [
+    {
+      "type": 0,
+      "value": "此刻：×"
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " → ×"
+    },
+    {
+      "type": 1,
+      "value": "next"
+    }
+  ],
+  "quantum.upgrade.time-bonus.maximum-description": [
+    {
+      "type": 0,
+      "value": "此刻：×"
+    },
+    {
+      "type": 1,
+      "value": "current"
+    }
+  ],
+  "quantum.upgrade.time-bonus.title": [
+    {
+      "type": 0,
+      "value": "时间加成"
     }
   ],
   "quantum.upgrades": [
@@ -14217,6 +14541,12 @@
       "value": "尚未记录已完成周期。"
     }
   ],
+  "statistics.last-cycle.ip-per-minute": [
+    {
+      "type": 0,
+      "value": "IP/分钟"
+    }
+  ],
   "statistics.last-cycle.ordinary-infinity": [
     {
       "type": 0,
@@ -17128,6 +17458,18 @@
       "value": "版本 4.1.11"
     }
   ],
+  "wiki.patch-notes.version-4-1-11.achievement-caps": [
+    {
+      "type": 0,
+      "value": "修复了 Steam 成就进度上限低于最新成就要求的问题。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.beginnings": [
+    {
+      "type": 0,
+      "value": "完成全部十个机器人目标即可完成“起步”，并获得第一个催化剂。已通过初始流程的存档也会获得奖励。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-11.credits": [
     {
       "type": 0,
@@ -17156,6 +17498,12 @@
     {
       "type": 0,
       "value": "按住购买按钮可连续购买Infinity和Quantum升级。松开后停止购买。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.infinity-rewards": [
+    {
+      "type": 0,
+      "value": "重做了无限点奖励，让较长的流程更有价值。自动无限可按 IP 或时间触发，并显示当前、上次和峰值每分钟 IP，以及峰值对应的奖励或时间。"
     }
   ],
   "wiki.patch-notes.version-4-1-11.infinity-summary": [
@@ -17216,6 +17564,12 @@
     {
       "type": 0,
       "value": "Stellar技能裂变后保留产出加成并移除负面效果。更新了技能描述、激活条件和机器人费用。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.time-bonus": [
+    {
+      "type": 0,
+      "value": "新增可重复购买的量子升级“时间加成”，初始价格为 1,000 量子碎片。其 IP 倍率会在每次无限中逐渐增长。点击升级可比较当前和下一级效果。"
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

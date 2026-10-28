@@ -138,6 +138,8 @@ const V2_DREAM_RESET_CAUSES = new Set([
 ])
 
 const CURRENT_ONLY_STATE_PATHS = new Set([
+  '$.infinity.rewardFormulaVersion',
+  '$.infinity.peakBots',
   '$.discovery',
   '$.statistics.speedruns',
   '$.challenges',

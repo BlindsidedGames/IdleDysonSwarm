@@ -84,6 +84,7 @@ import {
 } from '../simulation/quantumUpgrades'
 import { withCanonicalBotAllocation } from '../simulation/canonicalBotAllocation'
 import {
+  trackInfinityPeakBots,
   MANUAL_INFINITY_CALIBRATION_MINIMUM_SECONDS,
 } from '../simulation/infinityCycle'
 import type { QuantumUpgradeId } from '../simulation/quantumUpgrades'
@@ -298,6 +299,11 @@ export type CanonicalGameCommand =
       readonly kind: 'infinity.request-reset'
     }
   | {
+      readonly kind: 'infinity.set-reset-goal'
+      readonly mode: 'ip' | 'time'
+      readonly seconds: number
+    }
+  | {
       readonly kind: 'infinity.set-break-target'
       readonly target: bigint
     }
@@ -380,6 +386,7 @@ export type CanonicalGameCommandCode =
   | `dyson-facility:${string}`
   | `dyson-bot-distribution:${string}`
   | `dyson-setting:${string}`
+  | `infinity-reset-goal:${string}`
   | `infinity-break-target:${string}`
   | `infinity-automatic-reset:${string}`
   | `infinity-reset:${string}`
@@ -771,6 +778,10 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
     supported: true,
     authority: 'injected canonical Quantum Leap event-model boundary',
     requires: ['quantum-leap-port', 'runtime-evaluation-port'],
+  },
+  'infinity.set-reset-goal': {
+    supported: true,
+    authority: 'canonical persisted Infinity reset goal',
   },
   'infinity.set-break-target': {
     supported: true,
@@ -2392,6 +2403,23 @@ export function routeCanonicalGameCommand(
       )
     }
 
+    case 'infinity.set-reset-goal': {
+      if (!state.quantum.unlocks.breakTheLoop || !['ip', 'time'].includes(command.mode) ||
+          !Number.isFinite(command.seconds) || command.seconds < 1) {
+        return rejectDomain(state, carriers, 'infinity-reset-goal:invalid', command.kind,
+          'A reset goal requires Break The Loop and a finite duration of at least one second.')
+      }
+      const changed = command.mode !== (state.infinity.automaticResetMode ?? 'ip') ||
+        command.seconds !== (state.infinity.resetAfterSeconds ?? 60)
+      return finalizeAccepted(state, changed ? {
+        ...state,
+        infinity: { ...state.infinity, automaticResetMode: command.mode,
+          resetAfterSeconds: command.seconds, activeAutomaticThroughputCycleEligible: false },
+        statistics: { ...state.statistics, recentActiveAutomaticInfinityCycles: [] },
+      } : state, changed, `infinity-reset-goal:${changed ? 'set' : 'unchanged'}`,
+      carriers, options.runtimeEvaluation, EMPTY_ISSUES, false)
+    }
+
     case 'infinity.set-break-target': {
       if (!state.quantum.unlocks.breakTheLoop) {
         return rejectDomain(
@@ -2402,13 +2430,13 @@ export function routeCanonicalGameCommand(
           'Break target is unavailable until Break The Loop is owned.',
         )
       }
-      if (command.target > 2_147_483_647n) {
+      if (command.target > 9_223_372_036_854_775_807n) {
         return rejectDomain(
           state,
           carriers,
           'infinity-break-target:invalid',
           command.kind,
-          'Break target exceeds the canonical Unity integer range.',
+          'Break target exceeds the supported IP range.',
         )
       }
       const target = command.target < 1n ? 1n : command.target
@@ -2767,7 +2795,7 @@ function finalizeAccepted(
     )
   }
 
-  candidate = withCanonicalBotAllocation(candidate)
+  candidate = trackInfinityPeakBots(withCanonicalBotAllocation(candidate))
   let nextCarriers = carriers
   if (refreshEvaluation) {
     let evaluation: CanonicalRuntimeEvaluationPortResult

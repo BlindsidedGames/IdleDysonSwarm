@@ -14,20 +14,28 @@ import { challengeMessages as messages } from './challengeMessages'
 type ChallengeCommand = Extract<CanonicalPlayerCommand, { kind: `challenge.${string}` }>
 type ChallengeProps = {
   readonly progress: Readonly<InfinityChallengeState>
+  readonly goalStage: bigint
   readonly overflowReached: boolean
   readonly developmentVisible?: boolean
   readonly dispatchPlayer: (command: ChallengeCommand) => Promise<UiRuntimePlayerCommandResult>
 }
 export function InfinityChallenges(props: ChallengeProps) {
   const intl = useIntl()
-  if (!props.progress.unlocked && !props.developmentVisible) return null
-  return <><CollapsibleSection className="infinity-challenges" storageKey="infinity-challenges" title={intl.formatMessage(messages.title)}>
+  const openingComplete = props.progress.openingCompleted === true
+  return <><article className="infinity-shop-card infinity-challenge-card"><div>
+    <h3>{intl.formatMessage(messages.openingTitle)}</h3>
+    <p>{intl.formatMessage(messages.openingRule)}</p>
+    <p>{intl.formatMessage(props.progress.openingCatalystAwarded ? messages.rewarded : messages.reward, {
+      reward: <InlineResourceAmount leadingSymbol={<InlineImageSymbol className="infinity-challenge-card__galvanizer" src={galvanizerIcon} tint maskMode="luminance" label={intl.formatMessage(messages.galvanizers, {value: '1'})} />} value="1" />,
+    })}</p>
+    <p>{intl.formatMessage(openingComplete ? messages.openingComplete : messages.openingProgress, {value: String(props.goalStage > 10n ? 10n : props.goalStage)})}</p>
+  </div></article>{(props.progress.unlocked || props.developmentVisible) && <><CollapsibleSection className="infinity-challenges" storageKey="infinity-challenges" title={intl.formatMessage(messages.title)}>
     <ChallengeCard {...props} challengeId="blank-slate" />
     <ChallengeCard {...props} challengeId="trial-and-error" />
   </CollapsibleSection><CollapsibleSection className="infinity-challenges" storageKey="quantum-challenges" title={intl.formatMessage(messages.quantumTitle)}>
     <p>{intl.formatMessage(messages.quantumRules)}</p>
     {QUANTUM_CHALLENGE_IDS.map(id => <ChallengeCard key={id} {...props} challengeId={id} />)}
-  </CollapsibleSection></>
+  </CollapsibleSection></>}</>
 }
 function ChallengeCard({ progress, overflowReached, developmentVisible = false, dispatchPlayer, challengeId }: ChallengeProps & { challengeId: NonNullable<InfinityChallengeState['active']> }) {
   const intl = useIntl()

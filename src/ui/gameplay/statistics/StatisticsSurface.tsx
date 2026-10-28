@@ -33,6 +33,7 @@ import {
   type StatisticsWindowAggregate,
 } from './statisticsProjection'
 import './statistics.css'
+import { formatInfinityPointAmount } from '../../components/infinityPointFormatting'
 
 type StatisticsState = FrontendCanonicalProgression['statistics']
 type TotalsMetricKey = keyof SimulationTotalsState
@@ -573,7 +574,11 @@ function LastCycleCard({
               label={intl.formatMessage(messages.resetCause)}
               value={formatDreamCause(cycle.dreamCause, intl)}
             />
-          ) : null}
+          ) : <StatisticFact
+            label={intl.formatMessage(messages.cycleIpPerMinute)}
+            value={formatInfinityPointAmount(locale,
+              cycle.durationSeconds > 0 ? Number(cycle.reward) * 60 / cycle.durationSeconds : 0)}
+          />}
         </dl>
       ) : (
         <p>{intl.formatMessage(messages.noCompletedCycle)}</p>

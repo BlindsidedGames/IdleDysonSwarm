@@ -1,3 +1,4 @@
+import { type InfinityTimeBonusProgress } from '../../../simulation/infinityTimeBonus'
 import { usePressAndHoldRepeat } from '../usePressAndHoldRepeat'
 import type { InfinityCycleHistoryEntry } from '../../../game-state/types'
 import { infinityRunIpPerMinute } from '../statistics/statisticsProjection'
@@ -42,6 +43,8 @@ import {
 import { formatInfinityPointAmount } from '../../components/infinityPointFormatting'
 import {
   formatGameNumber,
+  formatGameDuration,
+  formatGameCountdown,
   formatNumber,
 } from '../../i18n/formatters'
 import type {
@@ -70,6 +73,7 @@ type InfinityCommand = Extract<
   {
     readonly kind:
       | 'infinity.purchase-shop-item'
+      | 'infinity.set-reset-goal'
       | 'infinity.set-break-target'
       | 'infinity.set-automatic-reset'
       | 'infinity.request-reset'
@@ -84,6 +88,7 @@ const BOTS_AMOUNT_MARKER = '__BOTS_AMOUNT__'
 
 export interface InfinityCommandAvailability {
   readonly purchaseShopItem: boolean
+  readonly setResetGoal?: boolean
   readonly setBreakTarget: boolean
   readonly setAutomaticReset: boolean
   readonly requestReset: boolean
@@ -96,6 +101,14 @@ export interface InfinitySurfaceProps {
   readonly resources: FrontendCanonicalResources['infinity']
   readonly progression: Pick<FrontendCanonicalProgression, 'infinity'>
   readonly derived: InfinityProgressFacts & Partial<{
+    readonly elapsedSeconds: number
+    readonly resetSpeedMultiplier: number
+    readonly timeBonusBaseReward: bigint
+    readonly timeBonus: InfinityTimeBonusProgress
+    readonly currentRunIpPerMinute: number
+    readonly currentRunPeakIpPerMinute: number
+    readonly currentRunPeakReward: bigint
+    readonly currentRunPeakSeconds: number
     readonly currentIpPerMinute: number
     readonly peakIpPerMinute: number
     readonly peakReward: bigint
@@ -132,28 +145,31 @@ export function InfinitySurface({
   const lastInfinityRate = lastInfinityCycle ? formatInfinityPointAmount(locale, infinityRunIpPerMinute(lastInfinityCycle)) : '—'
   const settingsId = useId()
   const progressFillRef = useRef<HTMLSpanElement>(null)
+  const timedReset = progression.infinity.automaticResetMode === 'time'
+  const solidPointProgress = useRapidInfinityProgress(derived.currentReward, derived.elapsedSeconds ?? 0, timedReset, reducedMotion)
   const progress = Math.max(
     0,
     Math.min(
       1,
-      derived.mode === 'break'
+      derived.mode === 'break' && !timedReset
         ? derived.breakTargetProgress.fraction
         : derived.progressFraction,
     ),
   )
+  const displayedProgress = timedReset && solidPointProgress ? 1 : progress
   const manualResetReady =
     !progression.infinity.automaticResetEnabled &&
     (derived.mode === 'break' ? derived.currentReward >= 1n : progress >= 1)
   const inefficientAutomaticTarget =
-    derived.mode === 'break' &&
+    derived.mode === 'break' && !timedReset &&
     progression.infinity.automaticResetEnabled &&
     (derived.peakReward ?? 0n) > 0n &&
     progression.infinity.breakTarget >=
       (derived.peakReward ?? 0n) * 3n
   useForwardProgressAnimation(progressFillRef, {
-    canonicalProgress: progress,
+    canonicalProgress: displayedProgress,
     inferRate: 'increasing',
-    active: progress < 1,
+    active: displayedProgress < 1,
     wraps: true,
     reducedMotion,
   })
@@ -295,7 +311,7 @@ export function InfinitySurface({
                     ? (
                         <InlineResourceAmount
                           leadingSymbol={<InfinityPointSymbol />}
-                          value={`${formatInfinityPointAmount(locale, derived.breakTargetProgress.currentReward)}/${formatInfinityPointAmount(locale, derived.breakTargetProgress.targetReward)}`}
+                          value={timedReset ? formatInfinityPointAmount(locale, derived.currentReward) : `${formatInfinityPointAmount(locale, derived.breakTargetProgress.currentReward)}/${formatInfinityPointAmount(locale, derived.breakTargetProgress.targetReward)}`}
                         />
                       )
                     : intl.formatMessage(messages.progressPercent, {
@@ -313,7 +329,7 @@ export function InfinitySurface({
                 aria-valuemax={100}
                 aria-valuenow={Math.round(progress * 100)}
                 aria-label={intl.formatMessage(
-                  derived.mode === 'break'
+                  derived.mode === 'break' && !timedReset
                     ? messages.breakProgressAccessible
                     : messages.ordinaryProgress,
                   {
@@ -327,7 +343,7 @@ export function InfinitySurface({
                 <span
                   ref={progressFillRef}
                   aria-hidden="true"
-                  style={{ transform: `scaleX(${progress})` }}
+                  style={{ transform: `scaleX(${displayedProgress})` }}
                 />
               </div>
               <ManualInfinityButton
@@ -356,6 +372,7 @@ export function InfinitySurface({
             </p>
           ) : null}
           <AutomaticInfinityControl
+            elapsed={formatGameDuration(locale, derived.elapsedSeconds ?? 0)}
             enabled={progression.infinity.automaticResetEnabled}
             routeAvailable={commandAvailability.setAutomaticReset}
             dispatchPlayer={dispatchPlayer}
@@ -375,26 +392,126 @@ export function InfinitySurface({
                     })}
                   />
                 </span>
+                {[messages.liveRate, timedReset ? messages.runPeakTime : messages.runPeakRate].map((message, index) => {
+                  const value = formatInfinityPointAmount(locale,
+                    (index === 0 ? derived.currentRunIpPerMinute : derived.currentRunPeakIpPerMinute) ?? 0)
+                  const reward = formatInfinityPointAmount(locale, derived.currentRunPeakReward ?? 0n)
+                  const time = derived.currentRunPeakSeconds === undefined ? '—' : formatGameCountdown(locale, derived.currentRunPeakSeconds)
+                  return <span key={message.id}>
+                    <InfinityCurrencySentence
+                      accessible={intl.formatMessage(message, { value, reward, time })}
+                      amounts={index === 0 ? [value] : [value, reward]}
+                      template={intl.formatMessage(message, { value: infinityAmountMarker(0), reward: infinityAmountMarker(1), time })}
+                    />
+                  </span>
+                })}
+                {derived.timeBonus && <span className="infinity-surface__time-bonus">
+                  <span>{intl.formatMessage(messages.timeBonusCurrent, {value: formatGameNumber(locale, derived.timeBonus.multiplier)})}</span>
+                  <span><InfinityCurrencySentence
+                    firstSymbolOnly
+                    accessible={intl.formatMessage(messages.timeBonusReward, {base: formatInfinityPointAmount(locale, derived.timeBonusBaseReward ?? derived.currentReward), reward: formatInfinityPointAmount(locale, derived.currentReward)})}
+                    amounts={[formatInfinityPointAmount(locale, derived.timeBonusBaseReward ?? derived.currentReward), formatInfinityPointAmount(locale, derived.currentReward)]}
+                    template={intl.formatMessage(messages.timeBonusReward, {base: infinityAmountMarker(0), reward: infinityAmountMarker(1)})}
+                  /></span>
+                </span>}
               </div>
               ) : null
             }
           />
           {derived.mode === 'break' ? (
             <>
-              <AutoInfinityTargetControl
+              <InfinityResetGoalControl
+                locale={locale}
+                speed={derived.resetSpeedMultiplier ?? 1}
+                mode={timedReset ? 'time' : 'ip'}
+                seconds={progression.infinity.resetAfterSeconds ?? 60}
+                routeAvailable={commandAvailability.setResetGoal ?? false}
+                dispatchPlayer={dispatchPlayer}
+              />
+              {!timedReset && <AutoInfinityTargetControl
                 locale={locale}
                 target={progression.infinity.breakTarget}
                 routeAvailable={
                   commandAvailability.setBreakTarget
                 }
                 dispatchPlayer={dispatchPlayer}
-              />
+              />}
             </>
           ) : null}
         </ProgressControlsPanel>}
       </div>
     </section>
   )
+}
+
+/** Presentation only: rapid point awards stay solid instead of flashing on every wrap. */
+function useRapidInfinityProgress(reward: bigint, elapsed: number, enabled: boolean, reducedMotion: boolean): boolean {
+  const [solid, setSolid] = useState(false)
+  const samples = useRef<{ reward: bigint; elapsed: number; at: number }[]>([])
+  useEffect(() => {
+    const at = performance.now()
+    const previous = samples.current.at(-1)
+    if (!enabled || !previous || elapsed < previous.elapsed || reward < previous.reward) {
+      samples.current = [{ reward, elapsed, at }]
+      setSolid(false)
+      return
+    }
+    samples.current.push({ reward, elapsed, at })
+    while (samples.current.length > 2 && samples.current[1].at <= at - 1000) samples.current.shift()
+    const first = samples.current[0]
+    const seconds = (at - first.at) / 1000
+    const gained = Number(reward - first.reward)
+    if (seconds >= 0.25 && gained >= 4 && gained / seconds >= 4) setSolid(true)
+    else if (seconds >= 0.9 && gained / seconds < 2) setSolid(false)
+  }, [reward, elapsed, enabled])
+  return enabled && (solid || (reducedMotion && reward > 0n))
+}
+
+function InfinityResetGoalControl({ locale, mode, seconds, speed, routeAvailable, dispatchPlayer }: {
+  readonly locale: EnabledLocale
+  readonly mode: 'ip' | 'time'
+  readonly speed: number
+  readonly seconds: number
+  readonly routeAvailable: boolean
+  readonly dispatchPlayer: InfinitySurfaceProps['dispatchPlayer']
+}) {
+  const intl = useIntl()
+  const [draft, setDraft] = useState(String(seconds))
+  const [pending, setPending] = useState(false)
+  const [error, setError] = useState<MessageDescriptor | null>(null)
+  const pendingRef = useRef(false)
+  useEffect(() => { setDraft(String(seconds)) }, [seconds])
+  const commit = async (nextMode: 'ip' | 'time', nextSeconds: number) => {
+    if (!routeAvailable || pendingRef.current) return
+    if (!Number.isFinite(nextSeconds) || nextSeconds < 1) { setError(messages.timeTargetInvalid); return }
+    if (nextMode === mode && nextSeconds === seconds) return
+    pendingRef.current = true
+    setPending(true)
+    setError(null)
+    try {
+      const result = await dispatchPlayer({ kind: 'infinity.set-reset-goal', mode: nextMode, seconds: nextSeconds })
+      if (result.status !== 'accepted') setError(messages.goalFailed)
+    } catch { setError(messages.goalFailed) }
+    finally { pendingRef.current = false; setPending(false) }
+  }
+  return <div className="infinity-reset-goal">
+    <div className="infinity-reset-goal__modes" role="group" aria-label={intl.formatMessage(messages.resetGoal)}>
+      {(['ip', 'time'] as const).map(value => <Button key={value} variant="primary"
+        aria-pressed={mode === value} disabled={!routeAvailable || pending}
+        onClick={() => void commit(value, seconds)}>
+        {intl.formatMessage(value === 'ip' ? messages.ipGoal : messages.timeGoal)}
+      </Button>)}
+    </div>
+    {mode === 'time' && <label className="infinity-reset-goal__time">
+      <span>{intl.formatMessage(messages.timeTarget)}</span>
+      <input type="number" min="1" step="any" value={draft} disabled={!routeAvailable || pending}
+        aria-invalid={error !== null} onChange={event => {setDraft(event.target.value); setError(null)}}
+        onBlur={() => void commit(mode, Number(draft))}
+        onKeyDown={event => {if (event.key === 'Enter') {event.preventDefault(); event.currentTarget.blur()}}} />
+      <span className="infinity-reset-goal__duration">{formatGameCountdown(locale, seconds / speed)}{speed > 1 ? ` (${formatNumber(locale, speed)}×)` : ''}</span>
+    </label>}
+    {error && <span role="alert">{intl.formatMessage(error)}</span>}
+  </div>
 }
 
 function ManualInfinityButton({
@@ -469,6 +586,7 @@ function ManualInfinityButton({
 }
 
 interface AutomaticInfinityControlProps {
+  readonly elapsed: string
   readonly enabled: boolean
   readonly guidance?: ReactNode
   readonly routeAvailable: boolean
@@ -476,6 +594,7 @@ interface AutomaticInfinityControlProps {
 }
 
 function AutomaticInfinityControl({
+  elapsed,
   enabled,
   guidance,
   routeAvailable,
@@ -505,7 +624,10 @@ function AutomaticInfinityControl({
   return (
     <div className="infinity-automatic-reset">
       <div className="infinity-automatic-reset__copy">
-        <span>{intl.formatMessage(messages.automaticReset)}</span>
+        <span className="infinity-automatic-reset__heading">
+          <span>{intl.formatMessage(messages.automaticReset)}</span>
+          <span className="infinity-automatic-reset__elapsed" aria-label={intl.formatMessage(messages.elapsedTime, { value: elapsed })}>{elapsed}</span>
+        </span>
         {guidance}
       </div>
       <button
@@ -793,10 +915,12 @@ function infinityAmountMarker(index: number): string {
 }
 
 function InfinityCurrencySentence({
+  firstSymbolOnly = false,
   accessible,
   amounts,
   template,
 }: {
+  readonly firstSymbolOnly?: boolean
   readonly accessible: string
   readonly amounts: readonly string[]
   readonly template: string
@@ -818,7 +942,7 @@ function InfinityCurrencySentence({
             <InlineResourceAmount
               className="infinity-point-amount"
               key={part}
-              leadingSymbol={<InfinityPointSymbol />}
+              leadingSymbol={!firstSymbolOnly || index === 0 ? <InfinityPointSymbol /> : undefined}
               value={amounts[index]}
             />
           )

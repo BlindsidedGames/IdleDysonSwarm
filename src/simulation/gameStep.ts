@@ -181,6 +181,7 @@ export function advanceGame(
     model.applyProductionArrivals(summary)
     model.applyDerivedTimers(gameSeconds, summary)
   }
+  model.sampleInfinityRatePeak(false)
   model.finishStep()
   return finish(
     model,

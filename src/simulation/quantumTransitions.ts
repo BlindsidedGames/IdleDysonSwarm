@@ -193,9 +193,11 @@ export function applyCanonicalQuantumReset(
       infinity: {
         ...state.infinity,
         points: 0n,
+        peakBots: 0,
         spentPoints: 0n,
         lastCycleDurationSeconds: 0,
         lastPointsGained: 0,
+        runPeak: undefined,
         currentCyclePeakIpPerMinute: 0,
         currentCyclePeakReward: 0n,
         manualPeakIpPerMinute: 0,

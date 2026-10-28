@@ -49,8 +49,10 @@ export function applyCanonicalOverflowReset(
       infinity: {
         ...state.infinity,
         points: 0n,
+        peakBots: 1,
         spentPoints: 0n,
         breakTarget: 1n,
+        runPeak: undefined,
         currentCyclePeakIpPerMinute: 0,
         currentCyclePeakReward: 0n,
         manualPeakIpPerMinute: 0,
@@ -96,6 +98,7 @@ export function applyCanonicalOverflowReset(
         influenceSpeedBonus: 0n,
         cashBonusLevels: 0n,
         scienceBonusLevels: 0n,
+        timeBonusLevel: 0,
         unlocks: {
           botMultitasking: false, doubleInfinityPoints: false, breakTheLoop: false,
           quantumEntanglement: false, automation: false, fragments: false,
@@ -120,6 +123,7 @@ export function applyCanonicalOverflowReset(
         researchAutomationTargetIndex: 0,
         infinityBoundaryRemaining: 0,
         infinityCycleSeconds: 0,
+      infinityCycleAutomationSeconds: 0,
         infinityCycleStartingPoints: 0n,
         infinityHasPostResetStart: false,
         doubleTime: { unlocked: false, enabled: false, bankSeconds: 0, rate: 0 },

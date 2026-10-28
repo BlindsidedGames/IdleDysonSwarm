@@ -62,7 +62,7 @@ export class SteamPublication {
   setSuspended(value, reason = 'system') { this.pauseReasons ??= new Set(); if(value) this.pauseReasons.add(reason); else this.pauseReasons.delete(reason); this.suspended = this.pauseReasons.size > 0; this.lastClock = performance.now() }
   async available() { try { return this.native !== null && Boolean(this.identity()) } catch { return false } }
   validate(facts) {
-    if (!facts || !Array.isArray(facts.unlocked) || facts.unlocked.length > 27 || !facts.statistics || typeof facts.statistics !== 'object' || typeof facts.presence !== 'string' || facts.presence.length > 100) throw new Error('Invalid achievement facts')
+    if (!facts || !Array.isArray(facts.unlocked) || facts.unlocked.length > Object.keys(this.map).length || !facts.statistics || typeof facts.statistics !== 'object' || typeof facts.presence !== 'string' || facts.presence.length > 100) throw new Error('Invalid achievement facts')
     if (facts.progression !== undefined) {
       const p = facts.progression
       if (!p || !['bots','avocadoMultiplier'].every(key => Number.isFinite(p[key]) && p[key] >= 0) || !['infinityPoints','quantumPoints'].every(key => typeof p[key] === 'string' && /^\d{1,20}$/.test(p[key])) || typeof p.realityUnlocked !== 'boolean' || typeof p.avocadoUnlocked !== 'boolean') throw new Error('Invalid presence facts')

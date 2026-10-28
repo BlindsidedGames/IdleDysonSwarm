@@ -1061,6 +1061,70 @@
       "value": "‬"
     }
   ],
+  "challenges.opening.complete": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.opening.progress": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ɔʇıʌǝ · "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " / 10 ƃoɐʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.opening.rule": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝ ɐʅʅ 10 ƃoɐʅs ıu ʇɥǝ Ԑoʇs ʇɐq."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "challenges.opening.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑǝƃıuuıuƃs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "challenges.quantumAbandonRestart": [
     {
       "type": 0,
@@ -8381,6 +8445,52 @@
       "value": "‬"
     }
   ],
+  "gameplay.notifications.catalyst-earned": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 0,
+              "value": "Ↄɐʇɐʅʎsʇ"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 0,
+              "value": "Ↄɐʇɐʅʎsʇs"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "gameplay.notifications.continue": [
     {
       "type": 0,
@@ -8563,6 +8673,66 @@
       "value": "‬"
     }
   ],
+  "gameplay.notifications.first-catalyst-body": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅄on ǝɐɹuǝp "
+    },
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 0,
+              "value": "ɐ Ↄɐʇɐʅʎsʇ"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 1,
+              "value": "count"
+            },
+            {
+              "type": 0,
+              "value": " Ↄɐʇɐʅʎsʇs"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": ". Sdǝup Ↄɐʇɐʅʎsʇs ıu Sʞıʅʅs ʇo dǝɹɯɐuǝuʇʅʎ ɟɹɐɔʇnɹǝ ɐ qɐsǝ sʞıʅʅ. Ⅎɹɐɔʇnɹǝp sʞıʅʅs sʇɐʎ ɐɔʇıʌǝ ʍıʇɥonʇ nsıuƃ Sʞıʅʅ Ԁoıuʇs ɐup ɥɐʌǝ ʇɥǝıɹ poʍusıpǝs pısɐqʅǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "gameplay.notifications.first-catalyst-title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅄onɹ ɟıɹsʇ Ↄɐʇɐʅʎsʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "gameplay.notifications.view-countermeasures": [
     {
       "type": 0,
@@ -8571,6 +8741,20 @@
     {
       "type": 0,
       "value": "Ʌıǝʍ Ↄonuʇǝɹɯǝɐsnɹǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "gameplay.notifications.view-skills": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ʌıǝʍ Sʞıʅʅs"
     },
     {
       "type": 0,
@@ -8697,6 +8881,108 @@
     {
       "type": 0,
       "value": "Sǝʇ ʇɐɹƃǝʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.elapsed-time": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ıɯǝ ıu ʇɥıs Iuɟıuıʇʎ: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.goal.goalFailed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ ɹǝsǝʇ ʇɐɹƃǝʇ ʍɐs uoʇ ɔɥɐuƃǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.goal.ipGoal": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "IԀ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.goal.resetGoal": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsǝʇ ʇɐɹƃǝʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.goal.timeGoal": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ıɯǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.goal.timeTarget": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ıɯǝ ɐʇ 1× (sǝɔoups)"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.goal.timeTargetInvalid": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝuʇǝɹ ɐ ʇıɯǝ oɟ ɐʇ ʅǝɐsʇ 1 sǝɔoup."
     },
     {
       "type": 0,
@@ -8979,6 +9265,28 @@
       "value": "‬"
     }
   ],
+  "infinity.rate.live": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄnɹɹǝuʇ: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " IԀ/ɯıu"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "infinity.rate.peak": [
     {
       "type": 0,
@@ -9003,6 +9311,62 @@
     {
       "type": 0,
       "value": " IԀ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.rate.run-peak": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁǝɐʞ: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " IԀ/ɯıu ɐʇ "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " IԀ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.rate.run-peak-time": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁǝɐʞ: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " IԀ/ɯıu ɐʇ "
+    },
+    {
+      "type": 1,
+      "value": "time"
     },
     {
       "type": 0,
@@ -9487,6 +9851,50 @@
     {
       "type": 0,
       "value": "Sʇɐɹʇ ʍıʇɥ 10 Sǝɹʌǝɹs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.time-bonus.current": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ıɯǝ qouns ×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.time-bonus.reward": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "base"
+    },
+    {
+      "type": 0,
+      "value": " → "
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " IԀ"
     },
     {
       "type": 0,
@@ -11841,6 +12249,104 @@
       "value": "‬"
     }
   ],
+  "quantum.time-bonus.details.close": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄʅosǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "quantum.time-bonus.details.current": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄnɹɹǝuʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "quantum.time-bonus.details.next": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Nǝxʇ ʅǝʌǝʅ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "quantum.time-bonus.details.note": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "IԀ ɯnʅʇıdʅıǝɹ. ᴚǝsʇɐɹʇs ǝɐɔɥ Iuɟıuıʇʎ. ⊥ıɯǝs nsǝ 1× sdǝǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "quantum.time-bonus.details.now": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚıƃɥʇ uoʍ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "quantum.time-bonus.details.time": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚnu ʇıɯǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "quantum.time-bonus.details.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ıɯǝ qouns"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "quantum.unavailable": [
     {
       "type": 0,
@@ -12409,6 +12915,64 @@
     {
       "type": 0,
       "value": "⊥ǝɹɹɐ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "quantum.upgrade.time-bonus.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚıƃɥʇ uoʍ: ×"
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " → ×"
+    },
+    {
+      "type": 1,
+      "value": "next"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "quantum.upgrade.time-bonus.maximum-description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚıƃɥʇ uoʍ: ×"
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "quantum.upgrade.time-bonus.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ıɯǝ qouns"
     },
     {
       "type": 0,
@@ -29249,6 +29813,20 @@
       "value": "‬"
     }
   ],
+  "statistics.last-cycle.ip-per-minute": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "IԀ/ɯıu"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "statistics.last-cycle.ordinary-infinity": [
     {
       "type": 0,
@@ -34616,6 +35194,34 @@
       "value": "‬"
     }
   ],
+  "wiki.patch-notes.version-4-1-11.achievement-caps": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıxǝp Sʇǝɐɯ ɐɔɥıǝʌǝɯǝuʇ dɹoƃɹǝss qǝıuƃ ɔɐddǝp qǝʅoʍ ʇɥǝ ɹǝbnıɹǝɯǝuʇs oɟ ʇɥǝ uǝʍǝsʇ ɐɔɥıǝʌǝɯǝuʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.beginnings": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝ ɐʅʅ ʇǝu Ԑoʇs ƃoɐʅs ʇo ɟıuısɥ Ԑǝƃıuuıuƃs ɐup ǝɐɹu ʎonɹ ɟıɹsʇ Ↄɐʇɐʅʎsʇ. Ǝxısʇıuƃ sɐʌǝs ɹǝɔǝıʌǝ ɔɹǝpıʇ ıɟ ʇɥǝʎ ɥɐʌǝ ɐʅɹǝɐpʎ dɐssǝp ʇɥǝ odǝuıuƃ ɹnu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "wiki.patch-notes.version-4-1-11.credits": [
     {
       "type": 0,
@@ -34680,6 +35286,20 @@
     {
       "type": 0,
       "value": "Hoʅp dnɹɔɥɐsǝ qnʇʇous ʇo ʞǝǝd qnʎıuƃ Iuɟıuıʇʎ ɐup Ònɐuʇnɯ ndƃɹɐpǝs. Ԁnɹɔɥɐsǝs sʇod ʍɥǝu ʎon ɹǝʅǝɐsǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.infinity-rewards": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝʍoɹʞǝp Iuɟıuıʇʎ Ԁoıuʇ ɹǝʍɐɹps ʇo ɯɐʞǝ ʅouƃǝɹ ɹnus ʍoɹʇɥʍɥıʅǝ. ∀nʇo Iuɟıuıʇʎ ɔɐu ʇɐɹƃǝʇ IԀ oɹ ɹnu ʇıɯǝ, ʍıʇɥ ɔnɹɹǝuʇ, ʅɐsʇ ɐup dǝɐʞ IԀ dǝɹ ɯıunʇǝ sɥoʍu ɐʅouƃsıpǝ ʇɥǝ dǝɐʞ ɹǝʍɐɹp oɹ ʇıɯǝ."
     },
     {
       "type": 0,
@@ -34820,6 +35440,20 @@
     {
       "type": 0,
       "value": "Sʇǝʅʅɐɹ sʞıʅʅs uoʍ ʞǝǝd ʇɥǝıɹ onʇdnʇ qounsǝs ʍɥǝu ɟɹɐɔʇnɹǝp, ʍıʇɥ ʇɥǝıɹ pɹɐʍqɐɔʞs ɹǝɯoʌǝp. ∩dpɐʇǝp Sʇǝʅʅɐɹ pǝsɔɹıdʇıous, ɐɔʇıʌɐʇıou ɹǝbnıɹǝɯǝuʇs ɐup Ԑoʇ ɔosʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.time-bonus": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ppǝp ʇɥǝ ɹǝdǝɐʇɐqʅǝ ⊥ıɯǝ qouns Ònɐuʇnɯ ndƃɹɐpǝ, sʇɐɹʇıuƃ ɐʇ 1,000 Ònɐuʇnɯ Sɥɐɹps. Iʇs IԀ ɯnʅʇıdʅıǝɹ ƃɹoʍs pnɹıuƃ ǝɐɔɥ Iuɟıuıʇʎ. ⊥ɐd ʇɥǝ ndƃɹɐpǝ ɟoɹ ɐ ɔnɹɹǝuʇ-ʌǝɹsns-uǝxʇ ɔoɯdɐɹısou."
     },
     {
       "type": 0,

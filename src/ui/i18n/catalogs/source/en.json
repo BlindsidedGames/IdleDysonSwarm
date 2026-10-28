@@ -259,6 +259,18 @@
   "challenges.noScience.description": {
     "defaultMessage": "Complete a Quantum run without Science or Research."
   },
+  "challenges.opening.complete": {
+    "defaultMessage": "Completed"
+  },
+  "challenges.opening.progress": {
+    "defaultMessage": "Active · {value} / 10 goals"
+  },
+  "challenges.opening.rule": {
+    "defaultMessage": "Complete all 10 goals in the Bots tab."
+  },
+  "challenges.opening.title": {
+    "defaultMessage": "Beginnings"
+  },
   "challenges.quantumAbandonRestart": {
     "defaultMessage": "This starts a fresh normal Quantum run without awarding Quantum Shards. Challenge restrictions end. Reality Skill Points, Division, Quantum Double IP and Quantum Entanglement become active again. Reality progress and later layers are kept."
   },
@@ -1833,6 +1845,10 @@
     "defaultMessage": "Tinker in your garage",
     "description": "Visible primary title for the Unity manual-creation action."
   },
+  "gameplay.notifications.catalyst-earned": {
+    "defaultMessage": "+{count} {count, plural, one {Catalyst} other {Catalysts}}",
+    "description": "Timed notice for newly awarded Simulation catalysts."
+  },
   "gameplay.notifications.continue": {
     "defaultMessage": "Continue",
     "description": "Primary action dismissing a first-disaster dialog."
@@ -1869,9 +1885,21 @@
     "defaultMessage": "{cause} reset {count} Simulations · +{reward} Strange Matter",
     "description": "Timed notification for coalesced repeat automatic disasters."
   },
+  "gameplay.notifications.first-catalyst-body": {
+    "defaultMessage": "You earned {count, plural, one {a Catalyst} other {{count} Catalysts}}. Spend Catalysts in Skills to permanently fracture a base skill. Fractured skills stay active without using Skill Points and have their downsides disabled.",
+    "description": "Explains the purpose of the first awarded catalysts."
+  },
+  "gameplay.notifications.first-catalyst-title": {
+    "defaultMessage": "Your first Catalyst",
+    "description": "First catalyst reward popup heading."
+  },
   "gameplay.notifications.view-countermeasures": {
     "defaultMessage": "View Countermeasures",
     "description": "Dismisses a disaster dialog and opens the Reality tab."
+  },
+  "gameplay.notifications.view-skills": {
+    "defaultMessage": "View Skills",
+    "description": "Open Skills from the first catalyst popup."
   },
   "infinity.automatic-reset": {
     "defaultMessage": "Auto Infinity",
@@ -1908,6 +1936,34 @@
   "infinity.break-target.set": {
     "defaultMessage": "Set target",
     "description": "Applies an exact Auto Infinity target."
+  },
+  "infinity.elapsed-time": {
+    "defaultMessage": "Time in this Infinity: {value}",
+    "description": "Accessible label for the elapsed time beside Auto Infinity."
+  },
+  "infinity.goal.goalFailed": {
+    "defaultMessage": "The reset target was not changed.",
+    "description": "Infinity automatic reset target control."
+  },
+  "infinity.goal.ipGoal": {
+    "defaultMessage": "IP",
+    "description": "Infinity automatic reset target control."
+  },
+  "infinity.goal.resetGoal": {
+    "defaultMessage": "Reset target",
+    "description": "Infinity automatic reset target control."
+  },
+  "infinity.goal.timeGoal": {
+    "defaultMessage": "Time",
+    "description": "Infinity automatic reset target control."
+  },
+  "infinity.goal.timeTarget": {
+    "defaultMessage": "Time at 1× (seconds)",
+    "description": "Infinity automatic reset target control."
+  },
+  "infinity.goal.timeTargetInvalid": {
+    "defaultMessage": "Enter a time of at least 1 second.",
+    "description": "Infinity automatic reset target control."
   },
   "infinity.manual-reset": {
     "defaultMessage": "Infinity",
@@ -1969,9 +2025,21 @@
     "defaultMessage": "Last Infinity: {value} IP/min",
     "description": "Infinity Point reward rate from the last completed Infinity."
   },
+  "infinity.rate.live": {
+    "defaultMessage": "Current: {value} IP/min",
+    "description": "Infinity Point reward per minute elapsed in the current run."
+  },
   "infinity.rate.peak": {
     "defaultMessage": "Recommended: {rate} IP/min at {reward} IP",
     "description": "Stable current-run Infinity reward recommendation in the Infinity settings."
+  },
+  "infinity.rate.run-peak": {
+    "defaultMessage": "Peak: {value} IP/min at {reward} IP",
+    "description": "Highest Infinity Point reward rate recorded in the current run."
+  },
+  "infinity.rate.run-peak-time": {
+    "defaultMessage": "Peak: {value} IP/min at {time}",
+    "description": "Highest rate this Infinity and its time on the 1x reset clock."
   },
   "infinity.region": {
     "defaultMessage": "Infinity",
@@ -2100,6 +2168,14 @@
   "infinity.shop.servers.title": {
     "defaultMessage": "Start with 10 Servers",
     "description": "Unity retained Servers upgrade title."
+  },
+  "infinity.time-bonus.current": {
+    "defaultMessage": "Time bonus ×{value}",
+    "description": "Current IP reward time multiplier in the Infinity settings."
+  },
+  "infinity.time-bonus.reward": {
+    "defaultMessage": "{base} → {reward} IP",
+    "description": "IP before and after the current time bonus."
   },
   "navigation.avocato": {
     "defaultMessage": "Avocato",
@@ -2670,6 +2746,34 @@
     "defaultMessage": "({value} spent)",
     "description": "Parenthetical spent Quantum Shard balance."
   },
+  "quantum.time-bonus.details.close": {
+    "defaultMessage": "Close",
+    "description": "Close time bonus details."
+  },
+  "quantum.time-bonus.details.current": {
+    "defaultMessage": "Current",
+    "description": "Owned time bonus level column."
+  },
+  "quantum.time-bonus.details.next": {
+    "defaultMessage": "Next level",
+    "description": "Next time bonus level column."
+  },
+  "quantum.time-bonus.details.note": {
+    "defaultMessage": "IP multiplier. Restarts each Infinity. Times use 1× speed.",
+    "description": "Time bonus comparison timing and effect."
+  },
+  "quantum.time-bonus.details.now": {
+    "defaultMessage": "Right now",
+    "description": "Live current run comparison row."
+  },
+  "quantum.time-bonus.details.time": {
+    "defaultMessage": "Run time",
+    "description": "Time comparison column."
+  },
+  "quantum.time-bonus.details.title": {
+    "defaultMessage": "Time bonus",
+    "description": "Time bonus comparison dialog title."
+  },
   "quantum.unavailable": {
     "defaultMessage": "Unavailable",
     "description": "Quantum upgrade unavailable action."
@@ -2833,6 +2937,18 @@
   "quantum.upgrade.terra.title": {
     "defaultMessage": "Terra",
     "description": "Unity Quantum upgrade title."
+  },
+  "quantum.upgrade.time-bonus.description": {
+    "defaultMessage": "Right now: ×{current} → ×{next}",
+    "description": "Next time bonus level and milestone on the 1x run clock."
+  },
+  "quantum.upgrade.time-bonus.maximum-description": {
+    "defaultMessage": "Right now: ×{current}",
+    "description": "Maximum purchased time bonus and milestone."
+  },
+  "quantum.upgrade.time-bonus.title": {
+    "defaultMessage": "Time bonus",
+    "description": "Repeatable Quantum upgrade for longer Infinity runs."
   },
   "quantum.upgrades": {
     "defaultMessage": "Quantum Upgrades",
@@ -7223,6 +7339,10 @@
     "defaultMessage": "No completed cycle has been recorded yet.",
     "description": "Empty state before the first tracked cycle."
   },
+  "statistics.last-cycle.ip-per-minute": {
+    "defaultMessage": "IP/min",
+    "description": "Infinity Points earned per minute in the last completed cycle."
+  },
   "statistics.last-cycle.ordinary-infinity": {
     "defaultMessage": "Ordinary Infinity",
     "description": "Ordinary Infinity cycle type."
@@ -8434,6 +8554,14 @@
     "defaultMessage": "Version 4.1.11",
     "description": "Version 4.1.11 release notes."
   },
+  "wiki.patch-notes.version-4-1-11.achievement-caps": {
+    "defaultMessage": "Fixed Steam achievement progress being capped below the requirements of the newest achievements.",
+    "description": "Version 4.1.11 release notes."
+  },
+  "wiki.patch-notes.version-4-1-11.beginnings": {
+    "defaultMessage": "Complete all ten Bots goals to finish Beginnings and earn your first Catalyst. Existing saves receive credit if they have already passed the opening run.",
+    "description": "Version 4.1.11 release notes."
+  },
   "wiki.patch-notes.version-4-1-11.credits": {
     "defaultMessage": "Added credits to the Wiki.",
     "description": "Version 4.1.11 release notes."
@@ -8452,6 +8580,10 @@
   },
   "wiki.patch-notes.version-4-1-11.infinity-hold": {
     "defaultMessage": "Hold purchase buttons to keep buying Infinity and Quantum upgrades. Purchases stop when you release.",
+    "description": "Version 4.1.11 release notes."
+  },
+  "wiki.patch-notes.version-4-1-11.infinity-rewards": {
+    "defaultMessage": "Reworked Infinity Point rewards to make longer runs worthwhile. Auto Infinity can target IP or run time, with current, last and peak IP per minute shown alongside the peak reward or time.",
     "description": "Version 4.1.11 release notes."
   },
   "wiki.patch-notes.version-4-1-11.infinity-summary": {
@@ -8492,6 +8624,10 @@
   },
   "wiki.patch-notes.version-4-1-11.stellar-benefits": {
     "defaultMessage": "Stellar skills now keep their output bonuses when fractured, with their drawbacks removed. Updated Stellar descriptions, activation requirements and Bot costs.",
+    "description": "Version 4.1.11 release notes."
+  },
+  "wiki.patch-notes.version-4-1-11.time-bonus": {
+    "defaultMessage": "Added the repeatable Time bonus Quantum upgrade, starting at 1,000 Quantum Shards. Its IP multiplier grows during each Infinity. Tap the upgrade for a current-versus-next comparison.",
     "description": "Version 4.1.11 release notes."
   },
   "wiki.patch-notes.version-4-1-2": {

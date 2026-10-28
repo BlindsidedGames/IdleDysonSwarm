@@ -1,5 +1,9 @@
 import { defineMessages } from 'react-intl'
 export const challengeMessages = defineMessages({
+  openingTitle: { id: 'challenges.opening.title', defaultMessage: 'Beginnings' },
+  openingRule: { id: 'challenges.opening.rule', defaultMessage: 'Complete all 10 goals in the Bots tab.' },
+  openingProgress: { id: 'challenges.opening.progress', defaultMessage: 'Active · {value} / 10 goals' },
+  openingComplete: { id: 'challenges.opening.complete', defaultMessage: 'Completed' },
   shortCircuit: { id: 'challenges.shortCircuit', defaultMessage: 'Short Circuit' },
   shortCircuitDescription: { id: 'challenges.shortCircuit.description', defaultMessage: 'Complete a Quantum run with panel lifetime fixed at 2 seconds.' },
   grounded: { id: 'challenges.grounded', defaultMessage: 'Grounded' },

@@ -46,6 +46,7 @@ import {
   infinityPointsPerMinute,
   ordinaryInfinityBotThreshold,
   preferredInfinityRatePeak,
+  trackInfinityPeakBots,
 } from './infinityCycle'
 import {
   applyDysonProductionArrivals,
@@ -445,8 +446,9 @@ export class CanonicalEventTimeModel
           createInfinityCycleState(this.carrier),
           Number.MAX_VALUE,
           infinity.automaticResetEnabled
-            ? infinityMinimumCycleSeconds
+            ? automaticInfinityMinimumSeconds(this.carrier.gameState, infinityMinimumCycleSeconds)
             : 0,
+          timedInfinityRewardAlreadyEarned(this.carrier) ? 0 : undefined,
         )
       : Number.MAX_VALUE
     const overflowHorizon = !hasReachedOverflow(this.carrier.gameState) &&
@@ -668,7 +670,7 @@ export class CanonicalEventTimeModel
 
       this.carrier = {
         ...this.carrier,
-        gameState: candidate,
+        gameState: trackInfinityPeakBots(candidate),
         tinker: tinker.runtime,
       }
       this.pendingInterval = {
@@ -851,11 +853,12 @@ export class CanonicalEventTimeModel
     this.appendBoundaryEvent(summary, event)
   }
 
-  sampleInfinityRatePeak(): void {
+  sampleInfinityRatePeak(recordRecommendation = true): void {
     if (this.currentIssue !== undefined) return
     this.replaceGameState(withUpdatedInfinityRatePeak(
       this.carrier.gameState,
       this.carrier.entitlements,
+      recordRecommendation,
     ))
   }
 
@@ -1187,7 +1190,7 @@ export class CanonicalEventTimeModel
   private replaceGameState(state: CanonicalGameStateV1): void {
     this.carrier = {
       ...this.carrier,
-      gameState: observeSpeedruns(withCanonicalBotAllocation(state)),
+      gameState: trackInfinityPeakBots(observeSpeedruns(withCanonicalBotAllocation(state))),
     }
   }
 
@@ -1295,7 +1298,8 @@ export class CanonicalEventTimeModel
       derived.auxiliary.stellarSacrifice.facilitiesPerSecond,
       createInfinityCycleState(this.carrier),
       Number.MAX_VALUE,
-      automaticResetEnabled ? minimumCycleSeconds : 0,
+      automaticResetEnabled ? automaticInfinityMinimumSeconds(state, minimumCycleSeconds) : 0,
+      timedInfinityRewardAlreadyEarned(this.carrier) ? 0 : undefined,
     )
     this.replaceGameState(
       withNextInfinityBoundary(
@@ -1745,6 +1749,10 @@ function withAdvancedClock(
         0,
         state.timeline.infinityBoundaryRemaining - seconds,
       ),
+      infinityCycleAutomationSeconds: addContinuous(
+        state.timeline.infinityCycleAutomationSeconds ?? state.timeline.infinityCycleSeconds,
+        seconds / (state.timeline.doubleTime.unlocked ? 2 : 1),
+      ),
       infinityCycleSeconds: addContinuous(
         state.timeline.infinityCycleSeconds,
         seconds * rateClockMultiplier,
@@ -1756,9 +1764,14 @@ function withAdvancedClock(
 function withUpdatedInfinityRatePeak(
   state: CanonicalGameStateV1,
   entitlements: Readonly<DysonEntitlements>,
+  recordRecommendation = true,
 ): CanonicalGameStateV1 {
   const infinity = createBasicDysonInfinityState({
     points: state.infinity.points,
+    startingPoints: state.timeline.infinityCycleStartingPoints,
+    rewardAgeSeconds: state.timeline.infinityCycleAutomationSeconds ?? state.timeline.infinityCycleSeconds,
+    timeBonusLevel: state.quantum.timeBonusLevel ?? 0,
+    peakBots: state.infinity.peakBots,
     permanentSkillPoints: state.infinity.permanentSkillPoints,
     breakTheLoop: isBreakInfinityEnabled(state),
     divisionsPurchased: effectiveDivisions(state),
@@ -1777,6 +1790,15 @@ function withUpdatedInfinityRatePeak(
       minimumObservedSeconds,
     ),
   )
+  const previousRunPeak = state.infinity.runPeak
+  const next = state.timeline.infinityCycleSeconds > 0 && reward > 0n && rate > (previousRunPeak?.rate ?? 0) ? {
+    ...state,
+    infinity: { ...state.infinity, runPeak: {
+      rate, reward,
+      seconds: state.timeline.infinityCycleAutomationSeconds ?? state.timeline.infinityCycleSeconds,
+    } },
+  } : state
+  if (!recordRecommendation) return next
   const previousPeak = {
     rate: state.infinity.currentCyclePeakIpPerMinute ?? 0,
     reward: state.infinity.currentCyclePeakReward ?? 0n,
@@ -1785,11 +1807,11 @@ function withUpdatedInfinityRatePeak(
   if (
     selected.rate === previousPeak.rate &&
     selected.reward === previousPeak.reward
-  ) return state
+  ) return next
   return {
-    ...state,
+    ...next,
     infinity: {
-      ...state.infinity,
+      ...next.infinity,
       currentCyclePeakIpPerMinute: selected.rate,
       currentCyclePeakReward: selected.reward,
     },
@@ -1872,6 +1894,9 @@ export function evaluateCanonicalInfinityBoundary(
     return { status: 'not-ready' }
   }
   const infinity = createInfinityCycleState(carrier)
+  const timedReset = !ignoreBreakTarget && isBreakInfinityEnabled(state) && state.infinity.automaticResetMode === 'time'
+  if (timedReset && (state.timeline.infinityCycleAutomationSeconds ?? state.timeline.infinityCycleSeconds) <
+      (state.infinity.resetAfterSeconds ?? 60)) return { status: 'not-ready' }
   if (state.timeline.infinityCycleSeconds < minimumCycleSeconds) {
     return { status: 'not-ready' }
   }
@@ -1883,7 +1908,7 @@ export function evaluateCanonicalInfinityBoundary(
   )
   if (
     (breakInfinity
-      ? breakReward < (ignoreBreakTarget ? 1n : state.infinity.breakTarget)
+      ? breakReward < (ignoreBreakTarget || timedReset ? 1n : state.infinity.breakTarget)
       : state.dyson.bots <
         ordinaryInfinityBotThreshold(
           effectiveDivisions(state),
@@ -1907,21 +1932,39 @@ export function evaluateCanonicalInfinityBoundary(
   }
 }
 
+function timedInfinityRewardAlreadyEarned(carrier: Readonly<CanonicalEventTimeState>): boolean {
+  const state = carrier.gameState
+  return isBreakInfinityEnabled(state) && state.infinity.automaticResetMode === 'time' &&
+    infinityPointsForBots(state.dyson.bots, createInfinityCycleState(carrier)) >= 1n
+}
+
+function automaticInfinityMinimumSeconds(state: Readonly<CanonicalGameStateV1>, minimum: number): number {
+  return isBreakInfinityEnabled(state) && state.infinity.automaticResetMode === 'time'
+    ? Math.max(minimum, Math.max(0, (state.infinity.resetAfterSeconds ?? 60) -
+        (state.timeline.infinityCycleAutomationSeconds ?? state.timeline.infinityCycleSeconds)) *
+        (state.timeline.doubleTime.unlocked ? 2 : 1))
+    : minimum
+}
+
 function createInfinityCycleState(
   carrier: Readonly<CanonicalEventTimeState>,
 ) {
   const state = carrier.gameState
   return createBasicDysonInfinityState({
     points: state.infinity.points,
+    startingPoints: state.timeline.infinityCycleStartingPoints,
+    rewardAgeSeconds: state.timeline.infinityCycleAutomationSeconds ?? state.timeline.infinityCycleSeconds,
+    timeBonusLevel: state.quantum.timeBonusLevel ?? 0,
+    peakBots: state.infinity.peakBots,
     permanentSkillPoints: state.infinity.permanentSkillPoints,
     breakTheLoop: isBreakInfinityEnabled(state),
     divisionsPurchased: effectiveDivisions(state),
-    breakTarget: state.infinity.breakTarget,
+    breakTarget: state.infinity.automaticResetMode === 'time' ? 1n : state.infinity.breakTarget,
     permanentDoubleIp: carrier.entitlements.permanentDoubleIp,
     quantumDoubleIp:
       quantumDoubleIpEnabled(state),
     secondsInCurrentCycle:
-      state.timeline.infinityCycleSeconds,
+      state.infinity.automaticResetMode === 'time' ? 0 : state.timeline.infinityCycleSeconds,
   })
 }
 
@@ -1960,6 +2003,7 @@ function withResetInfinityClock(
       eventClockInitialized: true,
       infinityBoundaryRemaining: minimumCycleSeconds,
       infinityCycleSeconds: 0,
+      infinityCycleAutomationSeconds: 0,
       infinityCycleStartingPoints: state.infinity.points,
       infinityHasPostResetStart: true,
     },

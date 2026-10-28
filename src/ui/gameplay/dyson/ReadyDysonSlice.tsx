@@ -682,7 +682,7 @@ function ReadyDysonSliceContent({
     overflowPoints: gameplay.resources.avocado.overflowPoints,
     developmentOverride: allTabsUnlocked,
   })
-  const challengesUnlocked = allTabsUnlocked || (gameplay.progression.challenges?.unlocked ?? false)
+  const challengesUnlocked = true
   const requestedRouteUnavailable =
     (requestedRoute === 'transcendence' && !discoveryUnlocked) ||
     (requestedRoute === 'challenges' && !challengesUnlocked) ||
@@ -1645,6 +1645,7 @@ function ReadyDysonSliceContent({
                     content: <div className="challenges-surface">
                       {gameplay.progression.challenges && <InfinityChallenges
                         progress={gameplay.progression.challenges}
+                        goalStage={gameplay.progression.dyson.goalStage}
                         developmentVisible={allTabsUnlocked}
                         overflowReached={gameplay.progression.infinity.botCapTransitionPending}
                         dispatchPlayer={dispatchPlayer}
@@ -1683,6 +1684,7 @@ function ReadyDysonSliceContent({
                               gameplay.commands.byKind[
                                 'infinity.purchase-shop-item'
                               ].routeAvailable,
+                            setResetGoal: gameplay.commands.byKind['infinity.set-reset-goal'].routeAvailable,
                             setBreakTarget:
                               gameplay.commands.byKind[
                                 'infinity.set-break-target'
@@ -1844,6 +1846,7 @@ function ReadyDysonSliceContent({
                               <QuantumSurface
                                 locale={locale}
                                 resources={gameplay.resources.quantum}
+                                infinityRunSeconds={gameplay.derived.infinity.timeBonusSeconds}
                                 availableInfinityPoints={
                                   gameplay.resources.infinity.availablePoints
                                 }
@@ -2158,6 +2161,7 @@ function ReadyDysonSliceContent({
           showPresetApplicationNotices={showSkillPresetApplicationNotices}
           skillState={gameplay.progression.skills}
           onViewReality={() => navigateTo('reality')}
+          onViewSkills={() => navigateTo('skills')}
         />
       }
       resources={{
