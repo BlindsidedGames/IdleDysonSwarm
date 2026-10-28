@@ -1,4 +1,3 @@
-import { getPresentationStorage } from '../presentationStorage'
 export const RESEARCH_VISIBILITY_STORAGE_KEY =
   'idle-dyson-swarm.research-visibility.v1'
 export const RESEARCH_VISIBILITY_PREFERENCE_VERSION = 1 as const
@@ -28,7 +27,9 @@ export class ResearchVisibilityPreferenceService {
   constructor(options: ResearchVisibilityPreferenceOptions = {}) {
     this.#storage = 'storage' in options
       ? options.storage ?? null
-      : getPresentationStorage()
+      : typeof localStorage === 'undefined'
+        ? null
+        : localStorage
     const stored = this.#readOnce()
     this.#hadStoredPreference = stored !== null
     this.#legacyAdoptionAvailable = stored === null

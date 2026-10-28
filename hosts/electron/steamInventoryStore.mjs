@@ -164,9 +164,8 @@ export function createSafeStorageProtector(
 }
 
 export class AtomicSteamEntitlementCache {
-  constructor(path, steamAppId, protector, publicSeedPath = null) {
+  constructor(path, steamAppId, protector) {
     this.path = path
-    this.publicSeedPath = publicSeedPath
     this.steamAppId = steamAppId
     this.protector = isValidProtector(protector) ? protector : null
   }
@@ -174,14 +173,7 @@ export class AtomicSteamEntitlementCache {
   async read(steamId) {
     if (!isValidSteamId(steamId) || this.protector === null) return null
     try {
-      let protectedValue
-      let seeded = false
-      try { protectedValue = await readFile(this.path) }
-      catch (error) {
-        if (error?.code !== 'ENOENT' || this.publicSeedPath === null) throw error
-        protectedValue = await readFile(this.publicSeedPath)
-        seeded = true
-      }
+      const protectedValue = await readFile(this.path)
       let plaintext
       try {
         plaintext = this.protector.unprotect(protectedValue)
@@ -201,8 +193,7 @@ export class AtomicSteamEntitlementCache {
         !isValidOwnership(parsed.ownership) ||
         !isValidPendingConsumptions(parsed.pendingConsumptions)
       ) return null
-      // Public consumable queues belong to public; beta seeds verified ownership only.
-      return freezeCacheState(seeded ? { ...parsed, pendingConsumptions: [] } : parsed)
+      return freezeCacheState(parsed)
     } catch (error) {
       if (error?.code === 'ENOENT' || error instanceof SyntaxError) return null
       throw error

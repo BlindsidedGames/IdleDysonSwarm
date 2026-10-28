@@ -1,7 +1,3 @@
-import { REWORK_INFINITY_UPGRADES } from '../../../simulation/canonicalInfinityShop'
-import { quantumUpgradeMessages } from '../quantum/messages'
-import { reworkMessages } from '../rework/messages'
-import { discoveryMessages } from '../discovery/messages'
 import { usePressAndHoldRepeat } from '../usePressAndHoldRepeat'
 import type { InfinityCycleHistoryEntry } from '../../../game-state/types'
 import { infinityRunIpPerMinute } from '../statistics/statisticsProjection'
@@ -94,7 +90,6 @@ export interface InfinityCommandAvailability {
 }
 
 export interface InfinitySurfaceProps {
-  readonly discoveryUnlocked?: boolean
   readonly lastInfinityCycle?: Readonly<InfinityCycleHistoryEntry>
   readonly onViewOverflow?: () => void
   readonly locale: EnabledLocale
@@ -118,7 +113,6 @@ export interface InfinitySurfaceProps {
  * prices, prerequisites and rewards remain backend-owned facts.
  */
 export function InfinitySurface({
-  discoveryUnlocked = false,
   locale,
   resources,
   progression,
@@ -168,13 +162,11 @@ export function InfinitySurface({
     resources.secretsOfTheUniverse,
   )
   const visibleShop = previews.shop.filter((preview) =>
-    !(discoveryUnlocked && preview.itemId === 'rework-BotMultitasking') && (!hideMaxed || !(
+    !hideMaxed || !(
       preview.code === 'already-purchased' ||
       preview.code === 'maximum-reached'
-    )),
+    ),
   )
-  const regularShop = visibleShop.filter(preview => !preview.itemId.startsWith('rework-'))
-  const advancedShop = visibleShop.filter(preview => preview.itemId.startsWith('rework-'))
 
   const productionMultiplier = formatGameNumber(locale, infinityFacilityMultiplier(resources.points, 0n), { wholeBelowHundred: true })
   const productionBoostText = intl.formatMessage(messages.productionBoost, {
@@ -226,26 +218,19 @@ export function InfinitySurface({
 
       <div className="infinity-surface__shop">
         {visibleShop.length > 0 ? (
-          <>
-          {[{ title: reworkMessages.regularUpgrades, rows: regularShop }, { title: reworkMessages.advancedUpgrades, rows: advancedShop }].map(group => group.rows.length > 0 &&
-          <section className="infinity-surface__upgrade-group" key={group.title.id}>
-          <h2>{intl.formatMessage(group.title)}</h2>
           <ol className="infinity-surface__grid">
-            {group.rows.map((preview) => (
+            {visibleShop.map((preview) => (
               <li key={preview.itemId}>
                 <InfinityShopCard
                   locale={locale}
                   preview={preview}
                   resources={resources}
-                  discoveryUnlocked={discoveryUnlocked}
                   routeAvailable={commandAvailability.purchaseShopItem}
                   dispatchPlayer={dispatchPlayer}
                 />
               </li>
             ))}
           </ol>
-          </section>)}
-          </>
         ) : (
           <p className="infinity-surface__empty">
             {intl.formatMessage(messages.empty)}
@@ -254,6 +239,11 @@ export function InfinitySurface({
       </div>
 
       <div className="infinity-surface__control-dock">
+        {derived.showRealityWarning ? (
+          <p className="infinity-surface__warning" role="status">
+            {intl.formatMessage(messages.realityWarning)}
+          </p>
+        ) : null}
         {progression.infinity.botCapTransitionPending ? (
           <div className="infinity-surface__overflow">
             <strong>{intl.formatMessage(avocatoMessages.overflowReached)}</strong>
@@ -548,7 +538,6 @@ interface InfinityShopCardProps {
   readonly locale: EnabledLocale
   readonly preview: FrontendGameplayPreviews['infinity']['shop'][number]
   readonly resources: FrontendCanonicalResources['infinity']
-  readonly discoveryUnlocked: boolean
   readonly routeAvailable: boolean
   readonly dispatchPlayer: InfinitySurfaceProps['dispatchPlayer']
 }
@@ -557,7 +546,6 @@ function InfinityShopCard({
   locale,
   preview,
   resources,
-  discoveryUnlocked,
   routeAvailable,
   dispatchPlayer,
 }: InfinityShopCardProps) {
@@ -565,8 +553,7 @@ function InfinityShopCard({
   const pendingRef = useRef(false)
   const [pending, setPending] = useState(false)
   const [failed, setFailed] = useState(false)
-  const name = preview.itemId === 'rework-ScienceBonus' && discoveryUnlocked
-    ? intl.formatMessage(discoveryMessages.booster) : itemName(preview.itemId, intl)
+  const name = itemName(preview.itemId, intl)
   const completed =
     preview.code === 'already-purchased' ||
     preview.code === 'maximum-reached'
@@ -624,12 +611,11 @@ function InfinityShopCard({
             })}
           </p>
         ) : null}
-        <p>{intl.formatMessage(preview.itemId === 'rework-ScienceBonus' && discoveryUnlocked
-          ? discoveryMessages.boosterEffect : itemDescriptionMessage(preview.itemId))}</p>
+        <p>{intl.formatMessage(itemDescriptionMessage(preview.itemId))}</p>
       </div>
       <Button
         className="infinity-shop-card__purchase"
-        variant="purchase"
+        variant="primary"
         state={pending ? 'pending' : failed ? 'failure' : 'idle'}
         disabled={disabled}
         aria-label={
@@ -888,10 +874,6 @@ function purchasedCount(
 function itemTitleMessage(
   itemId: CanonicalInfinityShopItemId,
 ): MessageDescriptor {
-  const relocated = REWORK_INFINITY_UPGRADES.find(item => item.id === itemId)
-  if (relocated) return relocated.upgradeId === null
-    ? reworkMessages.doubleTime
-    : quantumUpgradeMessages[`${relocated.upgradeId}Title` as keyof typeof quantumUpgradeMessages]
   switch (itemId) {
     case 'secret':
       return messages.secretTitle
@@ -911,17 +893,12 @@ function itemTitleMessage(
       return messages.dataCentersTitle
     case 'retain-planets':
       return messages.planetsTitle
-    default: throw new Error(`Unknown Infinity upgrade: ${itemId}`)
   }
 }
 
 function itemDescriptionMessage(
   itemId: CanonicalInfinityShopItemId,
 ): MessageDescriptor {
-  const relocated = REWORK_INFINITY_UPGRADES.find(item => item.id === itemId)
-  if (relocated) return relocated.upgradeId === null
-    ? reworkMessages.doubleTimeDescription
-    : quantumUpgradeMessages[`${relocated.upgradeId}Description` as keyof typeof quantumUpgradeMessages]
   switch (itemId) {
     case 'secret':
       return messages.secretDescription
@@ -941,7 +918,6 @@ function itemDescriptionMessage(
       return messages.dataCentersDescription
     case 'retain-planets':
       return messages.planetsDescription
-    default: throw new Error(`Unknown Infinity upgrade: ${itemId}`)
   }
 }
 

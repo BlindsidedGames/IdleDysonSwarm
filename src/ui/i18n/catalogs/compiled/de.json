@@ -639,916 +639,6 @@
       "value": "Herausforderung ansehen"
     }
   ],
-  "civilization.allocated": [
-    {
-      "type": 0,
-      "value": "Zugewiesene Arbeiter"
-    }
-  ],
-  "civilization.amount": [
-    {
-      "type": 1,
-      "value": "resource"
-    },
-    {
-      "type": 0,
-      "value": ": "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "civilization.autoPriority": [
-    {
-      "type": 0,
-      "value": "Auto-Priorität"
-    }
-  ],
-  "civilization.automaticAward": [
-    {
-      "type": 0,
-      "value": "Automatische Vergabe, sobald alle Anforderungen erfüllt sind."
-    }
-  ],
-  "civilization.automaticPriority": [
-    {
-      "type": 0,
-      "value": "Versorgungsarbeiter teilen ihre Zeit: zwei Drittel für die bevorzugte Aufgabe, ein Drittel für die andere. Die Arbeiterzahlen zeigen diese Anteile. Werkzeugreserven gelten weiterhin."
-    }
-  ],
-  "civilization.autumn": [
-    {
-      "type": 0,
-      "value": "Herbst"
-    }
-  ],
-  "civilization.available": [
-    {
-      "type": 0,
-      "value": "Nicht zugewiesen / insgesamt"
-    }
-  ],
-  "civilization.awarded": [
-    {
-      "type": 0,
-      "value": "Vergebene Katalysatoren: "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " / 3"
-    }
-  ],
-  "civilization.balanced": [
-    {
-      "type": 0,
-      "value": "Ausgewogen"
-    }
-  ],
-  "civilization.bootstrap": [
-    {
-      "type": 0,
-      "value": "Familiäres Sammeln benötigt keine Ressourcen oder zugewiesenen Arbeiter."
-    }
-  ],
-  "civilization.bootstrapV4": [
-    {
-      "type": 0,
-      "value": "Drei Gründer beginnen mit einem Unterkunftsbausatz. Sammeln benötigt eine echte Arbeitsgruppe und keine Zutaten."
-    }
-  ],
-  "civilization.buildCamp": [
-    {
-      "type": 0,
-      "value": "Lager bauen"
-    }
-  ],
-  "civilization.buildTent": [
-    {
-      "type": 0,
-      "value": "Zelt bauen"
-    }
-  ],
-  "civilization.camp": [
-    {
-      "type": 0,
-      "value": "Lager"
-    }
-  ],
-  "civilization.campBenefit": [
-    {
-      "type": 0,
-      "value": "Wandelt 3 Zelte in ein Lager um. Behält ihre Bewohner und fügt 3 hinzu."
-    }
-  ],
-  "civilization.campExpansion": [
-    {
-      "type": 0,
-      "value": "Lagererweiterung"
-    }
-  ],
-  "civilization.campProvisioning": [
-    {
-      "type": 0,
-      "value": "Lagerversorgung"
-    }
-  ],
-  "civilization.campUnlock": [
-    {
-      "type": 0,
-      "value": "Schließe einen Zyklus der Fellverarbeitung ab und wandle dann 3 Zelte um."
-    }
-  ],
-  "civilization.camps": [
-    {
-      "type": 0,
-      "value": "Lager"
-    }
-  ],
-  "civilization.cancel": [
-    {
-      "type": 0,
-      "value": "Abbrechen"
-    }
-  ],
-  "civilization.catalysts": [
-    {
-      "type": 0,
-      "value": "Katalysatoren"
-    }
-  ],
-  "civilization.chieftain": [
-    {
-      "type": 0,
-      "value": "Führung"
-    }
-  ],
-  "civilization.chieftainAuto": [
-    {
-      "type": 0,
-      "value": "Führungsautomatik"
-    }
-  ],
-  "civilization.chieftainHelp": [
-    {
-      "type": 0,
-      "value": "Wählt automatisch je eine Priorität für Versorgung und Handwerk nach Wachstumsbedarf und Jahreszeit. Zum manuellen Wählen ausschalten."
-    }
-  ],
-  "civilization.chieftainOff": [
-    {
-      "type": 0,
-      "value": "Aus"
-    }
-  ],
-  "civilization.chieftainOn": [
-    {
-      "type": 0,
-      "value": "An"
-    }
-  ],
-  "civilization.chieftainRequirement": [
-    {
-      "type": 0,
-      "value": "Benötigt 2 Lager. Kostet 12 Werkzeuge und 6 Wild; die Lager bleiben erhalten."
-    }
-  ],
-  "civilization.chieftainTarget": [
-    {
-      "type": 0,
-      "value": "Vorbereitung: "
-    },
-    {
-      "type": 1,
-      "value": "name"
-    }
-  ],
-  "civilization.clothing": [
-    {
-      "type": 0,
-      "value": "Leder"
-    }
-  ],
-  "civilization.coldSeason": [
-    {
-      "type": 0,
-      "value": "Jagd: voller Nahrungsertrag. Sammeln: 25 % Nahrungsertrag und doppelte Materialien. Der Wildertrag bleibt unverändert."
-    }
-  ],
-  "civilization.completed": [
-    {
-      "type": 0,
-      "value": "Abgeschlossene Zyklen"
-    }
-  ],
-  "civilization.continuedDevelopment": [
-    {
-      "type": 0,
-      "value": "Lagerentwicklung "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "civilization.conversion": [
-    {
-      "type": 0,
-      "value": "Jede Unterkunft beherbergt 2 Arbeiter; jedes Lager 8. Drei Unterkünfte werden zu einem Lager."
-    }
-  ],
-  "civilization.conversionV4": [
-    {
-      "type": 0,
-      "value": "Eine Unterkunft schafft Platz für 2 Bewohner. Beim Umbau bleiben drei Unterkünfte samt ihren 6 Bewohnern reserviert. Das fertige Lager beherbergt 9 Bewohner und fügt 3 hinzu."
-    }
-  ],
-  "civilization.craft": [
-    {
-      "type": 0,
-      "value": "Handwerk"
-    }
-  ],
-  "civilization.craftPriority": [
-    {
-      "type": 0,
-      "value": "Handwerkspriorität"
-    }
-  ],
-  "civilization.craftSpecialization": [
-    {
-      "type": 0,
-      "value": "Handwerksspezialisierung"
-    }
-  ],
-  "civilization.duration": [
-    {
-      "type": 0,
-      "value": "Zyklusdauer"
-    }
-  ],
-  "civilization.equip": [
-    {
-      "type": 0,
-      "value": "Arbeiter ausrüsten: "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
-  "civilization.equipConfirm": [
-    {
-      "type": 0,
-      "value": "Ausgeben: "
-    },
-    {
-      "type": 1,
-      "value": "tools"
-    },
-    {
-      "type": 0,
-      "value": " Werkzeuge und "
-    },
-    {
-      "type": 1,
-      "value": "clothing"
-    },
-    {
-      "type": 0,
-      "value": " Kleidung, um "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " Arbeiter auszurüsten?"
-    }
-  ],
-  "civilization.equipmentAutomatic": [
-    {
-      "type": 0,
-      "value": "Jede Simulationsminute rüsten verfügbare Werkzeuge und Kleidung bis zu ein Viertel der Bewohner aus. Jede bleibende Ausrüstung kostet 2 Werkzeuge und 1 Kleidung."
-    }
-  ],
-  "civilization.equipmentEffect": [
-    {
-      "type": 0,
-      "value": "Jeder ausgerüstete Feldarbeiter leistet die Arbeit eines zusätzlichen Arbeiters."
-    }
-  ],
-  "civilization.equipmentEffectV4": [
-    {
-      "type": 0,
-      "value": "Jeder sinnvoll eingesetzte ausgerüstete Feldarbeiter trägt die Arbeitsleistung eines halben zusätzlichen Arbeiters bei."
-    }
-  ],
-  "civilization.equipmentStock": [
-    {
-      "type": 0,
-      "value": "Werkzeuge und Kleidung werden beim Ausrüsten verbraucht. Die Ausrüstung bleibt im Lager."
-    }
-  ],
-  "civilization.equipped": [
-    {
-      "type": 0,
-      "value": "Ausgerüstete Arbeiter"
-    }
-  ],
-  "civilization.era": [
-    {
-      "type": 0,
-      "value": "Zeitalter der Jäger und Sammler"
-    }
-  ],
-  "civilization.eraSettings": [
-    {
-      "type": 0,
-      "value": "Details der Jäger und Sammler"
-    }
-  ],
-  "civilization.establishedCamp": [
-    {
-      "type": 0,
-      "value": "Gefestigtes Lager"
-    }
-  ],
-  "civilization.exchangeNetworks": [
-    {
-      "type": 0,
-      "value": "Austauschnetzwerke"
-    }
-  ],
-  "civilization.exchangeRoutes": [
-    {
-      "type": 0,
-      "value": "Handelsrouten"
-    }
-  ],
-  "civilization.expeditions": [
-    {
-      "type": 0,
-      "value": "Expeditionen & Handel"
-    }
-  ],
-  "civilization.failed": [
-    {
-      "type": 0,
-      "value": "Aktion fehlgeschlagen. Erneut versuchen."
-    }
-  ],
-  "civilization.fall": [
-    {
-      "type": 0,
-      "value": "Herbst"
-    }
-  ],
-  "civilization.firstHunt": [
-    {
-      "type": 0,
-      "value": "Erste Jagd"
-    }
-  ],
-  "civilization.fishing": [
-    {
-      "type": 0,
-      "value": "Fischen"
-    }
-  ],
-  "civilization.focus": [
-    {
-      "type": 0,
-      "value": "Arbeitsfokus"
-    }
-  ],
-  "civilization.focusBalancedHelp": [
-    {
-      "type": 0,
-      "value": "Ausgewogen verteilt Arbeitskräfte auf verfügbare Aufgaben mit ihrem normalen Arbeitstempo."
-    }
-  ],
-  "civilization.focusEffect": [
-    {
-      "type": 0,
-      "value": "Mit dem Wachstum arbeiten mehr Menschen in diesem Bereich. Andere Bereiche behalten kleinere Gruppen."
-    }
-  ],
-  "civilization.focusEffectV4": [
-    {
-      "type": 0,
-      "value": "Der Schwerpunkt bevorzugt diesen Bereich und seine unterstützenden Gruppen. Unfinanzierte Aufgaben geben Arbeiter frei; bezahlte Zyklen behalten ihre Zutaten."
-    }
-  ],
-  "civilization.focusSelectedHelp": [
-    {
-      "type": 1,
-      "value": "primary"
-    },
-    {
-      "type": 0,
-      "value": " arbeiten mit dem "
-    },
-    {
-      "type": 1,
-      "value": "selectedRate"
-    },
-    {
-      "type": 0,
-      "value": "-fachen Tempo von Ausgewogen. Andere Aufgaben behalten ihr normales Tempo."
-    }
-  ],
-  "civilization.focusSupportedHelp": [
-    {
-      "type": 1,
-      "value": "primary"
-    },
-    {
-      "type": 0,
-      "value": " arbeiten mit dem "
-    },
-    {
-      "type": 1,
-      "value": "selectedRate"
-    },
-    {
-      "type": 0,
-      "value": "-fachen Tempo von Ausgewogen; "
-    },
-    {
-      "type": 1,
-      "value": "support"
-    },
-    {
-      "type": 0,
-      "value": " mit dem "
-    },
-    {
-      "type": 1,
-      "value": "supportRate"
-    },
-    {
-      "type": 0,
-      "value": "-fachen. Andere Aufgaben behalten ihr normales Tempo."
-    }
-  ],
-  "civilization.food": [
-    {
-      "type": 0,
-      "value": "Nahrung"
-    }
-  ],
-  "civilization.foodPreservation": [
-    {
-      "type": 0,
-      "value": "Nahrungskonservierung"
-    }
-  ],
-  "civilization.fractureRule": [
-    {
-      "type": 0,
-      "value": "+5 % Simulationstempo pro frakturierter Fertigkeit. Boni sind additiv."
-    }
-  ],
-  "civilization.fractures": [
-    {
-      "type": 0,
-      "value": "Frakturbonus +"
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "civilization.gathering": [
-    {
-      "type": 0,
-      "value": "Sammeln"
-    }
-  ],
-  "civilization.growthFocus": [
-    {
-      "type": 0,
-      "value": "Wachstum"
-    }
-  ],
-  "civilization.hides": [
-    {
-      "type": 0,
-      "value": "Wild"
-    }
-  ],
-  "civilization.hideworking": [
-    {
-      "type": 0,
-      "value": "Fellverarbeitung"
-    }
-  ],
-  "civilization.hideworkingPrerequisite": [
-    {
-      "type": 0,
-      "value": "Schließe einen Jagdzyklus ab, um dies freizuschalten."
-    }
-  ],
-  "civilization.hireChieftain": [
-    {
-      "type": 0,
-      "value": "Führung freischalten"
-    }
-  ],
-  "civilization.housing": [
-    {
-      "type": 0,
-      "value": "Wohnkapazität"
-    }
-  ],
-  "civilization.hunting": [
-    {
-      "type": 0,
-      "value": "Jagen"
-    }
-  ],
-  "civilization.huntingPrerequisite": [
-    {
-      "type": 0,
-      "value": "Schließe einen Zyklus der Werkzeugherstellung ab."
-    }
-  ],
-  "civilization.huntingUnlock": [
-    {
-      "type": 0,
-      "value": "Schalte die Jagd für 1 Werkzeug frei. Weitere Jagden kosten keine Werkzeuge."
-    }
-  ],
-  "civilization.inputs": [
-    {
-      "type": 0,
-      "value": "Kosten pro Zyklus"
-    }
-  ],
-  "civilization.legacyWorkHelp": [
-    {
-      "type": 0,
-      "value": "Ältere bezahlte Arbeitszyklen behalten bis zum Abschluss ihr ursprüngliches Tempo."
-    }
-  ],
-  "civilization.locked": [
-    {
-      "type": 0,
-      "value": "Benötigt "
-    },
-    {
-      "type": 1,
-      "value": "name"
-    }
-  ],
-  "civilization.materials": [
-    {
-      "type": 0,
-      "value": "Materialien"
-    }
-  ],
-  "civilization.milestoneStep": [
-    {
-      "type": 1,
-      "value": "name"
-    },
-    {
-      "type": 0,
-      "value": ": "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " / "
-    },
-    {
-      "type": 1,
-      "value": "target"
-    }
-  ],
-  "civilization.next": [
-    {
-      "type": 0,
-      "value": "Als Nächstes: "
-    },
-    {
-      "type": 1,
-      "value": "name"
-    }
-  ],
-  "civilization.nextCatalyst": [
-    {
-      "type": 0,
-      "value": "Nächster Katalysator"
-    }
-  ],
-  "civilization.nextEra": [
-    {
-      "type": 0,
-      "value": "Als Nächstes: Anbau und Viehhaltung"
-    }
-  ],
-  "civilization.nodeBonus": [
-    {
-      "type": 0,
-      "value": "Nach der Frakturierung: +5 % gesamtes Simulationstempo. Boni sind additiv."
-    }
-  ],
-  "civilization.nodeBonusActive": [
-    {
-      "type": 0,
-      "value": "Frakturiert: +5 % gesamtes Simulationstempo. Boni sind additiv."
-    }
-  ],
-  "civilization.outputs": [
-    {
-      "type": 0,
-      "value": "Ertrag pro Zyklus"
-    }
-  ],
-  "civilization.paid": [
-    {
-      "type": 0,
-      "value": "Einsatz für diesen Zyklus reserviert"
-    }
-  ],
-  "civilization.phaseComplete": [
-    {
-      "type": 0,
-      "value": "Auftakt der Jäger und Sammler abgeschlossen"
-    }
-  ],
-  "civilization.population": [
-    {
-      "type": 0,
-      "value": "Bevölkerung"
-    }
-  ],
-  "civilization.populationGoal": [
-    {
-      "type": 0,
-      "value": "Bevölkerung "
-    },
-    {
-      "type": 1,
-      "value": "current"
-    },
-    {
-      "type": 0,
-      "value": " / "
-    },
-    {
-      "type": 1,
-      "value": "target"
-    }
-  ],
-  "civilization.preview": [
-    {
-      "type": 0,
-      "value": "Landwirtschaft folgt in einer späteren Phase. Deine Aktivitäten laufen weiter."
-    }
-  ],
-  "civilization.priority": [
-    {
-      "type": 0,
-      "value": "Versorgungspriorität"
-    }
-  ],
-  "civilization.priorityChoice": [
-    {
-      "type": 0,
-      "value": "Bevorzugen: "
-    },
-    {
-      "type": 1,
-      "value": "name"
-    }
-  ],
-  "civilization.provisioning": [
-    {
-      "type": 0,
-      "value": "Versorgung"
-    }
-  ],
-  "civilization.provisions": [
-    {
-      "type": 0,
-      "value": "Vorräte"
-    }
-  ],
-  "civilization.recruitment": [
-    {
-      "type": 0,
-      "value": "Arbeiter bleiben im Lager. Jeder benötigt einen Wohnplatz."
-    }
-  ],
-  "civilization.seasonRemaining": [
-    {
-      "type": 0,
-      "value": "Nächste Jahreszeit in "
-    },
-    {
-      "type": 1,
-      "value": "time"
-    }
-  ],
-  "civilization.seasonalExpeditions": [
-    {
-      "type": 0,
-      "value": "Saisonale Expeditionen"
-    }
-  ],
-  "civilization.settlement": [
-    {
-      "type": 0,
-      "value": "Siedlung"
-    }
-  ],
-  "civilization.shelterBuilding": [
-    {
-      "type": 0,
-      "value": "Unterkünfte bauen"
-    }
-  ],
-  "civilization.shelters": [
-    {
-      "type": 0,
-      "value": "Unterkünfte"
-    }
-  ],
-  "civilization.speed": [
-    {
-      "type": 0,
-      "value": "Fortschrittstempo"
-    }
-  ],
-  "civilization.spring": [
-    {
-      "type": 0,
-      "value": "Frühling"
-    }
-  ],
-  "civilization.summer": [
-    {
-      "type": 0,
-      "value": "Sommer"
-    }
-  ],
-  "civilization.suppliesFocus": [
-    {
-      "type": 0,
-      "value": "Vorräte"
-    }
-  ],
-  "civilization.tent": [
-    {
-      "type": 0,
-      "value": "Zelt"
-    }
-  ],
-  "civilization.tentBenefit": [
-    {
-      "type": 0,
-      "value": "Fügt 2 Bewohner hinzu. Sofortiger Bau."
-    }
-  ],
-  "civilization.tentUnlock": [
-    {
-      "type": 0,
-      "value": "Schließe einen Zyklus der Fellverarbeitung ab."
-    }
-  ],
-  "civilization.tents": [
-    {
-      "type": 0,
-      "value": "Zelte"
-    }
-  ],
-  "civilization.toolmaking": [
-    {
-      "type": 0,
-      "value": "Werkzeugherstellung"
-    }
-  ],
-  "civilization.toolmakingPrerequisite": [
-    {
-      "type": 0,
-      "value": "Schließe einen Sammelzyklus ab, um dies freizuschalten."
-    }
-  ],
-  "civilization.tools": [
-    {
-      "type": 0,
-      "value": "Werkzeuge"
-    }
-  ],
-  "civilization.tradeFocus": [
-    {
-      "type": 0,
-      "value": "Reisen"
-    }
-  ],
-  "civilization.unlock": [
-    {
-      "type": 0,
-      "value": "Benötigte Zyklen: "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " von "
-    },
-    {
-      "type": 1,
-      "value": "name"
-    }
-  ],
-  "civilization.unlockHunting": [
-    {
-      "type": 0,
-      "value": "Jagd freischalten"
-    }
-  ],
-  "civilization.upcoming": [
-    {
-      "type": 0,
-      "value": "Nächste Aktivitäten"
-    }
-  ],
-  "civilization.waiting": [
-    {
-      "type": 0,
-      "value": "Wartet"
-    }
-  ],
-  "civilization.waitingDemand": [
-    {
-      "type": 0,
-      "value": "Bedarf gedeckt; Arbeiter unterstützen andere Aufgaben, bis wieder Nachschub benötigt wird."
-    }
-  ],
-  "civilization.waitingHousing": [
-    {
-      "type": 0,
-      "value": "Wartet auf Wohnraum"
-    }
-  ],
-  "civilization.waitingInputs": [
-    {
-      "type": 0,
-      "value": "Wartet auf: "
-    },
-    {
-      "type": 1,
-      "value": "name"
-    }
-  ],
-  "civilization.waitingRange": [
-    {
-      "type": 0,
-      "value": "Bestand kann die Produktion nicht aufnehmen"
-    }
-  ],
-  "civilization.waitingWorkers": [
-    {
-      "type": 0,
-      "value": "Warten auf Arbeiter"
-    }
-  ],
-  "civilization.warmSeason": [
-    {
-      "type": 0,
-      "value": "Sammeln: voller Nahrungsertrag. Jagd: 25 % Nahrungsertrag. Der Wildertrag bleibt unverändert."
-    }
-  ],
-  "civilization.winter": [
-    {
-      "type": 0,
-      "value": "Winter"
-    }
-  ],
-  "civilization.workers": [
-    {
-      "type": 0,
-      "value": "Arbeiter"
-    }
-  ],
   "debug.access-description": [
     {
       "type": 0,
@@ -1703,24 +793,6 @@
       "value": "Kostenlos aktivieren"
     }
   ],
-  "debug.era": [
-    {
-      "type": 0,
-      "value": "Zeitalter"
-    }
-  ],
-  "debug.era-help": [
-    {
-      "type": 0,
-      "value": "Startet das gewählte Zeitalter neu. Ersetzt den Simulationsfortschritt; anderer Fortschritt bleibt erhalten."
-    }
-  ],
-  "debug.jump-era": [
-    {
-      "type": 0,
-      "value": "Zum Zeitalter springen"
-    }
-  ],
   "debug.lock-tabs": [
     {
       "type": 0,
@@ -1797,12 +869,6 @@
     {
       "type": 0,
       "value": "Ganzzahl-Grenze"
-    }
-  ],
-  "debug.simulation-era": [
-    {
-      "type": 0,
-      "value": "Simulationszeitalter"
     }
   ],
   "debug.speedrun-warning": [
@@ -2268,7 +1334,7 @@
   "discovery.resetRule": [
     {
       "type": 0,
-      "value": "Bleibt durch Unendlichkeit erhalten. Wird bei Transzendenz zurückgesetzt."
+      "value": "Bleibt bei Infinity und Quantum erhalten. Wird bei Transzendenz zurückgesetzt."
     }
   ],
   "discovery.route": [
@@ -5307,468 +4373,6 @@
       "value": "Bastle in deiner Garage"
     }
   ],
-  "farming.amount": [
-    {
-      "type": 1,
-      "value": "resource"
-    },
-    {
-      "type": 0,
-      "value": ": "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "farming.begin": [
-    {
-      "type": 0,
-      "value": "Landwirtschaftszeitalter beginnen"
-    }
-  ],
-  "farming.betaEndpoint": [
-    {
-      "type": 0,
-      "value": "Die Zeitalter der Jäger und Sammler und der Bauerndörfer sind abgeschlossen. Weitere Inhalte folgen bald."
-    }
-  ],
-  "farming.buy": [
-    {
-      "type": 0,
-      "value": "Kaufen"
-    }
-  ],
-  "farming.era": [
-    {
-      "type": 0,
-      "value": "Bauerndörfer"
-    }
-  ],
-  "farming.failed": [
-    {
-      "type": 0,
-      "value": "Aktion fehlgeschlagen. Erneut versuchen."
-    }
-  ],
-  "farming.finish": [
-    {
-      "type": 0,
-      "value": "Dorf gründen"
-    }
-  ],
-  "farming.granary": [
-    {
-      "type": 0,
-      "value": "Kornspeicher"
-    }
-  ],
-  "farming.handoff": [
-    {
-      "type": 0,
-      "value": "Der Ackerbau ersetzt dein Sammlerlager durch drei Gründer und leere Vorräte. Unfertige Arbeit verfällt. Verdiente Katalysatoren bleiben erhalten."
-    }
-  ],
-  "farming.inputs": [
-    {
-      "type": 0,
-      "value": "Kosten pro Zyklus"
-    }
-  ],
-  "farming.missingInputs": [
-    {
-      "type": 0,
-      "value": "Fehlt: "
-    },
-    {
-      "type": 1,
-      "value": "inputs"
-    }
-  ],
-  "farming.nextPrice": [
-    {
-      "type": 0,
-      "value": "Nächster Preis"
-    }
-  ],
-  "farming.outputs": [
-    {
-      "type": 0,
-      "value": "Ertrag pro Zyklus"
-    }
-  ],
-  "farming.owned": [
-    {
-      "type": 0,
-      "value": "Besitz: "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "farming.pendingSkill": [
-    {
-      "type": 0,
-      "value": "Dieser Meilenstein wartet auf eine verfügbare Fertigkeitsbaumwahl oder Platz im Katalysatorvorrat."
-    }
-  ],
-  "farming.settings": [
-    {
-      "type": 0,
-      "value": "Dorfeinstellungen"
-    }
-  ],
-  "farming.shop": [
-    {
-      "type": 0,
-      "value": "Käufe"
-    }
-  ],
-  "farming.village.averted": [
-    {
-      "type": 0,
-      "value": "Unheil abgewendet. Die Geister beanspruchen das Verdienst."
-    }
-  ],
-  "farming.village.balance": [
-    {
-      "type": 0,
-      "value": "Nahrungsbilanz"
-    }
-  ],
-  "farming.village.burials": [
-    {
-      "type": 0,
-      "value": "Bestattungen"
-    }
-  ],
-  "farming.village.consumption": [
-    {
-      "type": 0,
-      "value": "Verbrauch"
-    }
-  ],
-  "farming.village.crops": [
-    {
-      "type": 0,
-      "value": "Feldfrüchte"
-    }
-  ],
-  "farming.village.disasterDeaths": [
-    {
-      "type": 0,
-      "value": "Katastrophen"
-    }
-  ],
-  "farming.village.disasterLoss": [
-    {
-      "type": 0,
-      "value": "Bevölkerungsverlust"
-    }
-  ],
-  "farming.village.disasterRisk": [
-    {
-      "type": 0,
-      "value": "Risiko zum Saisonende"
-    }
-  ],
-  "farming.village.fewerJobs": [
-    {
-      "type": 1,
-      "value": "name"
-    },
-    {
-      "type": 0,
-      "value": ": weniger Stellen"
-    }
-  ],
-  "farming.village.field": [
-    {
-      "type": 0,
-      "value": "Feld"
-    }
-  ],
-  "farming.village.fire": [
-    {
-      "type": 0,
-      "value": "Feuer: Bevölkerung −"
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "farming.village.flood": [
-    {
-      "type": 0,
-      "value": "Überschwemmung: Bevölkerung −"
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "farming.village.food": [
-    {
-      "type": 0,
-      "value": "Nahrung"
-    }
-  ],
-  "farming.village.fullCrew": [
-    {
-      "type": 0,
-      "value": "Volle Besetzung"
-    }
-  ],
-  "farming.village.growth": [
-    {
-      "type": 0,
-      "value": "Wachstum"
-    }
-  ],
-  "farming.village.herding": [
-    {
-      "type": 0,
-      "value": "Viehzucht"
-    }
-  ],
-  "farming.village.house": [
-    {
-      "type": 0,
-      "value": "Haus"
-    }
-  ],
-  "farming.village.housing": [
-    {
-      "type": 0,
-      "value": "Wohnraum"
-    }
-  ],
-  "farming.village.idle": [
-    {
-      "type": 0,
-      "value": "Untätig"
-    }
-  ],
-  "farming.village.irrigation": [
-    {
-      "type": 0,
-      "value": "Bewässerung"
-    }
-  ],
-  "farming.village.jobSpaces": [
-    {
-      "type": 0,
-      "value": "Gebäudekapazität"
-    }
-  ],
-  "farming.village.jobs": [
-    {
-      "type": 0,
-      "value": "Stellen"
-    }
-  ],
-  "farming.village.jobsFor": [
-    {
-      "type": 1,
-      "value": "name"
-    },
-    {
-      "type": 0,
-      "value": ": Stellen"
-    }
-  ],
-  "farming.village.land": [
-    {
-      "type": 0,
-      "value": "Freies Land"
-    }
-  ],
-  "farming.village.lastEvent": [
-    {
-      "type": 0,
-      "value": "Letztes Ereignis"
-    }
-  ],
-  "farming.village.loggingCamp": [
-    {
-      "type": 0,
-      "value": "Holzfällerlager"
-    }
-  ],
-  "farming.village.moreJobs": [
-    {
-      "type": 1,
-      "value": "name"
-    },
-    {
-      "type": 0,
-      "value": ": mehr Stellen"
-    }
-  ],
-  "farming.village.natural": [
-    {
-      "type": 0,
-      "value": "Natürliche Todesfälle"
-    }
-  ],
-  "farming.village.needsGranary": [
-    {
-      "type": 0,
-      "value": "3 Häuser"
-    }
-  ],
-  "farming.village.needsIrrigation": [
-    {
-      "type": 0,
-      "value": "4 Felder"
-    }
-  ],
-  "farming.village.needsLand": [
-    {
-      "type": 0,
-      "value": "Kein freies Land"
-    }
-  ],
-  "farming.village.needsPasture": [
-    {
-      "type": 0,
-      "value": "2 Felder · 2 Häuser"
-    }
-  ],
-  "farming.village.needsShrine": [
-    {
-      "type": 0,
-      "value": "4 Häuser"
-    }
-  ],
-  "farming.village.needsWoodland": [
-    {
-      "type": 0,
-      "value": "Wald roden"
-    }
-  ],
-  "farming.village.needsWorkshop": [
-    {
-      "type": 0,
-      "value": "Werkstatt benötigt"
-    }
-  ],
-  "farming.village.nextDisaster": [
-    {
-      "type": 0,
-      "value": "Nächste Katastrophe"
-    }
-  ],
-  "farming.village.noMaterials": [
-    {
-      "type": 0,
-      "value": "Keine Materialien"
-    }
-  ],
-  "farming.village.pasture": [
-    {
-      "type": 0,
-      "value": "Weide"
-    }
-  ],
-  "farming.village.perMinute": [
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": "/min"
-    }
-  ],
-  "farming.village.production": [
-    {
-      "type": 0,
-      "value": "Produktion"
-    }
-  ],
-  "farming.village.protection": [
-    {
-      "type": 0,
-      "value": "Katastrophenabwehr"
-    }
-  ],
-  "farming.village.reserve": [
-    {
-      "type": 0,
-      "value": "Nahrungsvorrat"
-    }
-  ],
-  "farming.village.shaman": [
-    {
-      "type": 0,
-      "value": "Schamanen"
-    }
-  ],
-  "farming.village.shrine": [
-    {
-      "type": 0,
-      "value": "Schrein"
-    }
-  ],
-  "farming.village.sickness": [
-    {
-      "type": 0,
-      "value": "Krankheit: Bevölkerung −"
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "farming.village.starvation": [
-    {
-      "type": 0,
-      "value": "Hungertote"
-    }
-  ],
-  "farming.village.status": [
-    {
-      "type": 0,
-      "value": "Status"
-    }
-  ],
-  "farming.village.stocked": [
-    {
-      "type": 0,
-      "value": "Vorrat voll"
-    }
-  ],
-  "farming.village.woodland": [
-    {
-      "type": 0,
-      "value": "Waldland"
-    }
-  ],
-  "farming.village.work": [
-    {
-      "type": 0,
-      "value": "Arbeit"
-    }
-  ],
-  "farming.village.workingCount": [
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " bei der Arbeit"
-    }
-  ],
-  "farming.workshop": [
-    {
-      "type": 0,
-      "value": "Werkstatt"
-    }
-  ],
   "gameplay.notifications.continue": [
     {
       "type": 0,
@@ -6345,326 +4949,6 @@
       "value": "Beginne mit 10 Servern"
     }
   ],
-  "modes.back": [
-    {
-      "type": 0,
-      "value": "Zurück zu "
-    },
-    {
-      "type": 1,
-      "value": "mode"
-    }
-  ],
-  "modes.cancel": [
-    {
-      "type": 0,
-      "value": "Abbrechen"
-    }
-  ],
-  "modes.classic": [
-    {
-      "type": 0,
-      "value": "Klassisch"
-    }
-  ],
-  "modes.confirm": [
-    {
-      "type": 0,
-      "value": "Migration bestätigen"
-    }
-  ],
-  "modes.conflict": [
-    {
-      "type": 0,
-      "value": "Du hast bereits einen modernen Spielstand. Setze ihn fort, um seinen Fortschritt zu behalten."
-    }
-  ],
-  "modes.continue": [
-    {
-      "type": 0,
-      "value": "Fortsetzen: "
-    },
-    {
-      "type": 1,
-      "value": "mode"
-    }
-  ],
-  "modes.failed": [
-    {
-      "type": 0,
-      "value": "Die Änderung konnte nicht gespeichert werden. Dein zuletzt gespeicherter Fortschritt bleibt erhalten."
-    }
-  ],
-  "modes.migrate": [
-    {
-      "type": 0,
-      "value": "Klassischen Fortschritt übertragen"
-    }
-  ],
-  "modes.modern": [
-    {
-      "type": 0,
-      "value": "Modern"
-    }
-  ],
-  "modes.oneWay": [
-    {
-      "type": 0,
-      "value": "Kompatiblen klassischen Fortschritt nach Modern kopieren? Dein klassischer Spielstand bleibt mit seinem moduseigenen Fortschritt verfügbar. Moderner Fortschritt kann nicht zurückkonvertiert werden."
-    }
-  ],
-  "modes.saves.choose": [
-    {
-      "type": 0,
-      "value": "Spielstand wählen: "
-    },
-    {
-      "type": 1,
-      "value": "mode"
-    }
-  ],
-  "modes.saves.chooseDescription": [
-    {
-      "type": 0,
-      "value": "Diese Spielstände unterscheiden sich. Wähle den Fortschritt, den du behalten möchtest. Die Originalkopien bleiben erhalten."
-    }
-  ],
-  "modes.saves.close": [
-    {
-      "type": 0,
-      "value": "Schließen"
-    }
-  ],
-  "modes.saves.cloud": [
-    {
-      "type": 0,
-      "value": "Cloud verwenden"
-    }
-  ],
-  "modes.saves.copy": [
-    {
-      "type": 0,
-      "value": "Kopieren"
-    }
-  ],
-  "modes.saves.copyNumber": [
-    {
-      "type": 0,
-      "value": "Gespeicherte Kopie verwenden: "
-    },
-    {
-      "type": 1,
-      "value": "number"
-    }
-  ],
-  "modes.saves.description": [
-    {
-      "type": 0,
-      "value": "Exportiere oder importiere den Spielstand deines aktuellen Modus."
-    }
-  ],
-  "modes.saves.done": [
-    {
-      "type": 0,
-      "value": "Gespeichert."
-    }
-  ],
-  "modes.saves.download": [
-    {
-      "type": 0,
-      "value": "Datei herunterladen"
-    }
-  ],
-  "modes.saves.export": [
-    {
-      "type": 0,
-      "value": "Exportieren"
-    }
-  ],
-  "modes.saves.failed": [
-    {
-      "type": 0,
-      "value": "Der Vorgang ist fehlgeschlagen. Deine gespeicherten Daten bleiben erhalten."
-    }
-  ],
-  "modes.saves.file": [
-    {
-      "type": 0,
-      "value": "Spielstanddatei wählen"
-    }
-  ],
-  "modes.saves.import": [
-    {
-      "type": 0,
-      "value": "Importieren"
-    }
-  ],
-  "modes.saves.importDescription": [
-    {
-      "type": 0,
-      "value": "Importiere einen Spielstand in deinen aktuellen Modus. Classic-Spielstände werden beim Import in Modern automatisch migriert. Der Spielstand des anderen Modus bleibt erhalten."
-    }
-  ],
-  "modes.saves.importTarget": [
-    {
-      "type": 0,
-      "value": "In "
-    },
-    {
-      "type": 1,
-      "value": "mode"
-    },
-    {
-      "type": 0,
-      "value": " importieren."
-    }
-  ],
-  "modes.saves.local": [
-    {
-      "type": 0,
-      "value": "Dieses Gerät verwenden"
-    }
-  ],
-  "modes.saves.pending": [
-    {
-      "type": 0,
-      "value": "Wird bearbeitet…"
-    }
-  ],
-  "modes.saves.recovery": [
-    {
-      "type": 0,
-      "value": "Modus-Spielstände wiederherstellen"
-    }
-  ],
-  "modes.saves.recoveryDescription": [
-    {
-      "type": 0,
-      "value": "Ein Wiederherstellungsarchiv bewahrt beschädigte Daten zur Fehlerbehebung auf. Es kann nicht als Spielstand importiert werden."
-    }
-  ],
-  "modes.saves.recoveryExport": [
-    {
-      "type": 0,
-      "value": "Wiederherstellungsarchiv exportieren"
-    }
-  ],
-  "modes.saves.recoveryPartial": [
-    {
-      "type": 0,
-      "value": "Einige Wiederherstellungsdateien konnten nicht gelesen werden. Verfügbare Daten sind enthalten."
-    }
-  ],
-  "modes.saves.recoveryWarning": [
-    {
-      "type": 0,
-      "value": "Den aufbewahrten Speicherpunkt für die aufgeführten Modi wiederherstellen? Späterer Fortschritt bleibt im Wiederherstellungsarchiv erhalten."
-    }
-  ],
-  "modes.saves.replace": [
-    {
-      "type": 0,
-      "value": "Spielstand ersetzen"
-    }
-  ],
-  "modes.saves.resetConfirmation": [
-    {
-      "type": 0,
-      "value": "Den gesamten Fortschritt in "
-    },
-    {
-      "type": 1,
-      "value": "mode"
-    },
-    {
-      "type": 0,
-      "value": " zurücksetzen und neu beginnen? Der Spielstand des anderen Modus bleibt erhalten."
-    }
-  ],
-  "modes.saves.restoreRecovery": [
-    {
-      "type": 0,
-      "value": "Aufbewahrten Speicherpunkt wiederherstellen"
-    }
-  ],
-  "modes.saves.review": [
-    {
-      "type": 0,
-      "value": "Import prüfen"
-    }
-  ],
-  "modes.saves.reviewRecovery": [
-    {
-      "type": 0,
-      "value": "Aufbewahrten Speicherpunkt prüfen"
-    }
-  ],
-  "modes.saves.summary": [
-    {
-      "type": 0,
-      "value": "Modi: "
-    },
-    {
-      "type": 1,
-      "value": "modes"
-    },
-    {
-      "type": 0,
-      "value": ". Öffnet "
-    },
-    {
-      "type": 1,
-      "value": "mode"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
-  "modes.saves.text": [
-    {
-      "type": 0,
-      "value": "Spielstandexport"
-    }
-  ],
-  "modes.saves.title": [
-    {
-      "type": 0,
-      "value": "Speicherdaten"
-    }
-  ],
-  "modes.saves.warning": [
-    {
-      "type": 0,
-      "value": "Dies ersetzt den Spielstand deines aktuellen Modus. Der Spielstand des anderen Modus bleibt erhalten. Exportiere zuerst deinen aktuellen Spielstand."
-    }
-  ],
-  "modes.separate": [
-    {
-      "type": 0,
-      "value": "Jeder Modus behält einen eigenen Spielstand."
-    }
-  ],
-  "modes.start": [
-    {
-      "type": 0,
-      "value": "Starten: "
-    },
-    {
-      "type": 1,
-      "value": "mode"
-    }
-  ],
-  "modes.switch": [
-    {
-      "type": 0,
-      "value": "Spielmodus: "
-    },
-    {
-      "type": 1,
-      "value": "mode"
-    }
-  ],
   "navigation.avocato": [
     {
       "type": 0,
@@ -6827,32 +5111,6 @@
     {
       "type": 0,
       "value": "Simulationen"
-    }
-  ],
-  "navigation.simulations-goals-progress": [
-    {
-      "type": 1,
-      "value": "destination"
-    },
-    {
-      "type": 0,
-      "value": ", "
-    },
-    {
-      "type": 1,
-      "value": "current"
-    },
-    {
-      "type": 0,
-      "value": " von "
-    },
-    {
-      "type": 1,
-      "value": "required"
-    },
-    {
-      "type": 0,
-      "value": " Bots-Zielen abgeschlossen"
     }
   ],
   "navigation.simulations-influence-progress": [
@@ -7052,7 +5310,7 @@
   "offline-time.boost-stack": [
     {
       "type": 0,
-      "value": "Nur zusätzliche Zeit verbraucht den Vorrat. Doppelte Zeit wirkt zusätzlich."
+      "value": "Bewege den Regler über 1×, um gespeicherte Zeit zu nutzen. Nur zusätzliche Zeit verbraucht den Vorrat. Doppelte Zeit wirkt zusätzlich. Ein leerer Speicher, der Hintergrund und manuelle Resets setzen den Regler auf 1× zurück."
     }
   ],
   "offline-time.boost-start": [
@@ -7469,408 +5727,6 @@
     {
       "type": 0,
       "value": "Simulierte Zeit"
-    }
-  ],
-  "pilotChallenges.abandon": [
-    {
-      "type": 0,
-      "value": "Herausforderung abbrechen"
-    }
-  ],
-  "pilotChallenges.blank-slate.name": [
-    {
-      "type": 0,
-      "value": "Unbeschriebenes Blatt"
-    }
-  ],
-  "pilotChallenges.blank-slate.rule": [
-    {
-      "type": 0,
-      "value": "Schließe eine Unendlichkeit ab, während Skills, Erweiterungen und Fraktureffekte inaktiv sind."
-    }
-  ],
-  "pilotChallenges.break": [
-    {
-      "type": 0,
-      "value": "Erfordert Den Kreislauf durchbrechen."
-    }
-  ],
-  "pilotChallenges.budget": [
-    {
-      "type": 0,
-      "value": "Herausforderungsbelohnungen: "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " / 20 SP"
-    }
-  ],
-  "pilotChallenges.built-by-hand.name": [
-    {
-      "type": 0,
-      "value": "Handarbeit"
-    }
-  ],
-  "pilotChallenges.built-by-hand.rule": [
-    {
-      "type": 0,
-      "value": "Schließe eine Unendlichkeit ohne Anlagen und automatische Bot-Produktion ab. Handarbeit ist vorübergehend verfügbar."
-    }
-  ],
-  "pilotChallenges.cancel": [
-    {
-      "type": 0,
-      "value": "Abbrechen"
-    }
-  ],
-  "pilotChallenges.commitment-issues.name": [
-    {
-      "type": 0,
-      "value": "Bindungsangst"
-    }
-  ],
-  "pilotChallenges.commitment-issues.rule": [
-    {
-      "type": 0,
-      "value": "Verdiene 32 IP, ohne während des gesamten Versuchs Skill-Punkte zurückzugeben oder deinen Build zu ersetzen, auch bei Unendlichkeitsresets."
-    }
-  ],
-  "pilotChallenges.compactTitle": [
-    {
-      "type": 0,
-      "value": "Infinity-Challenges"
-    }
-  ],
-  "pilotChallenges.confirm": [
-    {
-      "type": 0,
-      "value": "Neustart bestätigen"
-    }
-  ],
-  "pilotChallenges.convergenceEarned": [
-    {
-      "type": 0,
-      "value": "Konvergenz freigeschaltet"
-    }
-  ],
-  "pilotChallenges.convergenceLocked": [
-    {
-      "type": 0,
-      "value": "Schließe alle 10 Herausforderungen zum Freischalten ab."
-    }
-  ],
-  "pilotChallenges.convergenceProgress": [
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " / 10 Herausforderungen abgeschlossen"
-    }
-  ],
-  "pilotChallenges.convergenceRule": [
-    {
-      "type": 0,
-      "value": "Deine galaktischen Gehirne wachsen kontinuierlich und verdoppeln sich alle 30 Minuten Spielzeit. Benötigt mindestens ein galaktisches Gehirn."
-    }
-  ],
-  "pilotChallenges.convergenceTitle": [
-    {
-      "type": 0,
-      "value": "Konvergenz"
-    }
-  ],
-  "pilotChallenges.earned": [
-    {
-      "type": 0,
-      "value": "Erhalten: "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " dauerhafte SP"
-    }
-  ],
-  "pilotChallenges.failure": [
-    {
-      "type": 0,
-      "value": "Die Herausforderung konnte nicht gestartet oder gespeichert werden. Dein aktueller Lauf bleibt erhalten."
-    }
-  ],
-  "pilotChallenges.first": [
-    {
-      "type": 0,
-      "value": "Schließe deine erste Unendlichkeit ab."
-    }
-  ],
-  "pilotChallenges.grounded.name": [
-    {
-      "type": 0,
-      "value": "Bodenhaftung"
-    }
-  ],
-  "pilotChallenges.grounded.rule": [
-    {
-      "type": 0,
-      "value": "Verdiene 32 IP ohne Planeten oder Megastrukturen. Das Planetenziel wird zu 100 gekauften Rechenzentren."
-    }
-  ],
-  "pilotChallenges.hands-off.name": [
-    {
-      "type": 0,
-      "value": "Finger weg"
-    }
-  ],
-  "pilotChallenges.hands-off.rule": [
-    {
-      "type": 0,
-      "value": "Verdiene 32 IP ohne Anlagenkäufe oder Basteln. Beginne mit einem Fließband und einem Build zur Planetenerzeugung."
-    }
-  ],
-  "pilotChallenges.history": [
-    {
-      "type": 0,
-      "value": "Frühere Herausforderungsabschlüsse: "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": ". Historische Belohnungen bleiben erhalten; dieser Pilot gewährt keine Entschädigung."
-    }
-  ],
-  "pilotChallenges.intro": [
-    {
-      "type": 0,
-      "value": "Jeder Versuch beginnt eine neue Unendlichkeit. Nur während des Versuchs verdiente IP zählen. Der erste Abschluss jeder Herausforderung gewährt einmalig dauerhafte SP."
-    }
-  ],
-  "pilotChallenges.lean-build.name": [
-    {
-      "type": 0,
-      "value": "Schlanker Build"
-    }
-  ],
-  "pilotChallenges.lean-build.rule": [
-    {
-      "type": 0,
-      "value": "Verdiene 16 IP mit höchstens 4 SP in zugewiesenen Skills. Skill-Punkt-Rückgaben sind erlaubt."
-    }
-  ],
-  "pilotChallenges.no-science.name": [
-    {
-      "type": 0,
-      "value": "Ohne Wissenschaft"
-    }
-  ],
-  "pilotChallenges.no-science.rule": [
-    {
-      "type": 0,
-      "value": "Verdiene 32 IP ohne Wissenschaft, Forschung oder Entdeckung."
-    }
-  ],
-  "pilotChallenges.openingComplete": [
-    {
-      "type": 0,
-      "value": "Abgeschlossen"
-    }
-  ],
-  "pilotChallenges.openingEarned": [
-    {
-      "type": 0,
-      "value": "Simulationen freigeschaltet"
-    }
-  ],
-  "pilotChallenges.openingProgress": [
-    {
-      "type": 0,
-      "value": "Aktiv · "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " / 10 Ziele"
-    }
-  ],
-  "pilotChallenges.openingReward": [
-    {
-      "type": 0,
-      "value": "Belohnung: Simulationen freischalten"
-    }
-  ],
-  "pilotChallenges.openingRule": [
-    {
-      "type": 0,
-      "value": "Schließe alle 10 Ziele im Bots-Tab ab."
-    }
-  ],
-  "pilotChallenges.openingTitle": [
-    {
-      "type": 0,
-      "value": "Anfänge"
-    }
-  ],
-  "pilotChallenges.other": [
-    {
-      "type": 0,
-      "value": "Beende die aktive Herausforderung oder brich sie ab."
-    }
-  ],
-  "pilotChallenges.overflow": [
-    {
-      "type": 0,
-      "value": "Schließe zuerst die Transzendenz ab."
-    }
-  ],
-  "pilotChallenges.progress": [
-    {
-      "type": 0,
-      "value": "Aktiv · "
-    },
-    {
-      "type": 1,
-      "value": "ip"
-    },
-    {
-      "type": 0,
-      "value": " IP verdient · "
-    },
-    {
-      "type": 1,
-      "value": "infinities"
-    },
-    {
-      "type": 0,
-      "value": " Unendlichkeiten"
-    }
-  ],
-  "pilotChallenges.purchases": [
-    {
-      "type": 0,
-      "value": "Bezahlte Anlagen: "
-    },
-    {
-      "type": 1,
-      "value": "count"
-    },
-    {
-      "type": 0,
-      "value": " / 10 · Typen: "
-    },
-    {
-      "type": 1,
-      "value": "types"
-    },
-    {
-      "type": 0,
-      "value": " / 3"
-    }
-  ],
-  "pilotChallenges.replay": [
-    {
-      "type": 0,
-      "value": "Wiederholen"
-    }
-  ],
-  "pilotChallenges.restart": [
-    {
-      "type": 0,
-      "value": "Beginne eine neue Unendlichkeit, ohne IP zu erhalten. Dauerhafter Zivilisationsfortschritt, Upgrades, Belohnungshistorie und Frakturbesitz bleiben erhalten. Abbrechen verwirft den Versuchsfortschritt und stellt normale Effekte wieder her."
-    }
-  ],
-  "pilotChallenges.reward": [
-    {
-      "type": 0,
-      "value": "Belohnung: "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " dauerhafte SP"
-    }
-  ],
-  "pilotChallenges.rules": [
-    {
-      "type": 0,
-      "value": "Frühere IP zählen nicht zum Produktionsmultiplikator. Division, Doppelte Unendlichkeitspunkte aus dem Spiel, Entdeckung und dauerhafte Frakturen sind inaktiv; gekaufte Boni bleiben aktiv. Käufe im Unendlichkeitsshop pausieren während der Versuche. Die meisten Versuche beginnen mit 10 SP plus Zielbelohnungen; Unbeschriebenes Blatt und Handarbeit beginnen mit null, Schlanker Build mit 4. Versuche laufen über mehrere Unendlichkeiten weiter. Transzendenz verwirft einen unvollendeten Versuch ohne dessen SP zu vergeben. Wiederholungen gewähren keine zusätzlichen SP."
-    }
-  ],
-  "pilotChallenges.rulesTitle": [
-    {
-      "type": 0,
-      "value": "Versuchsregeln und Belohnungen"
-    }
-  ],
-  "pilotChallenges.short-circuit.name": [
-    {
-      "type": 0,
-      "value": "Kurzschluss"
-    }
-  ],
-  "pilotChallenges.short-circuit.rule": [
-    {
-      "type": 0,
-      "value": "Verdiene 64 IP mit einer festen Paneellebensdauer von 2 Sekunden."
-    }
-  ],
-  "pilotChallenges.simulationsLocked": [
-    {
-      "type": 0,
-      "value": "Schließe Anfänge mit allen 10 Zielen im Bots-Tab ab, um Simulationen freizuschalten."
-    }
-  ],
-  "pilotChallenges.start": [
-    {
-      "type": 0,
-      "value": "Starten"
-    }
-  ],
-  "pilotChallenges.supply-shortage.name": [
-    {
-      "type": 0,
-      "value": "Lieferengpass"
-    }
-  ],
-  "pilotChallenges.supply-shortage.rule": [
-    {
-      "type": 0,
-      "value": "Verdiene 64 IP mit sich verdoppelnden Kaufpreisen und bezahle 10 Anlagen aus 3 Typen. Erzeugte und kostenlose Anlagen zählen nicht."
-    }
-  ],
-  "pilotChallenges.title": [
-    {
-      "type": 0,
-      "value": "Herausforderungen der Unendlichkeit"
-    }
-  ],
-  "pilotChallenges.unlock": [
-    {
-      "type": 0,
-      "value": "Erfordert insgesamt "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " verdiente IP."
     }
   ],
   "pwa.update.accept": [
@@ -10099,178 +7955,6 @@
     {
       "type": 0,
       "value": "Voreinstellungs-Schnellaktionen immer anzeigen"
-    }
-  ],
-  "rework.action.failed": [
-    {
-      "type": 0,
-      "value": "Die Änderung konnte nicht gespeichert werden. Versuche es erneut."
-    }
-  ],
-  "rework.cancel": [
-    {
-      "type": 0,
-      "value": "Abbrechen"
-    }
-  ],
-  "rework.challenges.completed": [
-    {
-      "type": 0,
-      "value": "Bisherige Abschlüsse: "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "rework.challenges.history": [
-    {
-      "type": 0,
-      "value": "Verdiente Belohnungen und Abschlussrekorde bleiben erhalten."
-    }
-  ],
-  "rework.challenges.pending": [
-    {
-      "type": 0,
-      "value": "Die Herausforderungen werden überarbeitet."
-    }
-  ],
-  "rework.civilization": [
-    {
-      "type": 0,
-      "value": "Zivilisation"
-    }
-  ],
-  "rework.infinity.advanced": [
-    {
-      "type": 0,
-      "value": "Fortgeschrittene Verbesserungen"
-    }
-  ],
-  "rework.infinity.double-time.description": [
-    {
-      "type": 0,
-      "value": "Verdoppelt die Spielgeschwindigkeit."
-    }
-  ],
-  "rework.infinity.double-time.title": [
-    {
-      "type": 0,
-      "value": "Doppelte Zeit"
-    }
-  ],
-  "rework.infinity.regular": [
-    {
-      "type": 0,
-      "value": "Unendlichkeitsverbesserungen"
-    }
-  ],
-  "rework.migration.automaticDescription": [
-    {
-      "type": 0,
-      "value": "Dein Spielstand wird automatisch migriert, wenn du Modern öffnest. Fortgeschrittene Verbesserungen müssen erneut erspielt werden. Brüche und ihre Erweiterungen werden entfernt. Grundspiel, IP, Transzendenz, Entdeckung und Käufe bleiben erhalten."
-    }
-  ],
-  "rework.migration.continueModern": [
-    {
-      "type": 0,
-      "value": "In Modern fortfahren"
-    }
-  ],
-  "rework.migration.description": [
-    {
-      "type": 0,
-      "value": "Behalte gleichwertige Verbesserungen und Brüche oder erspiele die fortgeschrittenen Verbesserungen erneut. Ein Neustart entfernt Brüche und ihre Erweiterungen; Grundspiel, IP, Transzendenz, Entdeckung und Käufe bleiben."
-    }
-  ],
-  "rework.migration.fresh": [
-    {
-      "type": 0,
-      "value": "Verbesserungen erneut verdienen"
-    }
-  ],
-  "rework.migration.intro": [
-    {
-      "type": 0,
-      "value": "Ich baue den Fortschritt neu auf. Quantum, Reality und die alten Sims sind weg. Nützliche Upgrades sind jetzt in Infinity, und die Zivilisations-Sims verdienen nun Ressourcen für Katalysatoren."
-    }
-  ],
-  "rework.migration.keep": [
-    {
-      "type": 0,
-      "value": "Gleichwertigen Fortschritt behalten"
-    }
-  ],
-  "rework.migration.returnClassic": [
-    {
-      "type": 0,
-      "value": "Zurück zu Klassisch"
-    }
-  ],
-  "rework.migration.separateSaves": [
-    {
-      "type": 0,
-      "value": "Dein Fortschritt wird in zwei getrennten Spielständen fortgesetzt. Du kannst jederzeit zwischen Klassisch und Modern wechseln."
-    }
-  ],
-  "rework.migration.title": [
-    {
-      "type": 0,
-      "value": "Hey Leute, der Entwickler hier"
-    }
-  ],
-  "rework.simulations.details": [
-    {
-      "type": 0,
-      "value": "Mit Epochenressourcen kannst du Katalysatoren kaufen. Dauerhafte Brüche beschleunigen jede Zivilisation."
-    }
-  ],
-  "rework.simulations.pending": [
-    {
-      "type": 0,
-      "value": "Die Zivilisationsentwicklung kommt als Nächstes."
-    }
-  ],
-  "rework.transcend": [
-    {
-      "type": 0,
-      "value": "Transzendieren"
-    }
-  ],
-  "rework.transcend.balance": [
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " Transzendenzpunkte"
-    }
-  ],
-  "rework.transcend.confirm": [
-    {
-      "type": 0,
-      "value": "Transzendenz bestätigen"
-    }
-  ],
-  "rework.transcend.confirmation": [
-    {
-      "type": 0,
-      "value": "Basisproduktion und Infinity-Upgrades für 1 Transzendenzpunkt zurücksetzen? Frakturen, Zivilisationsfortschritt und Discovery-Upgrades bleiben erhalten."
-    }
-  ],
-  "rework.transcend.threshold": [
-    {
-      "type": 0,
-      "value": "Erreiche "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " Bots, um zu transzendieren."
     }
   ],
   "settings.achievements.action": [
@@ -13024,7 +10708,7 @@
   "skills.node.androids.technical": [
     {
       "type": 0,
-      "value": "Solange Androiden zugewiesen ist, steigt der Bonus über 10 Minuten von 0 auf 200 Sekunden Panel-Lebensdauer.\nWird bei Unendlichkeit zurückgesetzt."
+      "value": "Solange der Skill Androiden zugewiesen ist, steigt sein Bonus über einen Zeitraum von 10 Minuten von 0 auf 200 Sekunden Paneel-Lebensdauer.\nDies wird bei Unendlichkeit/Quantensprung zurückgesetzt."
     }
   ],
   "skills.node.artificiallyEnhancedPanels.description": [
@@ -14464,7 +12148,7 @@
   "skills.node.superRadiantScattering.technical": [
     {
       "type": 0,
-      "value": "Erhöht Cash-, Wissenschafts-, Bot- und alle Anlagenproduktion pro zugewiesener Sekunde um 1 %. Boni sind additiv. Lädt während gespeicherter Zeit und wird bei Unendlichkeit zurückgesetzt."
+      "value": "Erhöht die Produktion von Geld, Wissenschaft, Bots und allen Anlagen um 1% pro Sekunde, solange dieser Skill zugewiesen ist. Die Boni sind additiv. Lädt sich auch bei der Simulation gespeicherter Zeit auf und wird bei Unendlichkeit oder Quantensprung zurückgesetzt."
     }
   ],
   "skills.node.superSwarm.description": [
@@ -14842,7 +12526,7 @@
   "skills.non-refundable-confirmation-warning": [
     {
       "type": 0,
-      "value": "Nicht erstattbare Fähigkeiten und ihre Voraussetzungen können erst nach einem Unendlichkeitsreset erstattet werden. Fortfahren?"
+      "value": "Nicht erstattbare Fähigkeiten und ihre Voraussetzungen können erst nach einem Unendlichkeits- oder Quantum-Reset zurückerstattet werden. Fortfahren?"
     }
   ],
   "skills.none": [
@@ -15401,6 +13085,12 @@
       "value": "Voreinstellungen 6–10 anzeigen"
     }
   ],
+  "skills.settings.showTooltips": [
+    {
+      "type": 0,
+      "value": "Tooltips anzeigen"
+    }
+  ],
   "skills.show-preset-application-notifications": [
     {
       "type": 0,
@@ -15440,7 +13130,7 @@
   "skills.srs.afterglow.effect": [
     {
       "type": 0,
-      "value": "Behält 10 % der SRS-Ladung durch Unendlichkeit. Stellares Gedächtnis multipliziert dies auf bis zu 50 %. Addiert sich zum Heißstart."
+      "value": "Behalte bei Unendlichkeit 10% der SRS-Ladung, multipliziert mit Stellares Gedächtnis bis zu maximal 50%. Addiert sich zum Heißstart. Ein Quantensprung löscht die beibehaltene Ladung."
     }
   ],
   "skills.srs.afterglow.name": [
@@ -15458,7 +13148,7 @@
   "skills.srs.deepExposure.effect": [
     {
       "type": 0,
-      "value": "Erhöht die SRS-Ladegeschwindigkeit um 10 % pro zugewiesener Minute, bis zu 200 % nach 20 Minuten. Stellares Gedächtnis multipliziert diese Boni. Wird bei Unendlichkeit zurückgesetzt. Boni sind additiv."
+      "value": "Erhöht die SRS-Ladegeschwindigkeit pro zugewiesener Minute um 10%, bis zu 200% nach 20 Minuten. Stellares Gedächtnis multipliziert diese Boni. Wird bei Unendlichkeit oder Quantensprung zurückgesetzt. Boni sind additiv."
     }
   ],
   "skills.srs.deepExposure.name": [
@@ -15548,7 +13238,7 @@
   "skills.srs.stellarMemory.effect": [
     {
       "type": 0,
-      "value": "Speichert bei einem Unendlichkeitsreset neu erzeugte SRS-Ladung ohne Heißstart und Nachglühen. Solange zugewiesen, verstärkt es SRS-Erweiterungen um 1 + 0,25 × log10(max(1, gespeicherte Sekunden))."
+      "value": "Speichert bei einem Unendlichkeits- oder Quanten-Reset neu erzeugte SRS-Ladung, ohne Heißstart und Nachglühen. Solange zugewiesen, verstärkt es die Vorteile der SRS-Augmente um den Faktor 1 + 0,25 × log10(max(1, gespeicherte Sekunden))."
     }
   ],
   "skills.srs.stellarMemory.name": [
@@ -15942,7 +13632,7 @@
   "skills.swarm.steadySupply.technical": [
     {
       "type": 0,
-      "value": "Behält bezahlte Anlagenkäufe durch Unendlichkeit. Vor dem Reset zuweisen; Käufe kehren automatisch zurück. Gratis-Starteinheiten sammeln sich nicht an. Transzendenz löscht den Vorrat."
+      "value": "Behält bezahlte Anlagenkäufe durch Unendlichkeit. Vor dem Zurücksetzen zuweisen; die Käufe kehren automatisch zurück. Kostenlose Starteinheiten sammeln sich nicht an. Quantum leert den Vorrat."
     }
   ],
   "skills.swarm.stellarSwarm.description": [
@@ -16716,7 +14406,7 @@
   "statistics.scope.quantum-run": [
     {
       "type": 0,
-      "value": "Aktueller Durchlauf"
+      "value": "Aktueller Quantendurchlauf"
     }
   ],
   "statistics.speedruns.boostedBest": [
@@ -18207,7 +15897,7 @@
   "wiki.discovery.resets": [
     {
       "type": 0,
-      "value": "Entdeckung bleibt durch "
+      "value": "Entdeckung bleibt bei "
     },
     {
       "type": 8,
@@ -18215,13 +15905,27 @@
       "children": [
         {
           "type": 0,
-          "value": "Unendlichkeit"
+          "value": "Infinity"
         }
       ]
     },
     {
       "type": 0,
-      "value": " erhalten. "
+      "value": ", "
+    },
+    {
+      "type": 8,
+      "value": "quantum",
+      "children": [
+        {
+          "type": 0,
+          "value": "Quantum"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " und Herausforderungen erhalten. "
     },
     {
       "type": 8,
@@ -18235,7 +15939,7 @@
     },
     {
       "type": 0,
-      "value": " setzt Stufe und Fortschritt zurück; Freischaltung und dauerhafte Verbesserungen bleiben. Ausgegebene gespeicherte Zeit treibt Entdeckung voran. Abwesenheit wird gespeichert und nicht automatisch auf Entdeckung angewandt."
+      "value": " setzt Stufe und Fortschritt zurück; Freischaltung und dauerhafte Upgrades bleiben. Gespeicherte Zeit treibt Entdeckung beim Ausgeben voran. Abwesenheit wird als Zeit gespeichert, nicht automatisch auf Entdeckung angewandt."
     }
   ],
   "wiki.discovery.resets-title": [
@@ -18699,15 +16403,15 @@
   "wiki.infinity.secrets": [
     {
       "type": 0,
-      "value": "In "
+      "value": "Nach einem "
     },
     {
       "type": 8,
-      "value": "infinity",
+      "value": "quantum",
       "children": [
         {
           "type": 0,
-          "value": "Unendlichkeit"
+          "value": "Quantensprung"
         }
       ]
     },
@@ -18727,7 +16431,7 @@
     },
     {
       "type": 0,
-      "value": "-Verbesserungen den Sinn des Lebens Buchstabe für Buchstabe und geben einen dauerhaften verborgenen Produktionsbonus."
+      "value": "-Upgrades Buchstabe für Buchstabe den Sinn des Lebens und gewähren einen dauerhaften verborgenen Produktionsbonus."
     }
   ],
   "wiki.infinity.secrets-title": [
@@ -19151,7 +16855,7 @@
   "wiki.other.offline-results": [
     {
       "type": 0,
-      "value": "Ein abgeschlossener Lauf zeigt simulierte Dauer, verbleibende gespeicherte Zeit, endgültige Genauigkeit und tatsächliche Aktualisierungszahl sowie Unendlichkeitsgewinne. Anlagen- und Bot-Gewinne erscheinen nur ohne Unendlichkeit, da Zurücksetzen und Wiederaufbau einen direkten Vergleich irreführend machen würden."
+      "value": "Ein abgeschlossener Lauf zeigt simulierte Dauer, verbleibende Bank, endgültige Genauigkeit und tatsächliche Aktualisierungszahl. Außerdem werden relevante Unendlichkeits-, Simulations- und Realitätsgewinne angezeigt. Anlagen- und Bot-Gewinne erscheinen nur, wenn keine Unendlichkeit stattfand, da Zurücksetzen und Wiederaufbau einen einfachen Vorher-Nachher-Vergleich irreführend machen würden."
     }
   ],
   "wiki.other.offline-results-title": [
@@ -19424,82 +17128,94 @@
       "value": "Version 4.1.11"
     }
   ],
-  "wiki.patch-notes.version-4-1-11.button-contrast": [
+  "wiki.patch-notes.version-4-1-11.credits": [
     {
       "type": 0,
-      "value": "Farbverläufe der Schaltflächen und Textkontrast im gesamten Spiel verbessert. Deaktivierte Schaltflächen verwenden jetzt einfarbige Flächen."
-    }
-  ],
-  "wiki.patch-notes.version-4-1-11.checkbox-labels": [
-    {
-      "type": 0,
-      "value": "Beschriftungen von Kontrollkästchen in Einstellungen und Fähigkeiten sind jetzt breiter und einheitlich."
+      "value": "Credits zum Wiki hinzugefügt."
     }
   ],
   "wiki.patch-notes.version-4-1-11.desktop-sizing": [
     {
       "type": 0,
-      "value": "Desktop-Oberflächengröße von 80 % bis 150 %, Rücksetzung auf den Standardwert und Fähigkeitsbaum-Zoom bis 250 % hinzugefügt."
+      "value": "Desktop-Oberflächengrößen von 80 % bis 150 % und Skillbaum-Zoom bis 250 % hinzugefügt."
     }
   ],
   "wiki.patch-notes.version-4-1-11.desktop-tooltips": [
     {
       "type": 0,
-      "value": "Überarbeitete Tooltips im Fähigkeitsbaum mit klareren Effekten, Formeln, Skill-Punkt-Kosten und möglichen Augmenten. Überflüssige Tooltips an anderen Stellen entfernt."
+      "value": "Skillbaum-Tooltips zeigen Effekte, Formeln, Skillpunkt-Kosten und mögliche Augmente. Du kannst sie in den Skillbaum-Einstellungen ein- oder ausschalten."
     }
   ],
   "wiki.patch-notes.version-4-1-11.imported-speedruns": [
     {
       "type": 0,
-      "value": "Gültige importierte Spielstände setzen Speedruns unter den bisherigen Teilnahmebedingungen fort. Ein passendes Diskettensymbol steht vor der gespeicherten Zeit."
+      "value": "Geeignete importierte Spielstände können Speedruns fortsetzen. Importierte Läufe tragen ein Speicherdatei-Symbol."
     }
   ],
   "wiki.patch-notes.version-4-1-11.infinity-hold": [
     {
       "type": 0,
-      "value": "Wiederholte Käufe für das Geheimnis des Universums und permanente Skill-Punkte in Unendlichkeit hinzugefügt. Halte die Maustaste gedrückt oder drücke lange, um weiterzukaufen."
+      "value": "Halte Kaufbuttons gedrückt, um Infinity- und Quantum-Upgrades wiederholt zu kaufen. Beim Loslassen enden die Käufe."
     }
   ],
   "wiki.patch-notes.version-4-1-11.infinity-summary": [
     {
       "type": 0,
-      "value": "Unendlichkeit zeigt neben den Gesamtwerten den Produktionsbonus für Einrichtungen aus allen verdienten IP, mit lesbarem, an der Grundlinie ausgerichtetem Text auf Mobilgeräten."
+      "value": "Infinity zeigt den Produktionsbonus für Anlagen aus allen verdienten Infinity-Punkten neben den Gesamtwerten."
     }
   ],
-  "wiki.patch-notes.version-4-1-11.preset-copy": [
+  "wiki.patch-notes.version-4-1-11.navigation": [
     {
       "type": 0,
-      "value": "Kopieren von Voreinstellungen in nativen Apps funktioniert jetzt ohne Berechtigungsabfrage für die Zwischenablage. Browser ohne Zwischenablagezugriff bieten manuelles Kopieren an."
+      "value": "Das Desktop-Seitenmenü ist breiter. Abstände, ausgewählte Buttons und die kompakte Navigation wurden verbessert. Ein blauer Pixel oben links wurde entfernt."
     }
   ],
-  "wiki.patch-notes.version-4-1-11.quick-amounts": [
+  "wiki.patch-notes.version-4-1-11.offline-speed": [
     {
       "type": 0,
-      "value": "Drei Schnellnutzungsmengen für gespeicherte Zeit lassen sich unter Offline-Zeit wählen, mit kompakten Beschriftungen in der Seitenleiste."
+      "value": "Offline-Zeit sammelt sich jetzt während deiner Abwesenheit. Nutze sie beim Spielen für 1× bis 42× Tempo. Nur das zusätzliche Tempo verbraucht gespeicherte Zeit; Doppelte Zeit wirkt zusätzlich."
     }
   ],
-  "wiki.patch-notes.version-4-1-11.sidebar-freeze": [
+  "wiki.patch-notes.version-4-1-11.offline-storage": [
     {
       "type": 0,
-      "value": "Behoben, dass das Spiel einfriert, wenn schnelle Nutzungen gespeicherter Zeit in der Seitenleiste Katastrophen oder das Ende einer Zivilisation auslösen."
+      "value": "Offline-Zeit hat jetzt eine Speicherleiste, die verbleibende Boost-Dauer und klarere Kapazitätskosten. Wähle Aus, Letztes Tempo oder Höchsttempo für automatische Boosts bei deiner Rückkehr."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.preset-notices": [
+    {
+      "type": 0,
+      "value": "Preset-Konflikthinweise wiederholen sich nicht mehr für denselben offenen Konflikt und verschwinden nach dessen Lösung."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.progression-fixes": [
+    {
+      "type": 0,
+      "value": "Die Frakturierbarkeit wird nach Fortschrittsänderungen aktualisiert. Abgeschlossene Forschung ausblenden umfasst jetzt auch Durability."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.runtime-fixes": [
+    {
+      "type": 0,
+      "value": "Hängende Railgun-Salven und fehlende Patient-Hands-Gutschriften zwischen Spielupdates wurden behoben."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.save-safety": [
+    {
+      "type": 0,
+      "value": "Spielstandwiederherstellung, Importsicherheit und Cloud-Konfliktbehandlung verbessert. Offline-Zeit wird nach der Rückkehr einmal gutgeschrieben."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.save-tools": [
+    {
+      "type": 0,
+      "value": "Optionale Zeitstempel für exportierte Speicherdateien hinzugefügt. Natives Speichern und Kopieren/Einfügen von Presets wurden verbessert."
     }
   ],
   "wiki.patch-notes.version-4-1-11.stellar-benefits": [
     {
       "type": 0,
-      "value": "Stellare Fähigkeiten wurden mit direkten Produktionsboni überarbeitet, die nach dem Frakturieren erhalten bleiben. Frakturieren entfernt die Nachteile der jeweiligen Fähigkeit, und Stellare Dominanz nutzt eine stabile Aktivierungsanforderung. Stellare Beschreibungen und Bot-Kosten wurden aktualisiert."
-    }
-  ],
-  "wiki.patch-notes.version-4-1-11.timestamp-exports": [
-    {
-      "type": 0,
-      "value": "Eine Option für Zeitstempel in den Dateinamen exportierter Spielstände hinzugefügt."
-    }
-  ],
-  "wiki.patch-notes.version-4-1-11.tinker-offline": [
-    {
-      "type": 0,
-      "value": "Tinker zeigt während der Verarbeitung von Offline-Zeit nicht mehr fälschlich „Wiederholung läuft“ an. Tinker ist jetzt bis zum Ende der Verarbeitung deaktiviert."
+      "value": "Stellare Fähigkeiten behalten nach dem Frakturieren ihre Produktionsboni und verlieren ihre Nachteile. Beschreibungen, Aktivierungsbedingungen und Bot-Kosten wurden angepasst."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [
@@ -20132,120 +17848,6 @@
       "value": "Gespeicherte Zeit wurde verbessert: Doppelte oder überlappende Ausgaben werden sicher abgelehnt, aktive Vorgänge behalten ihren Fortschritt und ihre Abbruchsteuerung, und unfertige Einstellungen bleiben beim Seitenwechsel erhalten."
     }
   ],
-  "wiki.patch-notes.version-4-2-1": [
-    {
-      "type": 0,
-      "value": "Version 4.2.1"
-    }
-  ],
-  "wiki.patch-notes.version-4-2-1.challenges": [
-    {
-      "type": 0,
-      "value": "Anfänge und neun Herausforderungen der Unendlichkeit mit neuen Regeln und Belohnungen hinzugefügt."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-1.convergence": [
-    {
-      "type": 0,
-      "value": "Der Effekt von Konvergenz wird nach sechs abgeschlossenen Herausforderungen enthüllt. Nach Abschluss aller zehn wachsen Galaktische Gehirne kontinuierlich: Vorhandene Galaktische Gehirne verdoppeln sich alle 30 Minuten Spielzeit."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-1.feedback": [
-    {
-      "type": 0,
-      "value": "Wiederholte Konfliktmeldungen automatischer Skill-Vorlagen unterbunden und Simulations-Countdowns, Fortschrittsanimationen und Ressourcenformatierung verbessert."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-1.forager": [
-    {
-      "type": 0,
-      "value": "Simulationen werden durch Anfänge nach zehn Bot-Zielen freigeschaltet. Saisonales Sammeln und Jagen, Gruppenzuweisungen, Unterkünfte, Handwerk und Führung hinzugefügt. Diese Version endet im Zeitalter der Jäger und Sammler; spätere Zeitalter sind nicht verfügbar."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-1.offline": [
-    {
-      "type": 0,
-      "value": "Behoben, dass Offline-Zeit nach einem Neustart erneut gutgeschrieben wurde. Die Anzeige der tatsächlichen Spielgeschwindigkeit verbessert und den Offline-Boost auf 8× begrenzt."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-1.production": [
-    {
-      "type": 0,
-      "value": "Festhängende Railgun-Salven und die Erkennung vorhandener Beta-Spielstände unter iOS behoben. Die Forschung Haltbarkeits-Upgrade wird nach Abschluss ausgeblendet."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-1.progression": [
-    {
-      "type": 0,
-      "value": "Den Fortschritt in Modern neu aufgebaut: Quantenfortschritt, Realität und die bisherigen Simulationen werden durch Verbesserungen der Unendlichkeit und Simulationen von Zivilisationen ersetzt. Nützliche dauerhafte Verbesserungen befinden sich jetzt unter Unendlichkeit."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-1.skills": [
-    {
-      "type": 0,
-      "value": "Die Verfügbarkeit von Fraktur nach dem Erhalt eines Katalysators korrigiert. Geduldige Hände behält die Ladung aus ungenutzter Zeit nach dem Abschluss eines Tinker-Vorgangs."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-2": [
-    {
-      "type": 0,
-      "value": "Version 4.2.2"
-    }
-  ],
-  "wiki.patch-notes.version-4-2-2.migration": [
-    {
-      "type": 0,
-      "value": "Die Migration zu Modern erfolgt automatisch. Fortgeschrittene Verbesserungen müssen erneut erspielt werden; Frakturen und ihre Erweiterungen werden entfernt. Grundspiel, Unendlichkeitspunkte, Transzendenz, Entdeckung und Käufe bleiben erhalten. Du kannst jederzeit zu Klassisch zurückkehren."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-2.modes": [
-    {
-      "type": 0,
-      "value": "Getrennte Modi Klassisch und Modern hinzugefügt. Beim ersten Öffnen von Modern wird dein klassischer Fortschritt kopiert und der ursprüngliche klassische Spielstand bleibt erhalten. Spätere Wechsel setzen den jeweiligen Fortschritt des Zielmodus fort."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-2.navigation": [
-    {
-      "type": 0,
-      "value": "Das Menü zeigt jetzt Zurück zu Klassisch oder Zurück zu Modern und wechselt direkt. Klassisch verwendet seine eigene Versionskennung C-1; Modern zeigt die App-Version. Kompakte Navigation und Versionsangaben am unteren Rand verbessert."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-2.storage": [
-    {
-      "type": 0,
-      "value": "Getrennte native Speicherdateien und Steam-Cloud-Speicher für Klassisch und Modern hinzugefügt, mit Schutz vor widersprüchlichen oder veralteten Schreibvorgängen und aufbewahrten Wiederherstellungskopien."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-3": [
-    {
-      "type": 0,
-      "value": "Version 4.2.3"
-    }
-  ],
-  "wiki.patch-notes.version-4-2-3.dialog": [
-    {
-      "type": 0,
-      "value": "Exportdateinamen mit Zeitstempel wiederhergestellt, mit einer eigenen Einstellung für jeden Modus. Das Kontrollkästchen entspricht jetzt den Einstellungen. Rückmeldungen zu Kopieren und Herunterladen, Importvorschauen, Design, Oberflächengröße und Tastaturfokus verbessert."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-3.export": [
-    {
-      "type": 0,
-      "value": "Behoben, dass der Export fehlschlug, wenn der Browser den Spielstand nicht mehr schreiben konnte. Das Erstellen einer Kopie startet das Spiel nicht mehr neu und erfordert keinen Speichervorgang. Während Gespeicherte Zeit verarbeitet wird, bleibt der sichere Stand vor der Verarbeitung für den Export erhalten."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-3.reset": [
-    {
-      "type": 0,
-      "value": "Das Zurücksetzen des Spielstands im aktuellen Modus wiederhergestellt, ohne den anderen Modus zurückzusetzen. Die Wiederherstellung von Modus-Spielständen aus den Einstellungen entfernt. Wenn sich ein Spielstand nicht öffnen lässt, bleibt die Wiederherstellung beim Start verfügbar."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-3.transfers": [
-    {
-      "type": 0,
-      "value": "Import und Export gelten jetzt nur für den Modus, den du gerade spielst, und verwenden dessen übliche Spielstandzeichenfolge oder Datei. Prüfe den importierten Fortschritt, bevor du den Spielstand dieses Modus ersetzt. Der andere Modus bleibt erhalten."
-    }
-  ],
   "wiki.patch-notes.version-4.accessibility": [
     {
       "type": 0,
@@ -20827,7 +18429,7 @@
   "wiki.skills.auto-assign": [
     {
       "type": 0,
-      "value": "Du kannst einzelne Fähigkeiten manuell von der automatischen Zuweisung ein- oder ausschließen. Der Baum merkt sich die Reihenfolge, um dein Layout nach "
+      "value": "Du kannst einzelne Skills manuell in die automatische Zuweisung einbeziehen oder davon ausschließen. Der Baum merkt sich die Zuweisungsreihenfolge, sodass er dein Layout nach einer "
     },
     {
       "type": 8,
@@ -20841,7 +18443,21 @@
     },
     {
       "type": 0,
-      "value": " wiederherzustellen. Ein Baumreset leert die aktive Zuweisungswarteschlange. Voreinstellungen speichern vollständige Layouts."
+      "value": " oder einer "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Quanten"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "zurücksetzung wiederherstellen kann. Das Zurücksetzen des Baums leert die aktive Warteschlange der automatischen Zuweisung. Voreinstellungen speichern vollständige Layouts."
     }
   ],
   "wiki.skills.auto-assign-title": [
@@ -21219,7 +18835,7 @@
     },
     {
       "type": 0,
-      "value": " kannst du in Avocato transzendieren, frühere Ebenen zurücksetzen und "
+      "value": " kannst du in Avocato transzendieren, um frühere Ebenen zurückzusetzen und "
     },
     {
       "type": 8,
@@ -21233,7 +18849,7 @@
     },
     {
       "type": 0,
-      "value": " erhalten. Gib dort einen Punkt für "
+      "value": " zu erhalten. Gib einen Punkt für "
     },
     {
       "type": 8,

@@ -1,6 +1,3 @@
-import { migrateLegacyFarming, migrateAssignedFarming, migrateAutomaticFarming, migrateManagedFarming, migratePreferredFarming, migrateSeasonalFarming, replaceForagerWithFarming } from '../simulation/farming'
-import { validateCivilizationSave } from '../simulation/civilization'
-import type { CivilizationState, LegacyFarmingState, AssignedFarmingState, AutomaticFarmingState, ManagedFarmingState, PreferredFarmingState, SeasonalFarmingState } from '../game-state/types'
 import { SKILL_PRESET_COUNT } from '../game-state/skillPresetSlots'
 import { EMPTY_DISCOVERY } from '../simulation/discovery'
 import { isSubskill } from '../simulation/skillSubskills'
@@ -23,7 +20,6 @@ import {
   ensureArray,
   ensureRecord,
   requireRecord,
-  isRecord,
   type SaveRecord,
 } from './graph'
 import { normalizeFacilityArrays } from './facilityArrays'
@@ -31,16 +27,19 @@ import { repairNumericSave, type NumericRepairResult } from './numericRepair'
 import { applyPackedSettingsFlags, packSettingsFlags } from './settingsFlags'
 import { validatePreparedSave, type SaveValidationResult } from './validate'
 
-import { CURRENT_SAVE_SCHEMA, UnsupportedFutureSaveSchemaError } from './saveSchema'
-export { CURRENT_SAVE_SCHEMA, UnsupportedFutureSaveSchemaError } from './saveSchema'
+export const CURRENT_SAVE_SCHEMA = 20
 
-/** Unknown subsystem versions are authoritative too: recovery must not silently
- * replace newer paid progress with an older backup. */
-export class UnsupportedFutureSaveSubsystemError extends UnsupportedFutureSaveSchemaError {
-  constructor(sourceSchema: number, subsystem: string, version: number) {
-    super(sourceSchema, CURRENT_SAVE_SCHEMA)
-    this.name = 'UnsupportedFutureSaveSubsystemError'
-    this.message = `${subsystem} save version ${version} is not supported.`
+export class UnsupportedFutureSaveSchemaError extends Error {
+  readonly sourceSchema: number
+  readonly supportedSchema: number
+
+  constructor(sourceSchema: number, supportedSchema: number) {
+    super(
+      `Save schema ${sourceSchema} is newer than supported schema ${supportedSchema}.`,
+    )
+    this.name = 'UnsupportedFutureSaveSchemaError'
+    this.sourceSchema = sourceSchema
+    this.supportedSchema = supportedSchema
   }
 }
 
@@ -60,26 +59,7 @@ export function migrateDecodedSave(candidate: unknown): SaveMigrationResult {
     typeof save.saveVersion === 'number' && Number.isInteger(save.saveVersion)
       ? save.saveVersion
       : 0
-  const civilization = source.civilization
-  if (isRecord(civilization)) {
-    if (typeof civilization.version === 'number' && civilization.version > 5) {
-      throw new UnsupportedFutureSaveSubsystemError(sourceSchema, 'Civilization', civilization.version)
-    }
-    const farming = civilization.farming
-    if (isRecord(farming) && typeof farming.version === 'number' && farming.version > 9) {
-      throw new UnsupportedFutureSaveSubsystemError(sourceSchema, 'Farming', farming.version)
-    }
-  }
-  // Root 22 is reserved as this development-input alias; a future published
-  // contract must not reuse it for different semantics.
-  // Root 22 existed only in the local continuous-clock candidate. Validate its
-  // complete modern graph before treating it as a development input alias;
-  // this is not a general future-schema fallback or a numeric repair route.
-  const development22 = sourceSchema === 22
-  if (development22 && !validatePreparedSave(source, 22).valid) {
-    throw new UnsupportedFutureSaveSchemaError(sourceSchema, CURRENT_SAVE_SCHEMA)
-  }
-  if (sourceSchema > CURRENT_SAVE_SCHEMA && !development22) {
+  if (sourceSchema > CURRENT_SAVE_SCHEMA) {
     throw new UnsupportedFutureSaveSchemaError(
       sourceSchema,
       CURRENT_SAVE_SCHEMA,
@@ -144,15 +124,12 @@ export function migrateDecodedSave(candidate: unknown): SaveMigrationResult {
   )
   appliedSteps.push('dense-facility-arrays')
   if (legacyFormat) ensureSimulationMathematicsParity(save)
-  if (migrateFarmingVillage(save)) appliedSteps.push('land-and-food-village')
   const numericRepair = repairNumericSave(save)
   packSettingsFlags(save)
   // Materialize packed defaults now, rather than changing the graph on its next load.
   applyPackedSettingsFlags(save)
   appliedSteps.push('packed-settings-flags')
-  if (sourceSchema < 21) appliedSteps.push('one-way-rework-format')
-  if (development22) appliedSteps.push('development-22-compatibility')
-  if (sourceSchema !== CURRENT_SAVE_SCHEMA) save.lastMigratedFromVersion = sourceSchema
+  if (sourceSchema < CURRENT_SAVE_SCHEMA) save.lastMigratedFromVersion = sourceSchema
   save.saveVersion = CURRENT_SAVE_SCHEMA
   const validation = validatePreparedSave(save, CURRENT_SAVE_SCHEMA)
 
@@ -164,19 +141,6 @@ export function migrateDecodedSave(candidate: unknown): SaveMigrationResult {
     numericRepair,
     validation,
   }
-}
-
-/** Preserve the entire old receipt while translating the village into land and food. */
-function migrateFarmingVillage(save: SaveRecord): boolean {
-  const civilization = save.civilization
-  if (!isRecord(civilization) || civilization.version !== 5) return false
-  const previous = civilization.farming
-  if (!isRecord(previous) || previous.version === 9) return false
-  const issue = validateCivilizationSave(civilization)
-  if (issue) throw new Error(issue)
-  const farming = previous.version === 8 ? migrateSeasonalFarming(previous as unknown as SeasonalFarmingState) : previous.version === 7 ? migratePreferredFarming(previous as unknown as PreferredFarmingState) : previous.version === 6 ? migrateManagedFarming(previous as unknown as ManagedFarmingState) : previous.version === 5 ? migrateAutomaticFarming(previous as unknown as AutomaticFarmingState) : previous.version === 4 ? migrateAssignedFarming(previous as unknown as AssignedFarmingState) : migrateLegacyFarming(previous as unknown as LegacyFarmingState)
-  save.civilization = replaceForagerWithFarming(civilization as unknown as CivilizationState, farming)
-  return true
 }
 
 function ensureSaveShape(save: SaveRecord): void {

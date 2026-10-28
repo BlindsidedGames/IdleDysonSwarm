@@ -1,5 +1,3 @@
-import { simulationsAvailable } from '../simulation/reworkChallenges'
-import { maximumOfflineBoostMultiplier } from '../simulation/offlineBoost'
 import { builtByHandTinkerGoal } from '../simulation/canonicalGoalProgression'
 import { challengeAllowsTinker, effectiveDivisions, isQuantumChallengeActive, quantumDoubleIpEnabled, isBreakInfinityEnabled, infinityChallenges } from '../simulation/infinityChallenges'
 import { deriveDiscoveryEffects, type DiscoveryEffects } from '../simulation/discoveryEffects'
@@ -122,6 +120,7 @@ import {
   advanceUniverseDesignation,
   advanceRealityWorkers,
   gatherRealityInfluence,
+  realityInfluenceGenerationStarted,
   type RealityWorkerAdvanceStatus,
   type RealityWorkerTuning,
 } from '../simulation/realityWorkers'
@@ -139,6 +138,7 @@ import {
 } from '../simulation/researchAutomation'
 import { deriveSecretBuffs } from '../simulation/secretBuffs'
 import { STORED_TIME_MAXIMUM_SECONDS, upgradeStoredTimeCapacity } from '../simulation/timeResources'
+import { MAXIMUM_OFFLINE_BOOST_MULTIPLIER } from '../simulation/offlineBoost'
 import {
   CANONICAL_PLAYER_COMMAND_KINDS,
   CANONICAL_PLAYER_COMMAND_SUPPORT,
@@ -159,8 +159,6 @@ import type {
 export const FRONTEND_GAMEPLAY_SNAPSHOT_VERSION = 2 as const
 
 export const FRONTEND_COMMAND_FAMILIES = Object.freeze([
-  'rework',
-  'civilization',
   'discovery',
   'boost',
   'dyson',
@@ -432,9 +430,9 @@ export interface FrontendCanonicalResources {
   readonly time: {
     readonly storedTimeAvailableSeconds: number
     readonly storedTimeCapacitySeconds: number
+    readonly offlineBoost?: { readonly multiplier: number }
     readonly maximumOfflineBoostMultiplier: number
     readonly offlineBoostAutoResume?: 'off' | 'last' | 'max'
-    readonly offlineBoost?: { readonly multiplier: number }
   }
 }
 
@@ -467,7 +465,6 @@ export interface FrontendCanonicalProgression {
     Omit<CanonicalGameStateV1['skills'], 'points' | 'fragments'>
   >
   readonly discovery?: DeepReadonly<CanonicalGameStateV1['discovery']>
-  readonly civilization?: DeepReadonly<CanonicalGameStateV1['civilization']>
   readonly research: DeepReadonly<CanonicalGameStateV1['research']>
   readonly reality: DeepReadonly<
     Pick<CanonicalGameStateV1['reality'], 'autoGather'>
@@ -672,7 +669,6 @@ export interface FrontendDysonPresentationFacts {
         readonly kind:
           | 'create-bots'
           | 'build-assembly-lines'
-          | 'build-data-centers'
           | 'tinkers'
           | 'have-active-panels'
           | 'own-planets'
@@ -1227,6 +1223,10 @@ export function selectGameplayVisibility(
   const visibleBasicFacilityIds = BASIC_DYSON_FACILITY_IDS.filter(
     (facilityId) => basicVisible[facilityId],
   )
+  const realityUnlocked = unlockAllTabs ||
+    state.quantum.pointsEarned > 0n ||
+    state.infinity.secretsOfTheUniverse >=
+      QUANTUM_CONSTANTS.maximumSecrets
   const skillPointEarned = unlockAllTabs ||
     infinityChallenges(state).hasEarnedGalvanizer ||
     state.skills.points > 0n ||
@@ -1245,6 +1245,9 @@ export function selectGameplayVisibility(
     state.dyson.bots >= infinityRequiredBots
   const quantumRequiredInfinityPoints =
     QUANTUM_CONSTANTS.infinityPointsPerQuantumPoint
+  const quantumUnlocked = unlockAllTabs ||
+    state.infinity.points >= quantumRequiredInfinityPoints ||
+    state.quantum.pointsEarned > 0n
   const realitySecretsFraction = Math.min(
     1,
     divideContinuous(
@@ -1257,10 +1260,48 @@ export function selectGameplayVisibility(
     requiredSecrets: QUANTUM_CONSTANTS.maximumSecrets,
     fraction: realitySecretsFraction,
   }
-  const simulationsRequiredInfluence = 10
-  const simulationsUnlocked = unlockAllTabs || simulationsAvailable(state)
-  const simulationsCurrentInfluence = simulationsUnlocked ? 10 : Number(state.dyson.goalStage)
-  const simulationsProgressFraction = Math.min(1, simulationsCurrentInfluence / 10)
+  const realityRouteVisible =
+    realityUnlocked ||
+    state.infinity.secretsOfTheUniverse >= 1n
+  const hasExistingSimulationProgress =
+    state.dream.resetCount > 0n ||
+    state.dream.strangeMatter > 0 ||
+    Object.values(state.dream.upgrades).some(Boolean) ||
+    Object.values(state.dream.education).some(
+      (education) =>
+        education.active ||
+        education.complete ||
+        education.progress > 0,
+    ) ||
+    Object.values(state.dream.purchaseBatches ?? {}).some(
+      (batches) => batches > 0n,
+    ) ||
+    state.dream.resources.hunters > 0n ||
+    state.dream.resources.gatherers > 0n
+  const simulationsRequiredInfluence = 128
+  const simulationsUnlocked = unlockAllTabs ||
+    (realityUnlocked && state.statistics.lifetime.manualInfluence >= simulationsRequiredInfluence) ||
+    hasExistingSimulationProgress
+  const realityVisited = realityInfluenceGenerationStarted(state)
+  const simulationsPendingWorkers = Number(
+    state.reality.workersReady < BigInt(simulationsRequiredInfluence)
+      ? state.reality.workersReady
+      : BigInt(simulationsRequiredInfluence),
+  )
+  const simulationsCurrentInfluence = simulationsUnlocked
+    ? simulationsRequiredInfluence
+    : simulationsPendingWorkers
+  const simulationsProgressFraction = simulationsUnlocked
+    ? 1
+    : Math.min(
+        1,
+        Math.max(
+          0,
+          (simulationsPendingWorkers +
+            state.reality.workerGenerationProgress) /
+            simulationsRequiredInfluence,
+        ),
+      )
 
   return {
     allTabsUnlocked: unlockAllTabs,
@@ -1301,12 +1342,12 @@ export function selectGameplayVisibility(
       },
     },
     reality: {
-      routeVisible: false,
-      routeUnlocked: false,
+      routeVisible: realityRouteVisible,
+      routeUnlocked: realityUnlocked,
       unlockProgress: realityUnlockProgress,
     },
     simulations: {
-      routeVisible: simulationsUnlocked || state.dyson.goalStage >= 1n,
+      routeVisible: (realityUnlocked && realityVisited) || simulationsUnlocked,
       routeUnlocked: simulationsUnlocked,
       unlockProgress: {
         currentInfluence: simulationsCurrentInfluence,
@@ -1315,8 +1356,12 @@ export function selectGameplayVisibility(
       },
     },
     quantum: {
-      routeVisible: false,
-      routeUnlocked: false,
+      routeVisible: unlockAllTabs ||
+        state.meta.firstInfinityComplete ||
+        state.infinity.points > 0n ||
+        state.infinity.spentPoints > 0n ||
+        state.quantum.pointsEarned > 0n,
+      routeUnlocked: quantumUnlocked,
       unlockProgress: {
         currentInfinityPoints: state.infinity.points,
         requiredInfinityPoints: quantumRequiredInfinityPoints,
@@ -1450,7 +1495,7 @@ function selectResources(
       storedTimeCapacitySeconds:
         state.timeline.storedTimeCapacitySeconds,
       offlineBoost: state.timeline.offlineBoost,
-      maximumOfflineBoostMultiplier: maximumOfflineBoostMultiplier(state.civilization),
+      maximumOfflineBoostMultiplier: MAXIMUM_OFFLINE_BOOST_MULTIPLIER,
       ...(state.timeline.offlineBoostAutoResume === undefined ? {} : { offlineBoostAutoResume: state.timeline.offlineBoostAutoResume }),
     }),
   }
@@ -1499,7 +1544,6 @@ function selectProgression(
       tabPresetAutomation:
         state.skills.tabPresetAutomation,
     }),
-    civilization: state.civilization === undefined ? undefined : reuseShallowDomain(previous?.civilization, state.civilization),
     discovery: reuseShallowDomain(previous?.discovery, state.discovery ?? EMPTY_DISCOVERY),
     research: reuseShallowDomain(previous?.research, state.research),
     reality: reuseShallowDomain(previous?.reality, {
@@ -1617,7 +1661,6 @@ function selectDerivedFacts(
             state.dyson.goalStage,
             effectiveDivisions(state),
             builtByHandTinkerGoal(state),
-            state.challenges?.replacement?.active === 'grounded',
           ),
         }
         : {
@@ -1882,7 +1925,6 @@ function projectDysonDerivedFacts(
   goalStage: bigint,
   divisionsPurchased: bigint,
   tinkerGoalTarget: number | null,
-  grounded = false,
 ): Omit<
   DerivedBasicDysonState,
   'nextEvaluationSnapshot' | 'megaRates'
@@ -1933,7 +1975,6 @@ function projectDysonDerivedFacts(
         goalStage,
         divisionsPurchased,
         tinkerGoalTarget,
-        grounded,
       ),
       facilities: source.facilityFacts,
     },
@@ -2279,7 +2320,6 @@ function projectDysonGoal(
   goalStage: bigint,
   divisionsPurchased: bigint,
   tinkerGoalTarget: number | null,
-  grounded = false,
 ): FrontendDysonPresentationFacts['currentGoal'] {
   if (tinkerGoalTarget !== null) return { kind: 'tinkers', target: tinkerGoalTarget }
   switch (goalStage) {
@@ -2290,7 +2330,7 @@ function projectDysonGoal(
     case 2n:
       return { kind: 'have-active-panels', target: 20_000 }
     case 3n:
-      return grounded ? { kind: 'build-data-centers', target: 100 } : { kind: 'own-planets', target: 20 }
+      return { kind: 'own-planets', target: 20 }
     case 4n:
       return { kind: 'decay-panels', target: 1_000_000_000_000 }
     case 5n:
@@ -2938,7 +2978,6 @@ function selectSkillPreviewDependencies(
       .join('\u0000'),
     challengeSignature: [
       state.challenges?.active ?? '',
-      ...(state.challenges?.replacement?.completedIds ?? []),
       state.challenges?.galvanizers ?? 0n,
       state.challenges?.blankSlateCompleted,
       state.challenges?.trialAndErrorCompleted,

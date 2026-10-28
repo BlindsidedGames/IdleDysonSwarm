@@ -1,7 +1,6 @@
 # 4.1.10 store drafts
 
-Original drafts prepared 27 September 2026. The sections below describe that
-initial preparation; see the 29 September status below for current submissions.
+Prepared 27 September 2026. Nothing submitted for review or published.
 
 ## Apple
 
@@ -48,14 +47,3 @@ the eventual public build, after Matthew approves release.
   provider configuration before replacing the candidate builds in these drafts.
 - Recheck final build selection and announcement copy before authorized release.
 - Saved console screenshots are in `evidence/`.
-
-## 29 September review submission status
-
-Android 2026092801 is approved and **Ready to publish**, held by managed publishing. Apple 2609.29.1
-was submitted with all five achievements; all six items are **Waiting for Review**.
-Manual release remains selected. Submission ID:
-`f1e8fac3-23b7-42bb-9e9d-fe8e8ace5b5c`.
-Google's five achievement definitions are published independently of the held app
-update. Permanent 2× Bots is approved/available on Apple and active on Google.
-Neither app update was released publicly. Steam remains unchanged by this task.
-See the [release ledger](../../platform/release-ledger.md) for evidence and limits.

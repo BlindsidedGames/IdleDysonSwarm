@@ -1,8 +1,12 @@
 {
   "extends": "./tsconfig.app.json",
-  "compilerOptions": {
-    "types": ["vite/client", "node"]
-  },
-  "include": ["src/**/*.test.ts", "src/vite-globals.d.ts", "test/support/**/*.ts", "vitest.save-safety.config.ts"],
+  "compilerOptions": { "types": ["vite/client", "node"] },
+  "include": [
+    "src/save/serialization.test.ts",
+    "src/save/repository.test.ts",
+    "src/application/offlineCheckpointRecovery.test.ts",
+    "src/vite-globals.d.ts",
+    "vitest.save-safety.config.ts"
+  ],
   "exclude": []
 }

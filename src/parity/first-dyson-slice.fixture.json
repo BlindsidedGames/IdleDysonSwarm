@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "preparedSave": {
-    "sourcePath": "qa/fixtures/schema-08-canonical-idb1-main-save.txt",
+    "sourcePath": "test/fixtures/schema-08-canonical-idb1-main-save.txt",
     "sourceSha256": "10e2e48cd989618918118e16d0900af7d80f0f5dfb1aad475423ac165ab00c78",
-    "preparedStateSha256": "1735ded7d188e1a0ad4c18b489b9d08dd28399cbf990c1b3c90da76d5b2ddc6e",
+    "preparedStateSha256": "fb72543cd709a40e8db6215a86fb68cb868fd5431d987f2d6e46f21194aa513e",
     "catalogSha256": "0f7e96636565c8d2d268eaa417335b9eb049939ddd2463408540b0af64ecf665"
   },
   "initial": {

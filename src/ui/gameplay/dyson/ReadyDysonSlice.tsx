@@ -1,15 +1,14 @@
-import { ReworkChallengesSurface } from '../rework/ReworkChallengesSurface'
-import { AvocatoSurface } from '../quantum/AvocatoSurface'
-import { isAvocatoRouteUnlocked } from './avocatoNavigation'
-import { CivilizationSurface } from '../simulations/CivilizationSurface'
-import { ReworkTranscendenceSurface, ReworkMigrationNotice } from '../rework/ReworkSurfaces'
 import { activeGameSpeed, realTimeRate } from '../effectiveSpeed'
 import { TabPresetQuickActions } from '../skills/TabPresetQuickActions'
+import { DiscoverySurface } from '../discovery/DiscoverySurface'
 import { discoveryMessages } from '../discovery/messages'
 import { NonRefundableSkillConfirmationProvider } from '../skills/NonRefundableSkillConfirmation'
 import { useConfirmedTabPresetDispatch } from '../skills/useConfirmedTabPresetDispatch'
 import { StoredTimeNavigationProgress } from '../offline-time/QuickStoredTime'
+import { isAvocatoRouteUnlocked } from './avocatoNavigation'
+import { InfinityChallenges } from '../infinity/InfinityChallenges'
 import { challengeMessages } from '../infinity/challengeMessages'
+import { avocatoMessages } from '../quantum/messages'
 import { useBotBoost } from '../store/useBotBoost'
 import { boostMessages } from '../store/boostMessages'
 import {
@@ -70,14 +69,13 @@ import {
   startDevelopmentTelemetry,
 } from '../../runtime/developmentTelemetry'
 import {
+  readBooleanPresentationPreference,
   readPresentationPreference,
   writeBooleanPresentationPreference,
   writePresentationPreference,
 } from '../../presentationPreferences'
 import type { SettingsSurfaceProps } from '../settings'
 import type { DebugSurfaceDraft } from '../debug'
-import type {
-} from '../offline-time'
 import type {
   SkillPresetActions,
   SkillTreeViewState,
@@ -112,6 +110,10 @@ import {
   wikiProgressionFromResources,
   type WikiCategoryId,
 } from '../wiki/wikiProjection'
+import { AvocatoMeditationSecretTrigger } from '../quantum/AvocatoMeditationSecretTrigger'
+import type { AvocatoMeditationPlacement } from '../quantum/meditationTargets'
+import { quantumQuantityFromBuyMode } from '../quantum/quantumPurchaseQuantities'
+import { simulationPurchaseQuantity } from '../simulations/simulationPurchaseQuantity'
 import type { ReleasePlatformServices } from '../../../platform/releaseFoundation'
 import type { ReleaseFooterPresentation } from '../../../platform/releaseFooter'
 import { Capacitor } from '@capacitor/core'
@@ -136,6 +138,26 @@ const SkillsSurface = lazy(async () => {
 const InfinitySurface = lazy(async () => {
   const module = await import('../infinity')
   return { default: module.InfinitySurface }
+})
+
+const RealitySurface = lazy(async () => {
+  const module = await import('../reality')
+  return { default: module.RealitySurface }
+})
+
+const SimulationsSurface = lazy(async () => {
+  const module = await import('../simulations')
+  return { default: module.SimulationsSurface }
+})
+
+const QuantumSurface = lazy(async () => {
+  const module = await import('../quantum')
+  return { default: module.QuantumSurface }
+})
+
+const AvocatoSurface = lazy(async () => {
+  const module = await import('../quantum')
+  return { default: module.AvocatoSurface }
 })
 
 const OfflineTimeSurface = lazy(async () => {
@@ -172,6 +194,16 @@ const SettingsSurface = lazy(async () => {
 const DebugSurface = lazy(async () => {
   const module = await import('../debug')
   return { default: module.DebugSurface }
+})
+
+const QuantumControlPanel = lazy(async () => {
+  const module = await import('../quantum/QuantumSurface')
+  return { default: module.QuantumControlPanel }
+})
+
+const AvotationCompletionOverlay = lazy(async () => {
+  const module = await import('../quantum/AvotationProgress')
+  return { default: module.AvotationCompletionOverlay }
 })
 
 const StoreRouteSurface = lazy(async () => {
@@ -534,6 +566,18 @@ function gameplayPreviewDemandForRoute(
   }
 }
 
+const AVOCATO_MEDITATION_ROUTE_PLACEMENT: Partial<
+  Record<ReadyGameRoute, AvocatoMeditationPlacement>
+> = Object.freeze({
+  quantum: 'quantum',
+  infinity: 'infinity',
+  bots: 'bots',
+  skills: 'skills',
+  settings: 'settings',
+  research: 'research',
+  transcendence: 'research',
+})
+
 /**
  * Maps published canonical facts into presentation components without
  * recalculating unlocks, affordability, timing or command outcomes.
@@ -572,6 +616,14 @@ function ReadyDysonSliceContent({
   const intl = useIntl()
   const [visualizationVisible, setVisualizationVisible] =
     useState(readVisualizationPreference)
+  const [quantumPurchaseSettingsOpen, setQuantumPurchaseSettingsOpen] =
+    useState(false)
+  const [avotationCompletionVisible, setAvotationCompletionVisible] =
+    useState(false)
+  const [quantumHideMaxed, setQuantumHideMaxed] =
+    useState(() =>
+      readBooleanPresentationPreference(QUANTUM_HIDE_MAXED_STORAGE_KEY),
+    )
   const [
     showSkillPresetApplicationNotices,
     setShowSkillPresetApplicationNotices,
@@ -580,6 +632,13 @@ function ReadyDysonSliceContent({
       SKILL_PRESET_APPLICATION_NOTICES_STORAGE_KEY,
     ) !== 'false',
   )
+  const updateQuantumHideMaxed = useCallback((hideMaxed: boolean) => {
+    setQuantumHideMaxed(hideMaxed)
+    writeBooleanPresentationPreference(
+      QUANTUM_HIDE_MAXED_STORAGE_KEY,
+      hideMaxed,
+    )
+  }, [])
   const debugDraftRef = useRef<DebugSurfaceDraft>({
     amount: '1',
     preset: 'early',
@@ -604,7 +663,7 @@ function ReadyDysonSliceContent({
   const storeVisible =
     releasePlatformServices !== undefined
   const gameplay = snapshot.gameplay
-  const gameSpeed = activeGameSpeed(gameplay.resources.time, gameplay.progression.timeline, gameplay.progression.civilization?.farming)
+  const gameSpeed = activeGameSpeed(gameplay.resources.time, gameplay.progression.timeline)
   const dispatchPlayer = useConfirmedTabPresetDispatch({
     dispatchPlayer: unconfirmedDispatchPlayer,
     autoAssignNonRefundable: gameplay.progression.skills.autoAssignNonRefundable,
@@ -615,32 +674,44 @@ function ReadyDysonSliceContent({
   const discoveryUnlocked = gameplay.progression.discovery?.unlocked === true
   const ownsBotBoost = gameplay.derived.dyson.status === 'ready' && gameplay.derived.dyson.value.entitlements.permanentBotBoost === true
   const botBoostStatus = useBotBoost(gameplay.progression.meta.botBoost, ownsBotBoost)
+  const quantumPurchaseQuantity = quantumQuantityFromBuyMode(gameplay.progression.quantum.buyMode)
   const allTabsUnlocked = gameplay.visibility.allTabsUnlocked === true
-  const transcendenceAvailable = isAvocatoRouteUnlocked({
-    firstInfinityComplete: gameplay.progression.meta.firstInfinityComplete, discoveryUnlocked,
-    overflowPoints: gameplay.resources.avocado.overflowPoints, overflowPending: gameplay.progression.infinity.botCapTransitionPending,
+  const avocatoRouteUnlocked = isAvocatoRouteUnlocked({
+    purchased: gameplay.progression.avocado.unlocked || discoveryUnlocked,
+    overflowPending: gameplay.progression.infinity.botCapTransitionPending,
+    overflowPoints: gameplay.resources.avocado.overflowPoints,
     developmentOverride: allTabsUnlocked,
   })
-  const challengesUnlocked = true
+  const challengesUnlocked = allTabsUnlocked || (gameplay.progression.challenges?.unlocked ?? false)
   const requestedRouteUnavailable =
-    ((requestedRoute === 'transcendence' || requestedRoute === 'avocato') && !transcendenceAvailable) ||
+    (requestedRoute === 'transcendence' && !discoveryUnlocked) ||
     (requestedRoute === 'challenges' && !challengesUnlocked) ||
-    (requestedRoute === 'simulations' && !gameplay.visibility.simulations.routeUnlocked) ||
     (requestedRoute === 'research' && !discoveryUnlocked &&
       !(gameplay.visibility.research?.routeUnlocked ?? true)) ||
     (requestedRoute === 'skills' &&
       !gameplay.visibility.skills.routeUnlocked) ||
     (requestedRoute === 'infinity' &&
       !gameplay.visibility.infinity.routeUnlocked) ||
-    (requestedRoute === 'reality' || requestedRoute === 'quantum') ||
+    ((requestedRoute === 'reality' ||
+      requestedRoute === 'simulations') &&
+      (!gameplay.visibility.reality.routeVisible ||
+        !gameplay.visibility.reality.routeUnlocked ||
+        (requestedRoute === 'simulations' &&
+          !gameplay.visibility.simulations.routeUnlocked))) ||
+    (requestedRoute === 'quantum' &&
+      !gameplay.visibility.quantum.routeUnlocked) ||
     (requestedRoute === 'store' && !storeVisible) ||
     (requestedRoute === 'offline-time' &&
       gameplay.resources.time.storedTimeCapacitySeconds <= 0) ||
+    (requestedRoute === 'avocato' &&
+      !avocatoRouteUnlocked) ||
     (requestedRoute === 'debug' && development === undefined)
   const route =
     requestedRouteUnavailable
       ? 'bots'
       : requestedRoute === 'research' && discoveryUnlocked ? 'transcendence' : requestedRoute
+  const meditationPlacement: AvocatoMeditationPlacement | null =
+    AVOCATO_MEDITATION_ROUTE_PLACEMENT[route] ?? null
   const dyson = gameplay.derived.dyson
   const rapidInfinityVisualization =
     shouldSettleRapidInfinityVisualization({
@@ -833,7 +904,11 @@ function ReadyDysonSliceContent({
   const skillsActive = route === 'skills'
   const infinityActive = route === 'infinity'
   const challengesActive = route === 'challenges'
+  const realityActive = route === 'reality'
   const simulationsActive = route === 'simulations'
+  const quantumRouteActive = route === 'quantum'
+  const avocatoActive = route === 'avocato'
+  const quantumNavigationActive = quantumRouteActive || (avocatoActive && !avocatoRouteUnlocked)
   const storyActive = route === 'story'
   const wikiActive = route === 'wiki'
   const offlineTimeActive = route === 'offline-time'
@@ -844,12 +919,14 @@ function ReadyDysonSliceContent({
     skillsActive ||
     challengesActive ||
     infinityActive ||
+    realityActive ||
     simulationsActive ||
+    quantumNavigationActive ||
     storyActive ||
     wikiActive ||
     statisticsActive ||
     storeActive ||
-    settingsActive || route === 'transcendence' || route === 'avocato'
+    settingsActive
   )
   const navigationVisibility =
     gameplay.progression.meta?.navigationVisibility ??
@@ -870,13 +947,18 @@ function ReadyDysonSliceContent({
     ),
   )
   const availableNavigationItems: BottomNavigationDestinationId[] = [
-    ...(transcendenceAvailable ? ['transcendence' as const, 'avocato' as const] : []),
+    ...(discoveryUnlocked ? ['transcendence' as const] : []),
     'bots',
     ...(!discoveryUnlocked ? ['research' as const] : []),
     ...(gameplay.visibility.skills.routeVisible ? ['skills' as const] : []),
     ...(gameplay.visibility.infinity.routeVisible ? ['infinity' as const] : []),
-    ...(gameplay.visibility.simulations.routeVisible ? ['simulations' as const] : []),
     ...(challengesUnlocked ? ['challenges' as const] : []),
+    ...(avocatoRouteUnlocked ? ['avocato' as const] : []),
+    ...(gameplay.visibility.quantum.routeVisible ? ['quantum' as const] : []),
+    ...(gameplay.visibility.reality.routeVisible ? ['reality' as const] : []),
+    ...(gameplay.visibility.simulations.routeVisible
+      ? ['simulations' as const]
+      : []),
     ...(storeVisible ? ['store' as const] : []),
     'story',
     'wiki',
@@ -884,10 +966,25 @@ function ReadyDysonSliceContent({
     'statistics',
     'settings',
   ]
+  const lateGameUnlockProgress = (
+    destination: string,
+    progress: typeof gameplay.visibility.reality.unlockProgress,
+  ) => ({
+    fraction: progress.fraction,
+    label: intl.formatMessage(messages.realitySecretsProgress, {
+      destination,
+      current: display(progress.currentSecrets),
+      required: display(progress.requiredSecrets),
+    }),
+  })
   const routeHeading = challengesActive
     ? challengeMessages.route
     : debugActive
     ? messages.debugRoute
+    : avocatoActive
+      ? messages.avocatoRoute
+    : quantumRouteActive
+      ? messages.quantumRoute
     : statisticsActive
       ? messages.statisticsRoute
     : storeActive
@@ -900,7 +997,6 @@ function ReadyDysonSliceContent({
       ? messages.wikiRoute
     : settingsActive
     ? messages.settingsRoute
-    : route === 'avocato' ? messages.avocatoRoute
     : route === 'transcendence' ? discoveryMessages.route
     : researchActive
       ? messages.researchRoute
@@ -908,7 +1004,9 @@ function ReadyDysonSliceContent({
         ? messages.skillsRoute
         : infinityActive
           ? messages.infinityRoute
-          : simulationsActive
+          : realityActive
+            ? messages.realityRoute
+            : simulationsActive
               ? messages.simulationsRoute
             : messages.route
   const presetQuickActions = gameplay.visibility.skills.routeUnlocked ? (
@@ -949,7 +1047,7 @@ function ReadyDysonSliceContent({
       routeTheme={route === 'transcendence' ? 'avocato' : challengesActive ? 'infinity' : debugActive ? 'statistics' : storeActive ? 'bots' : route}
       routeContentEdgeToEdge={storeActive}
       routeThemeVariant={
-        simulationsActive ? 'information' : gameplay.derived.simulations?.currentEra ?? 'foundational'
+        gameplay.derived.simulations?.currentEra ?? 'foundational'
       }
       navigation={{
         ariaLabel: intl.formatMessage(messages.primaryNavigation),
@@ -957,15 +1055,10 @@ function ReadyDysonSliceContent({
         bottomAriaLabel: intl.formatMessage(messages.bottomNavigation),
         includeBottomText: bottomNavigationIncludeText,
         items: [
-          ...(transcendenceAvailable ? [{
+          ...(discoveryUnlocked ? [{
             id: 'transcendence', label: intl.formatMessage(discoveryMessages.route), iconSrc: navigationAssets.transcendence,
             bottom: bottomVisible('transcendence'),
             ...(route === 'transcendence' ? { current: true as const } : { onActivate: () => navigateTo('transcendence') }),
-          }, {
-            id: 'avocato', label: intl.formatMessage(messages.avocatoRoute), iconSrc: navigationAssets.avocato,
-            iconMaskMode: 'luminance' as const,
-            bottom: bottomVisible('avocato'),
-            ...(route === 'avocato' ? { current: true as const } : { onActivate: () => navigateTo('avocato') }),
           }] : []),
           {
             id: 'bots',
@@ -1049,20 +1142,6 @@ function ReadyDysonSliceContent({
                     }),
               }]
             : []),
-          ...(gameplay.visibility.simulations.routeVisible ? [{
-            id: 'simulations' as const, label: intl.formatMessage(messages.simulationsRoute),
-            iconSrc: navigationAssets.simulations, bottom: bottomVisible('simulations'),
-            newlyUnlocked: newlyUnlockedRoutes.has('simulations'),
-            ...(gameplay.visibility.simulations.routeUnlocked
-              ? simulationsActive ? { current: true as const } : { onActivate: () => navigateTo('simulations') }
-              : { disabled: true, progress: {
-                  fraction: gameplay.visibility.simulations.unlockProgress.fraction,
-                  label: intl.formatMessage(messages.simulationsGoalsProgress, {
-                    destination: intl.formatMessage(messages.simulationsRoute),
-                    current: displayWhole(gameplay.progression.dyson.goalStage), required: displayWhole(10n),
-                  }),
-                } }),
-          }] : []),
           ...(challengesUnlocked ? [{
             id: 'challenges',
             label: intl.formatMessage(challengeMessages.route),
@@ -1072,6 +1151,124 @@ function ReadyDysonSliceContent({
             newlyUnlocked: newlyUnlockedRoutes.has('challenges'),
             ...(challengesActive ? { current: true as const }
               : { onActivate: () => navigateTo('challenges') }),
+          }] : []),
+          ...(gameplay.visibility.reality.routeVisible
+            ? [
+                {
+                  id: 'reality',
+                  label: intl.formatMessage(messages.realityRoute),
+                  iconSrc: navigationAssets.reality,
+                  bottom: bottomVisible('reality'),
+                  newlyUnlocked: newlyUnlockedRoutes.has('reality'),
+                  ...(gameplay.visibility.reality.routeUnlocked
+                    ? realityActive
+                      ? { current: true as const }
+                      : {
+                          onActivate: () =>
+                            navigateTo('reality'),
+                        }
+                    : {
+                        disabled: true,
+                        progress: lateGameUnlockProgress(
+                          intl.formatMessage(messages.realityRoute),
+                          gameplay.visibility.reality.unlockProgress,
+                        ),
+                      }),
+                },
+              ]
+            : []),
+          ...(gameplay.visibility.simulations.routeVisible
+            ? [
+                {
+                  id: 'simulations',
+                  label: intl.formatMessage(
+                    messages.simulationsRoute,
+                  ),
+                  iconSrc: navigationAssets.simulations,
+                  bottom: bottomVisible('simulations'),
+                  newlyUnlocked: newlyUnlockedRoutes.has('simulations'),
+                  ...(gameplay.visibility.simulations.routeUnlocked
+                    ? simulationsActive
+                      ? { current: true as const }
+                      : {
+                          onActivate: () =>
+                            navigateTo('simulations'),
+                        }
+                    : {
+                        disabled: true,
+                        progress: {
+                          fraction:
+                            gameplay.visibility.simulations.unlockProgress
+                              .fraction,
+                          label: intl.formatMessage(
+                            messages.simulationsInfluenceProgress,
+                            {
+                              destination: intl.formatMessage(
+                                messages.simulationsRoute,
+                              ),
+                              current: displayWhole(
+                                gameplay.visibility.simulations.unlockProgress
+                                  .currentInfluence,
+                              ),
+                              required: displayWhole(
+                                gameplay.visibility.simulations.unlockProgress
+                                  .requiredInfluence,
+                              ),
+                            },
+                          ),
+                        },
+                      }),
+                },
+              ]
+            : []),
+          ...(gameplay.visibility.quantum.routeVisible
+            ? [
+                {
+                  id: 'quantum',
+                  label: intl.formatMessage(messages.quantumRoute),
+                  iconSrc: navigationAssets.quantum,
+                  bottom: bottomVisible('quantum'),
+                  newlyUnlocked: newlyUnlockedRoutes.has('quantum'),
+                  ...(gameplay.visibility.quantum.routeUnlocked
+                    ? quantumNavigationActive
+                      ? { current: true as const }
+                      : {
+                          onActivate: () =>
+                            navigateTo('quantum'),
+                        }
+                    : {
+                        disabled: true,
+                        progress: {
+                          fraction:
+                            gameplay.visibility.quantum.unlockProgress.fraction,
+                          label: intl.formatMessage(
+                            messages.quantumProgress,
+                            {
+                              destination: intl.formatMessage(
+                                messages.quantumRoute,
+                              ),
+                              current: display(
+                                gameplay.visibility.quantum.unlockProgress
+                                  .currentInfinityPoints,
+                              ),
+                              required: display(
+                                gameplay.visibility.quantum.unlockProgress
+                                  .requiredInfinityPoints,
+                              ),
+                            },
+                          ),
+                        },
+                      }),
+                },
+              ]
+            : []),
+          ...(avocatoRouteUnlocked ? [{
+            id: 'avocato', label: intl.formatMessage(messages.avocatoRoute),
+            iconSrc: navigationAssets.avocato, iconMaskMode: 'luminance' as const, bottom: bottomVisible('avocato'),
+            badge: gameplay.progression.infinity.botCapTransitionPending
+              ? '!' : displayWhole(gameplay.resources.avocado.overflowPoints),
+            ...(avocatoActive ? { current: true as const }
+              : { onActivate: () => onRouteChange('avocato') }),
           }] : []),
           ...(storeVisible
             ? [
@@ -1261,15 +1458,8 @@ function ReadyDysonSliceContent({
                 </Suspense>
               ),
             }
-          : route === 'transcendence'
-            ? { ariaLabel: intl.formatMessage(discoveryMessages.route), content: <ReworkTranscendenceSurface gameplay={gameplay} locale={locale} gameSpeed={gameSpeed} onOpenStore={() => navigateTo('avocato')} /> }
-          : route === 'avocato'
-            ? { ariaLabel: intl.formatMessage(messages.avocatoRoute), content: <AvocatoSurface
-                locale={locale} resources={gameplay.resources.avocado} previews={gameplay.previews.avocado}
-                discovery={gameplay.progression.discovery}
-                discoveryAvailable={gameplay.commands.byKind['discovery.purchase'].routeAvailable}
-                commandAvailability={{ overflowReset: gameplay.commands.byKind['avocado.request-overflow-reset'].routeAvailable }}
-                dispatchPlayer={dispatchPlayer} onDiscoveryUnlocked={() => navigateTo('transcendence')} /> }
+          : route === 'transcendence' && gameplay.progression.discovery && gameplay.derived.discovery
+            ? { ariaLabel: intl.formatMessage(discoveryMessages.route), content: <DiscoverySurface gameSpeed={gameSpeed} state={gameplay.progression.discovery} effects={gameplay.derived.discovery} locale={locale} /> }
           : researchActive
             ? {
                 ariaLabel: intl.formatMessage(messages.researchRoute),
@@ -1452,7 +1642,14 @@ function ReadyDysonSliceContent({
               : challengesActive
                 ? {
                     ariaLabel: intl.formatMessage(challengeMessages.route),
-                    content: <ReworkChallengesSurface goalStage={gameplay.progression.dyson.goalStage} progress={gameplay.progression.challenges} earnedIp={gameplay.resources.infinity.points} firstInfinity={gameplay.progression.meta.firstInfinityComplete} breakTheLoop={gameplay.progression.quantum.unlocks.breakTheLoop} overflowPending={gameplay.progression.infinity.botCapTransitionPending} dispatchPlayer={dispatchPlayer} />,
+                    content: <div className="challenges-surface">
+                      {gameplay.progression.challenges && <InfinityChallenges
+                        progress={gameplay.progression.challenges}
+                        developmentVisible={allTabsUnlocked}
+                        overflowReached={gameplay.progression.infinity.botCapTransitionPending}
+                        dispatchPlayer={dispatchPlayer}
+                      />}
+                    </div>,
                   }
               : infinityActive
                 ? {
@@ -1471,7 +1668,6 @@ function ReadyDysonSliceContent({
                         }
                       >
                         <InfinitySurface
-                          discoveryUnlocked={gameplay.progression.discovery?.unlocked === true}
                           lastInfinityCycle={gameplay.progression.statistics.recentInfinityCycles?.[0]}
                           onViewOverflow={() => navigateTo('avocato')}
                           locale={locale}
@@ -1506,8 +1702,237 @@ function ReadyDysonSliceContent({
                       </Suspense>
                     ),
                   }
-                : simulationsActive
-                  ? { ariaLabel: intl.formatMessage(messages.simulationsRoute), content: <CivilizationSurface gameplay={gameplay} locale={locale} gameSpeed={gameSpeed} dispatchPlayer={dispatchPlayer} /> }
+                : realityActive
+                  ? {
+                      ariaLabel: intl.formatMessage(
+                        messages.realityRoute,
+                      ),
+                      content: (
+                        <Suspense
+                          fallback={
+                            <div
+                              aria-label={intl.formatMessage(
+                                messages.realityRoute,
+                              )}
+                              aria-busy="true"
+                            />
+                          }
+                        >
+                          <RealitySurface
+                            gameSpeed={gameSpeed}
+                            locale={locale}
+                            resources={gameplay.resources.reality}
+                            derived={gameplay.derived.reality}
+                            gatherPreview={
+                              gameplay.previews.reality
+                                .gatherInfluence
+                            }
+                            upgrades={
+                              gameplay.previews.reality.upgrades
+                            }
+                            upgradeSections={
+                              gameplay.derived.simulations
+                                .permanentUpgrades.reality
+                            }
+                            simulationUpgrades={
+                              gameplay.previews.dream.upgrades
+                            }
+                            simulationUpgradeSections={
+                              gameplay.derived.simulations
+                                .permanentUpgrades.simulation
+                            }
+                            strangeMatter={
+                              gameplay.resources.dream.strangeMatter
+                            }
+                            gatherRouteAvailable={
+                              gameplay.commands.byKind[
+                                'reality.gather-influence'
+                              ].routeAvailable
+                            }
+                            purchaseRouteAvailable={
+                              gameplay.commands.byKind[
+                                'reality.purchase-upgrade'
+                              ].routeAvailable
+                            }
+                            simulationPurchaseRouteAvailable={
+                              gameplay.commands.byKind[
+                                'dream.purchase-upgrade'
+                              ].routeAvailable
+                            }
+                            avocatoUnlocked={
+                              gameplay.progression.avocado.unlocked
+                            }
+                            onOpenAvocato={() =>
+                              onRouteChange('avocato')
+                            }
+                            dispatchPlayer={dispatchPlayer}
+                          />
+                        </Suspense>
+                      ),
+                    }
+                  : simulationsActive
+                    ? {
+                        ariaLabel: intl.formatMessage(
+                          messages.simulationsRoute,
+                        ),
+                        content: (
+                          <Suspense
+                            fallback={
+                              <div
+                                aria-label={intl.formatMessage(
+                                  messages.simulationsRoute,
+                                )}
+                                aria-busy="true"
+                              />
+                            }
+                          >
+                            <SimulationsSurface
+                              gameSpeed={gameSpeed}
+                              locale={locale}
+                              facts={gameplay.derived.simulations}
+                              progression={gameplay.progression.dream}
+                              previews={gameplay.previews.dream}
+                              influence={
+                                gameplay.resources.reality.influence
+                              }
+                              spaceAgePurchaseQuantity={simulationPurchaseQuantity(
+                                gameplay.progression.dream.buyMode ?? 'buy-1',
+                              )}
+                              commandAvailability={{
+                                setBuyMode:
+                                  gameplay.commands.byKind[
+                                    'dream.set-buy-mode'
+                                  ].routeAvailable,
+                                purchaseFoundational:
+                                  gameplay.commands.byKind[
+                                    'dream.purchase-foundational'
+                                  ].routeAvailable,
+                                purchaseSpaceAge:
+                                  gameplay.commands.byKind[
+                                    'dream.purchase-space-age'
+                                  ].routeAvailable,
+                                startEducation:
+                                  gameplay.commands.byKind[
+                                    'dream.start-education'
+                                  ].routeAvailable,
+                                blackHoleReset:
+                                  gameplay.commands.byKind[
+                                    'dream.request-black-hole-reset'
+                                  ].routeAvailable,
+                              }}
+                              dispatchPlayer={dispatchPlayer}
+                            />
+                          </Suspense>
+                        ),
+                      }
+                    : quantumRouteActive
+                      ? {
+                          ariaLabel: intl.formatMessage(
+                            messages.quantumRoute,
+                          ),
+                          content: (
+                            <Suspense
+                              fallback={
+                                <div
+                                  aria-label={intl.formatMessage(
+                                    messages.quantumRoute,
+                                  )}
+                                  aria-busy="true"
+                                />
+                              }
+                            >
+                              <QuantumSurface
+                                locale={locale}
+                                resources={gameplay.resources.quantum}
+                                availableInfinityPoints={
+                                  gameplay.resources.infinity.availablePoints
+                                }
+                                progression={{
+                                  quantum: gameplay.progression.quantum,
+                                  challenges: gameplay.progression.challenges,
+                                  discovery: gameplay.progression.discovery,
+                                  avocado: gameplay.progression.avocado,
+                                  secretProgress:
+                                    gameplay.progression.secretProgress,
+                                }}
+                                previews={gameplay.previews.quantum}
+                                meditationPreview={
+                                  gameplay.previews.avocado.meditation
+                                }
+                                commandAvailability={{
+                                  purchaseUpgrade:
+                                    gameplay.commands.byKind[
+                                      'quantum.purchase-upgrade'
+                                    ].routeAvailable,
+                                  requestLeap:
+                                    gameplay.commands.byKind[
+                                      'quantum.request-leap'
+                                    ].routeAvailable,
+                                  completeMeditationStep:
+                                    gameplay.commands.byKind[
+                                      'avocado.complete-meditation-step'
+                                    ].routeAvailable,
+                                }}
+                                dispatchPlayer={dispatchPlayer}
+                                onOpenAvocato={
+                                  gameplay.progression.avocado.unlocked
+                                    ? () => onRouteChange('avocato')
+                                    : undefined
+                                }
+                                purchaseQuantity={quantumPurchaseQuantity}
+                                hideMaxed={quantumHideMaxed}
+                              />
+                            </Suspense>
+                          ),
+                        }
+                      : avocatoActive
+                        ? {
+                            ariaLabel: intl.formatMessage(
+                              messages.avocatoRoute,
+                            ),
+                            content: (
+                              <Suspense
+                                fallback={
+                                  <div
+                                    aria-label={intl.formatMessage(
+                                      messages.avocatoRoute,
+                                    )}
+                                    aria-busy="true"
+                                  />
+                                }
+                              >
+                                <AvocatoSurface
+                                  discovery={gameplay.progression.discovery}
+                                  discoveryAvailable={gameplay.commands.byKind['discovery.purchase'].routeAvailable}
+                                  onDiscoveryUnlocked={() => navigateTo('transcendence')}
+                                  locale={locale}
+                                  unlocked={
+                                    gameplay.progression.avocado.unlocked
+                                  }
+                                  resources={gameplay.resources.avocado}
+                                  spendable={{
+                                    infinityPoints:
+                                      gameplay.resources.infinity
+                                        .availablePoints,
+                                    influence:
+                                      gameplay.resources.reality.influence,
+                                    strangeMatter:
+                                      gameplay.resources.dream.strangeMatter,
+                                  }}
+                                  derived={gameplay.derived.avocado}
+                                  previews={gameplay.previews.avocado}
+                                  commandAvailability={{
+                                    overflowReset: gameplay.commands.byKind['avocado.request-overflow-reset'].routeAvailable,
+                                    feed:
+                                      gameplay.commands.byKind[
+                                        'avocado.feed'
+                                      ].routeAvailable,
+                                  }}
+                                  dispatchPlayer={dispatchPlayer}
+                                />
+                              </Suspense>
+                            ),
+                          }
                         : storyActive
                           ? {
                               ariaLabel: intl.formatMessage(
@@ -1633,8 +2058,12 @@ function ReadyDysonSliceContent({
                                             infinity:
                                               gameplay.visibility.infinity
                                                 .routeUnlocked,
-                                            simulations: false,
-                                            reality: false,
+                                            simulations:
+                                              gameplay.visibility.simulations
+                                                .routeUnlocked,
+                                            reality:
+                                              gameplay.visibility.reality
+                                                .routeUnlocked,
                                           }}
                                         />
                                       </Suspense>
@@ -1681,8 +2110,44 @@ function ReadyDysonSliceContent({
                                     }
                                 : undefined
       }
+      routeSupplement={
+        quantumRouteActive
+            ? {
+                ariaLabel: intl.formatMessage(messages.quantumControls),
+                content: (
+                  <Suspense fallback={<LazySurfacePending />}>
+                    <QuantumControlPanel
+                    locale={locale}
+                    infinityPoints={gameplay.resources.infinity.points}
+                    purchaseSettingsOpen={quantumPurchaseSettingsOpen}
+                    purchaseQuantity={quantumPurchaseQuantity}
+                    hideMaxed={quantumHideMaxed}
+                    onPurchaseSettingsOpenChange={setQuantumPurchaseSettingsOpen}
+                    dispatchPlayer={dispatchPlayer}
+                    buyModeRouteAvailable={gameplay.commands.byKind['quantum.set-buy-mode'].routeAvailable}
+                    onHideMaxedChange={updateQuantumHideMaxed}
+                    />
+                  </Suspense>
+                ),
+              }
+            : undefined
+      }
       persistentNotice={
-        <ReworkMigrationNotice gameplay={gameplay} dispatchPlayer={dispatchPlayer} />
+        gameplay.progression.infinity.botCapTransitionPending && !avocatoActive && !infinityActive ? (
+          <div className="dyson-overflow-notice" role="status">
+            <strong>{intl.formatMessage(avocatoMessages.overflowReached)}</strong>
+            <button type="button" onClick={() => onRouteChange('avocato')}>
+              {intl.formatMessage(avocatoMessages.overflowOpen)}
+            </button>
+          </div>
+        ) : gameplay.progression.challenges?.active === 'blank-slate' && skillsActive ? (
+          <div className="dyson-overflow-notice" role="status">
+            <strong>{intl.formatMessage(challengeMessages.active)}</strong>
+            <button type="button" onClick={() => navigateTo('challenges')}>
+              {intl.formatMessage(challengeMessages.view)}
+            </button>
+          </div>
+        ) : undefined
       }
       notifications={
         <GameplayNotificationHost
@@ -1692,7 +2157,7 @@ function ReadyDysonSliceContent({
           locale={locale}
           showPresetApplicationNotices={showSkillPresetApplicationNotices}
           skillState={gameplay.progression.skills}
-          onViewReality={() => navigateTo('simulations')}
+          onViewReality={() => navigateTo('reality')}
         />
       }
       resources={{
@@ -1920,6 +2385,44 @@ function ReadyDysonSliceContent({
           : undefined
       }
       />
+      {meditationPlacement !== null ? (
+        <AvocatoMeditationSecretTrigger
+          placement={meditationPlacement}
+          requiredStepIndex={gameplay.progression.secretProgress.step}
+          completed={gameplay.progression.secretProgress.completed}
+          routeAvailable={
+            gameplay.commands.byKind[
+              'avocado.complete-meditation-step'
+            ].routeAvailable
+          }
+          dispatchPlayer={dispatchPlayer}
+          onSequenceCompleted={() =>
+            setAvotationCompletionVisible(true)
+          }
+        />
+      ) : null}
+      <AvocatoMeditationSecretTrigger
+        placement="side"
+        requiredStepIndex={gameplay.progression.secretProgress.step}
+        completed={gameplay.progression.secretProgress.completed}
+        routeAvailable={
+          gameplay.commands.byKind[
+            'avocado.complete-meditation-step'
+          ].routeAvailable
+        }
+        dispatchPlayer={dispatchPlayer}
+        onSequenceCompleted={() =>
+          setAvotationCompletionVisible(true)
+        }
+      />
+      {avotationCompletionVisible ? (
+        <Suspense fallback={<LazySurfacePending overlay />}>
+          <AvotationCompletionOverlay
+            open
+            onDismiss={() => setAvotationCompletionVisible(false)}
+          />
+        </Suspense>
+      ) : null}
     </>
   )
 }

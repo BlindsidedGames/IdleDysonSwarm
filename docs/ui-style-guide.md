@@ -93,6 +93,14 @@ Selected Research drawer icon exception (Matthew, 14 October 2026): its fine
 magnifying-glass strokes use the darker page foreground matching selected text,
 rather than the panel foreground used by the other selected drawer icons.
 
+Current standalone app (Matthew, 28 October 2026): the civilization rework is
+shelved; the active app has one game/save flow and no Classic/Modern switch.
+The persistent drawer is 20% wider, using `clamp(12.9rem, 18vw, 15rem)`.
+It becomes permanent at 1000px in landscape or 1120px in any orientation;
+CSS layout and interaction media queries must agree. The compact overlay width
+is unchanged. These changes preserve the Bots/Research navigation pattern.
+
+The following mode-switch conventions describe the shelved two-mode host only.
 Mode switch (Matthew, 16 October 2026): the bottom drawer trigger uses the same
 navigation button styling as the other drawer entries, with the destination text
 “Back to Classic” or “Back to Modern”, centered with no arrow (updated by Matthew, 16 October

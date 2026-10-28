@@ -1,7 +1,6 @@
 import { CloudStartupResolver, type PortableCloud } from '../platform/portableCloud'
 import { serializeCloudWebSave } from '../save/serialization'
 import { PreparedSave } from '../save/prepare'
-import { hydrateGameState } from '../game-state/mapping'
 import { evaluateAchievements, mergeAchievementFacts } from '../achievements/evaluate'
 import type { AchievementPublication } from '../achievements/contracts'
 import type { SaveRepository } from '../save/repository'
@@ -67,15 +66,13 @@ export function createProductionCanonicalApplicationFactory(
   return (repository) => {
     // Validate at graph creation, then read current ownership again for each save session.
     readEntitlements(options.readHostEntitlements)
-    const requiresChoice = (save: PreparedSave) => hydrateGameState(save).state.meta.reworkMigrationChoice === undefined
     const localResolver = new RepositoryStartupSaveResolver(
       repository,
       options.createFirstRunSave,
       'development',
-      requiresChoice,
     )
     const cloudResolver = options.cloud === undefined ? undefined
-      : new CloudStartupResolver(localResolver, repository, options.cloud, requiresChoice)
+      : new CloudStartupResolver(localResolver, repository, options.cloud)
     const startupResolver = cloudResolver ?? localResolver
     const application = createCanonicalGameApplication({
       repository,
@@ -118,7 +115,7 @@ function subscribeAchievementPublication(
   readDeveloperOptions: () => boolean,
 ): void {
   application.subscribe((snapshot) => {
-    if (snapshot.phase !== 'ready' || snapshot.operation === 'rework-choice-pending' || snapshot.operation === 'rework-migration') return
+    if (snapshot.phase !== 'ready') return
     try {
       const facts = mergeAchievementFacts(
         snapshot.state.achievementEvidence,

@@ -5,7 +5,7 @@ import {
   type StoreAdapter,
 } from '../store/contracts'
 import type { NativeMigrationSource } from './platformSaveStorage'
-import { BETA_STRIPE_RECORD_KEY, BrowserStripeCommerce } from '../store/browserStripe'
+import { BrowserStripeCommerce } from '../store/browserStripe'
 import { DevelopmentStoreCommerce } from '../store/developmentStore'
 import {
   DoubleInfinityPointsEffectPreferenceService,
@@ -20,10 +20,6 @@ export interface PlatformMetadata {
   readonly applicationVersion: string
   readonly applicationBuild?: string
   readonly supportsNativeFilesystemMigration: boolean
-  readonly saveStorageNamespace?: string
-  readonly entitlementCacheNamespace?: string
-  readonly cloudSavesEnabled?: boolean
-  readonly automaticUnityDiscoveryEnabled?: boolean
 }
 
 export interface PlatformMetadataSource {
@@ -160,14 +156,10 @@ export function createBrowserReleasePlatformServices(): Readonly<ReleasePlatform
 }
 
 export function createBrowserStripeReleasePlatformServices(): Readonly<ReleasePlatformServices> {
-  const commerce = new BrowserStripeCommerce(undefined, undefined, {
-    storageKey: BETA_STRIPE_RECORD_KEY,
-    publicReceiptKey: 'idle-dyson-swarm:stripe-device:v1',
-  })
+  const commerce = new BrowserStripeCommerce()
   return Object.freeze({
     hostKind: 'browser' as const,
     storeAvailable: true,
-    storeRestoreAvailable: true,
     metadata: new BrowserPlatformMetadataSource(),
     nativeFilesystemMigration: new NoopNativeFilesystemMigrationSource(),
     entitlements: commerce,

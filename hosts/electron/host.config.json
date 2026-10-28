@@ -5,9 +5,7 @@
   "releaseMetadata": "release-version.json",
   "steamAppId": 4348570,
   "webDirectory": "../../dist-native",
-  "webSaveRoot": "idleds-rework-beta-v1",
-  "storageChannel": "rework-beta-v1",
-  "cloudSavesEnabled": false,
+  "webSaveRoot": "web-runtime-v1",
   "browserWindow": {
     "contextIsolation": true,
     "nodeIntegration": false,

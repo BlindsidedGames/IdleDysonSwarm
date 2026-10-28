@@ -5,7 +5,6 @@ import {
 import { deepCloneSave, type SaveRecord } from './graph'
 import {
   CURRENT_SAVE_SCHEMA,
-  UnsupportedFutureSaveSchemaError,
   migrateDecodedSave,
   type SaveMigrationResult,
 } from './migrate'
@@ -129,9 +128,6 @@ export function prepareIdb1Save(
   limits?: Readonly<SaveImportLimits>,
 ): PreparedLegacySave {
   const decoded = decodeIdb1Save(text, limits)
-  if ((decoded.root as SaveRecord).saveVersion === 22) {
-    throw new UnsupportedFutureSaveSchemaError(22, CURRENT_SAVE_SCHEMA, 'Development schema 22 requires a canonical IDLEDS input.')
-  }
   const { prepared, migration } = PreparedSave.prepareDecoded(decoded.root)
   return {
     envelope: decoded.envelope,

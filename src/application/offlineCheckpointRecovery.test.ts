@@ -9,7 +9,7 @@ import { createCanonicalGameApplication } from './canonicalGameApplication'
 import { CanonicalLifecycleCoordinator } from './canonicalLifecycleCoordinator'
 import { createCanonicalRuntimeSessionFactory } from './canonicalRuntimeSession'
 
-const fixture = prepareIdb1Save(readFileSync(new URL('../../qa/fixtures/schema-08-canonical-idb1-main-save.txt', import.meta.url), 'utf8')).prepared
+const fixture = prepareIdb1Save(readFileSync(new URL('../../test/fixtures/schema-08-canonical-idb1-main-save.txt', import.meta.url), 'utf8')).prepared
 const start = Date.parse('2026-09-11T00:00:00Z')
 const day = 86_400_000
 
@@ -29,7 +29,7 @@ class Repository implements SaveRepository {
 
 function setup(extra: Record<string, unknown> = {}) {
   const source = fixture.copyValidatedState()
-  Object.assign(source, { idsReworkMigrationChoice: 'keep', processingRewriteMigrated: true, offlineTime: 0, maxOfflineTime: 172800, dateQuitString: null, idsLastActiveAtUtc: null }, extra)
+  Object.assign(source, { processingRewriteMigrated: true, offlineTime: 0, maxOfflineTime: 172800, dateQuitString: null, idsLastActiveAtUtc: null }, extra)
   const repository = new Repository(PreparedSave.fromDecoded(source))
   let now = start
   const open = () => {
@@ -54,7 +54,7 @@ function setup(extra: Record<string, unknown> = {}) {
 function savedBank(repository: Repository) { return repository.current.copyValidatedState().offlineTime }
 
 describe('cold-start recovery from active checkpoints', () => {
-  test.each([['off', 1], ['last', 5], ['max', 8]] as const)('an abrupt stop with %s resume recovers a day exactly once, including upgraded capacity', async (mode, multiplier) => {
+  test.each([['off', 1], ['last', 5], ['max', 42]] as const)('an abrupt stop with %s resume recovers a day exactly once, including upgraded capacity', async (mode, multiplier) => {
     const harness = setup({ offlineBoostAutoResume: mode, offlineBoostResumeMultiplier: 5 })
     const first = harness.open()
     await first.coordinator.start()

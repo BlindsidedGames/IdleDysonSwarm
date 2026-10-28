@@ -55,14 +55,12 @@ export interface NativeUnitySaveCandidate {
 }
 
 export interface NativeHostBridgeApi {
-  readonly setScreenOrientation?: (request: { orientation: 'auto' | 'portrait' | 'landscape' }) => Promise<void>
   readonly writeClipboardText?: (text: string) => Promise<void>
   readonly showAchievements?: () => Promise<void>
   readonly exportSaveFile?: (request: SaveFileExportRequest) => Promise<SaveFileExportResult>
   readonly target: Exclude<RuntimeTarget, 'browser'>
   readonly achievements?: AchievementPublication
   readonly cloud?: PortableCloud
-  readonly modeClouds?: Readonly<Record<'classic' | 'modern', Omit<import('../modes/modeCloud').ModeCloudPort, 'choose'>>>
   /** Resolves after native lifecycle events are subscribed and reconciled. */
   readonly ready?: () => Promise<void>
   exists(relativePath: string): Promise<boolean>
@@ -174,7 +172,6 @@ const capacitorPlugin = registerPlugin<CapacitorNativeHostPlugin>(
 )
 
 export async function setNativeScreenOrientation(request: { orientation: 'auto' | 'portrait' | 'landscape' }): Promise<void> {
-  if (window.idleDysonSwarmNativeHost?.setScreenOrientation) return window.idleDysonSwarmNativeHost.setScreenOrientation(request)
   if (!capacitorPlugin.setOrientation) throw new Error('Orientation is unavailable')
   await capacitorPlugin.setOrientation(request)
 }
@@ -411,11 +408,6 @@ function normalizeHostOwnership(
 }
 
 export class CapacitorNativeHostBridge implements NativeHostBridgeApi {
-  setScreenOrientation(request: { orientation: 'auto' | 'portrait' | 'landscape' }): Promise<void> {
-    if (!this.plugin.setOrientation) return Promise.reject(Error('Orientation is unavailable'))
-    return this.plugin.setOrientation(request)
-  }
-
   readonly showAchievements?: () => Promise<void>
   readonly achievements?: MobileAchievementPublication
   readonly target: 'android' | 'ios'

@@ -10,7 +10,7 @@ import { prepareIdb1Save } from '../../src/save/prepare'
 
 const fixtureText = readFileSync(
   new URL(
-    '../../qa/fixtures/schema-08-canonical-idb1-main-save.txt',
+    '../../test/fixtures/schema-08-canonical-idb1-main-save.txt',
     import.meta.url,
   ),
   'utf8',

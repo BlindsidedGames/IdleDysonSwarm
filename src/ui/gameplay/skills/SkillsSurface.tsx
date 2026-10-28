@@ -1,8 +1,7 @@
-import { getPresentationStorage } from '../../presentationStorage'
 import { realTimeRate, realTimeDuration } from '../effectiveSpeed'
 import { stellarFracturedMessages, stellarFracturedDiscoveryObliterationMessage } from './stellarMessages'
 import { copyPlainText } from '../../../platform/plainTextClipboard'
-import { isDesktopPresentation } from '../../desktopPresentation'
+import { isDesktopPresentation, useDesktopTooltipsPreference } from '../../desktopPresentation'
 import { useExtendedSkillPresets } from '../../useExtendedSkillPresets'
 import { SkillPresetQuickActions } from './SkillPresetQuickActions'
 import { useSkillPresetSelection, type PresetSelectionCommand } from './useSkillPresetSelection'
@@ -13,10 +12,9 @@ import { useSharedNonRefundableSkillConfirmation } from './nonRefundableSkillCon
 import { discoveryFracturedEffects } from '../discovery/skillMessages'
 import { galvanizedEffectMessages } from './galvanizedEffectMessages'
 import { discoveryMessages } from '../discovery/messages'
-import { civilizationMessages } from '../simulations/civilizationMessages'
 import type { SkillProductionPreview } from '../../../simulation/skillProductionPreview'
 import { basicFacilityMessages as facilityMessages } from '../facilities/messages'
-import { skillAugments, isSubskill } from '../../../simulation/skillSubskills'
+import { skillAugments } from '../../../simulation/skillSubskills'
 import galvanizerIcon from '../../assets/currency-galvanizer.png'
 import { InlineImageSymbol, InlineResourceAmount } from '../../components'
 import { challengeMessages } from '../infinity/challengeMessages'
@@ -57,7 +55,6 @@ import {
   StableSingleLineText,
 } from '../../components'
 import {
-  formatGameCountdown,
   formatGameNumber,
   formatWholeGameNumber,
 } from '../../i18n/formatters'
@@ -230,7 +227,7 @@ const SKILL_COMPARISONS_STORAGE_KEY = 'idle-dyson-swarm:show-skill-production-co
 function readSkillComparisonsPreference(): boolean {
   try {
     return typeof window === 'undefined' ||
-      getPresentationStorage()?.getItem(SKILL_COMPARISONS_STORAGE_KEY) !== 'false'
+      window.localStorage.getItem(SKILL_COMPARISONS_STORAGE_KEY) !== 'false'
   } catch {
     return true
   }
@@ -239,7 +236,7 @@ function readSkillComparisonsPreference(): boolean {
 function readSkillLabelsPreference(): boolean {
   try {
     return typeof window === 'undefined' ||
-      getPresentationStorage()?.getItem(SKILL_LABELS_STORAGE_KEY) !== 'false'
+      window.localStorage.getItem(SKILL_LABELS_STORAGE_KEY) !== 'false'
   } catch {
     return true
   }
@@ -247,7 +244,7 @@ function readSkillLabelsPreference(): boolean {
 
 function writeSkillLabelsPreference(enabled: boolean): void {
   try {
-    getPresentationStorage()?.setItem(SKILL_LABELS_STORAGE_KEY, String(enabled))
+    window.localStorage.setItem(SKILL_LABELS_STORAGE_KEY, String(enabled))
   } catch {
     // Labels remain usable when preference storage is unavailable.
   }
@@ -256,7 +253,7 @@ function writeSkillLabelsPreference(enabled: boolean): void {
 function readDoubleClickAssignmentPreference(): boolean {
   try {
     return typeof window !== 'undefined' &&
-      getPresentationStorage()?.getItem(SKILL_DOUBLE_CLICK_STORAGE_KEY) === 'true'
+      window.localStorage.getItem(SKILL_DOUBLE_CLICK_STORAGE_KEY) === 'true'
   } catch {
     return false
   }
@@ -264,7 +261,7 @@ function readDoubleClickAssignmentPreference(): boolean {
 
 function writeDoubleClickAssignmentPreference(enabled: boolean): void {
   try {
-    getPresentationStorage()?.setItem(
+    window.localStorage.setItem(
       SKILL_DOUBLE_CLICK_STORAGE_KEY,
       String(enabled),
     )
@@ -758,7 +755,7 @@ function SkillsSurfaceContent({
           onShowProductionComparisonsChange={(enabled) => {
             setShowProductionComparisons(enabled)
             try {
-              getPresentationStorage()?.setItem(SKILL_COMPARISONS_STORAGE_KEY, String(enabled))
+              window.localStorage.setItem(SKILL_COMPARISONS_STORAGE_KEY, String(enabled))
             } catch { /* Keep the toggle usable without persistence. */ }
           }}
           showSkillLabels={showSkillLabels}
@@ -1951,7 +1948,7 @@ function SkillDetails({
     `${formatGameNumber(locale, unit === '/s' ? realTimeRate(value, gameSpeed) : value)}${unit}`
   const projectedSeconds = realTimeDuration(liveProduction?.projectedSeconds ?? 0, gameSpeed)
   const productionWait = liveProduction?.projected
-    ? ` (${formatGameCountdown(locale, projectedSeconds)})`
+    ? ` (${formatGameNumber(locale, projectedSeconds < 60 ? projectedSeconds : projectedSeconds / 60)}${projectedSeconds < 60 ? 's' : 'm'})`
     : ''
 
   return (
@@ -1974,7 +1971,6 @@ function SkillDetails({
           <strong>{intl.formatMessage(messages.effect)}</strong>{' '}
           {technical}
         </p>
-        {!isSubskill(node.skillId) && <p className="skill-details__permanent">{intl.formatMessage(preview.galvanized ? civilizationMessages.nodeBonusActive : civilizationMessages.nodeBonus)}</p>}
         {preview.galvanizationUnlocked && galvanizers > 0n && !preview.galvanized && (
           <div className="skill-details__galvanization">
             <Button disabled={!preview.canGalvanize || pendingKind !== null}
@@ -2379,9 +2375,14 @@ function SkillSettings({
 }: SkillSettingsProps) {
   const intl = useIntl()
   const extendedPresets = useExtendedSkillPresets()
+  const tooltips = useDesktopTooltipsPreference()
 
   return (
     <div id={id} className="skill-settings">
+      {isDesktopPresentation() && <label className="skill-settings__toggle">
+        <input type="checkbox" checked={tooltips.enabled} onChange={event => tooltips.setEnabled(event.currentTarget.checked)} />
+        <span>{intl.formatMessage(messages.showTooltips)}</span>
+      </label>}
       <label className="skill-settings__toggle">
         <input type="checkbox" checked={extendedPresets.enabled} onChange={(event) => extendedPresets.setEnabled(event.currentTarget.checked)} />
         <span>{intl.formatMessage(messages.showExtendedPresets)}</span>

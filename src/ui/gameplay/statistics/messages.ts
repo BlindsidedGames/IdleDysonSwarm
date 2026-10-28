@@ -68,8 +68,8 @@ export const statisticsMessages = defineMessages({
   },
   currentQuantumRun: {
     id: 'statistics.scope.quantum-run',
-    defaultMessage: 'Current run',
-    description: 'Statistics for the current progression run.',
+    defaultMessage: 'Current Quantum run',
+    description: 'Statistics accumulated since the latest Quantum Leap.',
   },
   none: {
     id: 'statistics.none',

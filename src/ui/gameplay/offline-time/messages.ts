@@ -1,12 +1,12 @@
 import { defineMessages } from 'react-intl'
 
 export const offlineTimeMessages = defineMessages({
-  autoResume: { id: 'offline-time.auto-resume', defaultMessage: 'On return' },
+  autoResume: { id: 'offline-time.auto-resume', defaultMessage: 'Automation' },
   autoResumeOff: { id: 'offline-time.auto-resume-off', defaultMessage: 'Off' },
   autoResumeLast: { id: 'offline-time.auto-resume-last', defaultMessage: 'Last speed' },
   autoResumeMax: { id: 'offline-time.auto-resume-max', defaultMessage: 'Max speed' },
   capacityCost: { id: 'offline-time.capacity-cost', defaultMessage: 'Cost' },
-  capacityResult: { id: 'offline-time.capacity-result', defaultMessage: 'New capacity' },
+  capacityResult: { id: 'offline-time.capacity-result', defaultMessage: 'New cap' },
   capacityMaxed: { id: 'offline-time.capacity-maxed', defaultMessage: 'Maxed' },
   boostStored: { id: 'offline-time.boost-stored', defaultMessage: 'Stored time' },
   boostSpeed: { id: 'offline-time.boost-speed', defaultMessage: 'Game speed' },

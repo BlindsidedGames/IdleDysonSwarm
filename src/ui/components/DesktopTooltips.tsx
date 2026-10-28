@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useMediaQuery } from '../accessibility/useMediaQuery'
-import { isDesktopPresentation } from '../desktopPresentation'
+import { isDesktopPresentation, useDesktopTooltipsPreference } from '../desktopPresentation'
 import './desktopTooltips.css'
 import skillPointIcon from '../assets/nav-skills.png'
 import augmentIcon from '../assets/currency-galvanizer.png'
@@ -11,7 +11,8 @@ import './skillDialogPalette.css'
 /** One delegated hover host keeps mobile skill nodes free of hover work. */
 export function DesktopTooltips() {
   const finePointer = useMediaQuery('(hover: hover) and (pointer: fine)')
-  const enabled = finePointer && isDesktopPresentation()
+  const preference = useDesktopTooltipsPreference()
+  const enabled = preference.enabled && finePointer && isDesktopPresentation()
   const [target, setTarget] = useState<HTMLElement | null>(null)
   const tooltip = useRef<HTMLDivElement>(null)
   const [pointer, setPointer] = useState({ x: 0, y: 0 })
