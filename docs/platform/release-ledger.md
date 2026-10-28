@@ -302,3 +302,79 @@ interaction evidence. Physical Android/iPhone interaction, real cross-device
 Steam Cloud, every locale/scale and the full gameplay acceptance matrix remain
 unverified. Existing Google deobfuscation/native-symbol and Web chunk warnings
 were non-blocking. This documentation follow-up does not change product source.
+
+## 2026102802 — Infinity and first Catalyst 4.1.11 internal release
+
+28 October 2026 (AEDT, UTC+11). Product source is frozen at merged main
+`0630be7ca56b5a21169ac713869d25074103cc4a`, from PR
+[#243](https://github.com/BlindsidedGames/IdleDysonSwarm/pull/243). This iteration
+changes Infinity rewards, IP/time Auto Infinity targets and rate guidance,
+the Quantum Time bonus upgrade and comparison table, the once-only Beginnings
+Catalyst reward including existing-save credit, and Steam achievement progress
+caps. Marketing version remains 4.1.11.
+
+### Validation and artifacts
+
+- A clean isolated Mac checkout with Node 24.11.1 passed
+  `npm run release:local -- --release-id 2026102802`: the approved three-file
+  save-safety suite (16 cases), lint, catalogs, Web/native builds, Electron
+  boundary, signed Android packaging and iOS sync. No archived suite was run.
+- Shared verification on the merged source passed:
+  [40640717479](https://github.com/BlindsidedGames/IdleDysonSwarm/actions/runs/40640717479).
+  Final Android/iOS native verification passed before distribution:
+  [40640741920](https://github.com/BlindsidedGames/IdleDysonSwarm/actions/runs/40640741920).
+- Artifact/evidence root: `/Users/matthewrushworth/Builds/ids-release-2026102802/`.
+  Source identity, manifests, upload/build logs, screenshots, native provenance
+  and full Steam package/download hashes are retained there.
+- Android AAB: `android/idle-dyson-swarm-2026102802.aab`, 20,185,047 bytes;
+  SHA-256 `1da98ef478fda255c41c2cd4cef74a467ffdec2bb3f833b9a64fe0acdea602ad`.
+  The established Play upload certificate fingerprint was verified.
+- iOS archive: `ios/IDS-2026102802.xcarchive`, bundle
+  `com.blindsidedgames.idledysonswarm`, 4.1.11 / 2610.28.02. All 296 renderer
+  assets match Android. Archived App executable SHA-256
+  `eefc19e9bbdd520f6060537c53cf65aa8d6932648e5d106d27e709b8fd89ece8`.
+  Internal-only upload succeeded at 17:01:05 AEDT. The archive binary hash is not
+  an uploaded IPA hash; Apple distribution resigning occurs during upload.
+- Windows/Linux/universal macOS Steam packages embed the frozen source,
+  4.1.11 / 2026102802 and Steam distribution. Their ASAR SHA-256 is
+  `4ef7e3c8087099a860220438896b70e7d6c258203bc4d569f1a85435800c86f2`.
+  Native addon source and SDK lock are unchanged from the preceding release;
+  reused addon and official SDK library hashes were verified and recorded.
+
+### Verified distribution state
+
+| Target | Identity | Final observed state |
+| --- | --- | --- |
+| Google Play Internal | 4.1.11 / 2026102802, release 126 | **Available to internal testers**, released 28 October 17:02 AEDT. All eight localized note blocks accepted. |
+| Internal TestFlight | 4.1.11 / 2610.28.2 (uploaded 2610.28.02) | **Testing**, existing **Internal** group, 3 invites and 90-day expiry. Compliance and focused testing notes saved. |
+| Steam `public-beta` | Build **26263222** | **Active**. Fresh Windows/Linux/macOS downloads identify this BuildID and match all 76/75/265 uploaded package files. |
+
+Apple availability was verified in the coordinating Main IDS thread's
+authenticated App Store Connect browser. The [candidate build](https://appstoreconnect.apple.com/teams/e12982c4-2977-4eeb-be29-6d750fd48ca7/apps/1631060225/testflight/ios/ca285a45-51ad-44b4-808d-d5f5ae303f81)
+has UUID `ca285a45-51ad-44b4-808d-d5f5ae303f81`; the coordinating Windows
+screenshot is `output/internal-release-2026102802/testflight-testing.jpg`.
+
+Steam default/public remains **25569496**. Google production remains
+4.1.10 / 2026092801. No production/default promotion, App Review submission,
+website deployment, Steam Cloud-rule or achievement-definition publication,
+or community message was performed by this release.
+
+### Affected native checks and remaining limits
+
+The disposable iPhone 16 Pro / iOS 26.4 simulator was updated with the new app
+while retaining its previous synthetic Classic save. It displayed the first
+Catalyst notice and persisted exactly one Catalyst with the once-only reward
+marker. A separate synthetic Modern file remained byte-identical. A derived
+late-game fixture exercised the native IP/time Auto Infinity selector,
+purchased Time bonus level 1 for 1,000 Quantum Shards, and opened the live
+current-versus-next multiplier table. Terminate/relaunch retained the level,
+1,000 Shards spent and single Catalyst, without repeating the first-Catalyst
+notice. The simulator is shut down with its synthetic state retained.
+
+Packaged macOS startup checks passed on arm64 and Rosetta x64 using disposable
+profiles and mock Keychain. Steam SDK fallback outside a Steam launch means
+these checks do not establish live achievements, commerce, overlay or Cloud
+behavior. Physical Android/iPhone interaction, the native timed-reset plus
+Stored Time exact-balance matrix, every locale/scale, and real cross-device
+Steam Cloud remain unverified. Google debug-symbol/deobfuscation and Web chunk
+warnings were non-blocking. This record changes documentation only.
