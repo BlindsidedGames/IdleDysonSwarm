@@ -321,6 +321,11 @@ export const statisticsMessages = defineMessages({
     defaultMessage: 'Reward',
     description: 'Reward from the last completed cycle.',
   },
+  cycleIpPerMinute: {
+    id: 'statistics.last-cycle.ip-per-minute',
+    defaultMessage: 'IP/min',
+    description: 'Infinity Points earned per minute in the last completed cycle.',
+  },
   resetCause: {
     id: 'statistics.last-cycle.reset-cause',
     defaultMessage: 'Reset cause',

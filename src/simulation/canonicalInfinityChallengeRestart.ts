@@ -40,6 +40,7 @@ export function restartInfinityChallenge(
       researchAutomationTargetIndex: 0,
       infinityBoundaryRemaining: 0,
       infinityCycleSeconds: 0,
+      infinityCycleAutomationSeconds: 0,
       infinityCycleStartingPoints: reset.state.infinity.points,
       infinityHasPostResetStart: true,
     },

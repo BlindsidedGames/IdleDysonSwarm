@@ -1,3 +1,4 @@
+import { infinityTimeBonusMultiplier, INFINITY_TIME_BONUS_MAX_LEVEL } from './infinityTimeBonus'
 import { OVERFLOW_BOT_CAP } from './overflowBoundary'
 import {
   isFiniteNonNegativeNumber,
@@ -16,12 +17,23 @@ import {
 import {
   addDiscrete,
   bitIncrement,
+  DISCRETE_MAXIMUM,
 } from './numeric'
 import {
   buyXCost,
   maxAffordable,
 } from './transactions'
-import { UNITY_INT_MAXIMUM_BIGINT } from './unityNumericLimits'
+import type { CanonicalGameStateV1 } from '../game-state/types'
+
+export const INFINITY_REWARD_FORMULA_VERSION = 3
+// The profitable Bot range moves more slowly than production grows, so normal
+// progression shortens runs while skill builds can retain different peaks.
+const BREAK_REWARD_BASE_SLOPE = 0.0478
+const BREAK_REWARD_MIDDLE_SLOPE = 0.112
+const BREAK_REWARD_STRENGTH_SLOPE = 7.2
+const BREAK_REWARD_REFERENCE_POINTS = 33_184_213
+const BREAK_REWARD_REGION_START = 120
+const BREAK_REWARD_REGION_END = 140.8
 
 const ORDINARY_INFINITY_BOT_REQUIREMENT = 4.2e19
 const DEFAULT_INFINITY_EXPONENT = 3.9
@@ -35,7 +47,7 @@ export const INFINITY_RATE_MATERIAL_IMPROVEMENT = 0.02
  */
 export const MANUAL_INFINITY_CALIBRATION_MINIMUM_SECONDS = 1
 export const BREAK_INFINITY_PRESENTATION_TARGET_MINIMUM = 1n
-export const BREAK_INFINITY_PRESENTATION_TARGET_MAXIMUM = 1_100n
+export const BREAK_INFINITY_PRESENTATION_TARGET_MAXIMUM = DISCRETE_MAXIMUM
 
 const BREAK_INFINITY_PRESENTATION_POSITION_MINIMUM = Math.log10(
   Number(BREAK_INFINITY_PRESENTATION_TARGET_MINIMUM) + 1,
@@ -46,6 +58,8 @@ const BREAK_INFINITY_PRESENTATION_POSITION_MAXIMUM = Math.log10(
 
 export interface BasicDysonInfinityState {
   points: bigint
+  startingPoints: bigint
+  peakBots: number
   permanentSkillPoints: bigint
   retainedFacilities: Record<BasicDysonFacilityId, boolean>
   offlineTimeUsedThisInfinity: number
@@ -67,6 +81,9 @@ export interface BasicDysonInfinityState {
   quantumDoubleIp: boolean
   bankedSkillPoints: bigint
   artifactSkillPoints: bigint
+  /** 1x elapsed time; falls back to the cycle clock in the legacy adapter. */
+  rewardAgeSeconds?: number
+  timeBonusLevel?: number
   secondsInCurrentCycle: number
   overflowMultiplier: number
   legacyOverflowMultiplier: number
@@ -102,6 +119,10 @@ export interface AppliedBotCapReward {
 export interface InfinityProgressProjectionInput {
   readonly bots: number
   readonly totalInfinityPoints: bigint
+  readonly startingInfinityPoints?: bigint
+  readonly rewardAgeSeconds?: number
+  readonly timeBonusLevel?: number
+  readonly peakBots?: number
   readonly divisionsPurchased: bigint
   readonly breakTheLoop: boolean
   readonly breakTarget: bigint
@@ -164,6 +185,10 @@ export function createBasicDysonInfinityState(
 ): BasicDysonInfinityState {
   return {
     points: provided?.points ?? 0n,
+    rewardAgeSeconds: provided?.rewardAgeSeconds,
+    timeBonusLevel: provided?.timeBonusLevel ?? 0,
+    startingPoints: provided?.startingPoints ?? provided?.points ?? 0n,
+    peakBots: provided?.peakBots ?? 0,
     permanentSkillPoints: provided?.permanentSkillPoints ?? 0n,
     retainedFacilities: {
       ...createEmptyRetainedFacilities(),
@@ -256,6 +281,19 @@ export function infinityPointsForBots(
   bots: number,
   state: BasicDysonInfinityState,
 ): bigint {
+  if (state.breakTheLoop) {
+    const peak = Math.min(OVERFLOW_BOT_CAP, Math.max(bots, state.peakBots))
+    if (!isFinitePositiveNumber(peak) || peak < ordinaryInfinityBotThreshold(state.divisionsPurchased)) return 0n
+    const x = Math.log10(peak) + Number(state.divisionsPurchased)
+    const [start, end] = breakRewardRegion(state.startingPoints)
+    const region = Math.max(0, Math.min(x, end) - start)
+    const logReward = BREAK_REWARD_BASE_SLOPE * x +
+      (BREAK_REWARD_MIDDLE_SLOPE - BREAK_REWARD_BASE_SLOPE) * region - 0.75
+    const amount = Math.pow(10, logReward) * Number(infinityRewardMultiplier(state)) * infinityTimeBonusMultiplier(state.timeBonusLevel ?? 0, state.rewardAgeSeconds ?? state.secondsInCurrentCycle)
+    return amount >= Number(DISCRETE_MAXIMUM)
+      ? DISCRETE_MAXIMUM
+      : addDiscrete(0n, BigInt(Math.floor(amount)))
+  }
   const base = maxAffordable(
     bots,
     ordinaryInfinityBotThreshold(state.divisionsPurchased),
@@ -264,6 +302,21 @@ export function infinityPointsForBots(
   )
   const multiplier = infinityRewardMultiplier(state)
   return base > 0n ? addDiscrete(0n, base * multiplier) : 0n
+}
+
+function breakRewardRegion(startingPoints: bigint): readonly [number, number] {
+  const shift = BREAK_REWARD_STRENGTH_SLOPE *
+    Math.log10((1 + Number(startingPoints)) / (1 + BREAK_REWARD_REFERENCE_POINTS))
+  return [BREAK_REWARD_REGION_START + shift, BREAK_REWARD_REGION_END + shift]
+}
+
+/** Record production before later purchases or skills can consume Bots. */
+export function trackInfinityPeakBots(state: CanonicalGameStateV1): CanonicalGameStateV1 {
+  const peakBots = Math.max(state.infinity.peakBots ?? 0, state.dyson.bots)
+  return peakBots === state.infinity.peakBots ? state : {
+    ...state,
+    infinity: { ...state.infinity, peakBots },
+  }
 }
 
 /**
@@ -324,14 +377,18 @@ export function validateBasicDysonInfinityState(
     infinity.secondsInCurrentCycle,
     infinity.overflowMultiplier,
     infinity.legacyOverflowMultiplier,
+    infinity.peakBots,
   ]
   if (
-    !continuous.every(isFiniteNonNegativeNumber)
+    !continuous.every(isFiniteNonNegativeNumber) ||
+    (infinity.rewardAgeSeconds !== undefined && !isFiniteNonNegativeNumber(infinity.rewardAgeSeconds))
   ) {
     return 'SIM-DYSON-NON-FINITE'
   }
+  if (infinity.timeBonusLevel !== undefined && (!Number.isInteger(infinity.timeBonusLevel) || infinity.timeBonusLevel < 0 || infinity.timeBonusLevel > INFINITY_TIME_BONUS_MAX_LEVEL)) return 'SIM-INFINITY-INVALID'
   const discrete = [
     infinity.points,
+    infinity.startingPoints,
     infinity.permanentSkillPoints,
     infinity.skillPoints,
     infinity.fragments,
@@ -348,7 +405,7 @@ export function validateBasicDysonInfinityState(
   if (
     discrete.some((value) => value < 0n) ||
     infinity.breakTarget < 1n ||
-    infinity.breakTarget > UNITY_INT_MAXIMUM_BIGINT ||
+    infinity.breakTarget > DISCRETE_MAXIMUM ||
     infinity.divisionsPurchased > 19n ||
     infinity.exponent < 1
   ) {
@@ -395,8 +452,8 @@ export function timeToNextInfinityEvent(
 
 export function clampBreakTarget(target: bigint): bigint {
   if (target < 1n) return 1n
-  return target > UNITY_INT_MAXIMUM_BIGINT
-    ? UNITY_INT_MAXIMUM_BIGINT
+  return target > DISCRETE_MAXIMUM
+    ? DISCRETE_MAXIMUM
     : target
 }
 
@@ -409,16 +466,24 @@ export function projectInfinityProgress(
   input: Readonly<InfinityProgressProjectionInput>,
 ): InfinityProgressFacts {
   const infinity = createBasicDysonInfinityState({
+    points: input.totalInfinityPoints,
+    startingPoints: input.startingInfinityPoints ?? input.totalInfinityPoints,
+    peakBots: input.peakBots ?? 0,
+    rewardAgeSeconds: input.rewardAgeSeconds ?? 0,
+    timeBonusLevel: input.timeBonusLevel ?? 0,
     breakTheLoop: input.breakTheLoop,
     divisionsPurchased: input.divisionsPurchased,
     breakTarget: clampBreakTarget(input.breakTarget),
     permanentDoubleIp: input.permanentDoubleIp,
     quantumDoubleIp: input.quantumDoubleIp,
   })
-  const bots =
+  const currentBots =
     isFinitePositiveNumber(input.bots)
       ? input.bots
       : 0
+  const bots = input.breakTheLoop
+    ? Math.min(OVERFLOW_BOT_CAP, Math.max(currentBots, input.peakBots ?? 0))
+    : currentBots
   const currentReward = infinityPointsForBots(bots, infinity)
 
   if (!input.breakTheLoop) {
@@ -459,7 +524,7 @@ export function projectInfinityProgress(
     currentReward <= 0n
       ? 0
       : infinityBotThresholdForReward(currentReward, infinity)
-  const nextReward = currentReward + infinityRewardMultiplier(infinity)
+  const nextReward = currentReward + 1n
   const nextRewardThresholdBots = infinityBotThresholdForReward(
     nextReward,
     infinity,
@@ -502,8 +567,7 @@ export function projectInfinityProgress(
 }
 
 /**
- * Returns the Unity-parity logarithmic control metadata for the practical
- * Break Infinity target range.
+ * Returns logarithmic control metadata for the supported Break Infinity range.
  */
 export function projectBreakInfinityPresentationControl(
   target: bigint,
@@ -545,6 +609,23 @@ function infinityBotThresholdForReward(
 ): number {
   if (reward <= 0n) return 0
   const multiplier = infinityRewardMultiplier(state)
+  if (state.breakTheLoop) {
+    const [start, end] = breakRewardRegion(state.startingPoints)
+    const bonus = infinityTimeBonusMultiplier(state.timeBonusLevel ?? 0, state.rewardAgeSeconds ?? state.secondsInCurrentCycle)
+    const target = Math.log10(Number(reward) / (Number(multiplier) * bonus)) + 0.75
+    const startReward = BREAK_REWARD_BASE_SLOPE * start
+    const endReward = startReward + BREAK_REWARD_MIDDLE_SLOPE * (end - start)
+    const x = target <= startReward
+      ? target / BREAK_REWARD_BASE_SLOPE
+      : target <= endReward
+        ? start + (target - startReward) / BREAK_REWARD_MIDDLE_SLOPE
+        : end + (target - endReward) / BREAK_REWARD_BASE_SLOPE
+    const threshold = Math.max(
+      ordinaryInfinityBotThreshold(state.divisionsPurchased),
+      Math.pow(10, x - Number(state.divisionsPurchased)),
+    )
+    return Number.isFinite(threshold) ? threshold : Number.MAX_VALUE
+  }
   const requiredBaseReward =
     reward / multiplier + (reward % multiplier === 0n ? 0n : 1n)
   const threshold = buyXCost(
@@ -654,6 +735,8 @@ export function tryApplyBasicDysonInfinityReset(
   }
 
   infinity.points = resetState.points
+  infinity.startingPoints = resetState.points
+  infinity.peakBots = resetState.bots
   infinity.offlineTimeUsedPreviousInfinity =
     resetState.offlineTimeUsedPreviousInfinity
   infinity.offlineTimeUsedThisInfinity =

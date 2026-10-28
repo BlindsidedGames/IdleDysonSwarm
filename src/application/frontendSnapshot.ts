@@ -1,4 +1,5 @@
 import { builtByHandTinkerGoal } from '../simulation/canonicalGoalProgression'
+import { projectInfinityTimeBonus, type InfinityTimeBonusProgress } from '../simulation/infinityTimeBonus'
 import { challengeAllowsTinker, effectiveDivisions, isQuantumChallengeActive, quantumDoubleIpEnabled, isBreakInfinityEnabled, infinityChallenges } from '../simulation/infinityChallenges'
 import { deriveDiscoveryEffects, type DiscoveryEffects } from '../simulation/discoveryEffects'
 import { EMPTY_DISCOVERY } from '../simulation/discovery'
@@ -416,6 +417,7 @@ export interface FrontendCanonicalResources {
     readonly influenceSpeedBonus: bigint
     readonly cashBonusLevels: bigint
     readonly scienceBonusLevels: bigint
+    readonly timeBonusLevel: number
   }
   readonly avocado: {
     readonly infinityPoints: number
@@ -857,6 +859,15 @@ export interface FrontendGameplayDerivedFacts {
     readonly scientistsFraction: number
   }
   readonly infinity: InfinityProgressFacts & {
+    readonly elapsedSeconds: number
+    readonly resetSpeedMultiplier: number
+    readonly timeBonusSeconds: number
+    readonly timeBonusBaseReward: bigint
+    readonly timeBonus?: InfinityTimeBonusProgress
+    readonly currentRunIpPerMinute: number
+    readonly currentRunPeakIpPerMinute: number
+    readonly currentRunPeakReward: bigint
+    readonly currentRunPeakSeconds?: number
     readonly currentIpPerMinute: number
     readonly peakIpPerMinute: number
     readonly peakReward: bigint
@@ -1477,6 +1488,7 @@ function selectResources(
       influenceSpeedBonus: state.quantum.influenceSpeedBonus,
       cashBonusLevels: state.quantum.cashBonusLevels,
       scienceBonusLevels: state.quantum.scienceBonusLevels,
+      timeBonusLevel: state.quantum.timeBonusLevel ?? 0,
     }),
     avocado: reuseShallowDomain(previous?.avocado, {
       infinityPoints: state.avocado.infinityPoints,
@@ -1520,6 +1532,8 @@ function selectProgression(
     infinity: reuseShallowDomain(previous?.infinity, {
       automaticResetEnabled:
         state.infinity.automaticResetEnabled,
+      automaticResetMode: state.infinity.automaticResetMode ?? 'ip',
+      resetAfterSeconds: state.infinity.resetAfterSeconds ?? 60,
       breakTarget: state.infinity.breakTarget,
       inProgress: state.infinity.inProgress,
       botCapTransitionPending:
@@ -1627,15 +1641,20 @@ function selectDerivedFacts(
   const simulations = dream === null
     ? previous!.simulations
     : selectFrontendSimulationsDerivedFacts(state, dream)
-  const infinityProgress = projectInfinityProgress({
+  const infinityProgressInput = {
     bots: state.dyson.bots,
     totalInfinityPoints: state.infinity.points,
+    startingInfinityPoints: state.timeline.infinityCycleStartingPoints,
+    rewardAgeSeconds: state.timeline.infinityCycleAutomationSeconds ?? state.timeline.infinityCycleSeconds,
+    timeBonusLevel: state.quantum.timeBonusLevel ?? 0,
+    peakBots: state.infinity.peakBots,
     divisionsPurchased: effectiveDivisions(state),
     breakTheLoop: isBreakInfinityEnabled(state),
     breakTarget: state.infinity.breakTarget,
     permanentDoubleIp: context.entitlements.permanentDoubleIp,
     quantumDoubleIp: quantumDoubleIpEnabled(state),
-  })
+  }
+  const infinityProgress = projectInfinityProgress(infinityProgressInput)
   const minimumInfinityRateSeconds =
     state.timeline.processing.activeIntervalMilliseconds / 1000
   const liveInfinityRate = infinityPointsPerMinute(
@@ -1679,6 +1698,19 @@ function selectDerivedFacts(
           },
     infinity: {
       ...infinityProgress,
+      elapsedSeconds: state.timeline.infinityCycleSeconds,
+      timeBonusSeconds: infinityProgressInput.rewardAgeSeconds,
+      timeBonusBaseReward: (state.quantum.timeBonusLevel ?? 0) > 0
+        ? projectInfinityProgress({ ...infinityProgressInput, timeBonusLevel: 0 }).currentReward
+        : infinityProgress.currentReward,
+      timeBonus: infinityProgress.mode === 'break' && (state.quantum.timeBonusLevel ?? 0) > 0
+        ? projectInfinityTimeBonus(state.quantum.timeBonusLevel ?? 0, state.timeline.infinityCycleAutomationSeconds ?? state.timeline.infinityCycleSeconds)
+        : undefined,
+      resetSpeedMultiplier: state.timeline.storedTimeAvailableSeconds > 0 ? state.timeline.offlineBoost?.multiplier ?? 1 : 1,
+      currentRunIpPerMinute: liveInfinityRate,
+      currentRunPeakReward: state.infinity.runPeak?.reward ?? 0n,
+      currentRunPeakSeconds: state.infinity.runPeak?.seconds,
+      currentRunPeakIpPerMinute: state.infinity.runPeak?.rate ?? 0,
       currentIpPerMinute: automaticResetEnabled
         ? automaticInfinityRate
         : liveInfinityRate,

@@ -1,3 +1,5 @@
+import { infinityTimeBonusMultiplier, INFINITY_TIME_BONUS_MAX_LEVEL } from '../../../simulation/infinityTimeBonus'
+import { TimeBonusDetailsDialog } from './TimeBonusDetailsDialog'
 import { usePressAndHoldRepeat } from '../usePressAndHoldRepeat'
 import { isQuantumChallengeActive } from '../../../simulation/infinityChallenges'
 import { discoveryMessages } from '../discovery/messages'
@@ -58,6 +60,7 @@ export interface QuantumCommandAvailability {
 
 export interface QuantumSurfaceProps {
   readonly locale: EnabledLocale
+  readonly infinityRunSeconds: number
   readonly resources: FrontendCanonicalResources['quantum']
   /** Retained for compatibility; leap progress is rendered by QuantumControlPanel. */
   readonly infinityPoints?: bigint
@@ -82,6 +85,7 @@ const WHOLE_CURRENCY_FORMAT = { wholeBelowHundred: true } as const
 export function QuantumSurface({
   locale,
   resources,
+  infinityRunSeconds,
   availableInfinityPoints,
   progression,
   previews,
@@ -135,6 +139,7 @@ export function QuantumSurface({
                 section={section}
                 previews={previews.upgrades}
                 resources={resources}
+                infinityRunSeconds={infinityRunSeconds}
                 progression={progression}
                 routeAvailable={commandAvailability.purchaseUpgrade}
                 dispatchPlayer={dispatchPlayer}
@@ -154,6 +159,7 @@ interface QuantumUpgradeSectionProps {
   readonly locale: EnabledLocale
   readonly section: FrontendGameplayPreviews['quantum']['sections'][number]
   readonly previews: FrontendGameplayPreviews['quantum']['upgrades']
+  readonly infinityRunSeconds: number
   readonly resources: FrontendCanonicalResources['quantum']
   readonly progression: Pick<FrontendCanonicalProgression, 'quantum' | 'avocado' | 'discovery' | 'challenges'>
   readonly routeAvailable: boolean
@@ -168,6 +174,7 @@ function QuantumUpgradeSection({
   section,
   previews,
   resources,
+  infinityRunSeconds,
   progression,
   routeAvailable,
   dispatchPlayer,
@@ -237,6 +244,7 @@ function QuantumUpgradeSection({
                 locale={locale}
                 preview={preview}
                 resources={resources}
+                infinityRunSeconds={infinityRunSeconds}
                 progression={progression}
                 routeAvailable={routeAvailable}
                 dispatchPlayer={dispatchPlayer}
@@ -254,6 +262,7 @@ function QuantumUpgradeSection({
 interface QuantumUpgradeCardProps {
   readonly locale: EnabledLocale
   readonly preview: FrontendGameplayPreviews['quantum']['upgrades'][number]
+  readonly infinityRunSeconds: number
   readonly resources: FrontendCanonicalResources['quantum']
   readonly progression: Pick<FrontendCanonicalProgression, 'quantum' | 'avocado' | 'discovery' | 'challenges'>
   readonly routeAvailable: boolean
@@ -262,7 +271,7 @@ interface QuantumUpgradeCardProps {
   readonly purchaseQuantity: QuantumPurchaseQuantity
 }
 
-function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvailable, dispatchPlayer, onOpenAvocato, purchaseQuantity }: QuantumUpgradeCardProps) {
+function QuantumUpgradeCard({ locale, preview, resources, infinityRunSeconds, progression, routeAvailable, dispatchPlayer, onOpenAvocato, purchaseQuantity }: QuantumUpgradeCardProps) {
   const intl = useIntl()
   const pendingRef = useRef(false)
   const [pending, setPending] = useState(false)
@@ -270,6 +279,8 @@ function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvai
   const name = intl.formatMessage(progression.discovery?.unlocked && preview.upgradeId === 'ScienceBonus' ? discoveryMessages.booster : upgradeMessage(preview.upgradeId, 'Title'))
   const completed = preview.code === 'already-maxed'
   const inactive = isQuantumChallengeActive(progression) && ['Division', 'DoubleIP', 'QuantumEntanglement'].includes(preview.upgradeId)
+  const [detailsOpen, setDetailsOpen] = useState(false)
+  const timeBonusLevel = Math.min(INFINITY_TIME_BONUS_MAX_LEVEL, resources.timeBonusLevel + 1)
   const isAvocato = preview.upgradeId === 'Avocado'
   const isFreeClaim = preview.upgradeId === 'DoubleIP' && preview.cost === 0n
   const repeatable = HOLD_TO_PURCHASE_IDS.has(preview.upgradeId)
@@ -322,12 +333,20 @@ function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvai
       className={`quantum-upgrade-card${completed ? ' quantum-upgrade-card--complete' : ''}`}
       data-quantum-upgrade-id={preview.upgradeId}
     >
-      <div>
+      {preview.upgradeId === 'TimeBonus' ? <button type="button" className="quantum-time-bonus__details" aria-haspopup="dialog" onClick={() => setDetailsOpen(true)}>
+        <span className="quantum-time-bonus__title">{name} <span aria-hidden="true">ⓘ</span></span>
+        <span className="quantum-upgrade-card__level">{intl.formatMessage(messages.level, { value: level })}</span>
+        <span>{intl.formatMessage(completed ? upgradeMessages.TimeBonusMaximumDescription : upgradeMessages.TimeBonusDescription, {
+          current: formatGameNumber(locale, infinityTimeBonusMultiplier(resources.timeBonusLevel, infinityRunSeconds)),
+          next: formatGameNumber(locale, infinityTimeBonusMultiplier(timeBonusLevel, infinityRunSeconds)),
+        })}</span>
+      </button> : <div>
         <h4>{name}</h4>
         {inactive && <p>{intl.formatMessage(messages.inactiveChallenge)}</p>}
         {level !== null && <p className="quantum-upgrade-card__level">{intl.formatMessage(messages.level, { value: level })}</p>}
         <p>{intl.formatMessage(progression.discovery?.unlocked && preview.upgradeId === 'ScienceBonus' ? discoveryMessages.boosterEffect : progression.discovery?.unlocked && preview.upgradeId === 'Automation' ? discoveryMessages.automationEffect : progression.discovery?.unlocked && preview.upgradeId === 'Power' ? discoveryMessages.powerSkillsEffect : upgradeMessage(preview.upgradeId, 'Description'))}</p>
-      </div>
+      </div>}
+      {detailsOpen && <TimeBonusDetailsDialog locale={locale} level={resources.timeBonusLevel} seconds={infinityRunSeconds} onClose={() => setDetailsOpen(false)} />}
       {isAvocato && completed && onOpenAvocato ? (
         <Button variant="primary" onClick={onOpenAvocato}>{intl.formatMessage(messages.openAvocato)}</Button>
       ) : (
@@ -627,6 +646,7 @@ function upgradeLevel(locale: EnabledLocale, id: QuantumUpgradeId, resources: Fr
   if (id === 'Secrets') value = resources.permanentSecrets / QUANTUM_CONSTANTS.secretsPerPurchase
   else if (id === 'Division') value = progression.quantum.divisionsPurchased
   else if (id === 'InfluenceSpeed') value = resources.influenceSpeedBonus / QUANTUM_CONSTANTS.influenceSpeedPerPurchase
+  else if (id === 'TimeBonus') value = BigInt(resources.timeBonusLevel)
   else if (id === 'CashBonus') value = resources.cashBonusLevels
   else if (id === 'ScienceBonus') value = resources.scienceBonusLevels
   return value === null

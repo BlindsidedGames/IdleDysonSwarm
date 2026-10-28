@@ -1,3 +1,4 @@
+import { awardOpeningChallenge } from './infinityChallenges'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { addDiscrete } from './numeric'
 import { runCanonicalSkillAutoAssignment } from './canonicalSkillTransactions'
@@ -88,7 +89,7 @@ export function advanceCanonicalGoalProgression(
 
   return {
     ok: true,
-    state,
+    state: awardOpeningChallenge(state),
     completedStages: Object.freeze([...completedStages]),
     awardedSkillPoints: BigInt(completedStages.length),
   }

@@ -550,6 +550,15 @@ function buildEntries(): readonly MappingCoverageEntry[] {
 
 const entries = buildEntries()
 const developmentExtensions = Object.freeze([
+  owned('$.simulationInfinityRewardFormulaVersion', 'infinity', '$.infinity.rewardFormulaVersion'),
+  owned('$.prestigePlus.timeBonusLevel', 'quantum', '$.quantum.timeBonusLevel'),
+  owned('$.simulationInfinityTimeBonusLevel', 'quantum', '$.quantum.timeBonusLevel'),
+  owned('$.simulationInfinityRunPeak', 'infinity', '$.infinity.runPeak'),
+  owned('$.simulationInfinityCycleAutomationSeconds', 'timeline', '$.timeline.infinityCycleAutomationSeconds'),
+  owned('$.simulationInfinityResetMode', 'infinity', '$.infinity.automaticResetMode'),
+  owned('$.simulationInfinityResetAfterSeconds', 'infinity', '$.infinity.resetAfterSeconds'),
+  owned('$.simulationInfinityPeakBots', 'infinity', '$.infinity.peakBots'),
+  owned('$.simulationInfinityBreakTarget', 'infinity', '$.infinity.breakTarget'),
   owned('$.completedTinkers', 'dyson', '$.dyson.completedTinkers'),
   owned(
     '$.infinityAutomaticReset',

@@ -1,3 +1,4 @@
+import { addDiscrete, DISCRETE_MAXIMUM } from './numeric'
 import { getGameAssetsByKind } from '../game-data/catalog'
 import { SKILL_DEFINITION_ASSET_KIND } from '../game-data/runtimeAssetKinds'
 import type { CanonicalFacilityId, CanonicalGameStateV1, InfinityChallengeState, ChallengeId, QuantumChallengeId } from '../game-state/types'
@@ -21,7 +22,7 @@ export function isBlankSlateActive(state: Readonly<CanonicalGameStateV1>): boole
 
 export function isTrialAndErrorActive(state: Readonly<CanonicalGameStateV1>): boolean { return state.challenges?.active === 'trial-and-error' }
 export function isInfinityChallengeActive(state: Readonly<CanonicalGameStateV1>): boolean { return state.challenges?.active === 'blank-slate' || state.challenges?.active === 'trial-and-error' }
-export function hasCompletedInfinityChallenge(state: Readonly<CanonicalGameStateV1>): boolean { return state.challenges?.blankSlateCompleted === true || state.challenges?.trialAndErrorCompleted === true || state.challenges?.noScienceCompleted === true || (state.challenges?.completedQuantumChallenges?.length ?? 0) > 0 }
+export function hasCompletedInfinityChallenge(state: Readonly<CanonicalGameStateV1>): boolean { return state.challenges?.openingCompleted === true || state.challenges?.blankSlateCompleted === true || state.challenges?.trialAndErrorCompleted === true || state.challenges?.noScienceCompleted === true || (state.challenges?.completedQuantumChallenges?.length ?? 0) > 0 }
 
 /** An Infinity challenge always ends at the ordinary Infinity boundary. */
 export function isBreakInfinityEnabled(state: Readonly<CanonicalGameStateV1>): boolean {
@@ -32,6 +33,8 @@ export function validateInfinityChallenges(value: unknown): string | null {
   if (value === undefined) return null
   if (value === null || typeof value !== 'object' || Array.isArray(value)) return 'Invalid Infinity challenge progress.'
   const c = value as Record<string, unknown>
+  if ((c.openingCompleted !== undefined && typeof c.openingCompleted !== 'boolean') ||
+      (c.openingCatalystAwarded !== undefined && (typeof c.openingCatalystAwarded !== 'boolean' || (c.openingCatalystAwarded && c.openingCompleted !== true)))) return 'Invalid Beginnings challenge progress.'
   if ((c.noScienceCompleted !== undefined && typeof c.noScienceCompleted !== 'boolean') || (c.trialAndErrorCompleted !== undefined && typeof c.trialAndErrorCompleted !== 'boolean') || typeof c.unlocked !== 'boolean' || typeof c.blankSlateCompleted !== 'boolean' ||
       typeof c.hasEarnedGalvanizer !== 'boolean' || (c.active !== null && !isChallengeId(c.active)) ||
       typeof c.galvanizers !== 'bigint' || c.galvanizers < 0n || c.galvanizers > 9_223_372_036_854_775_807n ||
@@ -48,7 +51,7 @@ export function validateInfinityChallenges(value: unknown): string | null {
     const ids = c.galvanizedSkillIds
     const valid = new Set(getGameAssetsByKind(SKILL_DEFINITION_ASSET_KIND).map((asset) => asset.id))
     if (!Array.isArray(ids) || ids.some((id) => typeof id !== 'string' || !valid.has(id)) ||
-        new Set(ids).size !== ids.length || (ids.length > 0 && c.blankSlateCompleted !== true && c.trialAndErrorCompleted !== true && c.noScienceCompleted !== true && !(Array.isArray(c.completedQuantumChallenges) && c.completedQuantumChallenges.length > 0))) {
+        new Set(ids).size !== ids.length || (ids.length > 0 && c.openingCompleted !== true && c.blankSlateCompleted !== true && c.trialAndErrorCompleted !== true && c.noScienceCompleted !== true && !(Array.isArray(c.completedQuantumChallenges) && c.completedQuantumChallenges.length > 0))) {
       return 'Invalid galvanized skill ownership.'
     }
   }
@@ -99,4 +102,19 @@ export function challengeAllowsFacilityPurchase(state: Pick<CanonicalGameStateV1
 export function challengeFacilities(state: Pick<CanonicalGameStateV1, 'challenges'>, facilities: CanonicalGameStateV1['dyson']['facilities']): CanonicalGameStateV1['dyson']['facilities'] {
   if (state.challenges?.active !== 'built-by-hand' && state.challenges?.active !== 'grounded') return facilities
   return Object.fromEntries(Object.entries(facilities).map(([id, pair]) => [id, challengeAllowsFacility(state, id as CanonicalFacilityId) ? pair : [0, 0]])) as CanonicalGameStateV1['dyson']['facilities']
+}
+
+/** One lifetime reward; old saves retain credit for having passed the opening run. */
+export function awardOpeningChallenge(state: CanonicalGameStateV1): CanonicalGameStateV1 {
+  const progress = infinityChallenges(state)
+  if (progress.openingCatalystAwarded) return state
+  const completed = progress.openingCompleted === true || state.dyson.goalStage >= 10n ||
+    state.meta.firstInfinityComplete || state.meta.firstQuantumComplete === true ||
+    state.quantum.pointsEarned > 0n || (state.avocado.overflowPoints ?? 0n) > 0n
+  if (!completed) return state
+  const canAward = progress.galvanizers < DISCRETE_MAXIMUM
+  return { ...state, challenges: { ...progress, openingCompleted: true,
+    ...(canAward ? { openingCatalystAwarded: true, hasEarnedGalvanizer: true,
+      galvanizers: addDiscrete(progress.galvanizers, 1n) } : {}),
+  } }
 }

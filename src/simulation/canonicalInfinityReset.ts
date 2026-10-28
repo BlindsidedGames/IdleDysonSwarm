@@ -36,8 +36,6 @@ import {
   DISCRETE_MAXIMUM,
 } from './numeric'
 
-const INT32_MAXIMUM = 2_147_483_647n
-
 export interface CanonicalInfinityResetRequest {
   /** Challenge entry/abandonment restarts the run without a prestige reward. */
   readonly restartOnly?: boolean
@@ -257,14 +255,12 @@ export function applyCanonicalInfinityReset(
       infinity: {
         ...state.infinity,
         points: nextPoints,
+        peakBots: state.infinity.retainedFacilities.assembly_lines ? 10 : 1,
         inProgress: false,
         botCapTransitionPending: false,
         botCapRewardsGranted: false,
-        lastPointsGained: Number(
-          rewardGranted > INT32_MAXIMUM
-            ? INT32_MAXIMUM
-            : rewardGranted,
-        ),
+        lastPointsGained: Number(rewardGranted),
+        runPeak: undefined,
         currentCyclePeakIpPerMinute: 0,
         currentCyclePeakReward: 0n,
         manualPeakIpPerMinute:

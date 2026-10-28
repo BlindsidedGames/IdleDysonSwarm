@@ -1472,6 +1472,7 @@ function advanceActive(
     return reject('CANONICAL-ACTIVE-TIME-INVALID', 'Active time must be finite and non-negative.')
   }
   if (milliseconds === 0) return { accepted: true, changed: false }
+  const before = candidate.gameState
   const result = advanceGame(
     eventCarrier(candidate),
     {
@@ -1491,6 +1492,7 @@ function advanceActive(
   }
   replaceEventCarrier(candidate, result.state)
   appendDisasterPresentationEvents(candidate, result.summary.disasterEvents)
+  appendOpeningCatalystPresentationEvent(candidate, before)
   return { accepted: true, changed: true }
 }
 
@@ -1505,6 +1507,7 @@ function advanceActiveContinuous(
     return reject('CANONICAL-ACTIVE-TIME-INVALID', 'Active time must be finite and non-negative.')
   }
   if (milliseconds === 0) return { accepted: true, changed: false }
+  const before = candidate.gameState
   const result = advanceGame(
     eventCarrier(candidate),
     {
@@ -1521,6 +1524,7 @@ function advanceActiveContinuous(
   }
   replaceEventCarrier(candidate, result.state)
   appendDisasterPresentationEvents(candidate, result.summary.disasterEvents)
+  appendOpeningCatalystPresentationEvent(candidate, before)
   return { accepted: true, changed: true }
 }
 
@@ -1542,6 +1546,12 @@ function activeAdvanceMeasurement(
             Math.max(0, consumedBaseSeconds * 1000),
           ),
   }
+}
+
+function appendOpeningCatalystPresentationEvent(state: CanonicalRuntimeState, before: CanonicalRuntimeState['gameState']): void {
+  if (before.challenges?.openingCatalystAwarded || !state.gameState.challenges?.openingCatalystAwarded) return
+  appendPresentationEvent(state, sequence => ({ kind: 'catalyst-earned', sequence,
+    count: 1, totalEarned: 1, firstLifetimeOccurrence: before.challenges?.hasEarnedGalvanizer !== true }))
 }
 
 function appendDisasterPresentationEvents(
@@ -2012,6 +2022,10 @@ function validatePresentationEvents(
       return 'CANONICAL-PRESENTATION-EVENTS-INVALID'
     }
     previousSequence = event.sequence
+    if (event.kind === 'catalyst-earned') {
+      if (!Number.isSafeInteger(event.count) || event.count < 1 || !Number.isSafeInteger(event.totalEarned) || event.totalEarned < event.count || typeof event.firstLifetimeOccurrence !== 'boolean') return 'CANONICAL-PRESENTATION-EVENTS-INVALID'
+      continue
+    }
     if (event.kind === 'skill-preset-conflict-resolved') {
       if (!Number.isInteger(event.slot) || event.slot < 1 || event.slot > 10) {
         return 'CANONICAL-PRESENTATION-EVENTS-INVALID'

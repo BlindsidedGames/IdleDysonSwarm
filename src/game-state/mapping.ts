@@ -1,6 +1,7 @@
 import { SKILL_PRESET_COUNT } from './skillPresetSlots'
 import { DEFAULT_OFFLINE_BOOST_MULTIPLIER, isOfflineBoostAutoResume, isOfflineBoostMultiplier, resumeOfflineBoost } from '../simulation/offlineBoost'
 import { readSwarmGrants } from '../simulation/swarmAugments'
+import { INFINITY_REWARD_FORMULA_VERSION } from '../simulation/infinityCycle'
 import { EMPTY_DISCOVERY } from '../simulation/discovery'
 import { type SpeedrunStatistics } from '../simulation/speedrunStatistics'
 import { EMPTY_INFINITY_CHALLENGES } from '../simulation/infinityChallenges'
@@ -223,6 +224,8 @@ export function hydrateGameState(
   const hasManualInfinityCalibration =
     source.simulationInfinityManualPeakIpPerMinute !== undefined ||
     source.simulationInfinityManualPeakReward !== undefined
+  const hasCurrentInfinityRewards =
+    source.simulationInfinityRewardFormulaVersion === INFINITY_REWARD_FORMULA_VERSION
   const swarmGrants = readSwarmGrants(source.swarmGrants)
 
   const state: CanonicalGameStateV1 = {
@@ -286,32 +289,49 @@ export function hydrateGameState(
     },
     infinity: {
       points: toNonNegativeBigInt(prestige.infinityPoints),
+      rewardFormulaVersion: INFINITY_REWARD_FORMULA_VERSION,
+      peakBots: Math.max(
+        toFiniteNonNegativeNumber(infinityData.bots),
+        hasCurrentInfinityRewards ? toFiniteNonNegativeNumber(source.simulationInfinityPeakBots) : 0,
+      ),
       spentPoints: toNonNegativeBigInt(prestige.spentInfinityPoints),
       automaticResetEnabled: infinityAutomaticReset,
+      automaticResetMode: source.simulationInfinityResetMode === 'time' ? 'time' : 'ip',
+      resetAfterSeconds: Math.max(1, toFiniteNonNegativeNumber(source.simulationInfinityResetAfterSeconds, 60)),
       breakTarget: maximumBigInt(
         1n,
-        toNonNegativeBigInt(source.infinityPointsToBreakFor),
+        toNonNegativeBigInt(source.simulationInfinityBreakTarget ?? source.infinityPointsToBreakFor),
       ),
+      ...(hasCurrentInfinityRewards && (isRecord(source.simulationInfinityRunPeak) || toFiniteNonNegativeNumber(source.simulationInfinityPeakIpPerMinute) > 0) ? {
+        runPeak: isRecord(source.simulationInfinityRunPeak) ? {
+          rate: toFiniteNonNegativeNumber(source.simulationInfinityRunPeak.rate),
+          reward: toNonNegativeBigInt(source.simulationInfinityRunPeak.reward),
+          ...(source.simulationInfinityRunPeak.seconds === undefined ? {} : {seconds: toFiniteNonNegativeNumber(source.simulationInfinityRunPeak.seconds)}),
+        } : {
+          rate: toFiniteNonNegativeNumber(source.simulationInfinityPeakIpPerMinute),
+          reward: toNonNegativeBigInt(source.simulationInfinityPeakReward),
+        },
+      } : {}),
       currentCyclePeakIpPerMinute: toFiniteNonNegativeNumber(
-        source.simulationInfinityPeakIpPerMinute,
+        hasCurrentInfinityRewards ? source.simulationInfinityPeakIpPerMinute : 0,
       ),
       currentCyclePeakReward: toNonNegativeBigInt(
-        source.simulationInfinityPeakReward,
+        hasCurrentInfinityRewards ? source.simulationInfinityPeakReward : 0n,
       ),
       manualPeakIpPerMinute: toFiniteNonNegativeNumber(
-        source.simulationInfinityManualPeakIpPerMinute,
-        !hasManualInfinityCalibration && !infinityAutomaticReset
+        hasCurrentInfinityRewards ? source.simulationInfinityManualPeakIpPerMinute : 0,
+        hasCurrentInfinityRewards && !hasManualInfinityCalibration && !infinityAutomaticReset
           ? toFiniteNonNegativeNumber(source.simulationInfinityPeakIpPerMinute)
           : 0,
       ),
       manualPeakReward: toNonNegativeBigInt(
-        source.simulationInfinityManualPeakReward ??
+        hasCurrentInfinityRewards ? source.simulationInfinityManualPeakReward ??
           (!infinityAutomaticReset
             ? source.simulationInfinityPeakReward
-            : undefined),
+            : undefined) : 0n,
       ),
       manualCalibrationObservedActiveSeconds: toFiniteNonNegativeNumber(
-        source.simulationInfinityManualObservedActiveSeconds,
+        hasCurrentInfinityRewards ? source.simulationInfinityManualObservedActiveSeconds : 0,
       ),
       activeAutomaticThroughputCycleEligible: toBoolean(
         source.simulationInfinityActiveAutomaticThroughputCycleEligible,
@@ -412,6 +432,7 @@ export function hydrateGameState(
       influenceSpeedBonus: toNonNegativeBigInt(quantum.influence),
       cashBonusLevels: toNonNegativeBigInt(quantum.cash),
       scienceBonusLevels: toNonNegativeBigInt(quantum.science),
+      timeBonusLevel: toFiniteNonNegativeNumber(quantum.timeBonusLevel ?? source.simulationInfinityTimeBonusLevel),
       unlocks: {
         botMultitasking: toBoolean(quantum.botMultitasking),
         doubleInfinityPoints: toBoolean(quantum.doubleIP),
@@ -477,12 +498,13 @@ export function hydrateGameState(
         1 / 60,
       ),
       infinityCycleSeconds,
+      infinityCycleAutomationSeconds: toFiniteNonNegativeNumber(source.simulationInfinityCycleAutomationSeconds, infinityCycleSeconds),
       infinityCycleStartingPoints: toNonNegativeBigInt(
-        source.simulationInfinityCycleStartingPoints,
+        toBoolean(source.simulationInfinityHasPostResetStart)
+          ? source.simulationInfinityCycleStartingPoints
+          : prestige.infinityPoints,
       ),
-      infinityHasPostResetStart: toBoolean(
-        source.simulationInfinityHasPostResetStart,
-      ),
+      infinityHasPostResetStart: true,
       storedTimeAvailableSeconds: Math.min(
         storedTimeCapacitySeconds,
         toFiniteNonNegativeNumber(source.offlineTime) +
@@ -809,12 +831,20 @@ export function dehydrateGameState(
   }
 
   prestige.infinityPoints = state.infinity.points
+  delete source.simulationInfinityTimeBonusLevel
+  source.simulationInfinityRewardFormulaVersion = state.infinity.rewardFormulaVersion ?? INFINITY_REWARD_FORMULA_VERSION
+  source.simulationInfinityPeakBots = state.infinity.peakBots ?? state.dyson.bots
+  source.simulationInfinityResetMode = state.infinity.automaticResetMode ?? 'ip'
+  source.simulationInfinityResetAfterSeconds = state.infinity.resetAfterSeconds ?? 60
+  source.simulationInfinityBreakTarget = state.infinity.breakTarget
   prestige.spentInfinityPoints = state.infinity.spentPoints
   source.infinityAutomaticReset =
     state.infinity.automaticResetEnabled
   source.infinityPointsToBreakFor = Number(
     minimumBigInt(2_147_483_647n, state.infinity.breakTarget),
   )
+  if (state.infinity.runPeak !== undefined) source.simulationInfinityRunPeak = state.infinity.runPeak
+  else delete source.simulationInfinityRunPeak
   source.simulationInfinityPeakIpPerMinute =
     state.infinity.currentCyclePeakIpPerMinute ?? 0
   source.simulationInfinityPeakReward =
@@ -958,6 +988,7 @@ export function dehydrateGameState(
   quantum.influence = state.quantum.influenceSpeedBonus
   quantum.cash = state.quantum.cashBonusLevels
   quantum.science = state.quantum.scienceBonusLevels
+  quantum.timeBonusLevel = state.quantum.timeBonusLevel ?? 0
   // QuantumUpgradeCondition and older Unity builds still read this legacy
   // mirror even though AvocadoData is the canonical owner.
   quantum.avocatoPurchased = state.avocado.unlocked
@@ -998,6 +1029,7 @@ export function dehydrateGameState(
     state.timeline.researchAutomationTargetIndex
   source.simulationInfinityBoundaryRemaining =
     state.timeline.infinityBoundaryRemaining
+  source.simulationInfinityCycleAutomationSeconds = state.timeline.infinityCycleAutomationSeconds ?? state.timeline.infinityCycleSeconds
   source.simulationInfinityCycleSeconds =
     state.timeline.infinityCycleSeconds
   source.simulationInfinityCycleStartingPoints =

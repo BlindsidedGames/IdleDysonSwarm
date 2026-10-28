@@ -4,8 +4,9 @@ import {
   toDiscreteGameNumber,
 } from '../../i18n/gameNumberInput'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
+import { DISCRETE_MAXIMUM } from '../../../simulation/numeric'
 
-export const MAXIMUM_INFINITY_TARGET = 2_147_483_647n
+export const MAXIMUM_INFINITY_TARGET = DISCRETE_MAXIMUM
 
 /** Compact presentation for the editable Auto Infinity target. */
 export function formatAutoInfinityTargetInput(

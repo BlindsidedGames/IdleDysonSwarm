@@ -76,11 +76,19 @@ export interface DysonState {
 
 export interface InfinityState {
   readonly points: bigint
+  /** Version of the reward curve used by persisted rate recommendations. */
+  readonly rewardFormulaVersion?: number
+  /** Highest Bot balance reached since this Infinity began. */
+  readonly peakBots?: number
   readonly spentPoints: bigint
   readonly automaticResetEnabled: boolean
+  readonly automaticResetMode?: 'ip' | 'time'
+  readonly resetAfterSeconds?: number
   readonly breakTarget: bigint
   /** Highest observed IP/min rate in the current active Infinity cycle. */
   readonly currentCyclePeakIpPerMinute?: number
+  /** Exact maximum for this run; settings changes never clear it. Seconds use the 1x reset clock. */
+  readonly runPeak?: { readonly rate: number; readonly reward: bigint; readonly seconds?: number }
   /** Reward associated with the current active-cycle IP/min peak. */
   readonly currentCyclePeakReward?: bigint
   /** Last valid peak observed during a manual Infinity run. */
@@ -205,6 +213,7 @@ export interface QuantumState {
   readonly influenceSpeedBonus: bigint
   readonly cashBonusLevels: bigint
   readonly scienceBonusLevels: bigint
+  readonly timeBonusLevel?: number
   readonly unlocks: {
     readonly botMultitasking: boolean
     readonly doubleInfinityPoints: boolean
@@ -245,6 +254,7 @@ export interface TimelineState {
   readonly researchAutomationTargetIndex: number
   readonly infinityBoundaryRemaining: number
   readonly infinityCycleSeconds: number
+  readonly infinityCycleAutomationSeconds?: number
   readonly infinityCycleStartingPoints: bigint
   readonly infinityHasPostResetStart: boolean
   readonly storedTimeAvailableSeconds: number
@@ -554,6 +564,8 @@ export type QuantumChallengeId = 'no-science' | 'short-circuit' | 'grounded' | '
 export type ChallengeId = 'blank-slate' | 'trial-and-error' | QuantumChallengeId
 
 export interface InfinityChallengeState {
+  readonly openingCompleted?: boolean
+  readonly openingCatalystAwarded?: boolean
   readonly galvanizedSkillIds?: readonly string[]
   readonly unlocked: boolean
   readonly active: ChallengeId | null

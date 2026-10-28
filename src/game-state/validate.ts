@@ -1,4 +1,5 @@
 import { SKILL_PRESET_COUNT } from './skillPresetSlots'
+import { INFINITY_TIME_BONUS_MAX_LEVEL } from '../simulation/infinityTimeBonus'
 import { isOfflineBoostAutoResume, isOfflineBoostMultiplier } from '../simulation/offlineBoost'
 import { validateDiscovery } from '../simulation/discovery'
 import { validateCompletedTinkers } from '../simulation/tinkerGoalProgress'
@@ -175,9 +176,34 @@ export function validateCanonicalGameState(
   }
   if (
     state.infinity.breakTarget < 1n ||
-    state.infinity.breakTarget > 2_147_483_647n
+    state.infinity.breakTarget > 9_223_372_036_854_775_807n
   ) {
-    errors.push('Infinity Break target must be within the Unity schema-12 integer range.')
+    errors.push('Infinity Break target must be a positive Int64 value.')
+  }
+  if (state.infinity.peakBots !== undefined &&
+      (!Number.isFinite(state.infinity.peakBots) || state.infinity.peakBots < 0)) {
+    errors.push('Infinity peak Bots must be finite and non-negative.')
+  }
+  if (state.quantum.timeBonusLevel !== undefined &&
+      (!Number.isInteger(state.quantum.timeBonusLevel) || state.quantum.timeBonusLevel < 0 || state.quantum.timeBonusLevel > INFINITY_TIME_BONUS_MAX_LEVEL)) {
+    errors.push('Quantum time bonus level must be an integer from zero to four.')
+  }
+  if (state.infinity.automaticResetMode !== undefined && !['ip', 'time'].includes(state.infinity.automaticResetMode)) {
+    errors.push('Infinity automatic reset mode must be IP or time.')
+  }
+  if (state.infinity.resetAfterSeconds !== undefined &&
+      (!Number.isFinite(state.infinity.resetAfterSeconds) || state.infinity.resetAfterSeconds < 1)) {
+    errors.push('Infinity time target must be finite and at least one second.')
+  }
+  if (state.timeline.infinityCycleAutomationSeconds !== undefined &&
+      (!Number.isFinite(state.timeline.infinityCycleAutomationSeconds) || state.timeline.infinityCycleAutomationSeconds < 0)) {
+    errors.push('Infinity automation time must be finite and non-negative.')
+  }
+  const runPeak = state.infinity.runPeak
+  if (runPeak !== undefined && (runPeak === null ||
+      !Number.isFinite(runPeak.rate) || runPeak.rate < 0 || typeof runPeak.reward !== 'bigint' || runPeak.reward < 0n ||
+      (runPeak.seconds !== undefined && (!Number.isFinite(runPeak.seconds) || runPeak.seconds < 0)))) {
+    errors.push('Infinity run peak must contain a finite non-negative rate, reward and time.')
   }
   if (
     state.infinity.currentCyclePeakIpPerMinute !== undefined &&

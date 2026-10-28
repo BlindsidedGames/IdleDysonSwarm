@@ -178,6 +178,7 @@
 .quantum-upgrade-card__requirement { color: var(--quantum-accent) !important; font-size: calc(0.62rem * var(--game-text-scale)) !important; font-weight: var(--font-weight-semibold); }
 .quantum-upgrade-card > .ui-button { display: flex; min-block-size: var(--target-minimum); flex-direction: column; justify-content: center; gap: 0.12rem; padding: 0.28rem; font-size: calc(0.72rem * var(--game-text-scale)); }
 .quantum-upgrade-card--complete { background: var(--quantum-panel); }
+.quantum-upgrade-card[data-quantum-upgrade-id="TimeBonus"] > .ui-button { min-block-size: max(44px, var(--target-minimum)); }
 .quantum-upgrade-card--mystery { min-block-size: var(--target-minimum); grid-template-columns: minmax(0, 1fr); background: #28223a; color: #c9bddb; }
 
 .avocato-surface { display: block; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; }
@@ -303,4 +304,58 @@
   min-inline-size: 0;
   white-space: normal;
   overflow-wrap: anywhere;
+}
+
+.quantum-time-bonus__details {
+  display: grid;
+  align-content: start;
+  gap: .2rem;
+  min-inline-size: 44px;
+  min-block-size: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #f0eaf8;
+  text-align: start;
+  font: inherit;
+  font-size: calc(.67rem * var(--game-text-scale));
+  line-height: 1.16;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+.quantum-time-bonus__title { color: white; font-size: calc(.8rem * var(--game-text-scale)); font-weight: 700; }
+.quantum-time-bonus__details:focus-visible { outline: 2px solid var(--theme-accent); outline-offset: 3px; }
+.quantum-time-bonus-dialog {
+  inline-size: min(28rem, calc(100vw - 2rem));
+  max-block-size: calc(100dvh - 2rem);
+  box-sizing: border-box;
+  overflow: auto;
+  padding: var(--ui-panel-inset-roomy);
+  border: 1px solid var(--theme-accent);
+  border-radius: .5rem;
+  background: var(--theme-panel);
+  color: var(--theme-text, white);
+  font: inherit;
+}
+.quantum-time-bonus-dialog::backdrop { background: #000a; }
+.quantum-time-bonus-dialog h3 { margin: 0; font-size: var(--ui-text-section-title); }
+.quantum-time-bonus-dialog p { font-size: var(--ui-text-body); line-height: 1.3; }
+.quantum-time-bonus-dialog table { inline-size: 100%; border-collapse: collapse; font-size: var(--ui-text-body); font-variant-numeric: tabular-nums; }
+.quantum-time-bonus-dialog th, .quantum-time-bonus-dialog td { padding: .4rem .25rem; text-align: end; white-space: nowrap; }
+.quantum-time-bonus-dialog th:first-child { text-align: start; }
+.quantum-time-bonus-dialog__now { background: var(--theme-selected); }
+.quantum-time-bonus-dialog > button {
+  display: block;
+  margin-block-start: var(--ui-card-gap);
+  margin-inline-start: auto;
+  min-inline-size: 44px;
+  min-block-size: 44px;
+  padding: .4rem .8rem;
+  border: 1px solid var(--theme-accent);
+  border-radius: .25rem;
+  background: var(--theme-accent);
+  color: var(--theme-page);
+  font: inherit;
+  font-size: var(--ui-text-control);
+  cursor: pointer;
 }
