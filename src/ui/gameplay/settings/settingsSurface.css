@@ -19,6 +19,7 @@
 
 .settings-surface__content {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   align-content: start;
   gap: var(--ui-section-stack-gap);
   padding-block: var(--ui-route-inset);
@@ -315,6 +316,7 @@
 }
 
 .settings-surface__panel {
+  min-inline-size: 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
@@ -470,6 +472,7 @@
 
 .settings-surface__select-label select {
   box-sizing: border-box;
+  min-inline-size: 0;
   min-block-size: var(--target-minimum);
   inline-size: 100%;
   max-inline-size: 100%;
@@ -601,8 +604,6 @@
 .settings-surface__toggle {
   display: flex;
   align-items: center;
-  color: #eff8ef;
-  font-size: 1rem;
   min-block-size: var(--target-minimum);
   gap: 0.45rem;
   padding: 0.35rem 0.5rem;
@@ -1085,3 +1086,9 @@
 }
 
 .settings-surface__panel--display { order: 5; grid-template-columns: minmax(0, 1fr); align-content: start; align-items: start; }
+
+@media (max-width: 720px) {
+  .settings-surface__audio-controls > label:not(.settings-surface__toggle) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}

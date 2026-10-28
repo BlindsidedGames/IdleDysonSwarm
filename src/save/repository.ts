@@ -690,15 +690,14 @@ export class PortableSaveRepository implements SaveRepository {
   private retainMigrationSource(text: string): void {
     if (text === this.lastInspectedSourceText) return
     this.lastInspectedSourceText = text
-    if (!text.trim().toUpperCase().startsWith('IDLEDS:')) {
+    if (!text.trim().toUpperCase().startsWith('IDSWEB1:')) {
       this.pendingMigrationSources.add(text)
       return
     }
     let source: SaveRecord
     try { source = deserializeWebSave(text) }
     catch { this.pendingMigrationSources.add(text); return }
-    const civilization = source.civilization as { farming?: { version?: number } } | undefined
-    if (source.saveVersion !== CURRENT_SAVE_SCHEMA || civilization?.farming?.version === 1 || source.idsReworkMigrationChoice === undefined) {
+    if (source.saveVersion !== CURRENT_SAVE_SCHEMA) {
       this.pendingMigrationSources.add(text)
     }
   }
@@ -728,11 +727,11 @@ export class PortableSaveRepository implements SaveRepository {
       await this.storage.writeText(receiptPath, JSON.stringify({
         version: 1, sha256, sourceFormat: prefix, sourceSchema,
         sourceBuild: null, archivedAtUtc: new Date().toISOString(),
-        destinationFormat: 'IDLEDS', destinationSchema: CURRENT_SAVE_SCHEMA,
+        destinationFormat: 'IDSWEB1', destinationSchema: CURRENT_SAVE_SCHEMA,
       }))
     }
     const receipt = JSON.parse(await this.storage.readText(receiptPath)) as Record<string, unknown>
-    if (receipt.version !== 1 || receipt.sha256 !== sha256 || receipt.sourceFormat !== prefix || receipt.sourceSchema !== sourceSchema || receipt.destinationFormat !== 'IDLEDS' || (typeof receipt.destinationSchema !== 'number' || !Number.isSafeInteger(receipt.destinationSchema) || ![21, 22].includes(receipt.destinationSchema))) {
+    if (receipt.version !== 1 || receipt.sha256 !== sha256 || receipt.sourceFormat !== prefix || receipt.sourceSchema !== sourceSchema || receipt.destinationFormat !== 'IDSWEB1' || receipt.destinationSchema !== CURRENT_SAVE_SCHEMA) {
       throw new Error('One-way migration archive receipt verification failed before publication.')
     }
   }

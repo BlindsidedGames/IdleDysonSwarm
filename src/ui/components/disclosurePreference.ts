@@ -1,4 +1,3 @@
-import { getPresentationStorage } from '../presentationStorage'
 const DISCLOSURE_STORAGE_VERSION = 1
 const DISCLOSURE_STORAGE_PREFIX =
   `idle-dyson-swarm.ui.disclosure.v${DISCLOSURE_STORAGE_VERSION}:`
@@ -17,9 +16,9 @@ export function readDisclosurePreference(
   fallback: boolean,
 ): boolean {
   try {
-    if (getPresentationStorage() === null) return fallback
-    const stored = getPresentationStorage()?.getItem(preferenceKey)
-    if (stored == null) return fallback
+    if (typeof localStorage === 'undefined') return fallback
+    const stored = localStorage.getItem(preferenceKey)
+    if (stored === null) return fallback
     const parsed = JSON.parse(stored) as Partial<StoredDisclosurePreference>
     return parsed.version === DISCLOSURE_STORAGE_VERSION &&
       typeof parsed.expanded === 'boolean'
@@ -35,12 +34,12 @@ export function writeDisclosurePreference(
   expanded: boolean,
 ): void {
   try {
-    if (getPresentationStorage() === null) return
+    if (typeof localStorage === 'undefined') return
     const preference: StoredDisclosurePreference = {
       version: DISCLOSURE_STORAGE_VERSION,
       expanded,
     }
-    getPresentationStorage()?.setItem(preferenceKey, JSON.stringify(preference))
+    localStorage.setItem(preferenceKey, JSON.stringify(preference))
   } catch {
     // Storage can be unavailable or quota-limited; local state still works.
   }

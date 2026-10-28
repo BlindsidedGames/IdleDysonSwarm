@@ -224,10 +224,6 @@ class IdleDysonNativePlugin : Plugin() {
                 put("applicationVersion", packageInfo.versionName ?: "0.0.0")
                 put("buildNumber", packageInfo.longVersionCode.toString())
                 put("platform", "android")
-                put("saveStorageNamespace", WEB_SAVE_ROOT)
-                put("entitlementCacheNamespace", "rework-beta-v1")
-                put("cloudSavesEnabled", false)
-                put("automaticUnityDiscoveryEnabled", true)
                 put("locale", Locale.getDefault().toLanguageTag())
             })
         } catch (error: Exception) {
@@ -390,7 +386,7 @@ class IdleDysonNativePlugin : Plugin() {
 
     @PluginMethod
     fun writeText(call: PluginCall) = withNativeFailure(call) {
-        val target = rootedFile(requireRelativePath(call, "relativePath"), writable = true)
+        val target = rootedFile(requireRelativePath(call, "relativePath"))
         val contents = requireContents(call)
         target.parentFile?.mkdirs()
         FileOutputStream(target, false).use { output ->
@@ -403,8 +399,8 @@ class IdleDysonNativePlugin : Plugin() {
 
     @PluginMethod
     fun replaceAtomically(call: PluginCall) = withNativeFailure(call) {
-        val source = rootedFile(requireRelativePath(call, "temporaryRelativePath"), writable = true)
-        val destination = rootedFile(requireRelativePath(call, "destinationRelativePath"), writable = true)
+        val source = rootedFile(requireRelativePath(call, "temporaryRelativePath"))
+        val destination = rootedFile(requireRelativePath(call, "destinationRelativePath"))
         if (!source.isFile) {
             call.reject("The temporary Web save does not exist.", "file-not-found")
             return@withNativeFailure
@@ -417,7 +413,7 @@ class IdleDysonNativePlugin : Plugin() {
     @PluginMethod
     fun copy(call: PluginCall) = withNativeFailure(call) {
         val source = rootedFile(requireRelativePath(call, "sourceRelativePath"))
-        val destination = rootedFile(requireRelativePath(call, "destinationRelativePath"), writable = true)
+        val destination = rootedFile(requireRelativePath(call, "destinationRelativePath"))
         if (!source.isFile) {
             call.reject("The Web save source does not exist.", "file-not-found")
             return@withNativeFailure
@@ -669,19 +665,9 @@ class IdleDysonNativePlugin : Plugin() {
         .digest(text.toByteArray(StandardCharsets.UTF_8))
         .joinToString("") { byte -> "%02x".format(byte) }
 
-    private fun rootedFile(relativePath: String, writable: Boolean = false): File {
-        val parts = relativePath.split(File.separator).toMutableList()
-        val bucket = if (parts.first() in listOf("classic", "modern", "beta", "host")) parts.removeAt(0) else "host"
-        require(parts.isNotEmpty() && !(writable && bucket == "beta")) { "Historical beta files are read-only." }
-        val namespace = when (bucket) { "classic" -> "web-runtime-v1"; "modern" -> "idleds-modern-v1"; "beta" -> "idleds-rework-beta-v1"; else -> WEB_SAVE_ROOT }
-        val rawRoot = File(context.filesDir, namespace).apply { mkdirs() }.absoluteFile
-        var component: File? = File(rawRoot, parts.joinToString(File.separator))
-        while (component != null && component.path.startsWith(rawRoot.path)) {
-            require(!Files.isSymbolicLink(component.toPath())) { "Symbolic links are not accepted in mode save paths." }
-            component = component.parentFile
-        }
-        val root = rawRoot.canonicalFile
-        val target = File(root, parts.joinToString(File.separator)).canonicalFile
+    private fun rootedFile(relativePath: String): File {
+        val root = File(context.filesDir, WEB_SAVE_ROOT).apply { mkdirs() }.canonicalFile
+        val target = File(root, relativePath).canonicalFile
         val prefix = root.path + File.separator
         if (!target.path.startsWith(prefix)) {
             throw IllegalArgumentException("Native Web save paths must remain below the app-owned root.")
@@ -763,7 +749,7 @@ class IdleDysonNativePlugin : Plugin() {
     }
 
     companion object {
-        private const val WEB_SAVE_ROOT = "idleds-dual-modes-v1"
+        private const val WEB_SAVE_ROOT = "web-runtime-v1"
         private const val UNITY_SAVE_FILE_NAME = "idle_dyson_swarm_save.txt"
         private const val REVIEW_PREFERENCES_NAME = "idle_dyson_swarm_review"
         private const val REVIEW_REQUESTED_KEY = "review_requested_v1"

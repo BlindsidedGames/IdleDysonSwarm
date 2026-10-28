@@ -52,19 +52,31 @@ export function OfflineTimeSurface({ locale, resources, previews, storedTimeChea
   return <div className="offline-time-surface">
     <header className="offline-time-surface__header">
       <div className="offline-time-surface__title">{intl.formatMessage(messages.region)}</div>
+      <div className="offline-time-surface__speed"><span>{intl.formatMessage(messages.boostSpeed)}</span><output htmlFor="offline-boost-speed">{`${boost.multiplier}×`}</output></div>
     </header>
     <div className="offline-time-surface__scroll-region">
       {storedTimeCheater && <p className="offline-time-surface__warning">{intl.formatMessage(messages.disabled)}</p>}
-      <article className="offline-time-card offline-time-card--storage">
-        <div className="offline-time-card__heading"><h2>{intl.formatMessage(messages.boostStored)}</h2><strong>{formatGameDuration(locale, bank)}</strong></div>
+      <article className="offline-time-card offline-time-card--storage offline-time-card--boost">
+        <div className="offline-time-card__heading"><h2>{intl.formatMessage(messages.boostStored)}</h2><strong>{formatGameDuration(locale, bank)} / {formatGameDuration(locale, capacity)}</strong></div>
         <div className="offline-time-storage-progress" role="progressbar" aria-label={intl.formatMessage(messages.storageProgress)} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(fill * 100)}>
           <span aria-hidden="true" style={{ transform: `scaleX(${fill})` }} />
         </div>
-        <div className="offline-time-max-storage"><span>{intl.formatMessage(messages.maxStorage)}</span><span>{formatGameDuration(locale, capacity)}</span></div>
+        <div className="offline-time-boost-control">
+          <input id="offline-boost-speed" type="range" min={1} max={resources.maximumOfflineBoostMultiplier} step={1} value={boost.multiplier} disabled={disabled}
+            aria-label={intl.formatMessage(messages.boostSpeed)}
+            aria-valuetext={`${boost.multiplier}×`}
+            onChange={event => void select(event.currentTarget.valueAsNumber)} />
+        <dl className="offline-time-boost-facts">
+          <div><dt className="ui-visually-hidden">{intl.formatMessage(messages.boostDrainLabel)}</dt><dd>{intl.formatMessage(messages.boostDrain, { seconds: Math.max(0, boost.multiplier - 1) })}</dd></div>
+          <div><dt className="ui-visually-hidden">{intl.formatMessage(messages.boostDurationLabel)}</dt><dd>{boost.multiplier > 1 ? formatGameCountdown(locale, bank / (boost.multiplier - 1)) : '—'}</dd></div>
+        </dl>
+        </div>
         {bank <= 0 && <p className="offline-time-card__note">{intl.formatMessage(messages.noStoredTime)}</p>}
+        <div className="offline-time-actions">
         <div className="offline-time-capacity-upgrade">
+          <Button variant="primary" disabled={pending || ratePending || boost.multiplier > 1 || !previews.storedCapacity.eligible || storedTimeCheater || !commandAvailability.upgradeStoredCapacity}
+            onClick={() => void act({ kind: 'time.upgrade-stored-capacity' })}>{intl.formatMessage(previews.storedCapacity.code === 'maximum-reached' ? messages.capacityMaxed : messages.doubleStorage)}</Button>
           <div className="offline-time-capacity-upgrade__copy">
-            <p>{intl.formatMessage(messages.doubleStorageDescription)}</p>
             {previews.storedCapacity.code === 'maximum-reached'
               ? <p>{intl.formatMessage(messages.maximumStorage)}</p>
               : <dl className="offline-time-capacity-facts">
@@ -72,31 +84,20 @@ export function OfflineTimeSurface({ locale, resources, previews, storedTimeChea
                   <div><dt>{intl.formatMessage(messages.capacityResult)}</dt><dd>{formatGameDuration(locale, previews.storedCapacity.nextCapacitySeconds)}</dd></div>
                 </dl>}
           </div>
-          <Button variant="primary" disabled={pending || ratePending || boost.multiplier > 1 || !previews.storedCapacity.eligible || storedTimeCheater || !commandAvailability.upgradeStoredCapacity}
-            onClick={() => void act({ kind: 'time.upgrade-stored-capacity' })}>{intl.formatMessage(previews.storedCapacity.code === 'maximum-reached' ? messages.capacityMaxed : messages.doubleStorage)}</Button>
+
         </div>
-      </article>
-      <article className="offline-time-card offline-time-card--boost">
-        <div className="offline-time-card__heading">
-          <h2 id="offline-boost-label">{intl.formatMessage(messages.boostSpeed)}</h2>
+        <div className="offline-time-auto-resume">
+          <span id="offline-auto-resume-label" className="ui-visually-hidden">{intl.formatMessage(messages.autoResume)}</span>
+          <div className="offline-time-auto-resume__options" role="group" aria-labelledby="offline-auto-resume-label">
+            {(['off', 'last', 'max'] as const).map(mode => <button type="button" className="offline-time-auto-resume__option" key={mode}
+              aria-pressed={(resources.offlineBoostAutoResume ?? 'off') === mode}
+              disabled={pending || !commandAvailability.setAutoResume}
+              onClick={() => void act({ kind: 'time.set-offline-auto-resume', mode: mode as OfflineBoostAutoResume })}>
+              {intl.formatMessage(mode === 'off' ? messages.autoResumeOff : mode === 'last' ? messages.autoResumeLast : messages.autoResumeMax)}
+            </button>)}
+          </div>
         </div>
-        <div className="offline-time-boost-control">
-          <output htmlFor="offline-boost-speed" aria-label={intl.formatMessage(messages.boostSpeed)}>{boost.multiplier === 1 ? intl.formatMessage(messages.boostRegular) : `${boost.multiplier}×`}</output>
-          <input id="offline-boost-speed" type="range" min={1} max={resources.maximumOfflineBoostMultiplier} step={1} value={boost.multiplier} disabled={disabled}
-            aria-labelledby="offline-boost-label"
-            aria-valuetext={boost.multiplier === 1 ? intl.formatMessage(messages.boostRegular) : `${boost.multiplier}×`}
-            onChange={event => void select(event.currentTarget.valueAsNumber)} />
         </div>
-        <label className="offline-time-auto-resume"><span>{intl.formatMessage(messages.autoResume)}</span><select value={resources.offlineBoostAutoResume ?? 'off'} disabled={pending || !commandAvailability.setAutoResume} onChange={event => void act({ kind: 'time.set-offline-auto-resume', mode: event.target.value as OfflineBoostAutoResume })}>
-          <option value="off">{intl.formatMessage(messages.autoResumeOff)}</option>
-          <option value="last">{intl.formatMessage(messages.autoResumeLast)}</option>
-          <option value="max">{intl.formatMessage(messages.autoResumeMax)}</option>
-        </select></label>
-        {boost.multiplier > 1 && <dl className="offline-time-boost-facts">
-          <div><dt>{intl.formatMessage(messages.boostDrainLabel)}</dt><dd>{intl.formatMessage(messages.boostDrain, { seconds: boost.multiplier - 1 })}</dd></div>
-          <div><dt>{intl.formatMessage(messages.boostDurationLabel)}</dt><dd>{formatGameCountdown(locale, bank / (boost.multiplier - 1))}</dd></div>
-        </dl>}
-        <details className="offline-time-boost-details"><summary>{intl.formatMessage(messages.boostDetails)}</summary><p>{intl.formatMessage(messages.boostStack)}</p></details>
       </article>
       {failed && <p className="offline-time-feedback offline-time-feedback--failure" role="alert">{intl.formatMessage(messages.actionFailed)}</p>}
     </div>

@@ -1,6 +1,4 @@
 import type { CanonicalGameStateV1 } from '../game-state/types'
-import { EMPTY_INFINITY_CHALLENGES } from './infinityChallenges'
-import { openingChallengeComplete } from './reworkChallenges'
 import { addDiscrete } from './numeric'
 import { runCanonicalSkillAutoAssignment } from './canonicalSkillTransactions'
 import { resolvePanelArea } from './stellarArithmetic'
@@ -88,9 +86,6 @@ export function advanceCanonicalGoalProgression(
     }
   }
 
-  if (openingChallengeComplete(state) && !state.challenges?.openingCompleted) {
-    state = { ...state, challenges: { ...(state.challenges ?? EMPTY_INFINITY_CHALLENGES), openingCompleted: true } }
-  }
   return {
     ok: true,
     state,
@@ -119,7 +114,6 @@ function isGoalComplete(
     case 2n:
       return panelArea(state, deriveDysonFacts) >= 20_000
     case 3n: {
-      if (state.challenges?.replacement?.active === 'grounded') return state.dyson.facilities.data_centers[1] >= 100
       const manualPlanetMultiplier =
         state.skills.byId.terraIrradiant?.owned === true ? 12 : 1
       const planets =

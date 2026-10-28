@@ -1,6 +1,5 @@
 import {
   useCallback,
-  useContext,
   useEffect,
   useId,
   useLayoutEffect,
@@ -8,8 +7,6 @@ import {
   useState,
   type CSSProperties,
 } from 'react'
-import { HostGameModeSwitch } from './GameModeSwitch'
-import { GameModeControllerContext } from './GameModeControllerContext'
 import { DesktopTooltips } from '../../components/DesktopTooltips'
 import { useDesktopInterfaceScale } from '../../desktopPresentation'
 import { useMediaQuery } from '../../accessibility/useMediaQuery'
@@ -26,7 +23,7 @@ import { DysonResourceHeader } from './DysonResourceHeader'
 import './dysonGameplayShell.css'
 
 const PERMANENT_NAVIGATION_QUERY =
-  '(min-width: 1080px), (min-width: 960px) and (orientation: landscape)'
+  '(min-width: 1120px), (min-width: 1000px) and (orientation: landscape)'
 
 /**
  * Presentation-only responsive composition for the Dyson gameplay route.
@@ -62,7 +59,6 @@ export function DysonGameplayShell({
   routeContent,
   routeContentEdgeToEdge = false,
 }: DysonGameplayShellProps) {
-  const modeController = useContext(GameModeControllerContext)
   useDesktopInterfaceScale()
   const mainId = `dyson-gameplay-main-${useId().replaceAll(':', '')}`
   const menuId = `dyson-menu-${useId().replaceAll(':', '')}`
@@ -258,17 +254,14 @@ export function DysonGameplayShell({
             {sidePanelSupplement}
           </div>
         )}
-        {modeController !== null ? (
-          <div className="dyson-shell__side-bottom">
-            <HostGameModeSwitch />
-            {releaseFooter !== undefined && (
-              <footer className="dyson-shell__release-footer dyson-shell__release-footer--side"
-                aria-hidden={!wideLayout || undefined} dir="ltr">{releaseFooter}</footer>
-            )}
-          </div>
-        ) : releaseFooter !== undefined && (
-          <footer className="dyson-shell__release-footer dyson-shell__release-footer--side"
-            aria-hidden={!wideLayout || undefined} dir="ltr">{releaseFooter}</footer>
+        {releaseFooter !== undefined && (
+          <footer
+            className="dyson-shell__release-footer dyson-shell__release-footer--side"
+            aria-hidden={!wideLayout || undefined}
+            dir="ltr"
+          >
+            {releaseFooter}
+          </footer>
         )}
       </aside>
 

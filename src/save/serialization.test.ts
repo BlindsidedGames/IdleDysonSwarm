@@ -9,7 +9,7 @@ describe('canonical web save serialization', () => {
       bits: Uint8Array.from([0, 127, 255]),
     }
     const encoded = serializeWebSave(save)
-    expect(encoded).toMatch(/^IDLEDS:/)
+    expect(encoded).toMatch(/^IDSWEB1:/)
     const decoded = deserializeWebSave(encoded)
 
     expect(decoded.infinityPoints).toBe(9_223_372_036_854_775_807n)

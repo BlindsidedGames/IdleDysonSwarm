@@ -5,8 +5,6 @@ import type {
 import { TransactionalSimulationEngine } from '../core/simulationEngine'
 import { formatUnknownError as errorMessage } from '../core/unknownError'
 import type { PreparedSave } from '../save/prepare'
-import type { StartupPendingPublication } from '../save/startupResolver'
-import type { SaveCommitTarget } from '../save/repository'
 import { prepareImportedSaveText } from '../save/import'
 import type {
   ApplicationCommandEnvelope,
@@ -46,10 +44,6 @@ export class TransactionalGameApplication<TState, TCommand>
   private session: GameStateSession<TState> | undefined
   private startPromise: Promise<ApplicationSnapshot<TState>> | undefined
   private persistenceTail: Promise<void> = Promise.resolve()
-  private pendingMigration: StartupPendingPublication & {
-    readonly owner: PreparedSave
-    readonly target?: SaveCommitTarget
-  } | undefined
 
   constructor(options: GameApplicationOptions<TState, TCommand>) {
     this.options = options
@@ -191,7 +185,7 @@ export class TransactionalGameApplication<TState, TCommand>
    */
   capturePreparedSave(): PreparedSave | null {
     const ready = this.readySnapshot()
-    if (ready === undefined || ready.operation === 'rework-choice-pending' || ready.operation === 'rework-migration') return null
+    if (ready === undefined) return null
     return this.requireSession().prepare(
       this.requireEngine().snapshot().state,
     )
@@ -202,7 +196,7 @@ export class TransactionalGameApplication<TState, TCommand>
     purpose: CommitFirstPurpose,
   ): Promise<CommitFirstResult> {
     return this.inPersistenceLane(async () => {
-      const unavailable = this.validateActiveEnvelope(envelope, purpose === 'rework-migration')
+      const unavailable = this.validateActiveEnvelope(envelope)
       if (unavailable) {
         return { committed: false, transition: unavailable }
       }
@@ -214,24 +208,21 @@ export class TransactionalGameApplication<TState, TCommand>
         command: envelope.command,
       })
       if (!(staged.accepted && staged.changed && 'staged' in staged)) {
-        this.setReady({ ...this.requireReadySnapshot(), operation: before.operation })
+        this.setReady({ ...this.requireReadySnapshot(), operation: 'none' })
         return { committed: false, transition: staged }
       }
 
-      let prepared = staged.staged.readCandidate((candidate) => {
+      const prepared = staged.staged.readCandidate((candidate) => {
         const session = this.requireSession()
         return session.prepareForPersistence?.(candidate)
           ?? session.prepare(candidate)
       })
       let committed: PreparedSave
       try {
-        prepared = this.pendingMigration?.prepareForCommit?.(prepared) ?? prepared
-        await this.pendingMigration?.beforeCommit?.()
-        committed = await this.options.repository.commit(prepared, this.pendingMigration?.target,
-          this.pendingMigration?.sourceText, this.pendingMigration?.owner)
+        committed = await this.options.repository.commit(prepared)
       } catch (error) {
         const latest = this.readySnapshot()
-        if (latest) this.setReady({ ...latest, operation: before.operation })
+        if (latest) this.setReady({ ...latest, operation: 'none' })
         return {
           committed: false,
           transition: this.rejected(
@@ -242,10 +233,6 @@ export class TransactionalGameApplication<TState, TCommand>
           reason: errorMessage(error),
         }
       }
-
-      // Optional host completion cannot roll back an already durable choice.
-      // A failed Cloud acknowledgement keeps its publisher disabled instead.
-      try { await this.pendingMigration?.afterCommit?.() } catch { /* Retain the durable outcome. */ }
 
       let committedSession: GameStateSession<TState>
       try {
@@ -259,7 +246,6 @@ export class TransactionalGameApplication<TState, TCommand>
         return this.reloadAfterCommittedWrite(committed, published)
       }
       this.session = committedSession
-      this.pendingMigration = undefined
       const state = this.requireEngine().snapshot()
       this.setReady({
         ...this.requireReadySnapshot(),
@@ -377,9 +363,8 @@ export class TransactionalGameApplication<TState, TCommand>
       // Prove the complete application session and engine before the first
       // displacement or replacement write so an invalid import can never
       // overwrite the current durable save.
-      let candidateSession: GameStateSession<TState>
       try {
-        candidateSession = this.options.sessionFactory.open(prepared)
+        const candidateSession = this.options.sessionFactory.open(prepared)
         new TransactionalSimulationEngine(
           candidateSession.initialState,
           this.options.engineDefinition,
@@ -417,17 +402,8 @@ export class TransactionalGameApplication<TState, TCommand>
         }
       }
 
-      // This validated import replaces any abandoned startup recovery. Its
-      // publication must never execute the old source's entitlement/preferences.
-      this.options.repository.cancelPendingPublication?.()
-      if (candidateSession.requiresMigrationChoice) {
-        this.installSession(prepared, 'import', null, candidateSession,
-          { sourceText: request.text, target: request.target })
-        return { imported: true, sessionRevision: this.requireReadySnapshot().revision.session }
-      }
-
       try {
-        await this.options.repository.commit(prepared, request.target, request.text)
+        await this.options.repository.commit(prepared, request.target)
       } catch (error) {
         this.setSnapshot(previous)
         return {
@@ -493,15 +469,10 @@ export class TransactionalGameApplication<TState, TCommand>
       this.installSession(
         resolution.save,
         resolution.kind === 'first-run' ? 'first-run' : resolution.source,
-        resolution.kind === 'first-run' || resolution.publicationPending ? null : 0,
-        undefined,
-        resolution.pendingPublication,
+        resolution.kind === 'first-run' ? null : 0,
       )
-      if ((resolution.kind === 'first-run' || resolution.publicationPending) &&
-          this.requireReadySnapshot().operation !== 'rework-choice-pending') await this.checkpoint()
+      if (resolution.kind === 'first-run') await this.checkpoint()
     } catch (error) {
-      this.options.repository.cancelPendingPublication?.(this.pendingMigration?.owner)
-      this.pendingMigration = undefined
       this.setSnapshot({
         version: APPLICATION_SNAPSHOT_VERSION,
         phase: 'blocked',
@@ -516,18 +487,14 @@ export class TransactionalGameApplication<TState, TCommand>
     prepared: PreparedSave,
     source: ReadySource,
     durableRevision: number | null,
-    openedSession?: GameStateSession<TState>,
-    migrationInput?: StartupPendingPublication & { readonly target?: SaveCommitTarget },
   ): void {
-    const session = openedSession ?? this.options.sessionFactory.open(prepared)
-    const engine = new TransactionalSimulationEngine(
+    const session = this.options.sessionFactory.open(prepared)
+    this.session = session
+    this.engine = new TransactionalSimulationEngine(
       session.initialState,
       this.options.engineDefinition,
     )
-    const engineSnapshot = engine.snapshot()
-    this.session = session
-    this.engine = engine
-    this.pendingMigration = session.requiresMigrationChoice ? { owner: prepared, ...migrationInput } : undefined
+    const engineSnapshot = this.engine.snapshot()
     const previousSession =
       this.current.phase === 'ready' ? this.current.revision.session : 0
     this.setSnapshot({
@@ -547,7 +514,7 @@ export class TransactionalGameApplication<TState, TCommand>
               reason: 'state-changed',
             }
           : { kind: 'clean', durableRevision },
-      operation: session.requiresMigrationChoice ? 'rework-choice-pending' : 'none',
+      operation: 'none',
       state: engineSnapshot.state,
     })
   }
@@ -571,7 +538,6 @@ export class TransactionalGameApplication<TState, TCommand>
 
   private validateActiveEnvelope(
     envelope: ApplicationCommandEnvelope<TCommand>,
-    allowMigrationChoice = false,
   ): SimulationTransitionResult | undefined {
     const ready = this.readySnapshot()
     if (!ready) {
@@ -580,7 +546,7 @@ export class TransactionalGameApplication<TState, TCommand>
         'Commands require a ready application.',
       )
     }
-    if (ready.operation !== 'none' && !(allowMigrationChoice && ready.operation === 'rework-choice-pending')) {
+    if (ready.operation !== 'none') {
       return this.rejected(
         'APP-COMMIT-FIRST-BUSY',
         'A commit-first operation currently owns publication.',

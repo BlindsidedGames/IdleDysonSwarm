@@ -1,13 +1,10 @@
-import { fileURLToPath } from 'node:url'
 import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
 import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import {
   HTML_CONTENT_SECURITY_POLICY,
   renderStaticSecurityHeaders,
   SECURITY_HEADERS,
-  MODE_FRAME_SECURITY_HEADERS,
 } from './securityHeaders.js'
 import {
   stripMessageAuthoringMetadataPlugin,
@@ -16,7 +13,7 @@ import {
   omitDuplicatedEnglishWikiMessagesPlugin,
 } from './scripts/omitDuplicatedEnglishWikiMessages.js'
 import {
-  PWA_REWORK_BETA_BASE_PATH,
+  PWA_BASE_PATH,
   pwaPackagePlugin,
 } from './scripts/pwaPackage.js'
 import {
@@ -37,7 +34,7 @@ function nativeRelativeHtmlPlugin(): Plugin {
   return {
     name: 'idle-dyson-swarm-native-relative-html',
     transformIndexHtml(html) {
-      return html.replaceAll('/rework-beta/', './').replaceAll('/play/', './')
+      return html.replaceAll('/play/', './')
     },
   }
 }
@@ -89,7 +86,7 @@ export default defineConfig(({ mode }) => {
     process.env.IDS_RELEASE_CANDIDATE_ID,
   )
   return {
-    base: nativeBuild ? './' : PWA_REWORK_BETA_BASE_PATH,
+    base: nativeBuild ? './' : PWA_BASE_PATH,
     define: {
       __IDS_PACKAGED_RELEASE_IDENTITY__: JSON.stringify(
         packagedReleaseIdentity,
@@ -105,17 +102,8 @@ export default defineConfig(({ mode }) => {
         : [pwaPackagePlugin()]),
       {
         name: 'idle-dyson-swarm-security-headers',
-        configurePreviewServer(server) {
-          // Serve the single owned iframe before preview's global DENY headers.
-          server.middlewares.use((request, response, next) => {
-            if (request.url?.split('?')[0] !== `${server.config.base}mode.html`) return next()
-            for (const [name, value] of Object.entries(MODE_FRAME_SECURITY_HEADERS)) response.setHeader(name, value)
-            response.setHeader('Content-Type', 'text/html; charset=utf-8')
-            response.end(readFileSync(resolve(server.config.root, server.config.build.outDir, 'mode.html')))
-          })
-        },
-        transformIndexHtml(_html, context) {
-          if (context.server) return []
+        apply: 'build',
+        transformIndexHtml() {
           return [
             {
               tag: 'meta',
@@ -132,13 +120,12 @@ export default defineConfig(({ mode }) => {
           this.emitFile({
             type: 'asset',
             fileName: '_headers',
-            source: renderStaticSecurityHeaders('/rework-beta/*'),
+            source: renderStaticSecurityHeaders('/play/*'),
           })
         },
       },
     ],
     build: {
-      rolldownOptions: { input: { main: fileURLToPath(new URL('./index.html', import.meta.url)), mode: fileURLToPath(new URL('./mode.html', import.meta.url)) } },
       // Native schemes and Electron's file loader require relative asset URLs.
       outDir: nativeBuild ? 'dist-native' : 'dist',
       // The repeatable initial-request budget report consumes this graph instead

@@ -226,10 +226,6 @@ export interface BrowserRuntimeFoundationOptions {
   readonly saveStorage?: SaveStorageAdapter & BrowserLegacyRecoveryStore
   readonly saveRepositoryPaths?: SaveRepositoryPaths
   readonly allowCanonicalPlayerWrites?: boolean
-  /** Deployment hold checked before leases, host ownership and recovery. */
-  readonly savePublicationBlockReason?: string
-  /** Verifies the native root before acquiring ownership or reading any save. */
-  readonly verifySaveStorage?: () => Promise<void>
   readonly indexedDbFactory?: IDBFactory
   /** Deterministic lifecycle orchestration test seam. */
   readonly lifecycle?: LifecycleAdapter
@@ -471,7 +467,6 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   // completed any required canonical replay inside the authority fence.
   private lifecycleReconciledIntentEpoch = 0
   private departureRecordedForCurrentEpisode = false
-  private pendingMigrationGraph: BrowserRuntimeGraph | undefined
   // Every admitted import participates, including queued calls and failures.
   // Only the final completion may reopen foreground sampling.
   private pendingImportCount = 0
@@ -908,9 +903,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       )
       this.assertCurrentGraph(graph)
       this.publishFrontendSnapshot(graph)
-      // Restore may verify ownership that is already projected. No write is
-      // required for an accepted unchanged state; rejected/failed writes fail.
-      return result.committed || (result.transition.accepted && !result.transition.changed)
+      return result.committed
     } catch {
       return false
     }
@@ -1472,10 +1465,6 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     this.frontendSnapshots.publishStarting()
     this.publish({ phase: 'starting' })
     try {
-      if (this.options.savePublicationBlockReason !== undefined) {
-        throw new Error(this.options.savePublicationBlockReason)
-      }
-      await this.options.verifySaveStorage?.()
       const acquisition = await this.lease.acquire()
       if (this.shutdownRequested) {
         await this.teardownPromise
@@ -1636,7 +1625,6 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       {
         allowCanonicalPlayerWrites:
           this.options.allowCanonicalPlayerWrites === true,
-        publicationBlockReason: this.options.savePublicationBlockReason,
       },
       this.options.automaticPurchaseEvidencePromoter,
       this.options.automaticNumberFormattingAdopter,
@@ -2031,16 +2019,6 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     if (!this.lease.isAuthoritative()) {
       throw new WriterAuthorityLostError()
     }
-    const application = graph.application.snapshot()
-    if (application.phase === 'ready' && (application.operation === 'rework-choice-pending' || application.operation === 'rework-migration')) {
-      this.pendingMigrationGraph = graph
-      graph.checkpoint.stop()
-      graph.activeTime.pauseForeground()
-    } else if (this.pendingMigrationGraph === graph && application.phase === 'ready' && application.operation === 'none') {
-      this.pendingMigrationGraph = undefined
-      graph.checkpoint.start()
-      this.startActiveTimeIfForegroundIntended(graph)
-    }
     this.frontendSnapshots.publish(
       graph.application.frontendSnapshot(this.gameplayPreviewDemand, this.facilityDetailsDemand),
       force,
@@ -2267,8 +2245,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         expectedIntentEpoch !== this.lifecycleIntentEpoch
       ) ||
       !this.isCurrentGraph(graph) ||
-      graph.application.snapshot().phase !== 'ready' ||
-      this.pendingMigrationGraph === graph
+      graph.application.snapshot().phase !== 'ready'
     ) {
       return
     }
@@ -2349,7 +2326,6 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         this.departureRecordedForCurrentEpisode = false
       } else if (
         recordDeparture &&
-        (this.pendingMigrationGraph === undefined || this.pendingMigrationGraph !== this.graph) &&
         !this.departureRecordedForCurrentEpisode
       ) {
         this.departureMarker.record(serializedUtcText)
@@ -2543,8 +2519,6 @@ function isDirtySnapshot(
 ): boolean {
   return (
     snapshot.phase === 'ready' &&
-    snapshot.operation !== 'rework-choice-pending' &&
-    snapshot.operation !== 'rework-migration' &&
     snapshot.checkpoint.kind !== 'clean'
   )
 }
@@ -2645,7 +2619,6 @@ function unsafeForegroundReplayReason(
   }
   if (
     result.replayed ||
-    result.code === 'migration-choice-pending' ||
     result.code === 'no-quit-timestamp' ||
     result.code === 'import-baseline-suppressed'
   ) {
@@ -2731,7 +2704,6 @@ function mapImportResult(
   }
   return Object.freeze({
     imported: true,
-    ...(!result.committed ? { migrationPending: true as const } : {}),
     sessionRevision: result.sessionRevision,
     recoveryAvailable: true,
     lifecycleReset: result.lifecycleReset,

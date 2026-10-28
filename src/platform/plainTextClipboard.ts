@@ -10,7 +10,7 @@ if (typeof document !== 'undefined') {
   }, true)
 }
 
-/** Native writes are one user action; browser copying uses selection without asking permissions. */
+/** Native writes stay tied to a Copy click; browsers fall back to selection copying. */
 export function copyPlainText(text: string, selection?: HTMLTextAreaElement | null): Promise<void> {
   const nativeWrite = nativeClipboardTextWriter()
   if (nativeWrite !== null) {
@@ -18,6 +18,13 @@ export function copyPlainText(text: string, selection?: HTMLTextAreaElement | nu
     copyAction = false
     return nativeWrite(text)
   }
+  if (navigator.clipboard?.writeText) {
+    return navigator.clipboard.writeText(text).catch(() => copyUsingSelection(text, selection))
+  }
+  return copyUsingSelection(text, selection)
+}
+
+function copyUsingSelection(text: string, selection?: HTMLTextAreaElement | null): Promise<void> {
   const previousFocus = document.activeElement
   const area = selection ?? document.createElement('textarea')
   if (!selection) {

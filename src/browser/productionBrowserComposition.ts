@@ -9,8 +9,6 @@ import {
   createUnityFirstRunResetRequest,
 } from '../application/firstRun/productionFirstRun'
 import { CURRENT_SAVE_SCHEMA } from '../save/migrate'
-import { REWORK_BETA_DATABASE_NAME, REWORK_BETA_PROFILE_ID, REWORK_BETA_SAVE_PATHS,
-  REWORK_BETA_WRITER_TOKEN_KEY, REWORK_BETA_OWNERSHIP_CHANNEL } from './reworkBetaStorage'
 import {
   BrowserLifecycleUtcClock,
   BrowserMonotonicClock,
@@ -34,6 +32,11 @@ import type { ReleasePlatformServices } from '../platform/releaseFoundation'
 import {
   asAutomaticUnityPurchaseEvidencePromoter,
 } from '../save/automaticPurchaseEvidence'
+import {
+  PRODUCTION_BROWSER_DATABASE_NAME,
+  PRODUCTION_BROWSER_PROFILE_ID,
+  PRODUCTION_BROWSER_SAVE_PATHS,
+} from './productionBrowserStorage'
 
 export {
   PRODUCTION_BROWSER_DATABASE_NAME,
@@ -132,7 +135,7 @@ export function createProductionBrowserComposition(
     options.createRuntime ?? createBrowserRuntimeFoundation
   const writerIdentity =
     options.writerIdentity ??
-    createBrowserReloadWriterIdentity({ storageKey: REWORK_BETA_WRITER_TOKEN_KEY })
+    createBrowserReloadWriterIdentity()
   const ownershipNoticeChannel =
     options.ownershipNoticeChannel ??
     (options.createRuntime === undefined
@@ -144,21 +147,10 @@ export function createProductionBrowserComposition(
     createApplication,
     lifecyclePolicy: WEB_LIFECYCLE_POLICY,
     allowedExternalOrigins: COMMUNITY_EXTERNAL_ORIGINS,
-    databaseName: REWORK_BETA_DATABASE_NAME,
-    profileId: REWORK_BETA_PROFILE_ID,
-    saveRepositoryPaths: REWORK_BETA_SAVE_PATHS,
+    databaseName: PRODUCTION_BROWSER_DATABASE_NAME,
+    profileId: PRODUCTION_BROWSER_PROFILE_ID,
+    saveRepositoryPaths: PRODUCTION_BROWSER_SAVE_PATHS,
     allowCanonicalPlayerWrites: true,
-    verifySaveStorage: async () => {
-      if (typeof window === 'undefined') return
-      if (!window.location.pathname.startsWith('/rework-beta/')) {
-        throw new Error('Open the beta at its separate /rework-beta/ address. Existing progress is preserved.')
-      }
-      const controller = globalThis.navigator?.serviceWorker?.controller
-      if (controller !== null && controller !== undefined &&
-          new URL(controller.scriptURL, window.location.href).pathname !== '/rework-beta/service-worker.js') {
-        throw new Error('A public service worker controls this beta page. Existing progress is preserved; close this page and reopen the beta separately.')
-      }
-    },
     lifecycleClock,
     activeTimeClock: monotonicClock,
     nowUtcMilliseconds: () =>
@@ -227,7 +219,7 @@ function createOwnershipNoticeChannel():
   | undefined {
   try {
     return new BrowserBroadcastOwnershipChannel(
-      REWORK_BETA_OWNERSHIP_CHANNEL,
+      'idle-dyson-swarm:writer-ownership',
     )
   } catch {
     return undefined

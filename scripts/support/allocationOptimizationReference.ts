@@ -31,12 +31,12 @@ export function referenceSerializeWebSave(save: SaveRecord): string {
     throw new Error('Canonical web saves require a non-negative integer schema.')
   }
   const envelope = {
-    format: 'IDLEDS',
+    format: 'IDSWEB1',
     schema,
     state: encodeValue(save, new Set()),
   }
   const json = JSON.stringify(sortObject({ ...envelope }))
-  return `IDLEDS:${encodeBase64(gzipSync(strToU8(json), { level: 9, mtime: 0 }))}`
+  return `IDSWEB1:${encodeBase64(gzipSync(strToU8(json), { level: 9, mtime: 0 }))}`
 }
 
 function encodeValue(value: unknown, seen: Set<object>): unknown {

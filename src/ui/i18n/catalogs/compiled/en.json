@@ -639,916 +639,6 @@
       "value": "View challenge"
     }
   ],
-  "civilization.allocated": [
-    {
-      "type": 0,
-      "value": "Allocated workers"
-    }
-  ],
-  "civilization.amount": [
-    {
-      "type": 1,
-      "value": "resource"
-    },
-    {
-      "type": 0,
-      "value": ": "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "civilization.autoPriority": [
-    {
-      "type": 0,
-      "value": "Auto-Priority"
-    }
-  ],
-  "civilization.automaticAward": [
-    {
-      "type": 0,
-      "value": "Awarded automatically when every requirement is complete."
-    }
-  ],
-  "civilization.automaticPriority": [
-    {
-      "type": 0,
-      "value": "Provisioning workers share their time: two-thirds on your preferred job, one-third on the other. Worker counts show these shares. Tool reserves still apply."
-    }
-  ],
-  "civilization.autumn": [
-    {
-      "type": 0,
-      "value": "Autumn"
-    }
-  ],
-  "civilization.available": [
-    {
-      "type": 0,
-      "value": "Unassigned / total"
-    }
-  ],
-  "civilization.awarded": [
-    {
-      "type": 0,
-      "value": "Awarded Catalysts: "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " / 3"
-    }
-  ],
-  "civilization.balanced": [
-    {
-      "type": 0,
-      "value": "Balanced"
-    }
-  ],
-  "civilization.bootstrap": [
-    {
-      "type": 0,
-      "value": "Family gathering needs no inputs or assigned worker."
-    }
-  ],
-  "civilization.bootstrapV4": [
-    {
-      "type": 0,
-      "value": "Three founders begin with one shelter kit. Gathering needs a real crew and no inputs."
-    }
-  ],
-  "civilization.buildCamp": [
-    {
-      "type": 0,
-      "value": "Build camp"
-    }
-  ],
-  "civilization.buildTent": [
-    {
-      "type": 0,
-      "value": "Build tent"
-    }
-  ],
-  "civilization.camp": [
-    {
-      "type": 0,
-      "value": "Camp"
-    }
-  ],
-  "civilization.campBenefit": [
-    {
-      "type": 0,
-      "value": "Converts 3 tents into a camp. Keeps their residents and adds 3 more."
-    }
-  ],
-  "civilization.campExpansion": [
-    {
-      "type": 0,
-      "value": "Camp Expansion"
-    }
-  ],
-  "civilization.campProvisioning": [
-    {
-      "type": 0,
-      "value": "Camp Provisioning"
-    }
-  ],
-  "civilization.campUnlock": [
-    {
-      "type": 0,
-      "value": "Complete one Hideworking cycle, then convert 3 tents."
-    }
-  ],
-  "civilization.camps": [
-    {
-      "type": 0,
-      "value": "Camps"
-    }
-  ],
-  "civilization.cancel": [
-    {
-      "type": 0,
-      "value": "Cancel"
-    }
-  ],
-  "civilization.catalysts": [
-    {
-      "type": 0,
-      "value": "Catalysts"
-    }
-  ],
-  "civilization.chieftain": [
-    {
-      "type": 0,
-      "value": "Leadership"
-    }
-  ],
-  "civilization.chieftainAuto": [
-    {
-      "type": 0,
-      "value": "Leadership automation"
-    }
-  ],
-  "civilization.chieftainHelp": [
-    {
-      "type": 0,
-      "value": "Automatically chooses a priority for Provisioning and Craft based on growth needs and the season. Turn off to choose manually."
-    }
-  ],
-  "civilization.chieftainOff": [
-    {
-      "type": 0,
-      "value": "Off"
-    }
-  ],
-  "civilization.chieftainOn": [
-    {
-      "type": 0,
-      "value": "On"
-    }
-  ],
-  "civilization.chieftainRequirement": [
-    {
-      "type": 0,
-      "value": "Requires 2 Camps. Costs 12 Tools and 6 Game; Camps are kept."
-    }
-  ],
-  "civilization.chieftainTarget": [
-    {
-      "type": 0,
-      "value": "Preparing for "
-    },
-    {
-      "type": 1,
-      "value": "name"
-    }
-  ],
-  "civilization.clothing": [
-    {
-      "type": 0,
-      "value": "Leather"
-    }
-  ],
-  "civilization.coldSeason": [
-    {
-      "type": 0,
-      "value": "Hunting: full food yield. Gathering: 25% food yield and double materials. Game yield is unchanged."
-    }
-  ],
-  "civilization.completed": [
-    {
-      "type": 0,
-      "value": "Completed cycles"
-    }
-  ],
-  "civilization.continuedDevelopment": [
-    {
-      "type": 0,
-      "value": "Camp development "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "civilization.conversion": [
-    {
-      "type": 0,
-      "value": "Each shelter houses 2 workers; each camp houses 8. Three shelters become one camp."
-    }
-  ],
-  "civilization.conversionV4": [
-    {
-      "type": 0,
-      "value": "A shelter adds 2 residents. Three shelters and their 6 residents remain reserved during conversion. The finished camp houses 9 residents, adding 3."
-    }
-  ],
-  "civilization.craft": [
-    {
-      "type": 0,
-      "value": "Craft"
-    }
-  ],
-  "civilization.craftPriority": [
-    {
-      "type": 0,
-      "value": "Craft priority"
-    }
-  ],
-  "civilization.craftSpecialization": [
-    {
-      "type": 0,
-      "value": "Craft Specialization"
-    }
-  ],
-  "civilization.duration": [
-    {
-      "type": 0,
-      "value": "Cycle duration"
-    }
-  ],
-  "civilization.equip": [
-    {
-      "type": 0,
-      "value": "Equip "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " workers"
-    }
-  ],
-  "civilization.equipConfirm": [
-    {
-      "type": 0,
-      "value": "Spend "
-    },
-    {
-      "type": 1,
-      "value": "tools"
-    },
-    {
-      "type": 0,
-      "value": " Tools and "
-    },
-    {
-      "type": 1,
-      "value": "clothing"
-    },
-    {
-      "type": 0,
-      "value": " Clothing to equip "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " workers?"
-    }
-  ],
-  "civilization.equipmentAutomatic": [
-    {
-      "type": 0,
-      "value": "Every simulation minute, available Tools and Clothing equip up to one quarter of residents. Each retained kit costs 2 Tools and 1 Clothing."
-    }
-  ],
-  "civilization.equipmentEffect": [
-    {
-      "type": 0,
-      "value": "Each equipped field worker contributes one extra worker of productive labor."
-    }
-  ],
-  "civilization.equipmentEffectV4": [
-    {
-      "type": 0,
-      "value": "Each useful equipped field worker adds half a worker of productive labor."
-    }
-  ],
-  "civilization.equipmentStock": [
-    {
-      "type": 0,
-      "value": "Tools and Clothing are consumed when equipping workers. Installed equipment stays with the camp."
-    }
-  ],
-  "civilization.equipped": [
-    {
-      "type": 0,
-      "value": "Equipped workers"
-    }
-  ],
-  "civilization.era": [
-    {
-      "type": 0,
-      "value": "Forager era"
-    }
-  ],
-  "civilization.eraSettings": [
-    {
-      "type": 0,
-      "value": "Forager details"
-    }
-  ],
-  "civilization.establishedCamp": [
-    {
-      "type": 0,
-      "value": "Established camp"
-    }
-  ],
-  "civilization.exchangeNetworks": [
-    {
-      "type": 0,
-      "value": "Exchange Networks"
-    }
-  ],
-  "civilization.exchangeRoutes": [
-    {
-      "type": 0,
-      "value": "Exchange routes"
-    }
-  ],
-  "civilization.expeditions": [
-    {
-      "type": 0,
-      "value": "Expeditions & Trade"
-    }
-  ],
-  "civilization.failed": [
-    {
-      "type": 0,
-      "value": "Action failed. Try again."
-    }
-  ],
-  "civilization.fall": [
-    {
-      "type": 0,
-      "value": "Fall"
-    }
-  ],
-  "civilization.firstHunt": [
-    {
-      "type": 0,
-      "value": "First hunt"
-    }
-  ],
-  "civilization.fishing": [
-    {
-      "type": 0,
-      "value": "Fishing"
-    }
-  ],
-  "civilization.focus": [
-    {
-      "type": 0,
-      "value": "Workforce focus"
-    }
-  ],
-  "civilization.focusBalancedHelp": [
-    {
-      "type": 0,
-      "value": "Balanced shares workers across available jobs at their normal work rates."
-    }
-  ],
-  "civilization.focusEffect": [
-    {
-      "type": 0,
-      "value": "More workers join this path as the camp grows. Other paths keep smaller crews."
-    }
-  ],
-  "civilization.focusEffectV4": [
-    {
-      "type": 0,
-      "value": "Focus favours this path and its supporting crews. Unfunded jobs release workers; paid cycles keep their inputs."
-    }
-  ],
-  "civilization.focusSelectedHelp": [
-    {
-      "type": 1,
-      "value": "primary"
-    },
-    {
-      "type": 0,
-      "value": " work at "
-    },
-    {
-      "type": 1,
-      "value": "selectedRate"
-    },
-    {
-      "type": 0,
-      "value": "× their Balanced rate. Other jobs keep their normal rates."
-    }
-  ],
-  "civilization.focusSupportedHelp": [
-    {
-      "type": 1,
-      "value": "primary"
-    },
-    {
-      "type": 0,
-      "value": " work at "
-    },
-    {
-      "type": 1,
-      "value": "selectedRate"
-    },
-    {
-      "type": 0,
-      "value": "× their Balanced rate; "
-    },
-    {
-      "type": 1,
-      "value": "support"
-    },
-    {
-      "type": 0,
-      "value": " at "
-    },
-    {
-      "type": 1,
-      "value": "supportRate"
-    },
-    {
-      "type": 0,
-      "value": "×. Other jobs keep their normal rates."
-    }
-  ],
-  "civilization.food": [
-    {
-      "type": 0,
-      "value": "Food"
-    }
-  ],
-  "civilization.foodPreservation": [
-    {
-      "type": 0,
-      "value": "Food Preservation"
-    }
-  ],
-  "civilization.fractureRule": [
-    {
-      "type": 0,
-      "value": "+5% simulation speed per fractured skill. Bonuses are additive."
-    }
-  ],
-  "civilization.fractures": [
-    {
-      "type": 0,
-      "value": "Fracture boost +"
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "civilization.gathering": [
-    {
-      "type": 0,
-      "value": "Gathering"
-    }
-  ],
-  "civilization.growthFocus": [
-    {
-      "type": 0,
-      "value": "Growth"
-    }
-  ],
-  "civilization.hides": [
-    {
-      "type": 0,
-      "value": "Game"
-    }
-  ],
-  "civilization.hideworking": [
-    {
-      "type": 0,
-      "value": "Hideworking"
-    }
-  ],
-  "civilization.hideworkingPrerequisite": [
-    {
-      "type": 0,
-      "value": "Complete one Hunting cycle to unlock."
-    }
-  ],
-  "civilization.hireChieftain": [
-    {
-      "type": 0,
-      "value": "Unlock Leadership"
-    }
-  ],
-  "civilization.housing": [
-    {
-      "type": 0,
-      "value": "Housing capacity"
-    }
-  ],
-  "civilization.hunting": [
-    {
-      "type": 0,
-      "value": "Hunting"
-    }
-  ],
-  "civilization.huntingPrerequisite": [
-    {
-      "type": 0,
-      "value": "Complete one Toolmaking cycle to unlock."
-    }
-  ],
-  "civilization.huntingUnlock": [
-    {
-      "type": 0,
-      "value": "Unlock Hunting for 1 Tool. Further hunts cost no Tools."
-    }
-  ],
-  "civilization.inputs": [
-    {
-      "type": 0,
-      "value": "Cycle cost"
-    }
-  ],
-  "civilization.legacyWorkHelp": [
-    {
-      "type": 0,
-      "value": "Older paid cycles keep their original work rates until they finish."
-    }
-  ],
-  "civilization.locked": [
-    {
-      "type": 0,
-      "value": "Requires "
-    },
-    {
-      "type": 1,
-      "value": "name"
-    }
-  ],
-  "civilization.materials": [
-    {
-      "type": 0,
-      "value": "Materials"
-    }
-  ],
-  "civilization.milestoneStep": [
-    {
-      "type": 1,
-      "value": "name"
-    },
-    {
-      "type": 0,
-      "value": ": "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " / "
-    },
-    {
-      "type": 1,
-      "value": "target"
-    }
-  ],
-  "civilization.next": [
-    {
-      "type": 0,
-      "value": "Next: "
-    },
-    {
-      "type": 1,
-      "value": "name"
-    }
-  ],
-  "civilization.nextCatalyst": [
-    {
-      "type": 0,
-      "value": "Next Catalyst"
-    }
-  ],
-  "civilization.nextEra": [
-    {
-      "type": 0,
-      "value": "Next: Cultivation & Herding"
-    }
-  ],
-  "civilization.nodeBonus": [
-    {
-      "type": 0,
-      "value": "When fractured: +5% overall simulation speed. Bonuses are additive."
-    }
-  ],
-  "civilization.nodeBonusActive": [
-    {
-      "type": 0,
-      "value": "Fractured: +5% overall simulation speed. Bonuses are additive."
-    }
-  ],
-  "civilization.outputs": [
-    {
-      "type": 0,
-      "value": "Cycle output"
-    }
-  ],
-  "civilization.paid": [
-    {
-      "type": 0,
-      "value": "Inputs reserved for this cycle"
-    }
-  ],
-  "civilization.phaseComplete": [
-    {
-      "type": 0,
-      "value": "Forager opening complete"
-    }
-  ],
-  "civilization.population": [
-    {
-      "type": 0,
-      "value": "Population"
-    }
-  ],
-  "civilization.populationGoal": [
-    {
-      "type": 0,
-      "value": "Population "
-    },
-    {
-      "type": 1,
-      "value": "current"
-    },
-    {
-      "type": 0,
-      "value": " / "
-    },
-    {
-      "type": 1,
-      "value": "target"
-    }
-  ],
-  "civilization.preview": [
-    {
-      "type": 0,
-      "value": "Agriculture continues in a later phase. Your activities keep running."
-    }
-  ],
-  "civilization.priority": [
-    {
-      "type": 0,
-      "value": "Provisioning priority"
-    }
-  ],
-  "civilization.priorityChoice": [
-    {
-      "type": 0,
-      "value": "Prioritize: "
-    },
-    {
-      "type": 1,
-      "value": "name"
-    }
-  ],
-  "civilization.provisioning": [
-    {
-      "type": 0,
-      "value": "Provisioning"
-    }
-  ],
-  "civilization.provisions": [
-    {
-      "type": 0,
-      "value": "Provisions"
-    }
-  ],
-  "civilization.recruitment": [
-    {
-      "type": 0,
-      "value": "Workers remain in the camp. Each needs a housing place."
-    }
-  ],
-  "civilization.seasonRemaining": [
-    {
-      "type": 0,
-      "value": "Next season in "
-    },
-    {
-      "type": 1,
-      "value": "time"
-    }
-  ],
-  "civilization.seasonalExpeditions": [
-    {
-      "type": 0,
-      "value": "Seasonal Expeditions"
-    }
-  ],
-  "civilization.settlement": [
-    {
-      "type": 0,
-      "value": "Settlement"
-    }
-  ],
-  "civilization.shelterBuilding": [
-    {
-      "type": 0,
-      "value": "Shelter Building"
-    }
-  ],
-  "civilization.shelters": [
-    {
-      "type": 0,
-      "value": "Shelters"
-    }
-  ],
-  "civilization.speed": [
-    {
-      "type": 0,
-      "value": "Progress speed"
-    }
-  ],
-  "civilization.spring": [
-    {
-      "type": 0,
-      "value": "Spring"
-    }
-  ],
-  "civilization.summer": [
-    {
-      "type": 0,
-      "value": "Summer"
-    }
-  ],
-  "civilization.suppliesFocus": [
-    {
-      "type": 0,
-      "value": "Supplies"
-    }
-  ],
-  "civilization.tent": [
-    {
-      "type": 0,
-      "value": "Tent"
-    }
-  ],
-  "civilization.tentBenefit": [
-    {
-      "type": 0,
-      "value": "Adds 2 residents. Built immediately."
-    }
-  ],
-  "civilization.tentUnlock": [
-    {
-      "type": 0,
-      "value": "Complete one Hideworking cycle to unlock."
-    }
-  ],
-  "civilization.tents": [
-    {
-      "type": 0,
-      "value": "Tents"
-    }
-  ],
-  "civilization.toolmaking": [
-    {
-      "type": 0,
-      "value": "Toolmaking"
-    }
-  ],
-  "civilization.toolmakingPrerequisite": [
-    {
-      "type": 0,
-      "value": "Complete one Gathering cycle to unlock."
-    }
-  ],
-  "civilization.tools": [
-    {
-      "type": 0,
-      "value": "Tools"
-    }
-  ],
-  "civilization.tradeFocus": [
-    {
-      "type": 0,
-      "value": "Travel"
-    }
-  ],
-  "civilization.unlock": [
-    {
-      "type": 0,
-      "value": "Required cycles: "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " of "
-    },
-    {
-      "type": 1,
-      "value": "name"
-    }
-  ],
-  "civilization.unlockHunting": [
-    {
-      "type": 0,
-      "value": "Unlock Hunting"
-    }
-  ],
-  "civilization.upcoming": [
-    {
-      "type": 0,
-      "value": "Next activities"
-    }
-  ],
-  "civilization.waiting": [
-    {
-      "type": 0,
-      "value": "Waiting"
-    }
-  ],
-  "civilization.waitingDemand": [
-    {
-      "type": 0,
-      "value": "Demand met; workers support other jobs until more is needed."
-    }
-  ],
-  "civilization.waitingHousing": [
-    {
-      "type": 0,
-      "value": "Waiting for housing"
-    }
-  ],
-  "civilization.waitingInputs": [
-    {
-      "type": 0,
-      "value": "Waiting: "
-    },
-    {
-      "type": 1,
-      "value": "name"
-    }
-  ],
-  "civilization.waitingRange": [
-    {
-      "type": 0,
-      "value": "Balance cannot accept output"
-    }
-  ],
-  "civilization.waitingWorkers": [
-    {
-      "type": 0,
-      "value": "Waiting for workers"
-    }
-  ],
-  "civilization.warmSeason": [
-    {
-      "type": 0,
-      "value": "Gathering: full food yield. Hunting: 25% food yield. Game yield is unchanged."
-    }
-  ],
-  "civilization.winter": [
-    {
-      "type": 0,
-      "value": "Winter"
-    }
-  ],
-  "civilization.workers": [
-    {
-      "type": 0,
-      "value": "Workers"
-    }
-  ],
   "debug.access-description": [
     {
       "type": 0,
@@ -1703,24 +793,6 @@
       "value": "Enable for free"
     }
   ],
-  "debug.era": [
-    {
-      "type": 0,
-      "value": "Era"
-    }
-  ],
-  "debug.era-help": [
-    {
-      "type": 0,
-      "value": "Start the selected era fresh. Replaces simulation progress; other progress is kept."
-    }
-  ],
-  "debug.jump-era": [
-    {
-      "type": 0,
-      "value": "Jump to era"
-    }
-  ],
   "debug.lock-tabs": [
     {
       "type": 0,
@@ -1797,12 +869,6 @@
     {
       "type": 0,
       "value": "Whole cap"
-    }
-  ],
-  "debug.simulation-era": [
-    {
-      "type": 0,
-      "value": "Simulation era"
     }
   ],
   "debug.speedrun-warning": [
@@ -2268,7 +1334,7 @@
   "discovery.resetRule": [
     {
       "type": 0,
-      "value": "Persists through Infinity. Resets on Transcendence."
+      "value": "Persists through Infinity and Quantum. Resets on Transcendence."
     }
   ],
   "discovery.route": [
@@ -5307,468 +4373,6 @@
       "value": "Tinker in your garage"
     }
   ],
-  "farming.amount": [
-    {
-      "type": 1,
-      "value": "resource"
-    },
-    {
-      "type": 0,
-      "value": ": "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "farming.begin": [
-    {
-      "type": 0,
-      "value": "Begin Farming era"
-    }
-  ],
-  "farming.betaEndpoint": [
-    {
-      "type": 0,
-      "value": "Forager and Farming are complete. More coming soon."
-    }
-  ],
-  "farming.buy": [
-    {
-      "type": 0,
-      "value": "Buy"
-    }
-  ],
-  "farming.era": [
-    {
-      "type": 0,
-      "value": "Farming Villages"
-    }
-  ],
-  "farming.failed": [
-    {
-      "type": 0,
-      "value": "The action could not be saved. Try again."
-    }
-  ],
-  "farming.finish": [
-    {
-      "type": 0,
-      "value": "Establish the village"
-    }
-  ],
-  "farming.granary": [
-    {
-      "type": 0,
-      "value": "Granary"
-    }
-  ],
-  "farming.handoff": [
-    {
-      "type": 0,
-      "value": "Farming replaces your Forager camp with three founders and empty stores. Unfinished work is discarded. Earned Catalysts are kept."
-    }
-  ],
-  "farming.inputs": [
-    {
-      "type": 0,
-      "value": "Cycle cost"
-    }
-  ],
-  "farming.missingInputs": [
-    {
-      "type": 0,
-      "value": "Missing: "
-    },
-    {
-      "type": 1,
-      "value": "inputs"
-    }
-  ],
-  "farming.nextPrice": [
-    {
-      "type": 0,
-      "value": "Next price"
-    }
-  ],
-  "farming.outputs": [
-    {
-      "type": 0,
-      "value": "Cycle output"
-    }
-  ],
-  "farming.owned": [
-    {
-      "type": 0,
-      "value": "Owned: "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "farming.pendingSkill": [
-    {
-      "type": 0,
-      "value": "This milestone is waiting for an eligible existing Skill tree choice or room in the Catalyst wallet."
-    }
-  ],
-  "farming.settings": [
-    {
-      "type": 0,
-      "value": "Village settings"
-    }
-  ],
-  "farming.shop": [
-    {
-      "type": 0,
-      "value": "Purchases"
-    }
-  ],
-  "farming.village.averted": [
-    {
-      "type": 0,
-      "value": "Disaster averted. The spirits accept the credit."
-    }
-  ],
-  "farming.village.balance": [
-    {
-      "type": 0,
-      "value": "Food balance"
-    }
-  ],
-  "farming.village.burials": [
-    {
-      "type": 0,
-      "value": "Burials"
-    }
-  ],
-  "farming.village.consumption": [
-    {
-      "type": 0,
-      "value": "Consumption"
-    }
-  ],
-  "farming.village.crops": [
-    {
-      "type": 0,
-      "value": "Crops"
-    }
-  ],
-  "farming.village.disasterDeaths": [
-    {
-      "type": 0,
-      "value": "Disasters"
-    }
-  ],
-  "farming.village.disasterLoss": [
-    {
-      "type": 0,
-      "value": "Population loss"
-    }
-  ],
-  "farming.village.disasterRisk": [
-    {
-      "type": 0,
-      "value": "Season-end risk"
-    }
-  ],
-  "farming.village.fewerJobs": [
-    {
-      "type": 1,
-      "value": "name"
-    },
-    {
-      "type": 0,
-      "value": ": fewer jobs"
-    }
-  ],
-  "farming.village.field": [
-    {
-      "type": 0,
-      "value": "Field"
-    }
-  ],
-  "farming.village.fire": [
-    {
-      "type": 0,
-      "value": "Fire: population −"
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "farming.village.flood": [
-    {
-      "type": 0,
-      "value": "Flood: population −"
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "farming.village.food": [
-    {
-      "type": 0,
-      "value": "Food"
-    }
-  ],
-  "farming.village.fullCrew": [
-    {
-      "type": 0,
-      "value": "Full crew"
-    }
-  ],
-  "farming.village.growth": [
-    {
-      "type": 0,
-      "value": "Growing"
-    }
-  ],
-  "farming.village.herding": [
-    {
-      "type": 0,
-      "value": "Livestock"
-    }
-  ],
-  "farming.village.house": [
-    {
-      "type": 0,
-      "value": "House"
-    }
-  ],
-  "farming.village.housing": [
-    {
-      "type": 0,
-      "value": "Housing"
-    }
-  ],
-  "farming.village.idle": [
-    {
-      "type": 0,
-      "value": "Idle"
-    }
-  ],
-  "farming.village.irrigation": [
-    {
-      "type": 0,
-      "value": "Irrigation"
-    }
-  ],
-  "farming.village.jobSpaces": [
-    {
-      "type": 0,
-      "value": "Building capacity"
-    }
-  ],
-  "farming.village.jobs": [
-    {
-      "type": 0,
-      "value": "Jobs"
-    }
-  ],
-  "farming.village.jobsFor": [
-    {
-      "type": 1,
-      "value": "name"
-    },
-    {
-      "type": 0,
-      "value": ": jobs"
-    }
-  ],
-  "farming.village.land": [
-    {
-      "type": 0,
-      "value": "Free land"
-    }
-  ],
-  "farming.village.lastEvent": [
-    {
-      "type": 0,
-      "value": "Last event"
-    }
-  ],
-  "farming.village.loggingCamp": [
-    {
-      "type": 0,
-      "value": "Logging camp"
-    }
-  ],
-  "farming.village.moreJobs": [
-    {
-      "type": 1,
-      "value": "name"
-    },
-    {
-      "type": 0,
-      "value": ": more jobs"
-    }
-  ],
-  "farming.village.natural": [
-    {
-      "type": 0,
-      "value": "Natural deaths"
-    }
-  ],
-  "farming.village.needsGranary": [
-    {
-      "type": 0,
-      "value": "3 Houses"
-    }
-  ],
-  "farming.village.needsIrrigation": [
-    {
-      "type": 0,
-      "value": "4 Fields"
-    }
-  ],
-  "farming.village.needsLand": [
-    {
-      "type": 0,
-      "value": "No free land"
-    }
-  ],
-  "farming.village.needsPasture": [
-    {
-      "type": 0,
-      "value": "2 Fields · 2 Houses"
-    }
-  ],
-  "farming.village.needsShrine": [
-    {
-      "type": 0,
-      "value": "4 Houses"
-    }
-  ],
-  "farming.village.needsWoodland": [
-    {
-      "type": 0,
-      "value": "Clear woodland"
-    }
-  ],
-  "farming.village.needsWorkshop": [
-    {
-      "type": 0,
-      "value": "Workshop required"
-    }
-  ],
-  "farming.village.nextDisaster": [
-    {
-      "type": 0,
-      "value": "Next disaster"
-    }
-  ],
-  "farming.village.noMaterials": [
-    {
-      "type": 0,
-      "value": "No Materials"
-    }
-  ],
-  "farming.village.pasture": [
-    {
-      "type": 0,
-      "value": "Pasture"
-    }
-  ],
-  "farming.village.perMinute": [
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": "/min"
-    }
-  ],
-  "farming.village.production": [
-    {
-      "type": 0,
-      "value": "Production"
-    }
-  ],
-  "farming.village.protection": [
-    {
-      "type": 0,
-      "value": "Disaster reduction"
-    }
-  ],
-  "farming.village.reserve": [
-    {
-      "type": 0,
-      "value": "Food reserve"
-    }
-  ],
-  "farming.village.shaman": [
-    {
-      "type": 0,
-      "value": "Shamans"
-    }
-  ],
-  "farming.village.shrine": [
-    {
-      "type": 0,
-      "value": "Shrine"
-    }
-  ],
-  "farming.village.sickness": [
-    {
-      "type": 0,
-      "value": "Sickness: population −"
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "farming.village.starvation": [
-    {
-      "type": 0,
-      "value": "Starvation"
-    }
-  ],
-  "farming.village.status": [
-    {
-      "type": 0,
-      "value": "Status"
-    }
-  ],
-  "farming.village.stocked": [
-    {
-      "type": 0,
-      "value": "Stocked"
-    }
-  ],
-  "farming.village.woodland": [
-    {
-      "type": 0,
-      "value": "Woodland"
-    }
-  ],
-  "farming.village.work": [
-    {
-      "type": 0,
-      "value": "Work"
-    }
-  ],
-  "farming.village.workingCount": [
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " working"
-    }
-  ],
-  "farming.workshop": [
-    {
-      "type": 0,
-      "value": "Workshop"
-    }
-  ],
   "gameplay.notifications.continue": [
     {
       "type": 0,
@@ -6345,326 +4949,6 @@
       "value": "Start with 10 Servers"
     }
   ],
-  "modes.back": [
-    {
-      "type": 0,
-      "value": "Back to "
-    },
-    {
-      "type": 1,
-      "value": "mode"
-    }
-  ],
-  "modes.cancel": [
-    {
-      "type": 0,
-      "value": "Cancel"
-    }
-  ],
-  "modes.classic": [
-    {
-      "type": 0,
-      "value": "Classic"
-    }
-  ],
-  "modes.confirm": [
-    {
-      "type": 0,
-      "value": "Confirm migration"
-    }
-  ],
-  "modes.conflict": [
-    {
-      "type": 0,
-      "value": "You already have a Modern save. Continue it to keep its progress."
-    }
-  ],
-  "modes.continue": [
-    {
-      "type": 0,
-      "value": "Continue "
-    },
-    {
-      "type": 1,
-      "value": "mode"
-    }
-  ],
-  "modes.failed": [
-    {
-      "type": 0,
-      "value": "The change could not be saved. Your last saved progress is preserved."
-    }
-  ],
-  "modes.migrate": [
-    {
-      "type": 0,
-      "value": "Migrate Classic progress"
-    }
-  ],
-  "modes.modern": [
-    {
-      "type": 0,
-      "value": "Modern"
-    }
-  ],
-  "modes.oneWay": [
-    {
-      "type": 0,
-      "value": "Copy compatible Classic progress to Modern? Your Classic save stays available, including Classic-only progress. Modern progress cannot be converted back."
-    }
-  ],
-  "modes.saves.choose": [
-    {
-      "type": 0,
-      "value": "Choose save: "
-    },
-    {
-      "type": 1,
-      "value": "mode"
-    }
-  ],
-  "modes.saves.chooseDescription": [
-    {
-      "type": 0,
-      "value": "These saves differ. Choose which progress to keep. The original copies stay preserved."
-    }
-  ],
-  "modes.saves.close": [
-    {
-      "type": 0,
-      "value": "Close"
-    }
-  ],
-  "modes.saves.cloud": [
-    {
-      "type": 0,
-      "value": "Use Cloud"
-    }
-  ],
-  "modes.saves.copy": [
-    {
-      "type": 0,
-      "value": "Copy"
-    }
-  ],
-  "modes.saves.copyNumber": [
-    {
-      "type": 0,
-      "value": "Use saved copy "
-    },
-    {
-      "type": 1,
-      "value": "number"
-    }
-  ],
-  "modes.saves.description": [
-    {
-      "type": 0,
-      "value": "Export or import the save for your current mode."
-    }
-  ],
-  "modes.saves.done": [
-    {
-      "type": 0,
-      "value": "Saved."
-    }
-  ],
-  "modes.saves.download": [
-    {
-      "type": 0,
-      "value": "Download file"
-    }
-  ],
-  "modes.saves.export": [
-    {
-      "type": 0,
-      "value": "Export Save"
-    }
-  ],
-  "modes.saves.failed": [
-    {
-      "type": 0,
-      "value": "The operation failed. Your saved data is preserved."
-    }
-  ],
-  "modes.saves.file": [
-    {
-      "type": 0,
-      "value": "Choose save file"
-    }
-  ],
-  "modes.saves.import": [
-    {
-      "type": 0,
-      "value": "Import Save"
-    }
-  ],
-  "modes.saves.importDescription": [
-    {
-      "type": 0,
-      "value": "Import a save into your current mode. Classic saves imported into Modern are migrated automatically. The other mode’s save is kept."
-    }
-  ],
-  "modes.saves.importTarget": [
-    {
-      "type": 0,
-      "value": "Import into "
-    },
-    {
-      "type": 1,
-      "value": "mode"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
-  "modes.saves.local": [
-    {
-      "type": 0,
-      "value": "Use this device"
-    }
-  ],
-  "modes.saves.pending": [
-    {
-      "type": 0,
-      "value": "Working…"
-    }
-  ],
-  "modes.saves.recovery": [
-    {
-      "type": 0,
-      "value": "Recover mode saves"
-    }
-  ],
-  "modes.saves.recoveryDescription": [
-    {
-      "type": 0,
-      "value": "A recovery archive preserves damaged data for troubleshooting. It cannot be imported as a game save."
-    }
-  ],
-  "modes.saves.recoveryExport": [
-    {
-      "type": 0,
-      "value": "Export recovery archive"
-    }
-  ],
-  "modes.saves.recoveryPartial": [
-    {
-      "type": 0,
-      "value": "Some recovery files could not be read. Available data is included."
-    }
-  ],
-  "modes.saves.recoveryWarning": [
-    {
-      "type": 0,
-      "value": "Restore the retained checkpoint for the listed modes? Progress since that checkpoint stays in the recovery archive."
-    }
-  ],
-  "modes.saves.replace": [
-    {
-      "type": 0,
-      "value": "Replace Save"
-    }
-  ],
-  "modes.saves.resetConfirmation": [
-    {
-      "type": 0,
-      "value": "Reset all progress in "
-    },
-    {
-      "type": 1,
-      "value": "mode"
-    },
-    {
-      "type": 0,
-      "value": " and start again? The other mode’s save is kept."
-    }
-  ],
-  "modes.saves.restoreRecovery": [
-    {
-      "type": 0,
-      "value": "Restore retained checkpoint"
-    }
-  ],
-  "modes.saves.review": [
-    {
-      "type": 0,
-      "value": "Review import"
-    }
-  ],
-  "modes.saves.reviewRecovery": [
-    {
-      "type": 0,
-      "value": "Review retained checkpoint"
-    }
-  ],
-  "modes.saves.summary": [
-    {
-      "type": 0,
-      "value": "Modes: "
-    },
-    {
-      "type": 1,
-      "value": "modes"
-    },
-    {
-      "type": 0,
-      "value": ". Opens "
-    },
-    {
-      "type": 1,
-      "value": "mode"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
-  "modes.saves.text": [
-    {
-      "type": 0,
-      "value": "Save export"
-    }
-  ],
-  "modes.saves.title": [
-    {
-      "type": 0,
-      "value": "Save data"
-    }
-  ],
-  "modes.saves.warning": [
-    {
-      "type": 0,
-      "value": "This replaces your current mode’s save. The other mode’s save is kept. Export your current save first."
-    }
-  ],
-  "modes.separate": [
-    {
-      "type": 0,
-      "value": "Each mode keeps a separate save."
-    }
-  ],
-  "modes.start": [
-    {
-      "type": 0,
-      "value": "Start "
-    },
-    {
-      "type": 1,
-      "value": "mode"
-    }
-  ],
-  "modes.switch": [
-    {
-      "type": 0,
-      "value": "Game mode: "
-    },
-    {
-      "type": 1,
-      "value": "mode"
-    }
-  ],
   "navigation.avocato": [
     {
       "type": 0,
@@ -6829,32 +5113,6 @@
       "value": "Simulations"
     }
   ],
-  "navigation.simulations-goals-progress": [
-    {
-      "type": 1,
-      "value": "destination"
-    },
-    {
-      "type": 0,
-      "value": ", "
-    },
-    {
-      "type": 1,
-      "value": "current"
-    },
-    {
-      "type": 0,
-      "value": " of "
-    },
-    {
-      "type": 1,
-      "value": "required"
-    },
-    {
-      "type": 0,
-      "value": " Bots goals completed"
-    }
-  ],
   "navigation.simulations-influence-progress": [
     {
       "type": 1,
@@ -6944,7 +5202,7 @@
   "offline-time.auto-resume": [
     {
       "type": 0,
-      "value": "On return"
+      "value": "Automation"
     }
   ],
   "offline-time.auto-resume-last": [
@@ -7126,7 +5384,7 @@
   "offline-time.capacity-result": [
     {
       "type": 0,
-      "value": "New capacity"
+      "value": "New cap"
     }
   ],
   "offline-time.close-summary": [
@@ -7469,408 +5727,6 @@
     {
       "type": 0,
       "value": "Time simulated"
-    }
-  ],
-  "pilotChallenges.abandon": [
-    {
-      "type": 0,
-      "value": "Abandon challenge"
-    }
-  ],
-  "pilotChallenges.blank-slate.name": [
-    {
-      "type": 0,
-      "value": "Blank Slate"
-    }
-  ],
-  "pilotChallenges.blank-slate.rule": [
-    {
-      "type": 0,
-      "value": "Complete one Infinity with skills, augments and fractured effects inactive."
-    }
-  ],
-  "pilotChallenges.break": [
-    {
-      "type": 0,
-      "value": "Requires Break the Loop."
-    }
-  ],
-  "pilotChallenges.budget": [
-    {
-      "type": 0,
-      "value": "Challenge rewards: "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " / 20 SP"
-    }
-  ],
-  "pilotChallenges.built-by-hand.name": [
-    {
-      "type": 0,
-      "value": "Manual Labour"
-    }
-  ],
-  "pilotChallenges.built-by-hand.rule": [
-    {
-      "type": 0,
-      "value": "Complete one Infinity with no facilities or automatic Bot production. Temporary Manual Labour access is provided."
-    }
-  ],
-  "pilotChallenges.cancel": [
-    {
-      "type": 0,
-      "value": "Cancel"
-    }
-  ],
-  "pilotChallenges.commitment-issues.name": [
-    {
-      "type": 0,
-      "value": "Commitment Issues"
-    }
-  ],
-  "pilotChallenges.commitment-issues.rule": [
-    {
-      "type": 0,
-      "value": "Earn 32 IP without refunding or replacing your build throughout the attempt, including Infinity resets."
-    }
-  ],
-  "pilotChallenges.compactTitle": [
-    {
-      "type": 0,
-      "value": "Infinity Challenges"
-    }
-  ],
-  "pilotChallenges.confirm": [
-    {
-      "type": 0,
-      "value": "Confirm restart"
-    }
-  ],
-  "pilotChallenges.convergenceEarned": [
-    {
-      "type": 0,
-      "value": "Convergence unlocked"
-    }
-  ],
-  "pilotChallenges.convergenceLocked": [
-    {
-      "type": 0,
-      "value": "Complete all 10 challenges to unlock."
-    }
-  ],
-  "pilotChallenges.convergenceProgress": [
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " / 10 challenges completed"
-    }
-  ],
-  "pilotChallenges.convergenceRule": [
-    {
-      "type": 0,
-      "value": "Your Galactic Brains grow continuously, doubling every 30 minutes of game time. Requires at least one Galactic Brain."
-    }
-  ],
-  "pilotChallenges.convergenceTitle": [
-    {
-      "type": 0,
-      "value": "Convergence"
-    }
-  ],
-  "pilotChallenges.earned": [
-    {
-      "type": 0,
-      "value": "Earned "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " permanent SP"
-    }
-  ],
-  "pilotChallenges.failure": [
-    {
-      "type": 0,
-      "value": "The challenge could not be started or saved. Your current run has been kept."
-    }
-  ],
-  "pilotChallenges.first": [
-    {
-      "type": 0,
-      "value": "Complete your first Infinity."
-    }
-  ],
-  "pilotChallenges.grounded.name": [
-    {
-      "type": 0,
-      "value": "Grounded"
-    }
-  ],
-  "pilotChallenges.grounded.rule": [
-    {
-      "type": 0,
-      "value": "Earn 32 IP without Planets or megastructures. The Planet goal becomes 100 purchased Data Centers."
-    }
-  ],
-  "pilotChallenges.hands-off.name": [
-    {
-      "type": 0,
-      "value": "Hands Off"
-    }
-  ],
-  "pilotChallenges.hands-off.rule": [
-    {
-      "type": 0,
-      "value": "Earn 32 IP without facility purchases or Tinkering. Start with one Assembly Line and a Planet-generation build."
-    }
-  ],
-  "pilotChallenges.history": [
-    {
-      "type": 0,
-      "value": "Previous challenge completions: "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": ". Historical rewards are preserved; compensation is not applied in this pilot."
-    }
-  ],
-  "pilotChallenges.intro": [
-    {
-      "type": 0,
-      "value": "Each attempt starts a fresh Infinity. Only IP earned during the attempt counts. First completions award permanent SP once."
-    }
-  ],
-  "pilotChallenges.lean-build.name": [
-    {
-      "type": 0,
-      "value": "Lean Build"
-    }
-  ],
-  "pilotChallenges.lean-build.rule": [
-    {
-      "type": 0,
-      "value": "Earn 16 IP with no more than 4 SP of assigned skills. Refunds are allowed."
-    }
-  ],
-  "pilotChallenges.no-science.name": [
-    {
-      "type": 0,
-      "value": "No Science"
-    }
-  ],
-  "pilotChallenges.no-science.rule": [
-    {
-      "type": 0,
-      "value": "Earn 32 IP without Science, Research or Discovery."
-    }
-  ],
-  "pilotChallenges.openingComplete": [
-    {
-      "type": 0,
-      "value": "Completed"
-    }
-  ],
-  "pilotChallenges.openingEarned": [
-    {
-      "type": 0,
-      "value": "Simulations unlocked"
-    }
-  ],
-  "pilotChallenges.openingProgress": [
-    {
-      "type": 0,
-      "value": "Active · "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " / 10 goals"
-    }
-  ],
-  "pilotChallenges.openingReward": [
-    {
-      "type": 0,
-      "value": "Reward: unlock Simulations"
-    }
-  ],
-  "pilotChallenges.openingRule": [
-    {
-      "type": 0,
-      "value": "Complete all 10 goals in the Bots tab."
-    }
-  ],
-  "pilotChallenges.openingTitle": [
-    {
-      "type": 0,
-      "value": "Beginnings"
-    }
-  ],
-  "pilotChallenges.other": [
-    {
-      "type": 0,
-      "value": "Finish or abandon the active challenge."
-    }
-  ],
-  "pilotChallenges.overflow": [
-    {
-      "type": 0,
-      "value": "Resolve Transcendence first."
-    }
-  ],
-  "pilotChallenges.progress": [
-    {
-      "type": 0,
-      "value": "Active · "
-    },
-    {
-      "type": 1,
-      "value": "ip"
-    },
-    {
-      "type": 0,
-      "value": " IP earned · "
-    },
-    {
-      "type": 1,
-      "value": "infinities"
-    },
-    {
-      "type": 0,
-      "value": " Infinities"
-    }
-  ],
-  "pilotChallenges.purchases": [
-    {
-      "type": 0,
-      "value": "Paid facilities: "
-    },
-    {
-      "type": 1,
-      "value": "count"
-    },
-    {
-      "type": 0,
-      "value": " / 10 · types: "
-    },
-    {
-      "type": 1,
-      "value": "types"
-    },
-    {
-      "type": 0,
-      "value": " / 3"
-    }
-  ],
-  "pilotChallenges.replay": [
-    {
-      "type": 0,
-      "value": "Replay"
-    }
-  ],
-  "pilotChallenges.restart": [
-    {
-      "type": 0,
-      "value": "Start a fresh Infinity without awarding IP. Persistent civilization progress, upgrades, reward history and fracture ownership are kept. Abandoning discards attempt progress and restores normal effects."
-    }
-  ],
-  "pilotChallenges.reward": [
-    {
-      "type": 0,
-      "value": "Reward: "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " permanent SP"
-    }
-  ],
-  "pilotChallenges.rules": [
-    {
-      "type": 0,
-      "value": "Previous IP does not count toward the production multiplier. Division, gameplay Double IP, Discovery and permanent fractures are inactive; purchased boosts remain active. Infinity shop purchases pause during attempts. Most attempts start with 10 SP plus goal rewards; Blank Slate and Manual Labour start with zero, and Lean Build starts with 4. Attempts continue across Infinities. Transcendence discards an unfinished attempt without awarding its SP. Replays award no additional SP."
-    }
-  ],
-  "pilotChallenges.rulesTitle": [
-    {
-      "type": 0,
-      "value": "Attempt rules and rewards"
-    }
-  ],
-  "pilotChallenges.short-circuit.name": [
-    {
-      "type": 0,
-      "value": "Short Circuit"
-    }
-  ],
-  "pilotChallenges.short-circuit.rule": [
-    {
-      "type": 0,
-      "value": "Earn 64 IP with panel lifetime fixed at 2 seconds."
-    }
-  ],
-  "pilotChallenges.simulationsLocked": [
-    {
-      "type": 0,
-      "value": "Complete Beginnings by finishing all 10 goals in the Bots tab to unlock Simulations."
-    }
-  ],
-  "pilotChallenges.start": [
-    {
-      "type": 0,
-      "value": "Start"
-    }
-  ],
-  "pilotChallenges.supply-shortage.name": [
-    {
-      "type": 0,
-      "value": "Supply Shortage"
-    }
-  ],
-  "pilotChallenges.supply-shortage.rule": [
-    {
-      "type": 0,
-      "value": "Earn 64 IP with purchase prices doubling, and pay for 10 facilities across 3 types. Generated and free facilities do not count."
-    }
-  ],
-  "pilotChallenges.title": [
-    {
-      "type": 0,
-      "value": "Infinity Challenges"
-    }
-  ],
-  "pilotChallenges.unlock": [
-    {
-      "type": 0,
-      "value": "Requires "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " total earned IP."
     }
   ],
   "pwa.update.accept": [
@@ -10099,178 +7955,6 @@
     {
       "type": 0,
       "value": "Always show preset quick actions"
-    }
-  ],
-  "rework.action.failed": [
-    {
-      "type": 0,
-      "value": "The change could not be saved. Try again."
-    }
-  ],
-  "rework.cancel": [
-    {
-      "type": 0,
-      "value": "Cancel"
-    }
-  ],
-  "rework.challenges.completed": [
-    {
-      "type": 0,
-      "value": "Previous completions: "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    }
-  ],
-  "rework.challenges.history": [
-    {
-      "type": 0,
-      "value": "Earned rewards and completion records are preserved."
-    }
-  ],
-  "rework.challenges.pending": [
-    {
-      "type": 0,
-      "value": "Challenges are being redesigned."
-    }
-  ],
-  "rework.civilization": [
-    {
-      "type": 0,
-      "value": "Civilization"
-    }
-  ],
-  "rework.infinity.advanced": [
-    {
-      "type": 0,
-      "value": "Advanced upgrades"
-    }
-  ],
-  "rework.infinity.double-time.description": [
-    {
-      "type": 0,
-      "value": "Double game speed."
-    }
-  ],
-  "rework.infinity.double-time.title": [
-    {
-      "type": 0,
-      "value": "Double Time"
-    }
-  ],
-  "rework.infinity.regular": [
-    {
-      "type": 0,
-      "value": "Infinity upgrades"
-    }
-  ],
-  "rework.migration.automaticDescription": [
-    {
-      "type": 0,
-      "value": "Your save is automatically migrated when you open Modern. Advanced upgrades are earned again and fractures and their augments are removed. Your base game, IP, Transcendence, Discovery and purchases stay."
-    }
-  ],
-  "rework.migration.continueModern": [
-    {
-      "type": 0,
-      "value": "Continue in Modern"
-    }
-  ],
-  "rework.migration.description": [
-    {
-      "type": 0,
-      "value": "Choose to keep equivalent upgrades and fractures, or earn the advanced upgrades again. Starting fresh removes fractures and their augments; your base game, IP, Transcendence, Discovery and purchases stay."
-    }
-  ],
-  "rework.migration.fresh": [
-    {
-      "type": 0,
-      "value": "Earn upgrades again"
-    }
-  ],
-  "rework.migration.intro": [
-    {
-      "type": 0,
-      "value": "I'm rebuilding progression. Quantum, Reality and the old Sims are gone. Useful upgrades now live in Infinity, and civilization Sims now earn resources for Catalysts."
-    }
-  ],
-  "rework.migration.keep": [
-    {
-      "type": 0,
-      "value": "Keep equivalent progress"
-    }
-  ],
-  "rework.migration.returnClassic": [
-    {
-      "type": 0,
-      "value": "Return to Classic"
-    }
-  ],
-  "rework.migration.separateSaves": [
-    {
-      "type": 0,
-      "value": "Your progress continues in two separate saves. You can switch between Classic and Modern at any time."
-    }
-  ],
-  "rework.migration.title": [
-    {
-      "type": 0,
-      "value": "Hey guys, Dev here"
-    }
-  ],
-  "rework.simulations.details": [
-    {
-      "type": 0,
-      "value": "Era resources will buy Catalysts. Permanent fractures will accelerate each civilization."
-    }
-  ],
-  "rework.simulations.pending": [
-    {
-      "type": 0,
-      "value": "Civilization progression is coming next."
-    }
-  ],
-  "rework.transcend": [
-    {
-      "type": 0,
-      "value": "Transcend"
-    }
-  ],
-  "rework.transcend.balance": [
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " Transcendence Points"
-    }
-  ],
-  "rework.transcend.confirm": [
-    {
-      "type": 0,
-      "value": "Confirm Transcendence"
-    }
-  ],
-  "rework.transcend.confirmation": [
-    {
-      "type": 0,
-      "value": "Reset base production and Infinity upgrades for 1 Transcendence Point? Fractures, civilization progress and Discovery upgrades remain."
-    }
-  ],
-  "rework.transcend.threshold": [
-    {
-      "type": 0,
-      "value": "Reach "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " bots to Transcend."
     }
   ],
   "settings.achievements.action": [
@@ -13024,7 +10708,7 @@
   "skills.node.androids.technical": [
     {
       "type": 0,
-      "value": "While the Androids Skill is assigned, its bonus scales from 0 to 200 seconds of Panel Lifetime over a 10 minute span.\nThis resets on Infinity."
+      "value": "While the Androids Skill is assigned, its bonus scales from 0 to 200 seconds of Panel Lifetime over a 10 minute span.\nThis resets on Infinity/Quantum Leap."
     }
   ],
   "skills.node.artificiallyEnhancedPanels.description": [
@@ -14464,7 +12148,7 @@
   "skills.node.superRadiantScattering.technical": [
     {
       "type": 0,
-      "value": "Increase Cash, Science, Bot, and all facility production by 1% per second while assigned. Bonuses are additive. Charges during Stored Time simulation and resets on Infinity."
+      "value": "Increase Cash, Science, Bot, and all facility production by 1% per second while assigned. Bonuses are additive. Charges during Stored Time simulation and resets on Infinity or Quantum Leap."
     }
   ],
   "skills.node.superSwarm.description": [
@@ -14842,7 +12526,7 @@
   "skills.non-refundable-confirmation-warning": [
     {
       "type": 0,
-      "value": "Non-refundable skills and their prerequisite paths cannot be refunded until an Infinity reset. Continue?"
+      "value": "Non-refundable skills and their prerequisite paths cannot be refunded until an Infinity or Quantum reset. Continue?"
     }
   ],
   "skills.none": [
@@ -15401,6 +13085,12 @@
       "value": "Show presets 6–10"
     }
   ],
+  "skills.settings.showTooltips": [
+    {
+      "type": 0,
+      "value": "Show tooltips"
+    }
+  ],
   "skills.show-preset-application-notifications": [
     {
       "type": 0,
@@ -15440,7 +13130,7 @@
   "skills.srs.afterglow.effect": [
     {
       "type": 0,
-      "value": "Retain 10% of SRS charge through Infinity, multiplied by Stellar Memory up to 50% retention. Adds to Hot Start."
+      "value": "Retain 10% of SRS charge through Infinity, multiplied by Stellar Memory up to 50% retention. Adds to Hot Start. Quantum Leap clears retained charge."
     }
   ],
   "skills.srs.afterglow.name": [
@@ -15458,7 +13148,7 @@
   "skills.srs.deepExposure.effect": [
     {
       "type": 0,
-      "value": "Increase SRS charging speed by 10% per minute this augment is assigned, up to 200% after 20 minutes. Stellar Memory multiplies these bonuses. Resets on Infinity. Bonuses are additive."
+      "value": "Increase SRS charging speed by 10% per minute this augment is assigned, up to 200% after 20 minutes. Stellar Memory multiplies these bonuses. Resets on Infinity or Quantum Leap. Bonuses are additive."
     }
   ],
   "skills.srs.deepExposure.name": [
@@ -15548,7 +13238,7 @@
   "skills.srs.stellarMemory.effect": [
     {
       "type": 0,
-      "value": "On Infinity reset, bank newly generated SRS charge, excluding Hot Start and Afterglow. While assigned, boosts SRS augment benefits by 1 + 0.25 × log10(max(1, banked seconds))."
+      "value": "On Infinity or Quantum reset, bank newly generated SRS charge, excluding Hot Start and Afterglow. While assigned, boosts SRS augment benefits by 1 + 0.25 × log10(max(1, banked seconds))."
     }
   ],
   "skills.srs.stellarMemory.name": [
@@ -15942,7 +13632,7 @@
   "skills.swarm.steadySupply.technical": [
     {
       "type": 0,
-      "value": "Keep paid facility purchases through Infinity. Assign before resetting; purchases return automatically. Free starter units do not accumulate. Transcendence clears the supply."
+      "value": "Keep paid facility purchases through Infinity. Assign before resetting; purchases return automatically. Free starter units do not accumulate. Quantum clears the supply."
     }
   ],
   "skills.swarm.stellarSwarm.description": [
@@ -16716,7 +14406,7 @@
   "statistics.scope.quantum-run": [
     {
       "type": 0,
-      "value": "Current run"
+      "value": "Current Quantum run"
     }
   ],
   "statistics.speedruns.boostedBest": [
@@ -18221,7 +15911,21 @@
     },
     {
       "type": 0,
-      "value": ". "
+      "value": ", "
+    },
+    {
+      "type": 8,
+      "value": "quantum",
+      "children": [
+        {
+          "type": 0,
+          "value": "Quantum"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " and challenges. "
     },
     {
       "type": 8,
@@ -18699,15 +16403,15 @@
   "wiki.infinity.secrets": [
     {
       "type": 0,
-      "value": "In "
+      "value": "After a "
     },
     {
       "type": 8,
-      "value": "infinity",
+      "value": "quantum",
       "children": [
         {
           "type": 0,
-          "value": "Infinity"
+          "value": "Quantum Leap"
         }
       ]
     },
@@ -19151,7 +16855,7 @@
   "wiki.other.offline-results": [
     {
       "type": 0,
-      "value": "A completed run reports the simulated duration, remaining bank, final accuracy and actual update count. It also shows Infinity gains. Facility and Bot gains appear only when no Infinity occurred, because a reset and rebuild would make a simple before-and-after total misleading."
+      "value": "A completed run reports the simulated duration, remaining bank, final accuracy and actual update count. It also shows relevant Infinity, Simulation and Reality gains. Facility and Bot gains appear only when no Infinity occurred, because a reset and rebuild would make a simple before-and-after total misleading."
     }
   ],
   "wiki.other.offline-results-title": [
@@ -19424,82 +17128,94 @@
       "value": "Version 4.1.11"
     }
   ],
-  "wiki.patch-notes.version-4-1-11.button-contrast": [
+  "wiki.patch-notes.version-4-1-11.credits": [
     {
       "type": 0,
-      "value": "Improved button gradients and text contrast across the game. Disabled buttons now use flat colours."
-    }
-  ],
-  "wiki.patch-notes.version-4-1-11.checkbox-labels": [
-    {
-      "type": 0,
-      "value": "Made checkbox labels wider and consistent across Settings and Skills."
+      "value": "Added credits to the Wiki."
     }
   ],
   "wiki.patch-notes.version-4-1-11.desktop-sizing": [
     {
       "type": 0,
-      "value": "Added desktop interface sizing from 80% to 150%, a Default reset, and skill-tree zoom up to 250%."
+      "value": "Added desktop interface sizes from 80% to 150% and skill-tree zoom up to 250%."
     }
   ],
   "wiki.patch-notes.version-4-1-11.desktop-tooltips": [
     {
       "type": 0,
-      "value": "Refined skill-tree tooltips with clearer effects, formulas, SP costs and potential augment counts. Removed redundant tooltips elsewhere."
+      "value": "Skill-tree tooltips show effects, formulas, Skill Point costs and potential augments. Turn them on or off in the skill-tree settings."
     }
   ],
   "wiki.patch-notes.version-4-1-11.imported-speedruns": [
     {
       "type": 0,
-      "value": "Valid imported saves now continue speedruns with existing eligibility checks. A matching floppy-disk marker appears before Stored Time."
+      "value": "Eligible imported saves can continue speedruns. Imported runs show a save-file marker."
     }
   ],
   "wiki.patch-notes.version-4-1-11.infinity-hold": [
     {
       "type": 0,
-      "value": "Added repeat purchases for Secret of the Universe and Permanent Skill Points in Infinity. Click and hold or long press to keep buying."
+      "value": "Hold purchase buttons to keep buying Infinity and Quantum upgrades. Purchases stop when you release."
     }
   ],
   "wiki.patch-notes.version-4-1-11.infinity-summary": [
     {
       "type": 0,
-      "value": "Infinity now shows the Facility production boost from all earned IP beside the totals, with readable, baseline-aligned text on mobile."
+      "value": "Infinity now shows the facility production boost from all earned Infinity Points beside the totals."
     }
   ],
-  "wiki.patch-notes.version-4-1-11.preset-copy": [
+  "wiki.patch-notes.version-4-1-11.navigation": [
     {
       "type": 0,
-      "value": "Fixed preset Copy in native apps without a clipboard permission prompt. Browsers without clipboard access show a manual-copy fallback."
+      "value": "Widened the desktop side menu and improved its spacing, selected buttons and compact navigation. Fixed a blue pixel at the top-left edge."
     }
   ],
-  "wiki.patch-notes.version-4-1-11.quick-amounts": [
+  "wiki.patch-notes.version-4-1-11.offline-speed": [
     {
       "type": 0,
-      "value": "Choose three Stored Time quick-use amounts in Offline Time, with compact sidebar labels."
+      "value": "Offline Time now builds up while you are away. Spend it during play at speeds from 1× to 42×. Only the extra speed uses stored time; Double Time applies on top."
     }
   ],
-  "wiki.patch-notes.version-4-1-11.sidebar-freeze": [
+  "wiki.patch-notes.version-4-1-11.offline-storage": [
     {
       "type": 0,
-      "value": "Fixed the game freezing when sidebar Stored Time bursts trigger disasters or civilisation endings."
+      "value": "Redesigned Offline Time with a storage bar, remaining boost duration and clearer capacity costs. Choose Off, Last speed or Max speed for automatic boosts when you return."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.preset-notices": [
+    {
+      "type": 0,
+      "value": "Preset conflict notifications no longer repeat for the same unresolved conflict and clear when it is resolved."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.progression-fixes": [
+    {
+      "type": 0,
+      "value": "Fracture availability now updates after progression changes. Hide completed research now includes Durability."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.runtime-fixes": [
+    {
+      "type": 0,
+      "value": "Fixed stalled Railgun volleys and missing Patient Hands credit between game updates."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.save-safety": [
+    {
+      "type": 0,
+      "value": "Improved save recovery, import safety and Cloud conflict handling. Offline time is credited once after returning."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.save-tools": [
+    {
+      "type": 0,
+      "value": "Added optional timestamps to exported save filenames and improved native file saving and preset copy/paste."
     }
   ],
   "wiki.patch-notes.version-4-1-11.stellar-benefits": [
     {
       "type": 0,
-      "value": "Reworked Stellar skills with direct output bonuses that survive fracturing. Fracturing removes each skill’s drawbacks, and Stellar Dominance uses a stable activation requirement. Updated Stellar descriptions and Bot costs."
-    }
-  ],
-  "wiki.patch-notes.version-4-1-11.timestamp-exports": [
-    {
-      "type": 0,
-      "value": "Added an option to timestamp exported save filenames."
-    }
-  ],
-  "wiki.patch-notes.version-4-1-11.tinker-offline": [
-    {
-      "type": 0,
-      "value": "Fixed Tinker showing “Repeating” during Offline Time processing. Tinker is now disabled until processing finishes."
+      "value": "Stellar skills now keep their output bonuses when fractured, with their drawbacks removed. Updated Stellar descriptions, activation requirements and Bot costs."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [
@@ -20132,120 +17848,6 @@
       "value": "Improved Stored Time so duplicate or overlapping spends are safely rejected, active jobs retain their progress and cancellation controls, and unfinished settings remain intact when changing pages."
     }
   ],
-  "wiki.patch-notes.version-4-2-1": [
-    {
-      "type": 0,
-      "value": "Version 4.2.1"
-    }
-  ],
-  "wiki.patch-notes.version-4-2-1.challenges": [
-    {
-      "type": 0,
-      "value": "Added Beginnings and nine Infinity Challenges with new rules and rewards."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-1.convergence": [
-    {
-      "type": 0,
-      "value": "Convergence’s effect is revealed after six challenge completions. Completing all ten unlocks continuous Galactic Brain growth, doubling existing Galactic Brains every 30 minutes of game time."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-1.feedback": [
-    {
-      "type": 0,
-      "value": "Stopped repeated automatic skill-preset conflict notices and improved Simulation countdowns, progress animation and resource formatting."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-1.forager": [
-    {
-      "type": 0,
-      "value": "Simulations unlock through Beginnings after ten Bots goals. Added seasonal Forager gathering and hunting, crew assignments, housing, crafting and Leadership. This version stops at the Forager era; later eras are unavailable."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-1.offline": [
-    {
-      "type": 0,
-      "value": "Fixed offline returns being credited again after a restart. Improved effective game-speed display and capped the offline boost at 8×."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-1.production": [
-    {
-      "type": 0,
-      "value": "Fixed stalled Railgun volleys and iOS detection of existing beta saves, and hid completed Durability research."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-1.progression": [
-    {
-      "type": 0,
-      "value": "Rebuilt Modern progression: Quantum, Reality and the former Simulations are replaced by Infinity upgrades and civilization Simulations. Useful permanent upgrades now live in Infinity."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-1.skills": [
-    {
-      "type": 0,
-      "value": "Fixed Fracture availability after earning a Catalyst and preserved Patient Hands charge from unused time after a Tinker completion."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-2": [
-    {
-      "type": 0,
-      "value": "Version 4.2.2"
-    }
-  ],
-  "wiki.patch-notes.version-4-2-2.migration": [
-    {
-      "type": 0,
-      "value": "Modern migration runs automatically. Advanced upgrades must be earned again, and fractures and their augments are removed. Your base game, Infinity Points, Transcendence, Discovery and purchases stay. You can return to Classic at any time."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-2.modes": [
-    {
-      "type": 0,
-      "value": "Added separate Classic and Modern modes. Opening Modern for the first time copies your Classic progress and preserves the original Classic save. Later switches resume each mode’s own progress."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-2.navigation": [
-    {
-      "type": 0,
-      "value": "The menu now shows Back to Classic or Back to Modern and switches directly. Classic uses its own C-1 version label; Modern shows the app version. Improved compact navigation and version footers."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-2.storage": [
-    {
-      "type": 0,
-      "value": "Added separate native save files and Steam Cloud storage for Classic and Modern, with protection against conflicting or outdated writes and retained recovery copies."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-3": [
-    {
-      "type": 0,
-      "value": "Version 4.2.3"
-    }
-  ],
-  "wiki.patch-notes.version-4-2-3.dialog": [
-    {
-      "type": 0,
-      "value": "Restored timestamped export filenames with a separate preference for each mode. Matched the checkbox to Settings and improved copy/download feedback, import previews, theme and interface sizing, and keyboard focus."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-3.export": [
-    {
-      "type": 0,
-      "value": "Fixed export failing when the browser could no longer write its save. Taking a copy no longer restarts the game or requires a save write, and active Stored Time processing retains its safe pre-processing snapshot."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-3.reset": [
-    {
-      "type": 0,
-      "value": "Restored Reset Save for the current mode without resetting the other mode. Removed Recover mode saves from Settings; startup recovery remains available if a save cannot open."
-    }
-  ],
-  "wiki.patch-notes.version-4-2-3.transfers": [
-    {
-      "type": 0,
-      "value": "Import and export now apply only to the mode you are playing, using its normal save string or file. Review imported progress before replacing that mode’s save; the other mode is preserved."
-    }
-  ],
   "wiki.patch-notes.version-4.accessibility": [
     {
       "type": 0,
@@ -20841,7 +18443,21 @@
     },
     {
       "type": 0,
-      "value": ". Resetting the tree clears the live auto-assignment queue. Presets save complete layouts."
+      "value": " or a "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 0,
+          "value": "Quantum"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " reset. Resetting the tree clears the live auto-assignment queue. Presets save complete layouts."
     }
   ],
   "wiki.skills.auto-assign-title": [
@@ -21247,7 +18863,7 @@
     },
     {
       "type": 0,
-      "value": " in that tab to permanently replace Science and Research. Existing Science and research levels do not carry over."
+      "value": " to permanently replace Science and Research. Existing Science and research levels do not carry over."
     }
   ],
   "wiki.transcendence.overview-title": [

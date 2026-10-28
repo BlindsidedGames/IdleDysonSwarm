@@ -1,1 +1,0 @@
-Season symbols: Spring sprout and Autumn leaf reuse leaf paths from ../forager/foragerFood.svg. Summer sun and Winter snowflake use simple rounded geometry matching the existing flat white symbols. Export with sharp at density 288, resize to 256 square, lossless WebP into src/ui/assets/skill-icons.

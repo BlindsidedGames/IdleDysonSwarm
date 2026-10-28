@@ -1,4 +1,5 @@
 import { Gunzip, gzipSync, strToU8 } from 'fflate'
+import { CURRENT_SAVE_SCHEMA, UnsupportedFutureSaveSchemaError } from './migrate'
 import { isNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import {
   deepCloneSave,
@@ -16,16 +17,13 @@ import {
 } from './decodeIdb1'
 import { assertGzipTrailerIntegrity } from './gzipIntegrity'
 import { packSettingsFlags } from './settingsFlags'
-import { CURRENT_SAVE_SCHEMA, UnsupportedFutureSaveSchemaError } from './saveSchema'
 import {
   TRANSITIONAL_V2_CHECKPOINT_REVISION_FIELD,
   TRANSITIONAL_V2_STORED_TIME_JOB_SHA256_FIELD,
 } from './transitionalV2Retirement'
 
-const WEB_SAVE_FORMAT = 'IDLEDS'
+const WEB_SAVE_FORMAT = 'IDSWEB1'
 const WEB_SAVE_PREFIX = `${WEB_SAVE_FORMAT}:`
-const LEGACY_WEB_SAVE_FORMAT = 'IDSWEB1'
-const LEGACY_WEB_SAVE_PREFIX = `${LEGACY_WEB_SAVE_FORMAT}:`
 const MAXIMUM_DECODE_DEPTH = 128
 const MAXIMUM_DECODE_CONTAINERS = 100_000
 const MAXIMUM_DECODE_ENTRIES = 250_000
@@ -134,7 +132,7 @@ export function deserializeWebSaveBounded(
 }
 
 /**
- * Performs the bounded IDLEDS or historical IDSWEB1 decode once and classifies
+ * Performs the bounded IDSWEB1 transport decode exactly once and classifies
  * the parsed envelope before applying the canonical value codec. Historical
  * schema adapters can consume the unsupported parsed envelope without a
  * second synchronous base64/gzip/CRC/JSON pass.
@@ -145,40 +143,19 @@ export function decodeWebSaveTextBounded(
 ): DecodedWebSaveText {
   assertSuppliedSaveTextLimit(text, limits)
   const trimmed = text.trim()
-  const prefix = [WEB_SAVE_PREFIX, LEGACY_WEB_SAVE_PREFIX].find(
-    (candidate) => trimmed.toUpperCase().startsWith(candidate),
-  )
-  const json = prefix !== undefined
+  const json = trimmed.toUpperCase().startsWith(WEB_SAVE_PREFIX)
     ? decodeCompressedEnvelope(
-        trimmed.slice(prefix.length),
+        trimmed.slice(WEB_SAVE_PREFIX.length),
         limits,
       )
     : trimmed
   const parsed = parseBoundedJsonText(json)
   const envelope = requireRecord(parsed, 'web save envelope')
-  // A recognized newer claim is authoritative even when its transport or
-  // value codec is invalid. Treating it as generic corruption would allow
-  // automatic recovery to overwrite paid progress with an older backup.
+  // A newer schema claim must block recovery even when its value codec is damaged.
   const stateSchema = isRecord(envelope.state) ? envelope.state.saveVersion : undefined
   const newestClaim = Math.max(...[envelope.schema, stateSchema].filter(isNonNegativeInteger))
-  if (newestClaim > CURRENT_SAVE_SCHEMA && newestClaim !== 22) {
-    throw new UnsupportedFutureSaveSchemaError(newestClaim, CURRENT_SAVE_SCHEMA)
-  }
-  const development22 = envelope.schema === 22 || stateSchema === 22
-  if (development22) {
-    const reason = envelope.format !== WEB_SAVE_FORMAT
-      ? 'Development schema 22 requires the IDLEDS envelope.'
-      : prefix !== undefined && prefix !== WEB_SAVE_PREFIX
-        ? 'Web save transport prefix does not match its envelope format.'
-        : envelope.schema !== 22 || stateSchema !== 22
-          ? `Web save envelope schema ${String(envelope.schema)} does not match state schema ${String(stateSchema)}.`
-          : undefined
-    if (reason !== undefined) throw new UnsupportedFutureSaveSchemaError(22, CURRENT_SAVE_SCHEMA, reason)
-  }
-  if (
-    envelope.format !== WEB_SAVE_FORMAT &&
-    envelope.format !== LEGACY_WEB_SAVE_FORMAT
-  ) {
+  if (newestClaim > CURRENT_SAVE_SCHEMA) throw new UnsupportedFutureSaveSchemaError(newestClaim, CURRENT_SAVE_SCHEMA)
+  if (envelope.format !== WEB_SAVE_FORMAT) {
     return Object.freeze({
       kind: 'unsupported-envelope',
       envelope,
@@ -187,34 +164,22 @@ export function decodeWebSaveTextBounded(
       ),
     })
   }
-  if (prefix !== undefined && prefix !== `${envelope.format}:`) {
-    throw new Error('Web save transport prefix does not match its envelope format.')
-  }
   if (!isNonNegativeInteger(envelope.schema)) {
     throw new Error('Canonical web save envelope has an invalid schema.')
   }
-  let state: SaveRecord
-  try {
-    state = requireRecord(
-      decodeValue(
-        envelope.state,
-        {
-          decodedBytes: 0,
-          containers: 0,
-          entries: 0,
-          decodedByteLimit: limits.decodedPayloadBytes,
-        },
-        0,
-      ),
-      'web save state',
-    )
-  } catch (error) {
-    if (development22) {
-      throw new UnsupportedFutureSaveSchemaError(22, CURRENT_SAVE_SCHEMA,
-        `Development schema 22 could not be decoded: ${error instanceof Error ? error.message : String(error)}`)
-    }
-    throw error
-  }
+  const state = requireRecord(
+    decodeValue(
+      envelope.state,
+      {
+        decodedBytes: 0,
+        containers: 0,
+        entries: 0,
+        decodedByteLimit: limits.decodedPayloadBytes,
+      },
+      0,
+    ),
+    'web save state',
+  )
   if (state.saveVersion !== envelope.schema) {
     throw new Error(
       `Web save envelope schema ${envelope.schema} does not match state schema ${String(state.saveVersion)}.`,
@@ -526,7 +491,7 @@ function gunzipBounded(compressed: Uint8Array, limitBytes: number): Uint8Array {
       'Canonical web save gzip output does not match its advertised size.',
     )
   }
-  assertGzipTrailerIntegrity(compressed, output, 'Canonical web save payload')
+  assertGzipTrailerIntegrity(compressed, output, 'IDSWEB1 payload')
   return output
 }
 

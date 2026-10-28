@@ -76,8 +76,6 @@ export type UiRuntimeImportRequest =
 export type UiRuntimeImportResult =
   | {
       readonly imported: true
-      /** Source accepted; replacement awaits the explicit rework decision. */
-      readonly migrationPending?: true
       readonly sessionRevision: number
       readonly recoveryAvailable: true
       readonly lifecycleReset: boolean
@@ -198,7 +196,6 @@ export type UiRuntimeDevelopmentRealityResult =
     }
 
 export type UiRuntimeDevelopmentAction =
-  | { readonly kind: 'jump-to-era'; readonly era: 'forager' | 'farming' }
   | { readonly kind: 'add-discoveries'; readonly amount: bigint }
   | { readonly kind: 'add-transcendence-points'; readonly amount: bigint }
   | { readonly kind: 'add-cash'; readonly amount: number }

@@ -4,6 +4,8 @@ import { readPresentationPreference, writePresentationPreference } from './prese
 
 const KEY = 'idle-dyson-swarm:desktop-interface-scale'
 const CHANGED = `${KEY}:changed`
+const TOOLTIPS_KEY = 'idle-dyson-swarm:show-desktop-tooltips'
+const TOOLTIPS_CHANGED = `${TOOLTIPS_KEY}:changed`
 export const MINIMUM_INTERFACE_SCALE = 0.8
 export const MAXIMUM_INTERFACE_SCALE = 1.5
 
@@ -11,6 +13,27 @@ export function isDesktopPresentation() {
   const userAgent = globalThis.navigator?.userAgent ?? ''
   return Capacitor.getPlatform() === 'web' && !/Android|iPhone|iPad|iPod/i.test(userAgent) &&
     !(/Macintosh/i.test(userAgent) && (globalThis.navigator?.maxTouchPoints ?? 0) > 1)
+}
+
+function subscribeTooltips(listener: () => void) {
+  window.addEventListener(TOOLTIPS_CHANGED, listener)
+  window.addEventListener('storage', listener)
+  return () => {
+    window.removeEventListener(TOOLTIPS_CHANGED, listener)
+    window.removeEventListener('storage', listener)
+  }
+}
+
+const readTooltips = () => readPresentationPreference(TOOLTIPS_KEY) !== 'false'
+const defaultTooltips = () => true
+
+export function useDesktopTooltipsPreference() {
+  const enabled = useSyncExternalStore(subscribeTooltips, readTooltips, defaultTooltips)
+  const setEnabled = (value: boolean) => {
+    writePresentationPreference(TOOLTIPS_KEY, String(value))
+    window.dispatchEvent(new Event(TOOLTIPS_CHANGED))
+  }
+  return { enabled, setEnabled }
 }
 function subscribe(listener: () => void) {
   window.addEventListener(CHANGED, listener)

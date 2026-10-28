@@ -1,5 +1,3 @@
-import { hydrateCivilization } from '../simulation/civilization'
-import { initializeGameplayRework } from '../simulation/gameplayRework'
 import { SKILL_PRESET_COUNT } from './skillPresetSlots'
 import { DEFAULT_OFFLINE_BOOST_MULTIPLIER, isOfflineBoostAutoResume, isOfflineBoostMultiplier, resumeOfflineBoost } from '../simulation/offlineBoost'
 import { readSwarmGrants } from '../simulation/swarmAugments'
@@ -229,20 +227,12 @@ export function hydrateGameState(
 
   const state: CanonicalGameStateV1 = {
     modelVersion: CANONICAL_GAME_MODEL_VERSION,
-    ...(source.civilization === undefined ? {} : { civilization: hydrateCivilization(source.civilization) }),
     discovery: { ...EMPTY_DISCOVERY, ...recordOrEmpty(source.discovery) } as CanonicalGameStateV1['discovery'],
     challenges: {
       ...EMPTY_INFINITY_CHALLENGES,
       ...recordOrEmpty(source.infinityChallengeData),
-      ...(source.fractures ? {
-        galvanizers: recordOrEmpty(source.fractures).catalysts,
-        galvanizedSkillIds: recordOrEmpty(source.fractures).skillIds,
-        hasEarnedGalvanizer: Boolean(recordOrEmpty(source.infinityChallengeData).hasEarnedGalvanizer || recordOrEmpty(source.fractures).catalysts || (recordOrEmpty(source.fractures).skillIds as unknown[]).length),
-      } : {}),
     } as CanonicalGameStateV1['challenges'],
     meta: {
-      ...(source.idsReworkMigrationChoice === 'keep' || source.idsReworkMigrationChoice === 'fresh'
-        ? { reworkMigrationChoice: source.idsReworkMigrationChoice } : {}),
       createdAtLegacyText:
         nonBlankStringOrNull(source.dateStarted),
       tutorialComplete: toBoolean(source.tutorial),
@@ -466,7 +456,7 @@ export function hydrateGameState(
       )
       return {
       ...(isOfflineBoostAutoResume(source.offlineBoostAutoResume) ? { offlineBoostAutoResume: source.offlineBoostAutoResume } : {}),
-      ...(isOfflineBoostMultiplier(source.offlineBoostResumeMultiplier, 16) ? { offlineBoostResumeMultiplier: source.offlineBoostResumeMultiplier } : {}),
+      ...(isOfflineBoostMultiplier(source.offlineBoostResumeMultiplier) ? { offlineBoostResumeMultiplier: source.offlineBoostResumeMultiplier } : {}),
       ...(source.offlineBoostMultiplier === undefined ? {} : { offlineBoost: {
         // A loaded save always starts at regular speed.
         multiplier: DEFAULT_OFFLINE_BOOST_MULTIPLIER,
@@ -713,7 +703,7 @@ export function hydrateGameState(
       ),
     },
   }
-  return new HydratedGameStateV1(resumeOfflineBoost(initializeGameplayRework(state)), prepared)
+  return new HydratedGameStateV1(resumeOfflineBoost(state), prepared)
 }
 
 export function dehydrateGameState(
@@ -740,8 +730,6 @@ export function dehydrateGameState(
   const dreamRun = requireRecord(source.sdSimulation)
   const dreamProgression = requireRecord(source.sdPrestige)
 
-  if (state.meta.reworkMigrationChoice !== undefined) source.idsReworkMigrationChoice = state.meta.reworkMigrationChoice
-  else delete source.idsReworkMigrationChoice
   source.dateStarted = state.meta.createdAtLegacyText
   source.tutorial = state.meta.tutorialComplete
   source.firstInfinityDone = state.meta.firstInfinityComplete
@@ -992,9 +980,6 @@ export function dehydrateGameState(
     state.quantum.unlocks.galacticBrains
 
   source.infinityChallengeData = { ...EMPTY_INFINITY_CHALLENGES, ...state.challenges }
-  if (state.civilization !== undefined) source.civilization = { ...state.civilization, ...(state.civilization.farming ? { farming: structuredClone(state.civilization.farming) } : {}), activities: Object.fromEntries(Object.entries(state.civilization.activities).map(([id, activity]) => [id, { ...activity }])), resources: { ...state.civilization.resources }, awardedCatalystMilestoneIds: [...state.civilization.awardedCatalystMilestoneIds] }
-  else delete source.civilization
-  delete source.fractures
   source.discovery = { ...(state.discovery ?? EMPTY_DISCOVERY) }
   avocado.overflowPoints = state.avocado.overflowPoints ?? 0n
   avocado.unlocked = state.avocado.unlocked

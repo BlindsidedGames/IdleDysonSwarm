@@ -328,381 +328,6 @@
   "challenges.view": {
     "defaultMessage": "View challenge"
   },
-  "civilization.allocated": {
-    "defaultMessage": "Allocated workers"
-  },
-  "civilization.amount": {
-    "defaultMessage": "{resource}: {value}"
-  },
-  "civilization.autoPriority": {
-    "defaultMessage": "Auto-Priority"
-  },
-  "civilization.automaticAward": {
-    "defaultMessage": "Awarded automatically when every requirement is complete."
-  },
-  "civilization.automaticPriority": {
-    "defaultMessage": "Provisioning workers share their time: two-thirds on your preferred job, one-third on the other. Worker counts show these shares. Tool reserves still apply."
-  },
-  "civilization.autumn": {
-    "defaultMessage": "Autumn"
-  },
-  "civilization.available": {
-    "defaultMessage": "Unassigned / total"
-  },
-  "civilization.awarded": {
-    "defaultMessage": "Awarded Catalysts: {value} / 3"
-  },
-  "civilization.balanced": {
-    "defaultMessage": "Balanced"
-  },
-  "civilization.bootstrap": {
-    "defaultMessage": "Family gathering needs no inputs or assigned worker."
-  },
-  "civilization.bootstrapV4": {
-    "defaultMessage": "Three founders begin with one shelter kit. Gathering needs a real crew and no inputs."
-  },
-  "civilization.buildCamp": {
-    "defaultMessage": "Build camp"
-  },
-  "civilization.buildTent": {
-    "defaultMessage": "Build tent"
-  },
-  "civilization.camp": {
-    "defaultMessage": "Camp"
-  },
-  "civilization.campBenefit": {
-    "defaultMessage": "Converts 3 tents into a camp. Keeps their residents and adds 3 more."
-  },
-  "civilization.campExpansion": {
-    "defaultMessage": "Camp Expansion"
-  },
-  "civilization.campProvisioning": {
-    "defaultMessage": "Camp Provisioning"
-  },
-  "civilization.campUnlock": {
-    "defaultMessage": "Complete one Hideworking cycle, then convert 3 tents."
-  },
-  "civilization.camps": {
-    "defaultMessage": "Camps"
-  },
-  "civilization.cancel": {
-    "defaultMessage": "Cancel"
-  },
-  "civilization.catalysts": {
-    "defaultMessage": "Catalysts"
-  },
-  "civilization.chieftain": {
-    "defaultMessage": "Leadership"
-  },
-  "civilization.chieftainAuto": {
-    "defaultMessage": "Leadership automation"
-  },
-  "civilization.chieftainHelp": {
-    "defaultMessage": "Automatically chooses a priority for Provisioning and Craft based on growth needs and the season. Turn off to choose manually."
-  },
-  "civilization.chieftainOff": {
-    "defaultMessage": "Off"
-  },
-  "civilization.chieftainOn": {
-    "defaultMessage": "On"
-  },
-  "civilization.chieftainRequirement": {
-    "defaultMessage": "Requires 2 Camps. Costs 12 Tools and 6 Game; Camps are kept."
-  },
-  "civilization.chieftainTarget": {
-    "defaultMessage": "Preparing for {name}"
-  },
-  "civilization.clothing": {
-    "defaultMessage": "Leather"
-  },
-  "civilization.coldSeason": {
-    "defaultMessage": "Hunting: full food yield. Gathering: 25% food yield and double materials. Game yield is unchanged."
-  },
-  "civilization.completed": {
-    "defaultMessage": "Completed cycles"
-  },
-  "civilization.continuedDevelopment": {
-    "defaultMessage": "Camp development {value}"
-  },
-  "civilization.conversion": {
-    "defaultMessage": "Each shelter houses 2 workers; each camp houses 8. Three shelters become one camp."
-  },
-  "civilization.conversionV4": {
-    "defaultMessage": "A shelter adds 2 residents. Three shelters and their 6 residents remain reserved during conversion. The finished camp houses 9 residents, adding 3."
-  },
-  "civilization.craft": {
-    "defaultMessage": "Craft"
-  },
-  "civilization.craftPriority": {
-    "defaultMessage": "Craft priority"
-  },
-  "civilization.craftSpecialization": {
-    "defaultMessage": "Craft Specialization"
-  },
-  "civilization.duration": {
-    "defaultMessage": "Cycle duration"
-  },
-  "civilization.equip": {
-    "defaultMessage": "Equip {value} workers"
-  },
-  "civilization.equipConfirm": {
-    "defaultMessage": "Spend {tools} Tools and {clothing} Clothing to equip {value} workers?"
-  },
-  "civilization.equipmentAutomatic": {
-    "defaultMessage": "Every simulation minute, available Tools and Clothing equip up to one quarter of residents. Each retained kit costs 2 Tools and 1 Clothing."
-  },
-  "civilization.equipmentEffect": {
-    "defaultMessage": "Each equipped field worker contributes one extra worker of productive labor."
-  },
-  "civilization.equipmentEffectV4": {
-    "defaultMessage": "Each useful equipped field worker adds half a worker of productive labor."
-  },
-  "civilization.equipmentStock": {
-    "defaultMessage": "Tools and Clothing are consumed when equipping workers. Installed equipment stays with the camp."
-  },
-  "civilization.equipped": {
-    "defaultMessage": "Equipped workers"
-  },
-  "civilization.era": {
-    "defaultMessage": "Forager era"
-  },
-  "civilization.eraSettings": {
-    "defaultMessage": "Forager details"
-  },
-  "civilization.establishedCamp": {
-    "defaultMessage": "Established camp"
-  },
-  "civilization.exchangeNetworks": {
-    "defaultMessage": "Exchange Networks"
-  },
-  "civilization.exchangeRoutes": {
-    "defaultMessage": "Exchange routes"
-  },
-  "civilization.expeditions": {
-    "defaultMessage": "Expeditions & Trade"
-  },
-  "civilization.failed": {
-    "defaultMessage": "Action failed. Try again."
-  },
-  "civilization.fall": {
-    "defaultMessage": "Fall"
-  },
-  "civilization.firstHunt": {
-    "defaultMessage": "First hunt"
-  },
-  "civilization.fishing": {
-    "defaultMessage": "Fishing"
-  },
-  "civilization.focus": {
-    "defaultMessage": "Workforce focus"
-  },
-  "civilization.focusBalancedHelp": {
-    "defaultMessage": "Balanced shares workers across available jobs at their normal work rates."
-  },
-  "civilization.focusEffect": {
-    "defaultMessage": "More workers join this path as the camp grows. Other paths keep smaller crews."
-  },
-  "civilization.focusEffectV4": {
-    "defaultMessage": "Focus favours this path and its supporting crews. Unfunded jobs release workers; paid cycles keep their inputs."
-  },
-  "civilization.focusSelectedHelp": {
-    "defaultMessage": "{primary} work at {selectedRate}× their Balanced rate. Other jobs keep their normal rates."
-  },
-  "civilization.focusSupportedHelp": {
-    "defaultMessage": "{primary} work at {selectedRate}× their Balanced rate; {support} at {supportRate}×. Other jobs keep their normal rates."
-  },
-  "civilization.food": {
-    "defaultMessage": "Food"
-  },
-  "civilization.foodPreservation": {
-    "defaultMessage": "Food Preservation"
-  },
-  "civilization.fractureRule": {
-    "defaultMessage": "+5% simulation speed per fractured skill. Bonuses are additive."
-  },
-  "civilization.fractures": {
-    "defaultMessage": "Fracture boost +{value}"
-  },
-  "civilization.gathering": {
-    "defaultMessage": "Gathering"
-  },
-  "civilization.growthFocus": {
-    "defaultMessage": "Growth"
-  },
-  "civilization.hides": {
-    "defaultMessage": "Game"
-  },
-  "civilization.hideworking": {
-    "defaultMessage": "Hideworking"
-  },
-  "civilization.hideworkingPrerequisite": {
-    "defaultMessage": "Complete one Hunting cycle to unlock."
-  },
-  "civilization.hireChieftain": {
-    "defaultMessage": "Unlock Leadership"
-  },
-  "civilization.housing": {
-    "defaultMessage": "Housing capacity"
-  },
-  "civilization.hunting": {
-    "defaultMessage": "Hunting"
-  },
-  "civilization.huntingPrerequisite": {
-    "defaultMessage": "Complete one Toolmaking cycle to unlock."
-  },
-  "civilization.huntingUnlock": {
-    "defaultMessage": "Unlock Hunting for 1 Tool. Further hunts cost no Tools."
-  },
-  "civilization.inputs": {
-    "defaultMessage": "Cycle cost"
-  },
-  "civilization.legacyWorkHelp": {
-    "defaultMessage": "Older paid cycles keep their original work rates until they finish."
-  },
-  "civilization.locked": {
-    "defaultMessage": "Requires {name}"
-  },
-  "civilization.materials": {
-    "defaultMessage": "Materials"
-  },
-  "civilization.milestoneStep": {
-    "defaultMessage": "{name}: {value} / {target}"
-  },
-  "civilization.next": {
-    "defaultMessage": "Next: {name}"
-  },
-  "civilization.nextCatalyst": {
-    "defaultMessage": "Next Catalyst"
-  },
-  "civilization.nextEra": {
-    "defaultMessage": "Next: Cultivation & Herding"
-  },
-  "civilization.nodeBonus": {
-    "defaultMessage": "When fractured: +5% overall simulation speed. Bonuses are additive."
-  },
-  "civilization.nodeBonusActive": {
-    "defaultMessage": "Fractured: +5% overall simulation speed. Bonuses are additive."
-  },
-  "civilization.outputs": {
-    "defaultMessage": "Cycle output"
-  },
-  "civilization.paid": {
-    "defaultMessage": "Inputs reserved for this cycle"
-  },
-  "civilization.phaseComplete": {
-    "defaultMessage": "Forager opening complete"
-  },
-  "civilization.population": {
-    "defaultMessage": "Population"
-  },
-  "civilization.populationGoal": {
-    "defaultMessage": "Population {current} / {target}"
-  },
-  "civilization.preview": {
-    "defaultMessage": "Agriculture continues in a later phase. Your activities keep running."
-  },
-  "civilization.priority": {
-    "defaultMessage": "Provisioning priority"
-  },
-  "civilization.priorityChoice": {
-    "defaultMessage": "Prioritize: {name}"
-  },
-  "civilization.provisioning": {
-    "defaultMessage": "Provisioning"
-  },
-  "civilization.provisions": {
-    "defaultMessage": "Provisions"
-  },
-  "civilization.recruitment": {
-    "defaultMessage": "Workers remain in the camp. Each needs a housing place."
-  },
-  "civilization.seasonRemaining": {
-    "defaultMessage": "Next season in {time}"
-  },
-  "civilization.seasonalExpeditions": {
-    "defaultMessage": "Seasonal Expeditions"
-  },
-  "civilization.settlement": {
-    "defaultMessage": "Settlement"
-  },
-  "civilization.shelterBuilding": {
-    "defaultMessage": "Shelter Building"
-  },
-  "civilization.shelters": {
-    "defaultMessage": "Shelters"
-  },
-  "civilization.speed": {
-    "defaultMessage": "Progress speed"
-  },
-  "civilization.spring": {
-    "defaultMessage": "Spring"
-  },
-  "civilization.summer": {
-    "defaultMessage": "Summer"
-  },
-  "civilization.suppliesFocus": {
-    "defaultMessage": "Supplies"
-  },
-  "civilization.tent": {
-    "defaultMessage": "Tent"
-  },
-  "civilization.tentBenefit": {
-    "defaultMessage": "Adds 2 residents. Built immediately."
-  },
-  "civilization.tentUnlock": {
-    "defaultMessage": "Complete one Hideworking cycle to unlock."
-  },
-  "civilization.tents": {
-    "defaultMessage": "Tents"
-  },
-  "civilization.toolmaking": {
-    "defaultMessage": "Toolmaking"
-  },
-  "civilization.toolmakingPrerequisite": {
-    "defaultMessage": "Complete one Gathering cycle to unlock."
-  },
-  "civilization.tools": {
-    "defaultMessage": "Tools"
-  },
-  "civilization.tradeFocus": {
-    "defaultMessage": "Travel"
-  },
-  "civilization.unlock": {
-    "defaultMessage": "Required cycles: {value} of {name}"
-  },
-  "civilization.unlockHunting": {
-    "defaultMessage": "Unlock Hunting"
-  },
-  "civilization.upcoming": {
-    "defaultMessage": "Next activities"
-  },
-  "civilization.waiting": {
-    "defaultMessage": "Waiting"
-  },
-  "civilization.waitingDemand": {
-    "defaultMessage": "Demand met; workers support other jobs until more is needed."
-  },
-  "civilization.waitingHousing": {
-    "defaultMessage": "Waiting for housing"
-  },
-  "civilization.waitingInputs": {
-    "defaultMessage": "Waiting: {name}"
-  },
-  "civilization.waitingRange": {
-    "defaultMessage": "Balance cannot accept output"
-  },
-  "civilization.waitingWorkers": {
-    "defaultMessage": "Waiting for workers"
-  },
-  "civilization.warmSeason": {
-    "defaultMessage": "Gathering: full food yield. Hunting: 25% food yield. Game yield is unchanged."
-  },
-  "civilization.winter": {
-    "defaultMessage": "Winter"
-  },
-  "civilization.workers": {
-    "defaultMessage": "Workers"
-  },
   "debug.access-description": {
     "defaultMessage": "Spend 10 Transcendence Points to unlock the developer tools. Once purchased, they can be re-enabled for free.",
     "description": "Explains how developer tools are unlocked and retained."
@@ -795,15 +420,6 @@
     "defaultMessage": "Enable for free",
     "description": "Action that re-enables previously purchased developer tools."
   },
-  "debug.era": {
-    "defaultMessage": "Era"
-  },
-  "debug.era-help": {
-    "defaultMessage": "Start the selected era fresh. Replaces simulation progress; other progress is kept."
-  },
-  "debug.jump-era": {
-    "defaultMessage": "Jump to era"
-  },
   "debug.lock-tabs": {
     "defaultMessage": "Lock tabs",
     "description": "Removes the developer tab override; progression unlocks remain available."
@@ -855,9 +471,6 @@
   "debug.set-whole-cap": {
     "defaultMessage": "Whole cap",
     "description": "Button that fills the developer amount field with the maximum supported whole-number value."
-  },
-  "debug.simulation-era": {
-    "defaultMessage": "Simulation era"
   },
   "debug.speedrun-warning": {
     "defaultMessage": "Using gameplay tools makes this save ineligible for speedruns. Unlocking or opening Developer Options does not.",
@@ -1059,7 +672,7 @@
     "defaultMessage": "Research and Science will be permanently replaced."
   },
   "discovery.resetRule": {
-    "defaultMessage": "Persists through Infinity. Resets on Transcendence."
+    "defaultMessage": "Persists through Infinity and Quantum. Resets on Transcendence."
   },
   "discovery.route": {
     "defaultMessage": "Transcendence"
@@ -2220,213 +1833,6 @@
     "defaultMessage": "Tinker in your garage",
     "description": "Visible primary title for the Unity manual-creation action."
   },
-  "farming.amount": {
-    "defaultMessage": "{resource}: {value}"
-  },
-  "farming.begin": {
-    "defaultMessage": "Begin Farming era"
-  },
-  "farming.betaEndpoint": {
-    "defaultMessage": "Forager and Farming are complete. More coming soon."
-  },
-  "farming.buy": {
-    "defaultMessage": "Buy"
-  },
-  "farming.era": {
-    "defaultMessage": "Farming Villages"
-  },
-  "farming.failed": {
-    "defaultMessage": "The action could not be saved. Try again."
-  },
-  "farming.finish": {
-    "defaultMessage": "Establish the village"
-  },
-  "farming.granary": {
-    "defaultMessage": "Granary"
-  },
-  "farming.handoff": {
-    "defaultMessage": "Farming replaces your Forager camp with three founders and empty stores. Unfinished work is discarded. Earned Catalysts are kept."
-  },
-  "farming.inputs": {
-    "defaultMessage": "Cycle cost"
-  },
-  "farming.missingInputs": {
-    "defaultMessage": "Missing: {inputs}"
-  },
-  "farming.nextPrice": {
-    "defaultMessage": "Next price"
-  },
-  "farming.outputs": {
-    "defaultMessage": "Cycle output"
-  },
-  "farming.owned": {
-    "defaultMessage": "Owned: {value}"
-  },
-  "farming.pendingSkill": {
-    "defaultMessage": "This milestone is waiting for an eligible existing Skill tree choice or room in the Catalyst wallet."
-  },
-  "farming.settings": {
-    "defaultMessage": "Village settings"
-  },
-  "farming.shop": {
-    "defaultMessage": "Purchases"
-  },
-  "farming.village.averted": {
-    "defaultMessage": "Disaster averted. The spirits accept the credit."
-  },
-  "farming.village.balance": {
-    "defaultMessage": "Food balance"
-  },
-  "farming.village.burials": {
-    "defaultMessage": "Burials"
-  },
-  "farming.village.consumption": {
-    "defaultMessage": "Consumption"
-  },
-  "farming.village.crops": {
-    "defaultMessage": "Crops"
-  },
-  "farming.village.disasterDeaths": {
-    "defaultMessage": "Disasters"
-  },
-  "farming.village.disasterLoss": {
-    "defaultMessage": "Population loss"
-  },
-  "farming.village.disasterRisk": {
-    "defaultMessage": "Season-end risk"
-  },
-  "farming.village.fewerJobs": {
-    "defaultMessage": "{name}: fewer jobs"
-  },
-  "farming.village.field": {
-    "defaultMessage": "Field"
-  },
-  "farming.village.fire": {
-    "defaultMessage": "Fire: population −{value}"
-  },
-  "farming.village.flood": {
-    "defaultMessage": "Flood: population −{value}"
-  },
-  "farming.village.food": {
-    "defaultMessage": "Food"
-  },
-  "farming.village.fullCrew": {
-    "defaultMessage": "Full crew"
-  },
-  "farming.village.growth": {
-    "defaultMessage": "Growing"
-  },
-  "farming.village.herding": {
-    "defaultMessage": "Livestock"
-  },
-  "farming.village.house": {
-    "defaultMessage": "House"
-  },
-  "farming.village.housing": {
-    "defaultMessage": "Housing"
-  },
-  "farming.village.idle": {
-    "defaultMessage": "Idle"
-  },
-  "farming.village.irrigation": {
-    "defaultMessage": "Irrigation"
-  },
-  "farming.village.jobSpaces": {
-    "defaultMessage": "Building capacity"
-  },
-  "farming.village.jobs": {
-    "defaultMessage": "Jobs"
-  },
-  "farming.village.jobsFor": {
-    "defaultMessage": "{name}: jobs"
-  },
-  "farming.village.land": {
-    "defaultMessage": "Free land"
-  },
-  "farming.village.lastEvent": {
-    "defaultMessage": "Last event"
-  },
-  "farming.village.loggingCamp": {
-    "defaultMessage": "Logging camp"
-  },
-  "farming.village.moreJobs": {
-    "defaultMessage": "{name}: more jobs"
-  },
-  "farming.village.natural": {
-    "defaultMessage": "Natural deaths"
-  },
-  "farming.village.needsGranary": {
-    "defaultMessage": "3 Houses"
-  },
-  "farming.village.needsIrrigation": {
-    "defaultMessage": "4 Fields"
-  },
-  "farming.village.needsLand": {
-    "defaultMessage": "No free land"
-  },
-  "farming.village.needsPasture": {
-    "defaultMessage": "2 Fields · 2 Houses"
-  },
-  "farming.village.needsShrine": {
-    "defaultMessage": "4 Houses"
-  },
-  "farming.village.needsWoodland": {
-    "defaultMessage": "Clear woodland"
-  },
-  "farming.village.needsWorkshop": {
-    "defaultMessage": "Workshop required"
-  },
-  "farming.village.nextDisaster": {
-    "defaultMessage": "Next disaster"
-  },
-  "farming.village.noMaterials": {
-    "defaultMessage": "No Materials"
-  },
-  "farming.village.pasture": {
-    "defaultMessage": "Pasture"
-  },
-  "farming.village.perMinute": {
-    "defaultMessage": "{value}/min"
-  },
-  "farming.village.production": {
-    "defaultMessage": "Production"
-  },
-  "farming.village.protection": {
-    "defaultMessage": "Disaster reduction"
-  },
-  "farming.village.reserve": {
-    "defaultMessage": "Food reserve"
-  },
-  "farming.village.shaman": {
-    "defaultMessage": "Shamans"
-  },
-  "farming.village.shrine": {
-    "defaultMessage": "Shrine"
-  },
-  "farming.village.sickness": {
-    "defaultMessage": "Sickness: population −{value}"
-  },
-  "farming.village.starvation": {
-    "defaultMessage": "Starvation"
-  },
-  "farming.village.status": {
-    "defaultMessage": "Status"
-  },
-  "farming.village.stocked": {
-    "defaultMessage": "Stocked"
-  },
-  "farming.village.woodland": {
-    "defaultMessage": "Woodland"
-  },
-  "farming.village.work": {
-    "defaultMessage": "Work"
-  },
-  "farming.village.workingCount": {
-    "defaultMessage": "{value} working"
-  },
-  "farming.workshop": {
-    "defaultMessage": "Workshop"
-  },
   "gameplay.notifications.continue": {
     "defaultMessage": "Continue",
     "description": "Primary action dismissing a first-disaster dialog."
@@ -2695,138 +2101,6 @@
     "defaultMessage": "Start with 10 Servers",
     "description": "Unity retained Servers upgrade title."
   },
-  "modes.back": {
-    "defaultMessage": "Back to {mode}"
-  },
-  "modes.cancel": {
-    "defaultMessage": "Cancel"
-  },
-  "modes.classic": {
-    "defaultMessage": "Classic"
-  },
-  "modes.confirm": {
-    "defaultMessage": "Confirm migration"
-  },
-  "modes.conflict": {
-    "defaultMessage": "You already have a Modern save. Continue it to keep its progress."
-  },
-  "modes.continue": {
-    "defaultMessage": "Continue {mode}"
-  },
-  "modes.failed": {
-    "defaultMessage": "The change could not be saved. Your last saved progress is preserved."
-  },
-  "modes.migrate": {
-    "defaultMessage": "Migrate Classic progress"
-  },
-  "modes.modern": {
-    "defaultMessage": "Modern"
-  },
-  "modes.oneWay": {
-    "defaultMessage": "Copy compatible Classic progress to Modern? Your Classic save stays available, including Classic-only progress. Modern progress cannot be converted back."
-  },
-  "modes.saves.choose": {
-    "defaultMessage": "Choose save: {mode}"
-  },
-  "modes.saves.chooseDescription": {
-    "defaultMessage": "These saves differ. Choose which progress to keep. The original copies stay preserved."
-  },
-  "modes.saves.close": {
-    "defaultMessage": "Close"
-  },
-  "modes.saves.cloud": {
-    "defaultMessage": "Use Cloud"
-  },
-  "modes.saves.copy": {
-    "defaultMessage": "Copy"
-  },
-  "modes.saves.copyNumber": {
-    "defaultMessage": "Use saved copy {number}"
-  },
-  "modes.saves.description": {
-    "defaultMessage": "Export or import the save for your current mode."
-  },
-  "modes.saves.done": {
-    "defaultMessage": "Saved."
-  },
-  "modes.saves.download": {
-    "defaultMessage": "Download file"
-  },
-  "modes.saves.export": {
-    "defaultMessage": "Export Save"
-  },
-  "modes.saves.failed": {
-    "defaultMessage": "The operation failed. Your saved data is preserved."
-  },
-  "modes.saves.file": {
-    "defaultMessage": "Choose save file"
-  },
-  "modes.saves.import": {
-    "defaultMessage": "Import Save"
-  },
-  "modes.saves.importDescription": {
-    "defaultMessage": "Import a save into your current mode. Classic saves imported into Modern are migrated automatically. The other mode’s save is kept."
-  },
-  "modes.saves.importTarget": {
-    "defaultMessage": "Import into {mode}."
-  },
-  "modes.saves.local": {
-    "defaultMessage": "Use this device"
-  },
-  "modes.saves.pending": {
-    "defaultMessage": "Working…"
-  },
-  "modes.saves.recovery": {
-    "defaultMessage": "Recover mode saves"
-  },
-  "modes.saves.recoveryDescription": {
-    "defaultMessage": "A recovery archive preserves damaged data for troubleshooting. It cannot be imported as a game save."
-  },
-  "modes.saves.recoveryExport": {
-    "defaultMessage": "Export recovery archive"
-  },
-  "modes.saves.recoveryPartial": {
-    "defaultMessage": "Some recovery files could not be read. Available data is included."
-  },
-  "modes.saves.recoveryWarning": {
-    "defaultMessage": "Restore the retained checkpoint for the listed modes? Progress since that checkpoint stays in the recovery archive."
-  },
-  "modes.saves.replace": {
-    "defaultMessage": "Replace Save"
-  },
-  "modes.saves.resetConfirmation": {
-    "defaultMessage": "Reset all progress in {mode} and start again? The other mode’s save is kept."
-  },
-  "modes.saves.restoreRecovery": {
-    "defaultMessage": "Restore retained checkpoint"
-  },
-  "modes.saves.review": {
-    "defaultMessage": "Review import"
-  },
-  "modes.saves.reviewRecovery": {
-    "defaultMessage": "Review retained checkpoint"
-  },
-  "modes.saves.summary": {
-    "defaultMessage": "Modes: {modes}. Opens {mode}."
-  },
-  "modes.saves.text": {
-    "defaultMessage": "Save export"
-  },
-  "modes.saves.title": {
-    "defaultMessage": "Save data"
-  },
-  "modes.saves.warning": {
-    "defaultMessage": "This replaces your current mode’s save. The other mode’s save is kept. Export your current save first."
-  },
-  "modes.separate": {
-    "defaultMessage": "Each mode keeps a separate save."
-  },
-  "modes.start": {
-    "defaultMessage": "Start {mode}"
-  },
-  "modes.switch": {
-    "defaultMessage": "Game mode: {mode}"
-  },
   "navigation.avocato": {
     "defaultMessage": "Avocato",
     "description": "Unity Avocato sub-destination."
@@ -2883,9 +2157,6 @@
     "defaultMessage": "Simulations",
     "description": "Unity live Simulations destination."
   },
-  "navigation.simulations-goals-progress": {
-    "defaultMessage": "{destination}, {current} of {required} Bots goals completed"
-  },
   "navigation.simulations-influence-progress": {
     "defaultMessage": "{destination}, {current} of {required} Influence gathered",
     "description": "Accessible manual Influence unlock progress for the visible but locked Simulations destination."
@@ -2931,7 +2202,7 @@
     "description": "Stored Time cancellation feedback only when the app entered the background."
   },
   "offline-time.auto-resume": {
-    "defaultMessage": "On return"
+    "defaultMessage": "Automation"
   },
   "offline-time.auto-resume-last": {
     "defaultMessage": "Last speed"
@@ -3018,7 +2289,7 @@
     "defaultMessage": "Maxed"
   },
   "offline-time.capacity-result": {
-    "defaultMessage": "New capacity"
+    "defaultMessage": "New cap"
   },
   "offline-time.close-summary": {
     "defaultMessage": "Continue",
@@ -3215,165 +2486,6 @@
   "offline-time.time-simulated": {
     "defaultMessage": "Time simulated",
     "description": "Completed Stored Time summary label for processed game time."
-  },
-  "pilotChallenges.abandon": {
-    "defaultMessage": "Abandon challenge"
-  },
-  "pilotChallenges.blank-slate.name": {
-    "defaultMessage": "Blank Slate"
-  },
-  "pilotChallenges.blank-slate.rule": {
-    "defaultMessage": "Complete one Infinity with skills, augments and fractured effects inactive."
-  },
-  "pilotChallenges.break": {
-    "defaultMessage": "Requires Break the Loop."
-  },
-  "pilotChallenges.budget": {
-    "defaultMessage": "Challenge rewards: {value} / 20 SP"
-  },
-  "pilotChallenges.built-by-hand.name": {
-    "defaultMessage": "Manual Labour"
-  },
-  "pilotChallenges.built-by-hand.rule": {
-    "defaultMessage": "Complete one Infinity with no facilities or automatic Bot production. Temporary Manual Labour access is provided."
-  },
-  "pilotChallenges.cancel": {
-    "defaultMessage": "Cancel"
-  },
-  "pilotChallenges.commitment-issues.name": {
-    "defaultMessage": "Commitment Issues"
-  },
-  "pilotChallenges.commitment-issues.rule": {
-    "defaultMessage": "Earn 32 IP without refunding or replacing your build throughout the attempt, including Infinity resets."
-  },
-  "pilotChallenges.compactTitle": {
-    "defaultMessage": "Infinity Challenges"
-  },
-  "pilotChallenges.confirm": {
-    "defaultMessage": "Confirm restart"
-  },
-  "pilotChallenges.convergenceEarned": {
-    "defaultMessage": "Convergence unlocked"
-  },
-  "pilotChallenges.convergenceLocked": {
-    "defaultMessage": "Complete all 10 challenges to unlock."
-  },
-  "pilotChallenges.convergenceProgress": {
-    "defaultMessage": "{value} / 10 challenges completed"
-  },
-  "pilotChallenges.convergenceRule": {
-    "defaultMessage": "Your Galactic Brains grow continuously, doubling every 30 minutes of game time. Requires at least one Galactic Brain."
-  },
-  "pilotChallenges.convergenceTitle": {
-    "defaultMessage": "Convergence"
-  },
-  "pilotChallenges.earned": {
-    "defaultMessage": "Earned {value} permanent SP"
-  },
-  "pilotChallenges.failure": {
-    "defaultMessage": "The challenge could not be started or saved. Your current run has been kept."
-  },
-  "pilotChallenges.first": {
-    "defaultMessage": "Complete your first Infinity."
-  },
-  "pilotChallenges.grounded.name": {
-    "defaultMessage": "Grounded"
-  },
-  "pilotChallenges.grounded.rule": {
-    "defaultMessage": "Earn 32 IP without Planets or megastructures. The Planet goal becomes 100 purchased Data Centers."
-  },
-  "pilotChallenges.hands-off.name": {
-    "defaultMessage": "Hands Off"
-  },
-  "pilotChallenges.hands-off.rule": {
-    "defaultMessage": "Earn 32 IP without facility purchases or Tinkering. Start with one Assembly Line and a Planet-generation build."
-  },
-  "pilotChallenges.history": {
-    "defaultMessage": "Previous challenge completions: {value}. Historical rewards are preserved; compensation is not applied in this pilot."
-  },
-  "pilotChallenges.intro": {
-    "defaultMessage": "Each attempt starts a fresh Infinity. Only IP earned during the attempt counts. First completions award permanent SP once."
-  },
-  "pilotChallenges.lean-build.name": {
-    "defaultMessage": "Lean Build"
-  },
-  "pilotChallenges.lean-build.rule": {
-    "defaultMessage": "Earn 16 IP with no more than 4 SP of assigned skills. Refunds are allowed."
-  },
-  "pilotChallenges.no-science.name": {
-    "defaultMessage": "No Science"
-  },
-  "pilotChallenges.no-science.rule": {
-    "defaultMessage": "Earn 32 IP without Science, Research or Discovery."
-  },
-  "pilotChallenges.openingComplete": {
-    "defaultMessage": "Completed"
-  },
-  "pilotChallenges.openingEarned": {
-    "defaultMessage": "Simulations unlocked"
-  },
-  "pilotChallenges.openingProgress": {
-    "defaultMessage": "Active · {value} / 10 goals"
-  },
-  "pilotChallenges.openingReward": {
-    "defaultMessage": "Reward: unlock Simulations"
-  },
-  "pilotChallenges.openingRule": {
-    "defaultMessage": "Complete all 10 goals in the Bots tab."
-  },
-  "pilotChallenges.openingTitle": {
-    "defaultMessage": "Beginnings"
-  },
-  "pilotChallenges.other": {
-    "defaultMessage": "Finish or abandon the active challenge."
-  },
-  "pilotChallenges.overflow": {
-    "defaultMessage": "Resolve Transcendence first."
-  },
-  "pilotChallenges.progress": {
-    "defaultMessage": "Active · {ip} IP earned · {infinities} Infinities"
-  },
-  "pilotChallenges.purchases": {
-    "defaultMessage": "Paid facilities: {count} / 10 · types: {types} / 3"
-  },
-  "pilotChallenges.replay": {
-    "defaultMessage": "Replay"
-  },
-  "pilotChallenges.restart": {
-    "defaultMessage": "Start a fresh Infinity without awarding IP. Persistent civilization progress, upgrades, reward history and fracture ownership are kept. Abandoning discards attempt progress and restores normal effects."
-  },
-  "pilotChallenges.reward": {
-    "defaultMessage": "Reward: {value} permanent SP"
-  },
-  "pilotChallenges.rules": {
-    "defaultMessage": "Previous IP does not count toward the production multiplier. Division, gameplay Double IP, Discovery and permanent fractures are inactive; purchased boosts remain active. Infinity shop purchases pause during attempts. Most attempts start with 10 SP plus goal rewards; Blank Slate and Manual Labour start with zero, and Lean Build starts with 4. Attempts continue across Infinities. Transcendence discards an unfinished attempt without awarding its SP. Replays award no additional SP."
-  },
-  "pilotChallenges.rulesTitle": {
-    "defaultMessage": "Attempt rules and rewards"
-  },
-  "pilotChallenges.short-circuit.name": {
-    "defaultMessage": "Short Circuit"
-  },
-  "pilotChallenges.short-circuit.rule": {
-    "defaultMessage": "Earn 64 IP with panel lifetime fixed at 2 seconds."
-  },
-  "pilotChallenges.simulationsLocked": {
-    "defaultMessage": "Complete Beginnings by finishing all 10 goals in the Bots tab to unlock Simulations."
-  },
-  "pilotChallenges.start": {
-    "defaultMessage": "Start"
-  },
-  "pilotChallenges.supply-shortage.name": {
-    "defaultMessage": "Supply Shortage"
-  },
-  "pilotChallenges.supply-shortage.rule": {
-    "defaultMessage": "Earn 64 IP with purchase prices doubling, and pay for 10 facilities across 3 types. Generated and free facilities do not count."
-  },
-  "pilotChallenges.title": {
-    "defaultMessage": "Infinity Challenges"
-  },
-  "pilotChallenges.unlock": {
-    "defaultMessage": "Requires {value} total earned IP."
   },
   "pwa.update.accept": {
     "defaultMessage": "Save and update",
@@ -4546,84 +3658,6 @@
   },
   "research.show-preset-quick-actions": {
     "defaultMessage": "Always show preset quick actions"
-  },
-  "rework.action.failed": {
-    "defaultMessage": "The change could not be saved. Try again."
-  },
-  "rework.cancel": {
-    "defaultMessage": "Cancel"
-  },
-  "rework.challenges.completed": {
-    "defaultMessage": "Previous completions: {value}"
-  },
-  "rework.challenges.history": {
-    "defaultMessage": "Earned rewards and completion records are preserved."
-  },
-  "rework.challenges.pending": {
-    "defaultMessage": "Challenges are being redesigned."
-  },
-  "rework.civilization": {
-    "defaultMessage": "Civilization"
-  },
-  "rework.infinity.advanced": {
-    "defaultMessage": "Advanced upgrades"
-  },
-  "rework.infinity.double-time.description": {
-    "defaultMessage": "Double game speed."
-  },
-  "rework.infinity.double-time.title": {
-    "defaultMessage": "Double Time"
-  },
-  "rework.infinity.regular": {
-    "defaultMessage": "Infinity upgrades"
-  },
-  "rework.migration.automaticDescription": {
-    "defaultMessage": "Your save is automatically migrated when you open Modern. Advanced upgrades are earned again and fractures and their augments are removed. Your base game, IP, Transcendence, Discovery and purchases stay."
-  },
-  "rework.migration.continueModern": {
-    "defaultMessage": "Continue in Modern"
-  },
-  "rework.migration.description": {
-    "defaultMessage": "Choose to keep equivalent upgrades and fractures, or earn the advanced upgrades again. Starting fresh removes fractures and their augments; your base game, IP, Transcendence, Discovery and purchases stay."
-  },
-  "rework.migration.fresh": {
-    "defaultMessage": "Earn upgrades again"
-  },
-  "rework.migration.intro": {
-    "defaultMessage": "I'm rebuilding progression. Quantum, Reality and the old Sims are gone. Useful upgrades now live in Infinity, and civilization Sims now earn resources for Catalysts."
-  },
-  "rework.migration.keep": {
-    "defaultMessage": "Keep equivalent progress"
-  },
-  "rework.migration.returnClassic": {
-    "defaultMessage": "Return to Classic"
-  },
-  "rework.migration.separateSaves": {
-    "defaultMessage": "Your progress continues in two separate saves. You can switch between Classic and Modern at any time."
-  },
-  "rework.migration.title": {
-    "defaultMessage": "Hey guys, Dev here"
-  },
-  "rework.simulations.details": {
-    "defaultMessage": "Era resources will buy Catalysts. Permanent fractures will accelerate each civilization."
-  },
-  "rework.simulations.pending": {
-    "defaultMessage": "Civilization progression is coming next."
-  },
-  "rework.transcend": {
-    "defaultMessage": "Transcend"
-  },
-  "rework.transcend.balance": {
-    "defaultMessage": "{value} Transcendence Points"
-  },
-  "rework.transcend.confirm": {
-    "defaultMessage": "Confirm Transcendence"
-  },
-  "rework.transcend.confirmation": {
-    "defaultMessage": "Reset base production and Infinity upgrades for 1 Transcendence Point? Fractures, civilization progress and Discovery upgrades remain."
-  },
-  "rework.transcend.threshold": {
-    "defaultMessage": "Reach {value} bots to Transcend."
   },
   "settings.achievements.action": {
     "defaultMessage": "Achievements",
@@ -6061,7 +5095,7 @@
     "description": "Display name for the Androids Skill node."
   },
   "skills.node.androids.technical": {
-    "defaultMessage": "While the Androids Skill is assigned, its bonus scales from 0 to 200 seconds of Panel Lifetime over a 10 minute span.\nThis resets on Infinity.",
+    "defaultMessage": "While the Androids Skill is assigned, its bonus scales from 0 to 200 seconds of Panel Lifetime over a 10 minute span.\nThis resets on Infinity/Quantum Leap.",
     "description": "Technical gameplay-effect description for the Androids Skill node."
   },
   "skills.node.artificiallyEnhancedPanels.description": {
@@ -7021,7 +6055,7 @@
     "description": "Display name for the Super-Radiant Scattering Skill node."
   },
   "skills.node.superRadiantScattering.technical": {
-    "defaultMessage": "Increase Cash, Science, Bot, and all facility production by 1% per second while assigned. Bonuses are additive. Charges during Stored Time simulation and resets on Infinity.",
+    "defaultMessage": "Increase Cash, Science, Bot, and all facility production by 1% per second while assigned. Bonuses are additive. Charges during Stored Time simulation and resets on Infinity or Quantum Leap.",
     "description": "Technical gameplay-effect description for the Super-Radiant Scattering Skill node."
   },
   "skills.node.superSwarm.description": {
@@ -7273,7 +6307,7 @@
     "description": "First-time confirmation before manual or automatic assignment of non-refundable skills."
   },
   "skills.non-refundable-confirmation-warning": {
-    "defaultMessage": "Non-refundable skills and their prerequisite paths cannot be refunded until an Infinity reset. Continue?",
+    "defaultMessage": "Non-refundable skills and their prerequisite paths cannot be refunded until an Infinity or Quantum reset. Continue?",
     "description": "Explains that prerequisite points also become locked; Reset Skills does not refund them."
   },
   "skills.none": {
@@ -7531,6 +6565,9 @@
   "skills.settings.showExtendedPresets": {
     "defaultMessage": "Show presets 6–10"
   },
+  "skills.settings.showTooltips": {
+    "defaultMessage": "Show tooltips"
+  },
   "skills.show-preset-application-notifications": {
     "defaultMessage": "Show partial preset application notifications",
     "description": "Presentation preference controlling post-switch partial preset application notices."
@@ -7554,7 +6591,7 @@
     "defaultMessage": "The last universe is gone, but some of its particles haven’t taken the hint."
   },
   "skills.srs.afterglow.effect": {
-    "defaultMessage": "Retain 10% of SRS charge through Infinity, multiplied by Stellar Memory up to 50% retention. Adds to Hot Start."
+    "defaultMessage": "Retain 10% of SRS charge through Infinity, multiplied by Stellar Memory up to 50% retention. Adds to Hot Start. Quantum Leap clears retained charge."
   },
   "skills.srs.afterglow.name": {
     "defaultMessage": "Afterglow"
@@ -7563,7 +6600,7 @@
     "defaultMessage": "Your scientists recommend prolonged exposure. From behind a very thick window."
   },
   "skills.srs.deepExposure.effect": {
-    "defaultMessage": "Increase SRS charging speed by 10% per minute this augment is assigned, up to 200% after 20 minutes. Stellar Memory multiplies these bonuses. Resets on Infinity. Bonuses are additive."
+    "defaultMessage": "Increase SRS charging speed by 10% per minute this augment is assigned, up to 200% after 20 minutes. Stellar Memory multiplies these bonuses. Resets on Infinity or Quantum Leap. Bonuses are additive."
   },
   "skills.srs.deepExposure.name": {
     "defaultMessage": "Deep Exposure"
@@ -7608,7 +6645,7 @@
     "defaultMessage": "Your scientists keep their notes between universes. Most of them say “try not to do that again.”"
   },
   "skills.srs.stellarMemory.effect": {
-    "defaultMessage": "On Infinity reset, bank newly generated SRS charge, excluding Hot Start and Afterglow. While assigned, boosts SRS augment benefits by 1 + 0.25 × log10(max(1, banked seconds))."
+    "defaultMessage": "On Infinity or Quantum reset, bank newly generated SRS charge, excluding Hot Start and Afterglow. While assigned, boosts SRS augment benefits by 1 + 0.25 × log10(max(1, banked seconds))."
   },
   "skills.srs.stellarMemory.name": {
     "defaultMessage": "Stellar Memory"
@@ -7824,7 +6861,7 @@
     "defaultMessage": "Steady Supply"
   },
   "skills.swarm.steadySupply.technical": {
-    "defaultMessage": "Keep paid facility purchases through Infinity. Assign before resetting; purchases return automatically. Free starter units do not accumulate. Transcendence clears the supply."
+    "defaultMessage": "Keep paid facility purchases through Infinity. Assign before resetting; purchases return automatically. Free starter units do not accumulate. Quantum clears the supply."
   },
   "skills.swarm.stellarSwarm.description": {
     "defaultMessage": "Sacrifices are now available in bulk."
@@ -8311,8 +7348,8 @@
     "description": "Statistics accumulated across the entire save."
   },
   "statistics.scope.quantum-run": {
-    "defaultMessage": "Current run",
-    "description": "Statistics for the current progression run."
+    "defaultMessage": "Current Quantum run",
+    "description": "Statistics accumulated since the latest Quantum Leap."
   },
   "statistics.speedruns.boostedBest": {
     "defaultMessage": "Boosted best",
@@ -8986,7 +8023,7 @@
     "description": "Heading for Discovery progression mechanics."
   },
   "wiki.discovery.resets": {
-    "defaultMessage": "Discovery persists through <infinity>Infinity</infinity>. <value>Transcendence</value> resets its level and progress; the unlock and permanent upgrades remain. Stored Time advances Discovery when spent. Time away is banked, not automatically applied to Discovery.",
+    "defaultMessage": "Discovery persists through <infinity>Infinity</infinity>, <quantum>Quantum</quantum> and challenges. <value>Transcendence</value> resets its level and progress; the unlock and permanent upgrades remain. Stored Time advances Discovery when spent. Time away is banked, not automatically applied to Discovery.",
     "description": "Explains Discovery preservation, Transcendence reset and Stored Time rules."
   },
   "wiki.discovery.resets-title": {
@@ -9034,7 +8071,7 @@
     "description": "Heading for Infinity Point production scaling."
   },
   "wiki.infinity.secrets": {
-    "defaultMessage": "In <infinity>Infinity</infinity>, <value>Secret</value> upgrades reveal the meaning of life one letter at a time and apply a permanent hidden production benefit.",
+    "defaultMessage": "After a <quantum>Quantum Leap</quantum>, <value>Secret</value> upgrades reveal the meaning of life one letter at a time and apply a permanent hidden production benefit.",
     "description": "Secret unlock explanation adapted from the Unity WikiContent prefab."
   },
   "wiki.infinity.secrets-title": {
@@ -9242,7 +8279,7 @@
     "description": "Heading for Offline Time processing controls."
   },
   "wiki.other.offline-results": {
-    "defaultMessage": "A completed run reports the simulated duration, remaining bank, final accuracy and actual update count. It also shows Infinity gains. Facility and Bot gains appear only when no Infinity occurred, because a reset and rebuild would make a simple before-and-after total misleading.",
+    "defaultMessage": "A completed run reports the simulated duration, remaining bank, final accuracy and actual update count. It also shows relevant Infinity, Simulation and Reality gains. Facility and Bot gains appear only when no Infinity occurred, because a reset and rebuild would make a simple before-and-after total misleading.",
     "description": "Explains the player-facing Offline Time completion summary."
   },
   "wiki.other.offline-results-title": {
@@ -9397,56 +8434,64 @@
     "defaultMessage": "Version 4.1.11",
     "description": "Version 4.1.11 release notes."
   },
-  "wiki.patch-notes.version-4-1-11.button-contrast": {
-    "defaultMessage": "Improved button gradients and text contrast across the game. Disabled buttons now use flat colours.",
-    "description": "Version 4.1.11 release notes."
-  },
-  "wiki.patch-notes.version-4-1-11.checkbox-labels": {
-    "defaultMessage": "Made checkbox labels wider and consistent across Settings and Skills.",
+  "wiki.patch-notes.version-4-1-11.credits": {
+    "defaultMessage": "Added credits to the Wiki.",
     "description": "Version 4.1.11 release notes."
   },
   "wiki.patch-notes.version-4-1-11.desktop-sizing": {
-    "defaultMessage": "Added desktop interface sizing from 80% to 150%, a Default reset, and skill-tree zoom up to 250%.",
+    "defaultMessage": "Added desktop interface sizes from 80% to 150% and skill-tree zoom up to 250%.",
     "description": "Version 4.1.11 release notes."
   },
   "wiki.patch-notes.version-4-1-11.desktop-tooltips": {
-    "defaultMessage": "Refined skill-tree tooltips with clearer effects, formulas, SP costs and potential augment counts. Removed redundant tooltips elsewhere.",
+    "defaultMessage": "Skill-tree tooltips show effects, formulas, Skill Point costs and potential augments. Turn them on or off in the skill-tree settings.",
     "description": "Version 4.1.11 release notes."
   },
   "wiki.patch-notes.version-4-1-11.imported-speedruns": {
-    "defaultMessage": "Valid imported saves now continue speedruns with existing eligibility checks. A matching floppy-disk marker appears before Stored Time.",
+    "defaultMessage": "Eligible imported saves can continue speedruns. Imported runs show a save-file marker.",
     "description": "Version 4.1.11 release notes."
   },
   "wiki.patch-notes.version-4-1-11.infinity-hold": {
-    "defaultMessage": "Added repeat purchases for Secret of the Universe and Permanent Skill Points in Infinity. Click and hold or long press to keep buying.",
+    "defaultMessage": "Hold purchase buttons to keep buying Infinity and Quantum upgrades. Purchases stop when you release.",
     "description": "Version 4.1.11 release notes."
   },
   "wiki.patch-notes.version-4-1-11.infinity-summary": {
-    "defaultMessage": "Infinity now shows the Facility production boost from all earned IP beside the totals, with readable, baseline-aligned text on mobile.",
+    "defaultMessage": "Infinity now shows the facility production boost from all earned Infinity Points beside the totals.",
     "description": "Version 4.1.11 release notes."
   },
-  "wiki.patch-notes.version-4-1-11.preset-copy": {
-    "defaultMessage": "Fixed preset Copy in native apps without a clipboard permission prompt. Browsers without clipboard access show a manual-copy fallback.",
+  "wiki.patch-notes.version-4-1-11.navigation": {
+    "defaultMessage": "Widened the desktop side menu and improved its spacing, selected buttons and compact navigation. Fixed a blue pixel at the top-left edge.",
     "description": "Version 4.1.11 release notes."
   },
-  "wiki.patch-notes.version-4-1-11.quick-amounts": {
-    "defaultMessage": "Choose three Stored Time quick-use amounts in Offline Time, with compact sidebar labels.",
+  "wiki.patch-notes.version-4-1-11.offline-speed": {
+    "defaultMessage": "Offline Time now builds up while you are away. Spend it during play at speeds from 1× to 42×. Only the extra speed uses stored time; Double Time applies on top.",
     "description": "Version 4.1.11 release notes."
   },
-  "wiki.patch-notes.version-4-1-11.sidebar-freeze": {
-    "defaultMessage": "Fixed the game freezing when sidebar Stored Time bursts trigger disasters or civilisation endings.",
+  "wiki.patch-notes.version-4-1-11.offline-storage": {
+    "defaultMessage": "Redesigned Offline Time with a storage bar, remaining boost duration and clearer capacity costs. Choose Off, Last speed or Max speed for automatic boosts when you return.",
+    "description": "Version 4.1.11 release notes."
+  },
+  "wiki.patch-notes.version-4-1-11.preset-notices": {
+    "defaultMessage": "Preset conflict notifications no longer repeat for the same unresolved conflict and clear when it is resolved.",
+    "description": "Version 4.1.11 release notes."
+  },
+  "wiki.patch-notes.version-4-1-11.progression-fixes": {
+    "defaultMessage": "Fracture availability now updates after progression changes. Hide completed research now includes Durability.",
+    "description": "Version 4.1.11 release notes."
+  },
+  "wiki.patch-notes.version-4-1-11.runtime-fixes": {
+    "defaultMessage": "Fixed stalled Railgun volleys and missing Patient Hands credit between game updates.",
+    "description": "Version 4.1.11 release notes."
+  },
+  "wiki.patch-notes.version-4-1-11.save-safety": {
+    "defaultMessage": "Improved save recovery, import safety and Cloud conflict handling. Offline time is credited once after returning.",
+    "description": "Version 4.1.11 release notes."
+  },
+  "wiki.patch-notes.version-4-1-11.save-tools": {
+    "defaultMessage": "Added optional timestamps to exported save filenames and improved native file saving and preset copy/paste.",
     "description": "Version 4.1.11 release notes."
   },
   "wiki.patch-notes.version-4-1-11.stellar-benefits": {
-    "defaultMessage": "Reworked Stellar skills with direct output bonuses that survive fracturing. Fracturing removes each skill’s drawbacks, and Stellar Dominance uses a stable activation requirement. Updated Stellar descriptions and Bot costs.",
-    "description": "Version 4.1.11 release notes."
-  },
-  "wiki.patch-notes.version-4-1-11.timestamp-exports": {
-    "defaultMessage": "Added an option to timestamp exported save filenames.",
-    "description": "Version 4.1.11 release notes."
-  },
-  "wiki.patch-notes.version-4-1-11.tinker-offline": {
-    "defaultMessage": "Fixed Tinker showing “Repeating” during Offline Time processing. Tinker is now disabled until processing finishes.",
+    "defaultMessage": "Stellar skills now keep their output bonuses when fractured, with their drawbacks removed. Updated Stellar descriptions, activation requirements and Bot costs.",
     "description": "Version 4.1.11 release notes."
   },
   "wiki.patch-notes.version-4-1-2": {
@@ -9869,82 +8914,6 @@
     "defaultMessage": "Improved Stored Time so duplicate or overlapping spends are safely rejected, active jobs retain their progress and cancellation controls, and unfinished settings remain intact when changing pages.",
     "description": "Version 4.1 release note for Stored Time reliability and controls."
   },
-  "wiki.patch-notes.version-4-2-1": {
-    "defaultMessage": "Version 4.2.1",
-    "description": "Version 4.2.1 release notes, reconstructed from gameplay rework history before the Classic/Modern update."
-  },
-  "wiki.patch-notes.version-4-2-1.challenges": {
-    "defaultMessage": "Added Beginnings and nine Infinity Challenges with new rules and rewards.",
-    "description": "Version 4.2.1 release notes."
-  },
-  "wiki.patch-notes.version-4-2-1.convergence": {
-    "defaultMessage": "Convergence’s effect is revealed after six challenge completions. Completing all ten unlocks continuous Galactic Brain growth, doubling existing Galactic Brains every 30 minutes of game time.",
-    "description": "Version 4.2.1 release notes."
-  },
-  "wiki.patch-notes.version-4-2-1.feedback": {
-    "defaultMessage": "Stopped repeated automatic skill-preset conflict notices and improved Simulation countdowns, progress animation and resource formatting.",
-    "description": "Version 4.2.1 release notes."
-  },
-  "wiki.patch-notes.version-4-2-1.forager": {
-    "defaultMessage": "Simulations unlock through Beginnings after ten Bots goals. Added seasonal Forager gathering and hunting, crew assignments, housing, crafting and Leadership. This version stops at the Forager era; later eras are unavailable.",
-    "description": "Version 4.2.1 release notes."
-  },
-  "wiki.patch-notes.version-4-2-1.offline": {
-    "defaultMessage": "Fixed offline returns being credited again after a restart. Improved effective game-speed display and capped the offline boost at 8×.",
-    "description": "Version 4.2.1 release notes."
-  },
-  "wiki.patch-notes.version-4-2-1.production": {
-    "defaultMessage": "Fixed stalled Railgun volleys and iOS detection of existing beta saves, and hid completed Durability research.",
-    "description": "Version 4.2.1 release notes."
-  },
-  "wiki.patch-notes.version-4-2-1.progression": {
-    "defaultMessage": "Rebuilt Modern progression: Quantum, Reality and the former Simulations are replaced by Infinity upgrades and civilization Simulations. Useful permanent upgrades now live in Infinity.",
-    "description": "Version 4.2.1 release notes."
-  },
-  "wiki.patch-notes.version-4-2-1.skills": {
-    "defaultMessage": "Fixed Fracture availability after earning a Catalyst and preserved Patient Hands charge from unused time after a Tinker completion.",
-    "description": "Version 4.2.1 release notes."
-  },
-  "wiki.patch-notes.version-4-2-2": {
-    "defaultMessage": "Version 4.2.2",
-    "description": "Version 4.2.2 release notes."
-  },
-  "wiki.patch-notes.version-4-2-2.migration": {
-    "defaultMessage": "Modern migration runs automatically. Advanced upgrades must be earned again, and fractures and their augments are removed. Your base game, Infinity Points, Transcendence, Discovery and purchases stay. You can return to Classic at any time.",
-    "description": "Version 4.2.2 release notes."
-  },
-  "wiki.patch-notes.version-4-2-2.modes": {
-    "defaultMessage": "Added separate Classic and Modern modes. Opening Modern for the first time copies your Classic progress and preserves the original Classic save. Later switches resume each mode’s own progress.",
-    "description": "Version 4.2.2 release notes."
-  },
-  "wiki.patch-notes.version-4-2-2.navigation": {
-    "defaultMessage": "The menu now shows Back to Classic or Back to Modern and switches directly. Classic uses its own C-1 version label; Modern shows the app version. Improved compact navigation and version footers.",
-    "description": "Version 4.2.2 release notes."
-  },
-  "wiki.patch-notes.version-4-2-2.storage": {
-    "defaultMessage": "Added separate native save files and Steam Cloud storage for Classic and Modern, with protection against conflicting or outdated writes and retained recovery copies.",
-    "description": "Version 4.2.2 release notes."
-  },
-  "wiki.patch-notes.version-4-2-3": {
-    "defaultMessage": "Version 4.2.3",
-    "description": "Version 4.2.3 release notes."
-  },
-  "wiki.patch-notes.version-4-2-3.dialog": {
-    "defaultMessage": "Restored timestamped export filenames with a separate preference for each mode. Matched the checkbox to Settings and improved copy/download feedback, import previews, theme and interface sizing, and keyboard focus.",
-    "description": "Version 4.2.3 release notes."
-  },
-  "wiki.patch-notes.version-4-2-3.export": {
-    "defaultMessage": "Fixed export failing when the browser could no longer write its save. Taking a copy no longer restarts the game or requires a save write, and active Stored Time processing retains its safe pre-processing snapshot.",
-    "description": "Version 4.2.3 release notes."
-  },
-  "wiki.patch-notes.version-4-2-3.reset": {
-    "defaultMessage": "Restored Reset Save for the current mode without resetting the other mode. Removed Recover mode saves from Settings; startup recovery remains available if a save cannot open.",
-    "description": "Version 4.2.3 release notes."
-  },
-  "wiki.patch-notes.version-4-2-3.transfers": {
-    "defaultMessage": "Import and export now apply only to the mode you are playing, using its normal save string or file. Review imported progress before replacing that mode’s save; the other mode is preserved.",
-    "description": "Version 4.2.3 release notes."
-  },
   "wiki.patch-notes.version-4.accessibility": {
     "defaultMessage": "Improved keyboard and screen-reader support, reduced-motion behavior, mobile text selection, text-field editing, focus handling, and rapid-touch protection.",
     "description": "Version 4 release note for accessibility and input support."
@@ -10146,7 +9115,7 @@
     "description": "Heading for revealed Secrets of the Universe."
   },
   "wiki.skills.auto-assign": {
-    "defaultMessage": "You can manually include or exclude individual skills from automatic assignment. The tree remembers assignment order so it can rebuild your layout after <infinity>Infinity</infinity>. Resetting the tree clears the live auto-assignment queue. Presets save complete layouts.",
+    "defaultMessage": "You can manually include or exclude individual skills from automatic assignment. The tree remembers assignment order so it can rebuild your layout after <infinity>Infinity</infinity> or a <value>Quantum</value> reset. Resetting the tree clears the live auto-assignment queue. Presets save complete layouts.",
     "description": "Skill assignment explanation adapted from the Unity WikiContent prefab."
   },
   "wiki.skills.auto-assign-title": {
@@ -10242,7 +9211,7 @@
     "description": "Accessible heading for the Wiki topic navigation."
   },
   "wiki.transcendence.overview": {
-    "defaultMessage": "At <value>4e242 Bots</value>, Transcend in Avocato to reset the earlier layers and earn <value>one Transcendence Point</value>. Spend one point on <value>Unlock Discovery</value> in that tab to permanently replace Science and Research. Existing Science and research levels do not carry over.",
+    "defaultMessage": "At <value>4e242 Bots</value>, Transcend in Avocato to reset the earlier layers and earn <value>one Transcendence Point</value>. Spend one point on <value>Unlock Discovery</value> to permanently replace Science and Research. Existing Science and research levels do not carry over.",
     "description": "Explains the Transcendence threshold, currency and optional Discovery purchase."
   },
   "wiki.transcendence.overview-title": {

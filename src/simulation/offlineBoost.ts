@@ -1,16 +1,15 @@
-import type { CanonicalGameStateV1, CivilizationState, TimelineState } from '../game-state/types'
+import type { CanonicalGameStateV1, TimelineState } from '../game-state/types'
 import { settleContinuousDebit } from './conservativeSettlement'
 
-export const BASE_OFFLINE_BOOST_MULTIPLIER = 8
+export const MAXIMUM_OFFLINE_BOOST_MULTIPLIER = 42
+export const BASE_OFFLINE_BOOST_MULTIPLIER = MAXIMUM_OFFLINE_BOOST_MULTIPLIER
 export const DEFAULT_OFFLINE_BOOST_MULTIPLIER = 1
 export const DEFAULT_OFFLINE_BOOST = Object.freeze({ multiplier: DEFAULT_OFFLINE_BOOST_MULTIPLIER })
 export type OfflineBoostAutoResume = 'off' | 'last' | 'max'
 export const isOfflineBoostAutoResume = (value: unknown): value is OfflineBoostAutoResume => value === 'off' || value === 'last' || value === 'max'
 
-/** Era completion permanently raises the selectable Stored Time speed. */
-export function maximumOfflineBoostMultiplier(civilization?: Readonly<CivilizationState>): number {
-  if (civilization?.farming?.completionReached || civilization?.farming?.phase === 'complete') return 16
-  if (civilization?.farming || Array.isArray(civilization?.awardedCatalystMilestoneIds) && civilization.awardedCatalystMilestoneIds.includes('forager-catalyst-6')) return 12
+/** Classic retains the original foreground speed range without civilization gates. */
+export function maximumOfflineBoostMultiplier(): number {
   return BASE_OFFLINE_BOOST_MULTIPLIER
 }
 
@@ -46,7 +45,7 @@ export function planOfflineBoost(timeline: Readonly<Pick<TimelineState, 'storedT
 export function resumeOfflineBoost(state: CanonicalGameStateV1, allowed = true): CanonicalGameStateV1 {
   const mode = state.timeline.offlineBoostAutoResume ?? 'off'
   if (!allowed || mode === 'off' || state.timeline.storedTimeAvailableSeconds <= 0) return pauseOfflineBoost(state)
-  const maximum = maximumOfflineBoostMultiplier(state.civilization)
+  const maximum = maximumOfflineBoostMultiplier()
   const multiplier = mode === 'max' ? maximum : Math.min(maximum, state.timeline.offlineBoostResumeMultiplier ?? 1)
   return withOfflineBoost(state, { multiplier }, false)
 }

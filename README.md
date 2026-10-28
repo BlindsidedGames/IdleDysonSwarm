@@ -57,6 +57,7 @@ defects and must preserve deterministic gameplay behavior.
 ```bash
 npm install
 npm run dev
+npm test
 npm run lint
 npm run build
 npm run data:check
@@ -85,16 +86,14 @@ src/
 public/                Shipped browser assets
 source-assets/         Non-shipped masters and platform reference assets
 hosts/                 Capacitor mobile and Electron desktop hosts
-qa/fixtures/           Importable saves for in-game QA and profiling
-qa/parity/             Reference input used by performance reporting
+test/fixtures/         Immutable save fixtures
+test/parity/           Executable save and simulation parity cases
 ```
 
-Verify gameplay changes in the running game. Do not commit automated tests;
-the implementation is the contract, and requested changes must not be held to
-obsolete unit-test expectations. See `AGENTS.md` for the testing policy.
-The previous automated suite and its tooling are preserved on
-`test-archive-2026-10-16` (archive commit `fb7470d4`). Build, lint, data and
-packaging checks remain available.
+The Vitest suite is deliberately contract-first. It protects saves, canonical
+transactions, deterministic time progression, persistence/writer authority,
+and release packaging. Add focused tests for changed behavior; do not recreate
+exhaustive component-markup or static-data-restatement coverage.
 
 See the [documentation index](docs/README.md), the active
 [product backlog](docs/BACKLOG.md),

@@ -393,10 +393,6 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCen
                 forInfoDictionaryKey: "CFBundleVersion"
             ) as? String ?? "0",
             "platform": "ios",
-            "saveStorageNamespace": Self.webSaveRootName,
-            "entitlementCacheNamespace": "rework-beta-v1",
-            "cloudSavesEnabled": false,
-            "automaticUnityDiscoveryEnabled": true,
             "locale": Locale.current.identifier.replacingOccurrences(
                 of: "_",
                 with: "-"
@@ -489,7 +485,7 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCen
     @objc public func writeText(_ call: CAPPluginCall) {
         perform(call) {
             let target = try self.rootedURL(
-                relativePath: self.requireRelativePath(call, key: "relativePath"), writable: true
+                relativePath: self.requireRelativePath(call, key: "relativePath")
             )
             let data = try self.requireContents(call)
             try FileManager.default.createDirectory(
@@ -504,10 +500,10 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCen
     @objc public func replaceAtomically(_ call: CAPPluginCall) {
         perform(call) {
             let source = try self.rootedURL(
-                relativePath: self.requireRelativePath(call, key: "temporaryRelativePath"), writable: true
+                relativePath: self.requireRelativePath(call, key: "temporaryRelativePath")
             )
             let destination = try self.rootedURL(
-                relativePath: self.requireRelativePath(call, key: "destinationRelativePath"), writable: true
+                relativePath: self.requireRelativePath(call, key: "destinationRelativePath")
             )
             guard FileManager.default.fileExists(atPath: source.path) else {
                 call.reject("The temporary Web save does not exist.", "file-not-found")
@@ -528,7 +524,7 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCen
                 relativePath: self.requireRelativePath(call, key: "sourceRelativePath")
             )
             let destination = try self.rootedURL(
-                relativePath: self.requireRelativePath(call, key: "destinationRelativePath"), writable: true
+                relativePath: self.requireRelativePath(call, key: "destinationRelativePath")
             )
             guard FileManager.default.fileExists(atPath: source.path) else {
                 call.reject("The Web save source does not exist.", "file-not-found")
@@ -722,9 +718,9 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCen
         notifyListeners("lifecycleChanged", data: ["phase": phase])
     }
 
-    private func webSaveRoot(_ namespace: String = IdleDysonNativePlugin.webSaveRootName) throws -> URL {
+    private func webSaveRoot() throws -> URL {
         let root = try documentsDirectory().appendingPathComponent(
-            namespace,
+            Self.webSaveRootName,
             isDirectory: true
         )
         try FileManager.default.createDirectory(
@@ -744,14 +740,9 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCen
         return documents.standardizedFileURL
     }
 
-    private func rootedURL(relativePath: String, writable: Bool = false) throws -> URL {
-        var parts = relativePath.split(separator: "/").map(String.init)
-        let bucket = ["classic", "modern", "beta", "host"].contains(parts[0]) ? parts.removeFirst() : "host"
-        guard !parts.isEmpty, !(writable && bucket == "beta") else { throw NativeBridgeError.invalidPath }
-        let namespace = bucket == "classic" ? "web-runtime-v1" : bucket == "modern" ? "idleds-modern-v1" : bucket == "beta" ? "idleds-rework-beta-v1" : Self.webSaveRootName
-        let root = try webSaveRoot(namespace)
-        if try root.resourceValues(forKeys: [.isSymbolicLinkKey]).isSymbolicLink == true { throw NativeBridgeError.invalidPath }
-        let target = root.appendingPathComponent(parts.joined(separator: "/")).standardizedFileURL
+    private func rootedURL(relativePath: String) throws -> URL {
+        let root = try webSaveRoot()
+        let target = root.appendingPathComponent(relativePath).standardizedFileURL
         let rootPrefix = root.path.hasSuffix("/") ? root.path : root.path + "/"
         guard target.path.hasPrefix(rootPrefix) else {
             throw NativeBridgeError.invalidPath
@@ -850,7 +841,7 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin, GKGameCen
         }
     }
 
-    private static let webSaveRootName = "idleds-dual-modes-v1"
+    private static let webSaveRootName = "web-runtime-v1"
     private static let unitySaveFileName = "idle_dyson_swarm_save.txt"
     private static let reviewRequestedKey = "review_requested_v1"
     private static let maxFileBytes = 32 * 1024 * 1024

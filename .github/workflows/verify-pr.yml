@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   verify:
-    name: Lint, data, localization, and builds
+    name: Test, lint, data, localization, and builds
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -34,11 +34,11 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
 
+      - name: Run approved save-safety tests
+        run: npm run test:save-safety
+
       - name: Lint sources
         run: npm run lint
-
-      - name: Verify the approved save-safety suite
-        run: npm run test:save-safety
 
       - name: Validate generated gameplay data
         run: npm run data:check

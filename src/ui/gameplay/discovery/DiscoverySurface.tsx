@@ -9,7 +9,7 @@ import { Progress, InlineImageSymbol } from '../../components'
 import { discoveryIcons } from './icons'
 import { useDiscoveryBarMotion } from './useDiscoveryBarMotion'
 import { discoverySkillNames } from './skillMessages'
-import { formatGameNumber, formatWholeGameNumber, formatGameDuration, formatGameCountdown } from '../../i18n/formatters'
+import { formatGameNumber, formatWholeGameNumber, formatGameDuration } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import { discoveryMessages as m } from './messages'
 import './discovery.css'
@@ -53,8 +53,8 @@ export function DiscoverySurface({ state, effects, locale, gameSpeed }: {
           <h2 id={`discovery-${bar.id}-heading`}><InlineImageSymbol src={discoveryIcons[bar.id]} tint />{intl.formatMessage(bar.name)}</h2>
           <dl>
             <div><dt>{intl.formatMessage(m.completed)}</dt><dd>{formatWholeGameNumber(locale, bar.tier.completions)}</dd></div>
-            <div><dt>{intl.formatMessage(m.cycleDuration)}</dt><dd>{formatGameCountdown(locale, realTimeDuration(bar.maximum / bar.speed, gameSpeed))}</dd></div>
-            <div><dt>{intl.formatMessage(m.nextCompletion)}</dt><dd>{formatGameCountdown(locale, realTimeDuration(completionTimes[index], gameSpeed))}</dd></div>
+            <div><dt>{intl.formatMessage(m.cycleDuration)}</dt><dd>{duration(realTimeDuration(bar.maximum / bar.speed, gameSpeed))}</dd></div>
+            <div><dt>{intl.formatMessage(m.nextCompletion)}</dt><dd>{duration(realTimeDuration(completionTimes[index], gameSpeed))}</dd></div>
             <div><dt>{intl.formatMessage(bar.fact)}</dt><dd>{index === 2 ? '' : '×'}{bar.benefit}</dd></div>
             <div><dt>{intl.formatMessage(index === 2 ? m.nextPanelLifetime : m.nextMultiplier)}</dt><dd>{index === 2 ? '' : '×'}{bar.next}</dd></div>
             {index === 0 && !state.elevation && <div><dt>{intl.formatMessage(m.cashBots)}</dt><dd>×{number(effects.cashBotsMultiplier)}</dd></div>}
@@ -93,7 +93,7 @@ function DiscoveryBar({ tier, maximum, incoming, name, secondsPerProgress, local
   readonly label: string
 }) {
   const visible = useDiscoveryBarMotion(tier, maximum, incoming)
-  const time = formatGameCountdown(locale, (maximum - visible.progress) * secondsPerProgress)
+  const time = formatGameDuration(locale, (maximum - visible.progress) * secondsPerProgress)
   const displayedBenefit = benefit - Number(tier.completions - visible.completions) * perCompletion
   return <span className="discovery-bar">
     <Progress className="discovery-progress" label={name} valueText={time} value={visible.progress} maximum={maximum} />
