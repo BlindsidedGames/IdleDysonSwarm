@@ -221,3 +221,84 @@ Built from clean source `6d6193f2efd8d93ea9b968fb780d725a86ae7b4a` on
   behalf: https://discord.com/channels/712304553931833385/1006856538893340692/1553751345129852970.
 - No production, App Review or website changes. Google symbol warnings and the
   existing web chunk-size warning remain non-blocking.
+
+## 2026102801 — standalone Classic 4.1.11 internal release
+
+28 October 2026 (AEDT, UTC+11). Authorized targets were Google Play Internal,
+Internal TestFlight and Steam `public-beta`. Product source is frozen at
+`ad3bebc6ada1ab8c150ce54c526688f390ac0476` on merged main. Restoration PR
+[#239](https://github.com/BlindsidedGames/IdleDysonSwarm/pull/239) restored the
+public 4.1.10 engine with approved base-game improvements and the new Stored Time
+system. PR [#240](https://github.com/BlindsidedGames/IdleDysonSwarm/pull/240) added
+the missing Xcode target entries for the existing NativeSaveExport helper before
+any upload. The superseded `c9687ed3` candidate was not uploaded.
+
+The civilization rework remains preserved remotely on
+`Matt/shelved-civilization-rework-20261028` at
+`2458f4e84e7d74d9e71885f6b371def1c60d2df4`. This release has no mode switch or
+automatic Modern conversion. Classic keeps IDSWEB1/schema 20, the released
+`web-runtime-v1` native roots and Classic Steam `current.idsw` Cloud identity.
+
+### Validation and artifacts
+
+- Clean isolated Mac checkout; pinned Node 24.11.1. Canonical
+  `npm run release:local -- --release-id 2026102801` passed: the approved three-file
+  save-safety suite (16 cases), lint, catalogs, Web/native builds, Electron boundary,
+  signed Android packaging and iOS sync. The archived gameplay suite was not run.
+- Merged-source shared verification passed:
+  [40607680634](https://github.com/BlindsidedGames/IdleDysonSwarm/actions/runs/40607680634).
+  Final Android/iOS native verification passed:
+  [40607688381](https://github.com/BlindsidedGames/IdleDysonSwarm/actions/runs/40607688381).
+- Artifact/evidence root: `/Users/matthewrushworth/Builds/ids-release-2026102801/`.
+  `source.txt`, `android/manifest.json`, `android/SHA256SUMS`, upload logs, package
+  provenance, screenshots and full depot/download hashes are retained there.
+- Android AAB: `android/idle-dyson-swarm-2026102801.aab`, 20,168,315 bytes,
+  SHA-256 `058904a6b899e893b293470cdaecf85c865d664dc843c78c88d555f44382e695`. Established Play upload certificate fingerprint verified.
+- iOS archive: `ios/IDS-2026102801.xcarchive`, bundle
+  `com.blindsidedgames.idledysonswarm`, 4.1.11 / 2610.28.01. All 281 renderer assets
+  matched the Android artifact. Archived App executable SHA-256
+  `eea579559210149d7def1804a16824fd185ff45bbda927b53cbb93bb9f425e0f`.
+  Xcode Internal-Only upload succeeded at 11:22 AEDT; this archive hash is not an
+  uploaded IPA hash because Apple distribution resigning occurs during upload.
+- Windows/Linux/universal macOS Steam ASARs all embed source `ad3bebc6`, version
+  4.1.11/build 2026102801 and Steam distribution; standalone renderer and canonical
+  Classic storage root verified. ASAR SHA-256
+  `fc89c29d9fc75d6696fde810f66c75fc6847d538257782e4e6b356df97ad0018`.
+  Native addon source and SDK lock were unchanged from the previously verified
+  build; reused addons and matching official SDK libraries have recorded hashes.
+
+### Verified distribution state
+
+| Target | Identity | Final observed state |
+| --- | --- | --- |
+| Google Play Internal | 4.1.11 / 2026102801, release 125 | **Available to internal testers**, released 28 October 11:25 AEDT. Eight localized note blocks accepted. |
+| Internal TestFlight | 4.1.11 / 2610.28.1 (uploaded 2610.28.01) | **Testing**, existing **Internal** group, 3 tester invites. Compliance and focused testing notes saved. |
+| Steam `public-beta` | Build **26257907** | **Active**. Fresh Windows/Linux/macOS downloads match all 76/75/265 uploaded package files. |
+
+Apple tester availability was verified in the coordinating Main IDS thread's
+authenticated App Store Connect browser. [Candidate build](https://appstoreconnect.apple.com/teams/e12982c4-2977-4eeb-be29-6d750fd48ca7/apps/1631060225/testflight/ios/6f86c59e-016e-4797-ae48-a6145a20dc0e).
+The Apple build UUID is `6f86c59e-016e-4797-ae48-a6145a20dc0e`; the coordinating
+Windows screenshot is `output/testflight-4.1.11-internal.jpg`.
+Steam default/public remained **25569496** before and after beta activation.
+Google production was 4.1.10 / 2026092801 and was not changed. No App Review,
+production/default promotion, website deployment, Cloud-rule or achievement
+publication, or community message was performed by this release.
+
+### Affected native checks and remaining limits
+
+A new disposable iPhone 16 Pro / iOS 26.4 simulator loaded the checked-in Classic
+mature fixture. The new Offline Time slider reached 42x with a 41s/second debit
+and active countdown; it was restored to 1x / Off. Timestamped Save File opened
+the native document picker; cancellation returned to a usable export dialog.
+Background/terminate/reopen retained progressed Classic state. The canonical
+checkpoint remained IDSWEB1/schema 20. A separate synthetic Modern file remained
+byte-identical before and after restart; no player save was used or replaced.
+Actual export destination file writing/readback was not performed.
+
+Packaged macOS startup checks passed on arm64 and Rosetta x64 with disposable
+data and mock Keychain. The SDK fell back when the package was not launched by
+Steam, so these are packaging/startup checks, not live commerce/overlay or Cloud
+interaction evidence. Physical Android/iPhone interaction, real cross-device
+Steam Cloud, every locale/scale and the full gameplay acceptance matrix remain
+unverified. Existing Google deobfuscation/native-symbol and Web chunk warnings
+were non-blocking. This documentation follow-up does not change product source.

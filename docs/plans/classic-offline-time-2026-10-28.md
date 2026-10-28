@@ -11,7 +11,8 @@ No new Transcendence mechanics are selected by this change.
   checkpoint `2458f4e8`. It retains the Forager/Farming work and save fixtures.
 - Active development: `Matt/classic-offline-time`, based directly on public source.
 
-The rework branch is preserved locally; it has not been pushed or deployed.
+The rework branch was subsequently preserved remotely for the internal-release
+restoration; it has not been deployed by this release.
 Its save format and the Classic save format remain distinct. Do not import a
 Modern save into this older Classic engine or replace a player's save for QA.
 
@@ -205,3 +206,34 @@ claims are made. Resume on the release Mac from the exact prepared source commit
 using a clean isolated checkout and npm run release:local -- --release-id 2026102801.
 Then complete iOS archive/upload and Steam packages, activate only the requested
 internal/beta destinations, and verify tester availability independently.
+
+## Completed internal deployment — 28 October 2026
+
+Frozen product source `ad3bebc6ada1ab8c150ce54c526688f390ac0476` is merged main
+(restoration PR239 and the four Xcode target entries in PR240). All three internal
+destinations are verified: Google Play 2026102801 (4.1.11) Available to internal
+testers; TestFlight 4.1.11 (2610.28.1, uploaded 2610.28.01) Testing in Internal
+with 3 tester invites; Steam public-beta 26257907 active, with all three fresh
+platform downloads matching their uploaded files. Steam public/default 25569496,
+Google production 4.1.10/2026092801, App Review and website were untouched.
+
+The final local gate passed all 16 approved save-safety cases plus lint,
+localization, Web/native builds, Electron boundary, signing and sync. Shared and
+final native CI passed on the exact product SHA. The initial iOS archive found
+that NativeSaveExport.swift existed but was missing four Xcode target entries;
+that correction was merged and all final artifacts were rebuilt before upload.
+
+A disposable iOS 26.4 simulator opened the Classic fixture and new Offline Time
+panel, reached 42x/41s per second, returned to 1x/Off, opened the timestamped native
+Save File picker and cancelled back to a usable export window. Native restart
+retained progress and schema 20. A separately seeded synthetic Modern file stayed
+byte-identical; no player data was modified. Actual exported file writing/readback,
+physical mobile devices, Windows/Linux gameplay and cross-device Cloud remain
+unverified. macOS arm64/x64 package startup and all-platform download integrity
+checks do not claim those broader outcomes.
+
+Artifacts, checksums, timestamps, store links and limits are recorded in the
+[release ledger](../platform/release-ledger.md#2026102801--standalone-classic-4111-internal-release)
+and `/Users/matthewrushworth/Builds/ids-release-2026102801/`. This section supersedes
+the initial Windows-only readiness status above. Product version remains 4.1.11;
+no 4.1.12 or new civilization/Transcendence mechanics were introduced.
