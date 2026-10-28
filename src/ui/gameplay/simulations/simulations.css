@@ -609,7 +609,7 @@
 }
 
 .simulation-panel-card__actions > .ui-button:not(:disabled):active {
-  background-color: var(--simulation-card-action-active);
+  background-color: color-mix(in srgb, var(--simulation-card-action-active) 80%, white);
 }
 
 .simulation-panel-card__actions > .ui-button:disabled {
@@ -619,13 +619,13 @@
 }
 
 .simulation-panel-card__actions > .ui-button--danger {
-  background: #bb7f96;
+  background: color-mix(in srgb, #bb7f96 80%, white);
 }
 
 .simulation-panel-card .ui-button:focus-visible,
 .simulations-surface__show-formulas:has(input:focus-visible) {
-  outline: none;
-  outline-offset: 0;
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
 }
 
 .simulation-panel-card__progress-content,
@@ -1027,4 +1027,12 @@
   .simulation-panel-card__actions > .ui-button:not(:disabled) {
     background-image: var(--ui-action-gradient);
   }
+}
+
+.simulation-panel-card__actions > .ui-button--danger:not(:disabled):hover {
+  background-color: color-mix(in srgb, #bb7f96 70%, white);
+}
+
+.simulation-panel-card__actions > .ui-button--danger:not(:disabled):active {
+  background-color: color-mix(in srgb, #bb7f96 90%, white);
 }

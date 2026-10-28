@@ -64,7 +64,14 @@
 
 .tinker-surface__control:disabled {
   cursor: not-allowed;
-  opacity: 0.65;
+}
+
+.tinker-surface__control:disabled * {
+  color: var(--color-text-secondary);
+}
+
+.tinker-surface__control:disabled .tinker-surface__progress-fill {
+  background: var(--theme-selected);
 }
 
 .tinker-surface__title,

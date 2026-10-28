@@ -4589,6 +4589,46 @@
       "value": ")"
     }
   ],
+  "infinity.production-boost": [
+    {
+      "type": 0,
+      "value": "Anlagenproduktion verstärkt um "
+    },
+    {
+      "type": 8,
+      "value": "highlight",
+      "children": [
+        {
+          "type": 0,
+          "value": "×"
+        },
+        {
+          "type": 1,
+          "value": "multiplier"
+        }
+      ]
+    }
+  ],
+  "infinity.production-boost.facility-range": [
+    {
+      "type": 1,
+      "value": "first"
+    },
+    {
+      "type": 0,
+      "value": "–"
+    },
+    {
+      "type": 1,
+      "value": "last"
+    }
+  ],
+  "infinity.production-boost.none": [
+    {
+      "type": 0,
+      "value": "Anlagenproduktion ×1"
+    }
+  ],
   "infinity.progress.bots-until-next": [
     {
       "type": 0,
@@ -5159,10 +5199,136 @@
       "value": "App wurde in den Hintergrund versetzt, Verarbeitung abgebrochen"
     }
   ],
+  "offline-time.auto-resume": [
+    {
+      "type": 0,
+      "value": "Bei Rückkehr"
+    }
+  ],
+  "offline-time.auto-resume-last": [
+    {
+      "type": 0,
+      "value": "Letzte Geschwindigkeit"
+    }
+  ],
+  "offline-time.auto-resume-max": [
+    {
+      "type": 0,
+      "value": "Maximale Geschwindigkeit"
+    }
+  ],
+  "offline-time.auto-resume-off": [
+    {
+      "type": 0,
+      "value": "Aus"
+    }
+  ],
   "offline-time.balanced-preset": [
     {
       "type": 0,
       "value": "Ausgewogen"
+    }
+  ],
+  "offline-time.boost-details": [
+    {
+      "type": 0,
+      "value": "Details"
+    }
+  ],
+  "offline-time.boost-drain": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " s pro Sekunde"
+    }
+  ],
+  "offline-time.boost-drain-label": [
+    {
+      "type": 0,
+      "value": "Bei aktivem Boost"
+    }
+  ],
+  "offline-time.boost-duration-label": [
+    {
+      "type": 0,
+      "value": "Boost-Dauer"
+    }
+  ],
+  "offline-time.boost-explanation": [
+    {
+      "type": 0,
+      "value": "Nutze gespeicherte Zeit, um aktives Spielen zu beschleunigen."
+    }
+  ],
+  "offline-time.boost-pause": [
+    {
+      "type": 0,
+      "value": "Boost pausieren"
+    }
+  ],
+  "offline-time.boost-paused": [
+    {
+      "type": 0,
+      "value": "Pausiert"
+    }
+  ],
+  "offline-time.boost-regular": [
+    {
+      "type": 0,
+      "value": "Normal 1×"
+    }
+  ],
+  "offline-time.boost-running": [
+    {
+      "type": 0,
+      "value": "Läuft mit "
+    },
+    {
+      "type": 1,
+      "value": "multiplier"
+    },
+    {
+      "type": 0,
+      "value": "×"
+    }
+  ],
+  "offline-time.boost-selected": [
+    {
+      "type": 0,
+      "value": "Gewähltes Tempo"
+    }
+  ],
+  "offline-time.boost-speed": [
+    {
+      "type": 0,
+      "value": "Spieltempo"
+    }
+  ],
+  "offline-time.boost-stack": [
+    {
+      "type": 0,
+      "value": "Bewege den Regler über 1×, um gespeicherte Zeit zu nutzen. Nur zusätzliche Zeit verbraucht den Vorrat. Doppelte Zeit wirkt zusätzlich. Ein leerer Speicher, der Hintergrund und manuelle Resets setzen den Regler auf 1× zurück."
+    }
+  ],
+  "offline-time.boost-start": [
+    {
+      "type": 0,
+      "value": "Boost starten"
+    }
+  ],
+  "offline-time.boost-stored": [
+    {
+      "type": 0,
+      "value": "Gespeicherte Zeit"
+    }
+  ],
+  "offline-time.boost-title": [
+    {
+      "type": 0,
+      "value": "Offline-Boost"
     }
   ],
   "offline-time.calculating": [
@@ -5203,6 +5369,24 @@
       "value": "capacity"
     }
   ],
+  "offline-time.capacity-cost": [
+    {
+      "type": 0,
+      "value": "Kosten"
+    }
+  ],
+  "offline-time.capacity-maxed": [
+    {
+      "type": 0,
+      "value": "Maximum"
+    }
+  ],
+  "offline-time.capacity-result": [
+    {
+      "type": 0,
+      "value": "Neue Kapazität"
+    }
+  ],
   "offline-time.close-summary": [
     {
       "type": 0,
@@ -5224,21 +5408,13 @@
   "offline-time.double-storage": [
     {
       "type": 0,
-      "value": "Speicher verdoppeln"
+      "value": "Kapazität verdoppeln"
     }
   ],
   "offline-time.double-storage-description": [
     {
       "type": 0,
-      "value": "Verbrauche den gesamten Vorrat, um die Kapazität auf "
-    },
-    {
-      "type": 1,
-      "value": "capacity"
-    },
-    {
-      "type": 0,
-      "value": " zu erhöhen."
+      "value": "Fülle deinen Offline-Zeitspeicher, um seine Kapazität zu verdoppeln."
     }
   ],
   "offline-time.error-code": [
@@ -5347,6 +5523,22 @@
     {
       "type": 0,
       "value": "% abgeschlossen"
+    }
+  ],
+  "offline-time.quick-amounts": [
+    {
+      "type": 0,
+      "value": "Schnellaktionen (Minuten)"
+    }
+  ],
+  "offline-time.quick-slot": [
+    {
+      "type": 0,
+      "value": "Aktion "
+    },
+    {
+      "type": 1,
+      "value": "slot"
     }
   ],
   "offline-time.quick-spend": [
@@ -8025,6 +8217,18 @@
       "value": "Entwicklungsmenü"
     }
   ],
+  "settings.interface-size": [
+    {
+      "type": 0,
+      "value": "Oberflächengröße"
+    }
+  ],
+  "settings.interface-size.description": [
+    {
+      "type": 0,
+      "value": "Ändere die Größe der Oberfläche im gesamten Spiel"
+    }
+  ],
   "settings.language.chinese-simplified": [
     {
       "type": 0,
@@ -8603,6 +8807,12 @@
     {
       "type": 0,
       "value": "Speicherdaten"
+    }
+  ],
+  "settings.timestamp-exports": [
+    {
+      "type": 0,
+      "value": "Exportdateinamen mit Zeitstempel"
     }
   ],
   "settings.visualization.description": [
@@ -9815,6 +10025,12 @@
     {
       "type": 0,
       "value": "Kopieren"
+    }
+  ],
+  "skills.copy-failed": [
+    {
+      "type": 0,
+      "value": "Kopieren fehlgeschlagen. Kopiere den markierten Text manuell."
     }
   ],
   "skills.cost": [
@@ -12869,6 +13085,12 @@
       "value": "Voreinstellungen 6–10 anzeigen"
     }
   ],
+  "skills.settings.showTooltips": [
+    {
+      "type": 0,
+      "value": "Tooltips anzeigen"
+    }
+  ],
   "skills.show-preset-application-notifications": [
     {
       "type": 0,
@@ -13023,6 +13245,90 @@
     {
       "type": 0,
       "value": "Stellares Gedächtnis"
+    }
+  ],
+  "skills.stellar.dominance.technical": [
+    {
+      "type": 0,
+      "value": "1.000× stellare Produktion. 10× Panel-Lebensdauer, solange deine Bots die Abdeckungsanforderung erfüllen, die vor diesem Lebensdauerbonus berechnet wird. Währenddessen wird Geld durch 100 geteilt; die gewöhnlichen abdeckungsabhängigen Bot-Kosten werden mit 100 multipliziert."
+    }
+  ],
+  "skills.stellar.fracturedDominance": [
+    {
+      "type": 0,
+      "value": "1.000× stellare Produktion. 10× Panel-Lebensdauer, solange die normale Bot-Anforderung vor dem Bonus erfüllt ist. Entfernt den zusätzlichen Bot-Kostenfaktor und den Geldnachteil dieser Fähigkeit."
+    }
+  ],
+  "skills.stellar.fracturedImprovements": [
+    {
+      "type": 0,
+      "value": "2× stellare Produktion und durch 1.000 geteilte Bot-Kosten, dauerhaft ohne zugewiesene Fähigkeitspunkte."
+    }
+  ],
+  "skills.stellar.fracturedObliteration": [
+    {
+      "type": 0,
+      "value": "1.000× stellare Produktion und 1.000× effektive stellare Galaxien. Entfernt die zusätzlichen Bot-Kosten und den Geld-/Wissenschaftsnachteil dieser Fähigkeit."
+    }
+  ],
+  "skills.stellar.fracturedObliteration.discoveryTechnical": [
+    {
+      "type": 0,
+      "value": "1.000× stellare Produktion und 1.000× effektive stellare Galaxien. Entfernt die zusätzlichen Bot-Kosten und den Geldnachteil dieser Fähigkeit."
+    }
+  ],
+  "skills.stellar.fracturedSacrifices": [
+    {
+      "type": 0,
+      "value": "Erzeugt deine höchste besessene Einrichtung, einschließlich Megastrukturen, ohne Bots zu verbrauchen: max(0, log10(stellare Galaxien))² pro Sekunde, multipliziert mit besessenen stellaren Vorteilen, Entdeckung und Sternenschwarm. Keine Produktion bei einer stellaren Galaxie oder weniger."
+    }
+  ],
+  "skills.stellar.fracturedSupernova": [
+    {
+      "type": 0,
+      "value": "1.000× stellare Produktion und nochmals 1.000× effektive stellare Galaxien. Entfernt die zusätzlichen Bot-Kosten dieser Fähigkeit und stellt Kaufboni wieder her, einschließlich der Skalierung des Sternenschwarms."
+    }
+  ],
+  "skills.stellar.improvements.technical": [
+    {
+      "type": 0,
+      "value": "2× stellare Produktion. Teilt die für Stellare Opfer erforderlichen Bots durch 1.000."
+    }
+  ],
+  "skills.stellar.obliteration.discoveryTechnical": [
+    {
+      "type": 0,
+      "value": "1.000× stellare Produktion, 1.000× effektive stellare Galaxien und 1.000× Bot-Kosten. Teilt Geld durch die effektiven stellaren Galaxien, mit einem Mindestdivisor von eins."
+    }
+  ],
+  "skills.stellar.obliteration.technical": [
+    {
+      "type": 0,
+      "value": "1.000× stellare Produktion, 1.000× effektive stellare Galaxien und 1.000× Bot-Kosten. Teilt Geld und Wissenschaft durch die effektiven stellaren Galaxien, mit einem Mindestdivisor von eins."
+    }
+  ],
+  "skills.stellar.outputBonuses": [
+    {
+      "type": 0,
+      "value": "Stellare Produktionsboni"
+    }
+  ],
+  "skills.stellar.outputBonusesDescription": [
+    {
+      "type": 0,
+      "value": "Kombinierte Produktionsmultiplikatoren von Stellaren Verbesserungen, Stellarer Dominanz, Stellarer Auslöschung und Supernova."
+    }
+  ],
+  "skills.stellar.sacrifices.technical": [
+    {
+      "type": 0,
+      "value": "Verbraucht Bots, um deine höchste besessene Einrichtung einschließlich Megastrukturen zu erzeugen: max(0, log10(stellare Galaxien))² pro Sekunde, multipliziert mit besessenen stellaren Vorteilen, Entdeckung und Sternenschwarm. Keine Produktion bei einer stellaren Galaxie oder weniger. Die Basis-Bot-Kosten entsprechen den umschlossenen Sternen pro Sekunde, mindestens eins."
+    }
+  ],
+  "skills.stellar.supernova.technical": [
+    {
+      "type": 0,
+      "value": "1.000× stellare Produktion, nochmals 1.000× effektive stellare Galaxien und nochmals 1.000× Bot-Kosten. Unterdrückt alle Einrichtungsboni aus Käufen, einschließlich der Kaufskalierung des Sternenschwarms. Eine Rückerstattung stellt sie wieder her."
     }
   ],
   "skills.subskill-assign": [
@@ -13381,6 +13687,28 @@
     {
       "type": 0,
       "value": "Einige Fertigkeiten können derzeit nicht zurückgesetzt werden und blockieren einen Teil dieser Voreinstellung. Du kannst trotzdem wechseln und alle kompatiblen Teile anwenden."
+    }
+  ],
+  "skills.tooltip.potential-augments": [
+    {
+      "type": 0,
+      "value": "Mögliche Augmente: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "skills.tooltip.scientific-planets.body": [
+    {
+      "type": 0,
+      "value": "Erzeugt Planeten basierend auf Wissenschafts-Bots."
+    }
+  ],
+  "skills.tooltip.scientific-planets.formula": [
+    {
+      "type": 0,
+      "value": "Log10(Wissenschafts-Bots)"
     }
   ],
   "skills.tree": [
@@ -14162,7 +14490,7 @@
   "statistics.speedruns.importedRun": [
     {
       "type": 0,
-      "value": "Nicht zugelassen — Importierter Spielstand"
+      "value": "Importierter Spielstand"
     }
   ],
   "statistics.speedruns.inProgress": [
@@ -14312,7 +14640,7 @@
   "statistics.speedruns.usageLegendHelp": [
     {
       "type": 0,
-      "value": "Importierte Spielstände, Debug-Nutzung und unbestätigte Zeiten zählen nicht für persönliche Bestzeiten."
+      "value": "Persönliche Bestzeiten schließen Debug-Nutzung und nicht überprüfte Zeiten aus."
     }
   ],
   "statistics.speedruns.usageNotUsed": [
@@ -15472,6 +15800,30 @@
     {
       "type": 0,
       "value": "Transzendenz"
+    }
+  ],
+  "wiki.credits": [
+    {
+      "type": 0,
+      "value": "Mitwirkende"
+    }
+  ],
+  "wiki.credits.lead-developer": [
+    {
+      "type": 0,
+      "value": "Hauptentwickler"
+    }
+  ],
+  "wiki.credits.sound": [
+    {
+      "type": 0,
+      "value": "Ton"
+    }
+  ],
+  "wiki.credits.special-mentions": [
+    {
+      "type": 0,
+      "value": "Besondere Erwähnungen"
     }
   ],
   "wiki.discovery.overview": [
@@ -16768,6 +17120,102 @@
     {
       "type": 0,
       "value": "Overflow heißt jetzt Transzendenz. Schalte Entdeckung in Avocato für 1 Transzendenzpunkt frei, um Wissenschaft und Forschung zu ersetzen."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11": [
+    {
+      "type": 0,
+      "value": "Version 4.1.11"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.credits": [
+    {
+      "type": 0,
+      "value": "Credits zum Wiki hinzugefügt."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.desktop-sizing": [
+    {
+      "type": 0,
+      "value": "Desktop-Oberflächengrößen von 80 % bis 150 % und Skillbaum-Zoom bis 250 % hinzugefügt."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.desktop-tooltips": [
+    {
+      "type": 0,
+      "value": "Skillbaum-Tooltips zeigen Effekte, Formeln, Skillpunkt-Kosten und mögliche Augmente. Du kannst sie in den Skillbaum-Einstellungen ein- oder ausschalten."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.imported-speedruns": [
+    {
+      "type": 0,
+      "value": "Geeignete importierte Spielstände können Speedruns fortsetzen. Importierte Läufe tragen ein Speicherdatei-Symbol."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.infinity-hold": [
+    {
+      "type": 0,
+      "value": "Halte Kaufbuttons gedrückt, um Infinity- und Quantum-Upgrades wiederholt zu kaufen. Beim Loslassen enden die Käufe."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.infinity-summary": [
+    {
+      "type": 0,
+      "value": "Infinity zeigt den Produktionsbonus für Anlagen aus allen verdienten Infinity-Punkten neben den Gesamtwerten."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.navigation": [
+    {
+      "type": 0,
+      "value": "Das Desktop-Seitenmenü ist breiter. Abstände, ausgewählte Buttons und die kompakte Navigation wurden verbessert. Ein blauer Pixel oben links wurde entfernt."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.offline-speed": [
+    {
+      "type": 0,
+      "value": "Offline-Zeit sammelt sich jetzt während deiner Abwesenheit. Nutze sie beim Spielen für 1× bis 42× Tempo. Nur das zusätzliche Tempo verbraucht gespeicherte Zeit; Doppelte Zeit wirkt zusätzlich."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.offline-storage": [
+    {
+      "type": 0,
+      "value": "Offline-Zeit hat jetzt eine Speicherleiste, die verbleibende Boost-Dauer und klarere Kapazitätskosten. Wähle Aus, Letztes Tempo oder Höchsttempo für automatische Boosts bei deiner Rückkehr."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.preset-notices": [
+    {
+      "type": 0,
+      "value": "Preset-Konflikthinweise wiederholen sich nicht mehr für denselben offenen Konflikt und verschwinden nach dessen Lösung."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.progression-fixes": [
+    {
+      "type": 0,
+      "value": "Die Frakturierbarkeit wird nach Fortschrittsänderungen aktualisiert. Abgeschlossene Forschung ausblenden umfasst jetzt auch Durability."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.runtime-fixes": [
+    {
+      "type": 0,
+      "value": "Hängende Railgun-Salven und fehlende Patient-Hands-Gutschriften zwischen Spielupdates wurden behoben."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.save-safety": [
+    {
+      "type": 0,
+      "value": "Spielstandwiederherstellung, Importsicherheit und Cloud-Konfliktbehandlung verbessert. Offline-Zeit wird nach der Rückkehr einmal gutgeschrieben."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.save-tools": [
+    {
+      "type": 0,
+      "value": "Optionale Zeitstempel für exportierte Speicherdateien hinzugefügt. Natives Speichern und Kopieren/Einfügen von Presets wurden verbessert."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.stellar-benefits": [
+    {
+      "type": 0,
+      "value": "Stellare Fähigkeiten behalten nach dem Frakturieren ihre Produktionsboni und verlieren ihre Nachteile. Beschreibungen, Aktivierungsbedingungen und Bot-Kosten wurden angepasst."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

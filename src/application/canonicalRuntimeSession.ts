@@ -1,3 +1,4 @@
+import { withCanonicalBotAllocation } from '../simulation/canonicalBotAllocation'
 import { SKILL_PRESET_COUNT } from '../game-state/skillPresetSlots'
 import { completeRetiredResearchSecret } from '../simulation/avocadoMeditation'
 import { initializeSpeedrunTracking } from '../simulation/speedrunStatistics'
@@ -46,6 +47,12 @@ export type CanonicalRuntimePresentationEvent =
       readonly application: Readonly<CanonicalRuntimeSkillPresetApplicationOutcome>
     }
   | {
+      /** A successful application ends this preset's automatic conflict episode. */
+      readonly kind: 'skill-preset-conflict-resolved'
+      readonly sequence: number
+      readonly slot: CanonicalRuntimeSkillPresetApplicationOutcome['slot']
+    }
+  | {
       readonly kind: 'automatic-dream-disaster'
       readonly sequence: number
       readonly cause: AutomaticDreamDisasterCause
@@ -59,12 +66,15 @@ export interface CanonicalRuntimeState extends CanonicalEventTimeState {
   readonly storedTimeCheater: boolean
   /** Loaded checkpoint baseline, pending the first successful startup replay. */
   readonly coldStartCheckpointAtUtc?: string | null
+  /** Exact departure acknowledged atomically with its credited Stored Time. */
+  readonly consumedDepartureAtUtc?: string | null
   readonly selectedSkillPresetSlot: CanonicalSkillPresetSlot
   /** Last exact preset rebuild result for transient player feedback. */
   readonly lastSkillPresetApplication:
     | Readonly<CanonicalRuntimeSkillPresetApplicationOutcome>
     | null
-  /** Sequenced session facts retained across ordinary snapshot publication. */
+  /** Pending presentation events, retained until accepted by the UI queue. */
+  readonly presentationEventSequence?: number
   readonly presentationEvents: readonly Readonly<CanonicalRuntimePresentationEvent>[]
   readonly unlockAllTabs?: boolean
   readonly debugOptionsEnabled?: boolean
@@ -103,7 +113,7 @@ export class CanonicalRuntimeSession
     const source = prepared.copyValidatedState()
     this.initialState = cloneCanonicalRuntimeState({
       ...(options.captureAchievements ? {achievementEvidence:{unlocked: this.persistAchievements ? readSavedAchievements(source.idsAchievementEvidence) : [],statistics:{},presence:''}} : {}),
-      gameState: completeRetiredResearchSecret(initializeSpeedrunTracking(this.hydrated.state)),
+      gameState: withCanonicalBotAllocation(completeRetiredResearchSecret(initializeSpeedrunTracking(this.hydrated.state))),
       compatibilityTuning: this.hydrated.compatibilityTuning,
       evaluationSnapshot:
         this.hydrated.skillEffectEvaluationSnapshot,
@@ -115,9 +125,15 @@ export class CanonicalRuntimeSession
         Number.isFinite(Date.parse(source.idsLastActiveAtUtc))
           ? { coldStartCheckpointAtUtc: source.idsLastActiveAtUtc } : {}
       ),
+      ...(
+        typeof source.idsConsumedDepartureAtUtc === 'string' &&
+        Number.isFinite(Date.parse(source.idsConsumedDepartureAtUtc))
+          ? { consumedDepartureAtUtc: source.idsConsumedDepartureAtUtc } : {}
+      ),
       selectedSkillPresetSlot:
         extractSelectedSkillPresetSlot(source),
       lastSkillPresetApplication: null,
+      presentationEventSequence: 0,
       presentationEvents: [],
       unlockAllTabs: extractBoolean(source, 'debugOptions') &&
         extractBoolean(source, 'unlockAllTabs'),
@@ -146,6 +162,11 @@ export class CanonicalRuntimeSession
     if (this.persistAchievements) {
       const facts = mergeAchievementFacts(candidate.achievementEvidence, evaluateAchievements(candidate.gameState, false))
       source.idsAchievementEvidence = readSavedAchievements(facts.unlocked)
+    }
+    if (candidate.consumedDepartureAtUtc == null) {
+      delete source.idsConsumedDepartureAtUtc
+    } else {
+      source.idsConsumedDepartureAtUtc = candidate.consumedDepartureAtUtc
     }
     source.cheater = candidate.storedTimeCheater
     source.unlockAllTabs = candidate.unlockAllTabs === true

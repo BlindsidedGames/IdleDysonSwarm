@@ -40,6 +40,8 @@ export function validatePreparedSave(
     const discoveryError = validateDiscovery(value.discovery as unknown as DiscoveryState)
     if (discoveryError) return invalid(discoveryError)
   }
+  if (value.idsResolvedCloudDownloadSha256 !== undefined && (typeof value.idsResolvedCloudDownloadSha256 !== 'string' || !/^[a-f0-9]{64}$/u.test(value.idsResolvedCloudDownloadSha256))) return invalid('Invalid local Cloud completion hash.')
+  if (value.idsResolvedCloudSourceSha256 !== undefined && (typeof value.idsResolvedCloudSourceSha256 !== 'string' || !/^[a-f0-9]{64}$/u.test(value.idsResolvedCloudSourceSha256))) return invalid('Invalid local Cloud selected-source hash.')
   if (value.firstQuantumComplete !== undefined && typeof value.firstQuantumComplete !== 'boolean') return invalid('Invalid first Quantum milestone.')
   const tinkerError = validateCompletedTinkers(value.completedTinkers)
   if (tinkerError) return invalid(tinkerError)

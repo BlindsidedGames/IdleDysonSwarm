@@ -55,11 +55,13 @@ export function resolveStellarSacrificesRequiredBots(
     panelsPerSecond,
     panelLifetimeSeconds,
   )
-  const stellarMultiplier = ownedSkills.has('supernova')
-    ? 1_000_000
-    : ownedSkills.has('stellarObliteration')
-      ? 1_000
-      : 1
+  // Each fractured galaxy skill removes its own extra Bot cost, not its benefit.
+  // Keep the legacy ordinary-Nova combined factor exactly for unfractured inputs.
+  const ordinaryNova = ownedSkills.has('supernova') && !galvanizedSkills.has('supernova')
+  const ordinaryObliteration = ownedSkills.has('stellarObliteration') && !galvanizedSkills.has('stellarObliteration')
+  const stellarMultiplier = ordinaryNova
+    ? (ownedSkills.has('stellarObliteration') && galvanizedSkills.has('stellarObliteration') ? 1000 : 1_000_000)
+    : ordinaryObliteration ? 1000 : 1
 
   // Preserve the authored operation order and ordinary-range rounding. Only
   // recompute as one composed multiplication if that order overflows.

@@ -1,4 +1,5 @@
 import { isFiniteNonNegativeNumber } from '../core/finiteNonNegativeNumber'
+import { resumeOfflineBoost } from '../simulation/offlineBoost'
 import type { SimulationTransitionResult } from '../core/contracts'
 import type { DysonEntitlements } from '../simulation/canonicalDysonDerivation'
 import type { LifecycleAdapter, LifecyclePhase } from '../platform/contracts'
@@ -277,6 +278,9 @@ export class CanonicalLifecycleCoordinator {
   private shutdownPromise: Promise<void> | undefined
   private suppressImportedAwayReplay = false
   private pendingColdStartTimestamp: ParsedUtcTimestamp | undefined
+  // Lifecycle receipts are queued in order, but several can capture the same
+  // marker before its first credit commits and clears the live marker.
+  private consumedPendingDepartureUtcMilliseconds: number | undefined
   private disposed = false
 
   constructor(options: Readonly<CanonicalLifecycleCoordinatorOptions>) {
@@ -436,7 +440,6 @@ export class CanonicalLifecycleCoordinator {
         capacitySeconds:
           runtime.gameState.timeline.storedTimeCapacitySeconds,
         cheater: runtime.storedTimeCheater,
-        dreamDoubleTimeBankSeconds: 0,
       })
       const candidate = {
         ...runtime,
@@ -445,6 +448,7 @@ export class CanonicalLifecycleCoordinator {
           ...runtime.gameState,
           timeline: {
             ...runtime.gameState.timeline,
+            ...(runtime.gameState.timeline.offlineBoost === undefined ? {} : { offlineBoost: { multiplier: 1 } }),
             storedTimeAvailableSeconds: grant.bankSeconds,
             storedTimeCapacitySeconds: grant.capacitySeconds,
             doubleTime: {
@@ -456,6 +460,7 @@ export class CanonicalLifecycleCoordinator {
           },
         },
       }
+      candidate.gameState = resumeOfflineBoost(candidate.gameState, !grant.cheater)
       const committed = await this.application.commitAwayReplacement(
         revisionEnvelope(snapshot),
         candidate,
@@ -745,6 +750,7 @@ export class CanonicalLifecycleCoordinator {
         request.context.kind === 'manual-shared-import'
       this.suppressImportedAwayReplay = suppressAwayReplay
       this.pendingColdStartTimestamp = undefined
+      this.consumedPendingDepartureUtcMilliseconds = undefined
       const snapshot = this.application.snapshot()
       if (snapshot.phase === 'ready') {
         const importedBaseline = createLifecycleState(
@@ -875,8 +881,26 @@ export class CanonicalLifecycleCoordinator {
     const persistedQuitTimestamp = parseUnityInvariantUtcTimestamp(
       runtime.gameState.timeline.lastSuspendedAtLegacyText,
     )
+    const unconsumedPendingTimestamp =
+      pendingQuitTimestamp?.status === 'valid' &&
+      (pendingQuitTimestamp.utcMilliseconds ===
+        this.consumedPendingDepartureUtcMilliseconds ||
+        pendingQuitTimestamp.utcMilliseconds ===
+          Date.parse(runtime.consumedDepartureAtUtc ?? ''))
+        ? undefined
+        : pendingQuitTimestamp
+    if (
+      pendingQuitTimestamp?.status === 'valid' &&
+      unconsumedPendingTimestamp === undefined
+    ) {
+      // The bank already contains this exact credit. Retrying cleanup is safe
+      // even on a fresh runtime; a newer marker still has its own absence.
+      this.clearPendingDepartureTimestamp?.(
+        pendingQuitTimestamp.utcMilliseconds,
+      )
+    }
     const departureTimestamp = earliestValidDepartureTimestamp(
-      earliestValidDepartureTimestamp(persistedQuitTimestamp, pendingQuitTimestamp),
+      earliestValidDepartureTimestamp(persistedQuitTimestamp, unconsumedPendingTimestamp),
       this.pendingColdStartTimestamp,
     )
     const checkpointTimestamp = parseUnityInvariantUtcTimestamp(
@@ -906,6 +930,13 @@ export class CanonicalLifecycleCoordinator {
 
     const candidate = cloneCanonicalRuntimeState(runtime)
     Object.assign(candidate, {
+      ...(unconsumedPendingTimestamp?.status === 'valid'
+        ? {
+            consumedDepartureAtUtc: new Date(
+              unconsumedPendingTimestamp.utcMilliseconds,
+            ).toISOString(),
+          }
+        : {}),
       ...(runtime.coldStartCheckpointAtUtc === undefined
         ? {} : { coldStartCheckpointAtUtc: null }),
       gameState: replay.state.canonical,
@@ -943,6 +974,8 @@ export class CanonicalLifecycleCoordinator {
     this.pendingColdStartTimestamp = undefined
     this.lifecycleState = replay.state
     if (pendingQuitTimestamp?.status === 'valid') {
+      this.consumedPendingDepartureUtcMilliseconds =
+        pendingQuitTimestamp.utcMilliseconds
       this.clearPendingDepartureTimestamp?.(
         pendingQuitTimestamp.utcMilliseconds,
       )

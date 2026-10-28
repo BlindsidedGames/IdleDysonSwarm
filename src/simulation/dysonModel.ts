@@ -444,7 +444,7 @@ export class BasicDysonSimulationModel
     }
   }
 
-  applyDerivedTimersAndDoubleTime(): void {
+  applyDerivedTimers(): void {
     this.state.rates = recalculateBasicDysonRates(this.state)
   }
 

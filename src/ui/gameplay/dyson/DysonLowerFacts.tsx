@@ -1,3 +1,4 @@
+import { realTimeRate } from '../effectiveSpeed'
 import { FormattedMessage } from 'react-intl'
 import type {
   FrontendGameplaySnapshot,
@@ -15,10 +16,12 @@ import './dysonLowerFacts.css'
 
 export interface DysonLowerFactsProps {
   readonly gameplay: DeepReadonly<FrontendGameplaySnapshot>
+  readonly gameSpeed?: number
   readonly locale: EnabledLocale
 }
 
 export function DysonProductionSummary({
+  gameSpeed = 1,
   gameplay,
   locale,
 }: DysonLowerFactsProps) {
@@ -37,7 +40,7 @@ export function DysonProductionSummary({
         >
           <WorkerProductionMessage
             workers={formatGameNumber(locale, resources.workers)}
-            panels={formatGameNumber(locale, rates.panels)}
+            panels={formatGameNumber(locale, realTimeRate(rates.panels, gameSpeed))}
           />
         </StableSingleLineText>
       </p>

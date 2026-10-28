@@ -29,7 +29,6 @@ export function ResourceValue({
         className="ui-resource-value__value"
         value={machineValue}
         aria-label={fullPrecisionValue}
-        title={fullPrecisionValue}
         tabIndex={fullPrecisionValue ? 0 : undefined}
       >
         <span className="ui-resource-value__content">

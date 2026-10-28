@@ -258,8 +258,6 @@ export function applyDevelopmentAction(
         bankSeconds: state.timeline.storedTimeAvailableSeconds,
         capacitySeconds: state.timeline.storedTimeCapacitySeconds,
         cheater: candidate.storedTimeCheater,
-        dreamDoubleTimeBankSeconds:
-          state.timeline.doubleTime.bankSeconds,
       })
       const next = {
         ...state,
@@ -269,7 +267,7 @@ export function applyDevelopmentAction(
           storedTimeCapacitySeconds: grant.capacitySeconds,
           doubleTime: {
             ...state.timeline.doubleTime,
-            bankSeconds: grant.dreamDoubleTimeBankSeconds,
+            bankSeconds: 0,
           },
         },
       }
@@ -278,8 +276,7 @@ export function applyDevelopmentAction(
         grant.bankRepaired ||
         grant.capacityRepaired ||
         grant.storedTimeCreditedSeconds > 0 ||
-        grant.dreamDoubleTimeBankSeconds !==
-          state.timeline.doubleTime.bankSeconds
+        state.timeline.doubleTime.bankSeconds !== 0
       if (changed) {
         Object.assign(candidate, {
           gameState: next,

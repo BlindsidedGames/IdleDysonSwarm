@@ -16,7 +16,7 @@ import type {
 type LatestIdempotentCommand =
   | Extract<
       CanonicalPlayerCommand,
-      { readonly kind: 'tinker.start' | 'tinker.set-repeat' }
+      { readonly kind: 'tinker.start' | 'tinker.set-repeat' | 'time.set-offline-boost-multiplier' }
     >
   | Extract<
       CanonicalPlayerCommand,

@@ -188,3 +188,11 @@
     background-image: var(--ui-action-gradient);
   }
 }
+
+.simulation-permanent-upgrade-card .ui-button:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--simulation-upgrade-action) 82%, white);
+}
+
+.simulation-permanent-upgrade-card .ui-button:not(:disabled):active {
+  background-color: color-mix(in srgb, var(--simulation-upgrade-action) 90%, #111820);
+}

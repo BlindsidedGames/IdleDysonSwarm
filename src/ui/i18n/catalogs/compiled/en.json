@@ -4589,6 +4589,46 @@
       "value": ")"
     }
   ],
+  "infinity.production-boost": [
+    {
+      "type": 0,
+      "value": "Boosting Facility Production by "
+    },
+    {
+      "type": 8,
+      "value": "highlight",
+      "children": [
+        {
+          "type": 0,
+          "value": "×"
+        },
+        {
+          "type": 1,
+          "value": "multiplier"
+        }
+      ]
+    }
+  ],
+  "infinity.production-boost.facility-range": [
+    {
+      "type": 1,
+      "value": "first"
+    },
+    {
+      "type": 0,
+      "value": "–"
+    },
+    {
+      "type": 1,
+      "value": "last"
+    }
+  ],
+  "infinity.production-boost.none": [
+    {
+      "type": 0,
+      "value": "Facility production ×1"
+    }
+  ],
   "infinity.progress.bots-until-next": [
     {
       "type": 0,
@@ -5159,10 +5199,136 @@
       "value": "App was backgrounded processing cancelled"
     }
   ],
+  "offline-time.auto-resume": [
+    {
+      "type": 0,
+      "value": "Automation"
+    }
+  ],
+  "offline-time.auto-resume-last": [
+    {
+      "type": 0,
+      "value": "Last speed"
+    }
+  ],
+  "offline-time.auto-resume-max": [
+    {
+      "type": 0,
+      "value": "Max speed"
+    }
+  ],
+  "offline-time.auto-resume-off": [
+    {
+      "type": 0,
+      "value": "Off"
+    }
+  ],
   "offline-time.balanced-preset": [
     {
       "type": 0,
       "value": "Balanced"
+    }
+  ],
+  "offline-time.boost-details": [
+    {
+      "type": 0,
+      "value": "Details"
+    }
+  ],
+  "offline-time.boost-drain": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "s per second"
+    }
+  ],
+  "offline-time.boost-drain-label": [
+    {
+      "type": 0,
+      "value": "Use while running"
+    }
+  ],
+  "offline-time.boost-duration-label": [
+    {
+      "type": 0,
+      "value": "Boost duration"
+    }
+  ],
+  "offline-time.boost-explanation": [
+    {
+      "type": 0,
+      "value": "Use stored time to speed up active play."
+    }
+  ],
+  "offline-time.boost-pause": [
+    {
+      "type": 0,
+      "value": "Pause Boost"
+    }
+  ],
+  "offline-time.boost-paused": [
+    {
+      "type": 0,
+      "value": "Paused"
+    }
+  ],
+  "offline-time.boost-regular": [
+    {
+      "type": 0,
+      "value": "Regular 1×"
+    }
+  ],
+  "offline-time.boost-running": [
+    {
+      "type": 0,
+      "value": "Running at "
+    },
+    {
+      "type": 1,
+      "value": "multiplier"
+    },
+    {
+      "type": 0,
+      "value": "×"
+    }
+  ],
+  "offline-time.boost-selected": [
+    {
+      "type": 0,
+      "value": "Selected speed"
+    }
+  ],
+  "offline-time.boost-speed": [
+    {
+      "type": 0,
+      "value": "Game speed"
+    }
+  ],
+  "offline-time.boost-stack": [
+    {
+      "type": 0,
+      "value": "Only extra time uses the bank. Double Time stacks separately."
+    }
+  ],
+  "offline-time.boost-start": [
+    {
+      "type": 0,
+      "value": "Start Boost"
+    }
+  ],
+  "offline-time.boost-stored": [
+    {
+      "type": 0,
+      "value": "Stored time"
+    }
+  ],
+  "offline-time.boost-title": [
+    {
+      "type": 0,
+      "value": "Offline Boost"
     }
   ],
   "offline-time.calculating": [
@@ -5203,6 +5369,24 @@
       "value": "capacity"
     }
   ],
+  "offline-time.capacity-cost": [
+    {
+      "type": 0,
+      "value": "Cost"
+    }
+  ],
+  "offline-time.capacity-maxed": [
+    {
+      "type": 0,
+      "value": "Maxed"
+    }
+  ],
+  "offline-time.capacity-result": [
+    {
+      "type": 0,
+      "value": "New cap"
+    }
+  ],
   "offline-time.close-summary": [
     {
       "type": 0,
@@ -5224,21 +5408,13 @@
   "offline-time.double-storage": [
     {
       "type": 0,
-      "value": "Double Storage"
+      "value": "Double Capacity"
     }
   ],
   "offline-time.double-storage-description": [
     {
       "type": 0,
-      "value": "Consume the full bank to increase capacity to "
-    },
-    {
-      "type": 1,
-      "value": "capacity"
-    },
-    {
-      "type": 0,
-      "value": "."
+      "value": "Fill your offline time storage to double its capacity."
     }
   ],
   "offline-time.error-code": [
@@ -5347,6 +5523,22 @@
     {
       "type": 0,
       "value": "% complete"
+    }
+  ],
+  "offline-time.quick-amounts": [
+    {
+      "type": 0,
+      "value": "Quick actions (minutes)"
+    }
+  ],
+  "offline-time.quick-slot": [
+    {
+      "type": 0,
+      "value": "Action "
+    },
+    {
+      "type": 1,
+      "value": "slot"
     }
   ],
   "offline-time.quick-spend": [
@@ -8025,6 +8217,18 @@
       "value": "Development Menu"
     }
   ],
+  "settings.interface-size": [
+    {
+      "type": 0,
+      "value": "Interface size"
+    }
+  ],
+  "settings.interface-size.description": [
+    {
+      "type": 0,
+      "value": "Change how the interface scales across the game"
+    }
+  ],
   "settings.language.chinese-simplified": [
     {
       "type": 0,
@@ -8603,6 +8807,12 @@
     {
       "type": 0,
       "value": "Save Data"
+    }
+  ],
+  "settings.timestamp-exports": [
+    {
+      "type": 0,
+      "value": "Timestamp export filenames"
     }
   ],
   "settings.visualization.description": [
@@ -9815,6 +10025,12 @@
     {
       "type": 0,
       "value": "Copy"
+    }
+  ],
+  "skills.copy-failed": [
+    {
+      "type": 0,
+      "value": "Copy failed. Copy the selected text manually."
     }
   ],
   "skills.cost": [
@@ -12869,6 +13085,12 @@
       "value": "Show presets 6–10"
     }
   ],
+  "skills.settings.showTooltips": [
+    {
+      "type": 0,
+      "value": "Show tooltips"
+    }
+  ],
   "skills.show-preset-application-notifications": [
     {
       "type": 0,
@@ -13023,6 +13245,90 @@
     {
       "type": 0,
       "value": "Stellar Memory"
+    }
+  ],
+  "skills.stellar.dominance.technical": [
+    {
+      "type": 0,
+      "value": "1,000× Stellar output. 10× Panel Lifetime while your Bots meet the coverage-based requirement calculated before this lifetime bonus. Cash is divided by 100 while active; ordinary coverage-based Bot cost is multiplied by 100."
+    }
+  ],
+  "skills.stellar.fracturedDominance": [
+    {
+      "type": 0,
+      "value": "1,000× Stellar output. 10× Panel Lifetime while the normal pre-bonus Bot requirement is met. Removes this skill’s extra Bot-cost factor and Cash penalty."
+    }
+  ],
+  "skills.stellar.fracturedImprovements": [
+    {
+      "type": 0,
+      "value": "2× Stellar output and 1,000× lower Bot costs, permanently without assigned Skill Points."
+    }
+  ],
+  "skills.stellar.fracturedObliteration": [
+    {
+      "type": 0,
+      "value": "1,000× Stellar output and 1,000× effective Stellar Galaxies. Removes this skill’s extra Bot cost and Cash/Science penalty."
+    }
+  ],
+  "skills.stellar.fracturedObliteration.discoveryTechnical": [
+    {
+      "type": 0,
+      "value": "1,000× Stellar output and 1,000× effective Stellar Galaxies. Removes this skill’s extra Bot cost and Cash penalty."
+    }
+  ],
+  "skills.stellar.fracturedSacrifices": [
+    {
+      "type": 0,
+      "value": "Create your highest owned facility, including megastructures, without consuming Bots: max(0, log10(Stellar Galaxies))² per second, multiplied by owned Stellar benefits, Discovery and Stellar Swarm. No output at one Stellar Galaxy or below."
+    }
+  ],
+  "skills.stellar.fracturedSupernova": [
+    {
+      "type": 0,
+      "value": "1,000× Stellar output and another 1,000× effective Stellar Galaxies. Removes this skill’s extra Bot cost and restores purchase bonuses, including Stellar Swarm scaling."
+    }
+  ],
+  "skills.stellar.improvements.technical": [
+    {
+      "type": 0,
+      "value": "2× Stellar output. Divide Bots required for Stellar Sacrifices by 1,000."
+    }
+  ],
+  "skills.stellar.obliteration.discoveryTechnical": [
+    {
+      "type": 0,
+      "value": "1,000× Stellar output, 1,000× effective Stellar Galaxies and 1,000× Bot cost. Divide Cash by effective Stellar Galaxies, with a minimum divisor of one."
+    }
+  ],
+  "skills.stellar.obliteration.technical": [
+    {
+      "type": 0,
+      "value": "1,000× Stellar output, 1,000× effective Stellar Galaxies and 1,000× Bot cost. Divide Cash and Science by effective Stellar Galaxies, with a minimum divisor of one."
+    }
+  ],
+  "skills.stellar.outputBonuses": [
+    {
+      "type": 0,
+      "value": "Stellar output bonuses"
+    }
+  ],
+  "skills.stellar.outputBonusesDescription": [
+    {
+      "type": 0,
+      "value": "Combined output multipliers from Stellar Improvements, Stellar Dominance, Stellar Obliteration and Supernova."
+    }
+  ],
+  "skills.stellar.sacrifices.technical": [
+    {
+      "type": 0,
+      "value": "Consume Bots to create your highest owned facility, including megastructures: max(0, log10(Stellar Galaxies))² per second, multiplied by owned Stellar benefits, Discovery and Stellar Swarm. No output at one Stellar Galaxy or below. Base Bot cost equals Stars Surrounded per second, with a minimum of one."
+    }
+  ],
+  "skills.stellar.supernova.technical": [
+    {
+      "type": 0,
+      "value": "1,000× Stellar output, another 1,000× effective Stellar Galaxies and another 1,000× Bot cost. Suppress all facility bonuses from purchases, including the purchase scaling used by Stellar Swarm. Refunding restores them."
     }
   ],
   "skills.subskill-assign": [
@@ -13381,6 +13687,28 @@
     {
       "type": 0,
       "value": "Some skills can’t be unassigned right now and block part of this preset. You can still switch and apply everything compatible."
+    }
+  ],
+  "skills.tooltip.potential-augments": [
+    {
+      "type": 0,
+      "value": "Potential augments: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "skills.tooltip.scientific-planets.body": [
+    {
+      "type": 0,
+      "value": "Produces Planets based on Science Bots."
+    }
+  ],
+  "skills.tooltip.scientific-planets.formula": [
+    {
+      "type": 0,
+      "value": "Log10(Science Bots)"
     }
   ],
   "skills.tree": [
@@ -14162,7 +14490,7 @@
   "statistics.speedruns.importedRun": [
     {
       "type": 0,
-      "value": "Ineligible — Imported save"
+      "value": "Imported save"
     }
   ],
   "statistics.speedruns.inProgress": [
@@ -14312,7 +14640,7 @@
   "statistics.speedruns.usageLegendHelp": [
     {
       "type": 0,
-      "value": "Personal bests exclude imported saves, Debug use, and unverified times."
+      "value": "Personal bests exclude Debug use and unverified times."
     }
   ],
   "statistics.speedruns.usageNotUsed": [
@@ -15472,6 +15800,30 @@
     {
       "type": 0,
       "value": "Transcendence"
+    }
+  ],
+  "wiki.credits": [
+    {
+      "type": 0,
+      "value": "Credits"
+    }
+  ],
+  "wiki.credits.lead-developer": [
+    {
+      "type": 0,
+      "value": "Lead developer"
+    }
+  ],
+  "wiki.credits.sound": [
+    {
+      "type": 0,
+      "value": "Sound"
+    }
+  ],
+  "wiki.credits.special-mentions": [
+    {
+      "type": 0,
+      "value": "Special mentions"
     }
   ],
   "wiki.discovery.overview": [
@@ -16768,6 +17120,102 @@
     {
       "type": 0,
       "value": "Overflow is now Transcendence. Unlock Discovery in Avocato for 1 Transcendence Point to replace Science and Research."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11": [
+    {
+      "type": 0,
+      "value": "Version 4.1.11"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.credits": [
+    {
+      "type": 0,
+      "value": "Added credits to the Wiki."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.desktop-sizing": [
+    {
+      "type": 0,
+      "value": "Added desktop interface sizes from 80% to 150% and skill-tree zoom up to 250%."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.desktop-tooltips": [
+    {
+      "type": 0,
+      "value": "Skill-tree tooltips show effects, formulas, Skill Point costs and potential augments. Turn them on or off in the skill-tree settings."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.imported-speedruns": [
+    {
+      "type": 0,
+      "value": "Eligible imported saves can continue speedruns. Imported runs show a save-file marker."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.infinity-hold": [
+    {
+      "type": 0,
+      "value": "Hold purchase buttons to keep buying Infinity and Quantum upgrades. Purchases stop when you release."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.infinity-summary": [
+    {
+      "type": 0,
+      "value": "Infinity now shows the facility production boost from all earned Infinity Points beside the totals."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.navigation": [
+    {
+      "type": 0,
+      "value": "Widened the desktop side menu and improved its spacing, selected buttons and compact navigation. Fixed a blue pixel at the top-left edge."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.offline-speed": [
+    {
+      "type": 0,
+      "value": "Offline Time now builds up while you are away. Spend it during play at speeds from 1× to 42×. Only the extra speed uses stored time; Double Time applies on top."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.offline-storage": [
+    {
+      "type": 0,
+      "value": "Redesigned Offline Time with a storage bar, remaining boost duration and clearer capacity costs. Choose Off, Last speed or Max speed for automatic boosts when you return."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.preset-notices": [
+    {
+      "type": 0,
+      "value": "Preset conflict notifications no longer repeat for the same unresolved conflict and clear when it is resolved."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.progression-fixes": [
+    {
+      "type": 0,
+      "value": "Fracture availability now updates after progression changes. Hide completed research now includes Durability."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.runtime-fixes": [
+    {
+      "type": 0,
+      "value": "Fixed stalled Railgun volleys and missing Patient Hands credit between game updates."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.save-safety": [
+    {
+      "type": 0,
+      "value": "Improved save recovery, import safety and Cloud conflict handling. Offline time is credited once after returning."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.save-tools": [
+    {
+      "type": 0,
+      "value": "Added optional timestamps to exported save filenames and improved native file saving and preset copy/paste."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.stellar-benefits": [
+    {
+      "type": 0,
+      "value": "Stellar skills now keep their output bonuses when fractured, with their drawbacks removed. Updated Stellar descriptions, activation requirements and Bot costs."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

@@ -4,6 +4,7 @@ import { prepareImportedSaveText } from '../save/import'
 import { serializeCloudWebSave } from '../save/serialization'
 import { UnsupportedFutureSaveSchemaError } from '../save/migrate'
 import { packSettingsFlags } from '../save/settingsFlags'
+import { sha256Utf8 } from '../save/automaticPurchaseEvidence'
 import type { PreparedSave } from '../save/prepare'
 
 export interface PortableCloud {
@@ -30,39 +31,92 @@ export class CloudStartupResolver implements StartupSaveResolver {
   private readonly local: StartupSaveResolver
   private readonly repository: SaveRepository
   private readonly cloud: PortableCloud
+  private readonly deferPublication?: (save: PreparedSave) => boolean
+  private publicationAllowed = false
 
   constructor(
     local: StartupSaveResolver,
     repository: SaveRepository,
     cloud: PortableCloud,
+    deferPublication?: (save: PreparedSave) => boolean,
   ) {
     this.local = local
     this.repository = repository
     this.cloud = cloud
+    this.deferPublication = deferPublication
   }
 
   async resolve(): Promise<StartupSaveResolution> {
+    this.publicationAllowed = false
     let text: string | null
     try {
       text = await this.cloud.read()
     } catch {
       return this.local.resolve()
     }
-    if (text === null) return this.local.resolve()
-
-    const remote = await this.prepareRemoteSave(text)
-    if (remote.kind === 'blocked') return remote
+    if (text === null) {
+      this.publicationAllowed = true
+      return this.local.resolve()
+    }
 
     try {
       const current = await this.loadLocalSaveForComparison()
+      const downloadedHash = await sha256Utf8(text)
+      const currentState = current?.copyValidatedState()
+      const selectedSourceHash = currentState?.idsResolvedCloudSourceSha256
+      if (current !== null && !this.deferPublication?.(current) &&
+          currentState?.idsResolvedCloudDownloadSha256 === downloadedHash &&
+          typeof selectedSourceHash === 'string') {
+        // The choice survived a crash/failed acknowledgement. Keep subsequent
+        // local progress and finish only the original transport completion.
+        const resolution = await this.local.resolve()
+        if (resolution.kind !== 'blocked') {
+          // Local completion is authoritative even if its optional remote
+          // acknowledgement is still unavailable. Changed/missing backups
+          // must neither replay the choice nor enable publication.
+          try {
+            if (selectedSourceHash === downloadedHash) {
+              await this.completeDownload(text)
+            } else {
+              const selected = await this.prepareRemoteSave(text)
+              if (selected.kind === 'prepared' && await sha256Utf8(selected.text) === selectedSourceHash) {
+                await this.completeDownload(text, selected.text)
+              }
+            }
+          } catch { /* Continue the verified local game with Cloud disabled. */ }
+        }
+        return resolution
+      }
+      const remote = await this.prepareRemoteSave(text)
+      if (remote.kind === 'blocked') return remote
+      const sourceHash = await sha256Utf8(remote.text)
       if (current !== null) {
         const localText = serializeCloudWebSave(current.copyValidatedState())
         if (
           localText !== remote.text &&
           await this.cloud.choose(localText, remote.text) === 'local'
         ) {
-          await this.cloud.acknowledge(text)
-          return this.local.resolve()
+          const resolution = await this.local.resolve()
+          if (resolution.kind === 'blocked') return resolution
+          if (resolution.publicationPending) {
+            return { ...resolution, pendingPublication: {
+              ...resolution.pendingPublication,
+              prepareForCommit: save => withDownloadCompletion(
+                resolution.pendingPublication?.prepareForCommit?.(save) ?? save,
+                downloadedHash, sourceHash,
+              ),
+              beforeCommit: async () => {
+                await this.requireUnchangedDownload(text, remote.text)
+                await resolution.pendingPublication?.beforeCommit?.()
+              },
+              afterCommit: async () => {
+                await resolution.pendingPublication?.afterCommit?.()
+                await this.completeDownload(text, remote.text)
+              },
+            } }
+          }
+          try { await this.completeDownload(text, remote.text) } catch { /* Keep the verified local game playable. */ }
+          return resolution
         }
       }
       let selected = remote.save
@@ -74,18 +128,63 @@ export class CloudStartupResolver implements StartupSaveResolver {
         packSettingsFlags(source)
         selected = selected.withValidatedState(source)
       }
-      const committed = await this.repository.commit(selected)
+      selected = withDownloadCompletion(selected, downloadedHash, sourceHash)
+      if (this.deferPublication?.(selected)) {
+        return { kind: 'ready', source: remote.source, save: selected, publicationPending: true,
+          pendingPublication: {
+            sourceText: text === remote.text ? text : [text, remote.text],
+            beforeCommit: () => this.requireUnchangedDownload(text, remote.text),
+            afterCommit: () => this.completeDownload(text, remote.text),
+          } }
+      }
+      await this.requireUnchangedDownload(text, remote.text)
+      const committed = await this.repository.commit(selected, 'development', text === remote.text ? text : [text, remote.text])
       // Acknowledge the downloaded primary even when a backup supplied the
       // recovered save: this is the remote version the player resolved.
-      await this.cloud.acknowledge(text)
+      try { await this.completeDownload(text, remote.text) } catch { /* The local publication already completed. */ }
       return { kind: 'ready', source: remote.source, save: committed }
     } catch (error) {
       return {
         kind: 'blocked',
-        reason: 'recovery-write-failed',
+        reason: error instanceof UnsupportedFutureSaveSchemaError ? 'unsupported-future-version' : 'recovery-write-failed',
         error: error instanceof Error ? error.message : String(error),
       }
     }
+  }
+
+  /** Refuse reporting over an unresolved or newer download. */
+  async publishCheckpoint(text: string): Promise<void> {
+    if (!this.publicationAllowed) throw new Error('Cloud startup transaction is unresolved.')
+    if (await this.cloud.read() !== null) {
+      this.publicationAllowed = false
+      throw new Error('Cloud changed; restart to resolve the new download.')
+    }
+    await this.cloud.publish(text)
+  }
+
+  private async requireUnchangedRemote(text: string): Promise<void> {
+    if (await this.cloud.read() !== text) {
+      throw new Error('Cloud changed while the migration choice was pending; restart to resolve it.')
+    }
+  }
+
+  private async requireUnchangedDownload(text: string, selected: string): Promise<void> {
+    await this.requireUnchangedRemote(text)
+    if (text !== selected) {
+      const currentSelection = await this.prepareRemoteSave(text)
+      if (currentSelection.kind !== 'prepared' || currentSelection.text !== selected) {
+        throw new Error('Cloud backup changed while the migration choice was pending; restart to resolve it.')
+      }
+      // Recovery preparation may await backup I/O. Recheck its primary before
+      // allowing the final local write or acknowledgement.
+      await this.requireUnchangedRemote(text)
+    }
+  }
+
+  private async completeDownload(text: string, selected = text): Promise<void> {
+    await this.requireUnchangedDownload(text, selected)
+    await this.cloud.acknowledge(text)
+    this.publicationAllowed = true
   }
 
   private async prepareRemoteSave(text: string): Promise<CloudSavePreparation> {
@@ -153,4 +252,11 @@ function unsupportedCloudSave(source: 'save' | 'backup'): BlockedCloudSave {
     reason: 'unsupported-future-version',
     error: `This Steam Cloud ${source} needs a newer game version. Its original file has been preserved.`,
   }
+}
+
+function withDownloadCompletion(save: PreparedSave, hash: string, sourceHash: string): PreparedSave {
+  const state = save.copyValidatedState()
+  state.idsResolvedCloudDownloadSha256 = hash
+  state.idsResolvedCloudSourceSha256 = sourceHash
+  return save.withValidatedState(state)
 }

@@ -1,3 +1,5 @@
+import { realTimeRate } from '../effectiveSpeed'
+import { stellarTechnicalMessages, stellarDiscoveryObliterationMessage, stellarFracturedMessages, stellarFracturedDiscoveryObliterationMessage, stellarOutputBonusMessages } from '../skills/stellarMessages'
 import { tinkerMessages } from '../tinker/messages'
 import { SWARM_AUGMENTS } from '../../../simulation/skillSubskills'
 import { swarmAugmentPresentation } from '../skills/swarmMessages'
@@ -103,6 +105,7 @@ const facilityRootSkill: Readonly<Record<DysonFacilityId, string>> = {
 }
 
 export interface FacilityPresentationCardProps {
+  readonly gameSpeed?: number
   readonly locale: EnabledLocale
   readonly facilityId: DysonFacilityId
   readonly fact: FacilityCanonicalFact
@@ -118,6 +121,7 @@ export interface FacilityPresentationCardProps {
 }
 
 export function FacilityPresentationCard({
+  gameSpeed = 1,
   locale,
   facilityId,
   fact,
@@ -177,7 +181,7 @@ export function FacilityPresentationCard({
         <FittedProductionLine
           display={productionDisplay(
             locale,
-            fact.production.perSecond,
+            realTimeRate(fact.production.perSecond, gameSpeed),
             presentation,
             intl,
           )}
@@ -197,7 +201,7 @@ export function FacilityPresentationCard({
             },
           )}
           progress={fact.productionProgress}
-          productionRatePerSecond={fact.production.perSecond}
+          productionRatePerSecond={realTimeRate(fact.production.perSecond, gameSpeed)}
           reducedMotion={reducedMotion}
         />
       }
@@ -259,7 +263,6 @@ export function FacilityPresentationCard({
             <data
               className="basic-facility-card__purchase-quantity"
               value={String(preview.selectedQuantity)}
-              title={selectedQuantityPrecise}
             >
               <bdi>
                 {automationActive
@@ -275,7 +278,6 @@ export function FacilityPresentationCard({
             <data
               className="basic-facility-card__purchase-cost"
               value={String(preview.cost)}
-              title={costPrecise}
             >
               <bdi>
                 {intl.formatMessage(messages.purchaseCost, { cost })}
@@ -414,7 +416,7 @@ export function FacilityDetailsContent({
   )
   const generationContributions = details?.generationContributions ?? []
   const facilityName = intl.formatMessage(presentation.name)
-  const realRate = fact.production.perSecond * gameSpeed
+  const realRate = realTimeRate(fact.production.perSecond, gameSpeed)
   const productionFormula = base && count
     ? formatProductionFormula(
         locale,
@@ -556,7 +558,7 @@ export function FacilityDetailsContent({
                   })
                 : intl.formatMessage(messages.producedBy, {
                     facility: intl.formatMessage(upstreamFacilityNameMessages[source.sourceFacilityId] ?? messages.unknownFacility),
-                    rate: formatFacilityNumber(locale, source.contributionPerSecond),
+                    rate: formatFacilityNumber(locale, realTimeRate(source.contributionPerSecond, gameSpeed)),
                   })}</small>
             </span>
             {'producedCount' in source && (
@@ -978,7 +980,10 @@ function effectPresentation(contribution: FacilityContribution, facilityId: Dyso
       (discoveryUnlocked ? discoverySkillEffects[source.id as keyof typeof discoverySkillEffects] : undefined) ?? augment.effect,
     ) }
     const name = discoveryUnlocked ? discoverySkillNames[source.id as keyof typeof discoverySkillNames] : undefined
-    const effect = (discoveryUnlocked ? (source.fractured ? discoveryFracturedEffects[source.id as keyof typeof discoveryFracturedEffects] : undefined) ?? discoverySkillEffects[source.id as keyof typeof discoverySkillEffects] : undefined)
+    const stellarEffect = source.fractured
+      ? (source.id === 'stellarObliteration' && discoveryUnlocked ? stellarFracturedDiscoveryObliterationMessage : stellarFracturedMessages[source.id as keyof typeof stellarFracturedMessages])
+      : (source.id === 'stellarObliteration' && discoveryUnlocked ? stellarDiscoveryObliterationMessage : stellarTechnicalMessages[source.id as keyof typeof stellarTechnicalMessages])
+    const effect = stellarEffect ?? (discoveryUnlocked ? (source.fractured ? discoveryFracturedEffects[source.id as keyof typeof discoveryFracturedEffects] : undefined) ?? discoverySkillEffects[source.id as keyof typeof discoverySkillEffects] : undefined)
       ?? (source.fractured ? galvanizedEffectMessages[source.id] : undefined)
     return { icon: skillIcons[source.id] ?? navigationAssets.skills, name: name ? intl.formatMessage(name) : skillName(source.id, intl), description: effect ? intl.formatMessage(effect) : skillTechnical(source.id, intl) }
   }
@@ -988,6 +993,7 @@ function effectPresentation(contribution: FacilityContribution, facilityId: Dyso
   if (source?.kind === 'avocato') return { icon: skillIcons.avocados ?? navigationAssets.infinity, name: intl.formatMessage(messages.avocatoPower), description: intl.formatMessage(messages.avocatoPower) }
   if (source?.id === 'milestone-50') return { icon: facilityIcon(facilityId), name: intl.formatMessage(messages.milestone50), description: intl.formatMessage(messages.milestone50) }
   if (source?.id === 'milestone-100') return { icon: facilityIcon(facilityId), name: intl.formatMessage(messages.milestone100), description: intl.formatMessage(messages.milestone100) }
+  if (contribution.sourceId === 'system.stellar-benefits') return { icon: skillIcons.stellarSacrifices, name: intl.formatMessage(stellarOutputBonusMessages.name), description: intl.formatMessage(stellarOutputBonusMessages.description) }
   if (contribution.sourceId === 'discovery.cash-bots') return { icon: navigationAssets.discovery, name: intl.formatMessage(discoveryMessages.cashBots), description: '' }
   if (contribution.sourceId === 'discovery.production') return { icon: navigationAssets.discovery, name: intl.formatMessage(discoveryMessages.name), description: '' }
   if (contribution.sourceId === 'bot-boost') return { icon: navigationAssets.store, name: intl.formatMessage(boostMessages.title), description: '' }
@@ -1135,7 +1141,6 @@ function FacilityIdentity({
   return (
     <span
       className="basic-facility-card__identity"
-      title={identityText}
     >
       <span className="ui-visually-hidden">{identityText}</span>
       <span

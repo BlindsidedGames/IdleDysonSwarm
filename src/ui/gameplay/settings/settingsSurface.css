@@ -19,6 +19,7 @@
 
 .settings-surface__content {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   align-content: start;
   gap: var(--ui-section-stack-gap);
   padding-block: var(--ui-route-inset);
@@ -140,6 +141,7 @@
   z-index: 100;
   inset: 0;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   place-items: center;
   padding: 1rem;
   background: rgb(0 0 0 / 68%);
@@ -147,7 +149,9 @@
 
 .settings-surface__dialog {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   box-sizing: border-box;
+  min-inline-size: 0;
   inline-size: min(100%, 34rem);
   gap: 0.8rem;
   padding: 1.25rem;
@@ -186,6 +190,7 @@
 
 .settings-surface__transfer textarea {
   box-sizing: border-box;
+  min-inline-size: 0;
   inline-size: 100%;
   min-block-size: 10rem;
   resize: vertical;
@@ -266,7 +271,7 @@
 
 .settings-surface__file-option > button:hover:not(:disabled),
 .settings-surface__dialog-actions > button:hover:not(:disabled) {
-  background-color: color-mix(in srgb, var(--theme-selected) 78%, var(--theme-accent));
+  background-color: color-mix(in srgb, var(--theme-selected) 88%, var(--theme-accent));
 }
 
 .settings-surface__file-option > button:active:not(:disabled),
@@ -288,6 +293,7 @@
 
 .settings-surface__dialog-actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
   gap: 0.65rem;
 }
@@ -310,6 +316,7 @@
 }
 
 .settings-surface__panel {
+  min-inline-size: 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
@@ -435,7 +442,7 @@
 }
 
 .settings-surface__community-action:hover {
-  background-color: color-mix(in srgb, var(--theme-selected) 78%, var(--theme-accent));
+  background-color: color-mix(in srgb, var(--theme-selected) 88%, var(--theme-accent));
 }
 
 .settings-surface__community-action--primary:hover {
@@ -465,6 +472,7 @@
 
 .settings-surface__select-label select {
   box-sizing: border-box;
+  min-inline-size: 0;
   min-block-size: var(--target-minimum);
   inline-size: 100%;
   max-inline-size: 100%;
@@ -507,7 +515,7 @@
 }
 
 .settings-surface__processing-default:hover:not(:disabled) {
-  background-color: color-mix(in srgb, var(--theme-selected) 78%, var(--theme-accent));
+  background-color: color-mix(in srgb, var(--theme-selected) 92%, var(--theme-accent));
 }
 
 .settings-surface__processing-default:focus-visible {
@@ -778,7 +786,7 @@
 }
 
 .settings-surface__save-actions > button:hover:not(:disabled) {
-  background-color: color-mix(in srgb, var(--theme-selected) 78%, var(--theme-accent));
+  background-color: color-mix(in srgb, var(--theme-selected) 88%, var(--theme-accent));
 }
 
 .settings-surface__save-actions > button:focus-visible {
@@ -993,6 +1001,22 @@
     padding: 0.4rem 0.7rem;
   }
 
+  .settings-surface__import-preview {
+    gap: 0.45rem;
+    padding: 0.6rem;
+  }
+
+  .settings-surface__import-preview dl {
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(100%, 7rem), 1fr)
+    );
+    gap: 0.35rem;
+  }
+}
+
+/* Save dialogs are portalled outside the Settings size container. */
+@media (max-width: 40rem) {
   .settings-surface__dialog-backdrop {
     padding: 0.5rem;
   }
@@ -1007,7 +1031,7 @@
 
   .settings-surface__dialog-actions {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 6rem), 1fr));
     gap: 0.4rem;
   }
 
@@ -1021,19 +1045,6 @@
   .settings-surface__transfer textarea {
     min-block-size: 8rem;
     font-size: max(1rem, calc(0.68rem * var(--game-text-scale)));
-  }
-
-  .settings-surface__import-preview {
-    gap: 0.45rem;
-    padding: 0.6rem;
-  }
-
-  .settings-surface__import-preview dl {
-    grid-template-columns: repeat(
-      auto-fit,
-      minmax(min(100%, 7rem), 1fr)
-    );
-    gap: 0.35rem;
   }
 }
 
@@ -1071,5 +1082,13 @@
   .settings-surface__processing-default:not(:disabled),
   .settings-surface__development-controls button:not(:disabled) {
     background-image: var(--ui-action-gradient-dark);
+  }
+}
+
+.settings-surface__panel--display { order: 5; grid-template-columns: minmax(0, 1fr); align-content: start; align-items: start; }
+
+@media (max-width: 720px) {
+  .settings-surface__audio-controls > label:not(.settings-surface__toggle) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 }

@@ -110,6 +110,7 @@ export function prepareImportedSaveText(
       return prepareImportedSave(
         PreparedSave.fromDecoded(transferred),
         context.importedAtUtc,
+        effectiveReceivingState,
       )
     }
   }

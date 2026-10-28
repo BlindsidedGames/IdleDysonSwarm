@@ -1,6 +1,10 @@
 import { defineMessages } from 'react-intl'
 
 export const skillMessages = defineMessages({
+  showTooltips: { id: 'skills.settings.showTooltips', defaultMessage: 'Show tooltips' },
+  tooltipPotentialAugments: { id: 'skills.tooltip.potential-augments', defaultMessage: 'Potential augments: {value}', description: 'Potential augment count in a skill tree tooltip, including before fracture.' },
+  tooltipScientificPlanetsBody: { id: 'skills.tooltip.scientific-planets.body', defaultMessage: 'Produces Planets based on Science Bots.', description: 'Short Scientific Planets hover description. Its formula is displayed separately.' },
+  tooltipScientificPlanetsFormula: { id: 'skills.tooltip.scientific-planets.formula', defaultMessage: 'Log10(Science Bots)', description: 'Scientific Planets formula displayed at the bottom of the tooltip.' },
   showExtendedPresets: { id: 'skills.settings.showExtendedPresets', defaultMessage: 'Show presets 6–10' },
   hunterCommunity: { id: 'skills.production.hunterCommunity', defaultMessage: 'Hunters: Community' },
   gathererCommunity: { id: 'skills.production.gathererCommunity', defaultMessage: 'Gatherers: Community' },
@@ -502,6 +506,11 @@ export const skillMessages = defineMessages({
     id: 'skills.paste',
     defaultMessage: 'Paste',
     description: 'Button label for pasting a skill preset import string.',
+  },
+  copyFailed: {
+    id: 'skills.copy-failed',
+    defaultMessage: 'Copy failed. Copy the selected text manually.',
+    description: 'Clipboard failure feedback; the preset export text remains selected for manual copying.',
   },
   copied: {
     id: 'skills.copied',

@@ -166,7 +166,7 @@ export function ResearchSurface({
   )
   const visibleCards = orderResearchCardsForPresentation(
     canonicalVisibleCards.filter(
-      (card) => card.stackedDurability || !hideCompleted || !card.maxed,
+      (card) => !hideCompleted || !card.maxed,
     ),
   )
   const previousVisibleIds = useRef(

@@ -7,6 +7,7 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from 'react'
+import { createPortal } from 'react-dom'
 import { useIntl, type IntlShape } from 'react-intl'
 import type { CanonicalRuntimePresentationEvent } from '../../../application/canonicalRuntimeSession'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
@@ -21,6 +22,29 @@ type DisasterEvent = Extract<
   CanonicalRuntimePresentationEvent,
   { readonly kind: 'automatic-dream-disaster' }
 >
+
+type PresetConflict = Extract<CanonicalRuntimePresentationEvent, { readonly kind: 'skill-preset-conflict' }>
+type VisiblePresentationEvent = Exclude<CanonicalRuntimePresentationEvent, { readonly kind: 'skill-preset-conflict-resolved' }>
+
+interface PresetConflictSkillState {
+  readonly presets: readonly { readonly skillIds: readonly string[] }[]
+  readonly byId: Readonly<Record<string, { readonly owned: boolean }>>
+}
+
+function isCurrentConflict(event: PresetConflict, skills?: PresetConflictSkillState): boolean {
+  if (event.application.trigger !== 'automatic' || skills === undefined) return true
+  return event.application.retainedSkillIds.every(id => skills.byId[id]?.owned === true) &&
+    event.application.blockedByRetainedSkillIds.some(id => skills.presets[event.application.slot - 1]?.skillIds.includes(id))
+}
+
+function automaticConflictIdentity(event: PresetConflict): string {
+  const application = event.application
+  // Skill sets and the persisted slot identify the conflict independently of
+  // names, translation, ordering, or a repeated application's sequence number.
+  return JSON.stringify([application.slot,
+    [...application.retainedSkillIds].sort(),
+    [...application.blockedByRetainedSkillIds].sort()])
+}
 
 type QueuedNotice =
   | Extract<CanonicalRuntimePresentationEvent, { readonly kind: 'skill-preset-conflict' }>
@@ -42,6 +66,9 @@ export interface GameplayNotificationHostProps {
   readonly storedTimeFirstDisasterEvents?: readonly Readonly<DisasterEvent>[]
   readonly locale: EnabledLocale
   readonly showPresetApplicationNotices: boolean
+  /** Canonical targets/ownership retire stale automatic feedback after edits or resets. */
+  readonly skillState?: PresetConflictSkillState
+  readonly onEventsAccepted?: (sessionRevision: number, throughSequence: number) => void
   readonly onViewReality: () => void
 }
 
@@ -51,18 +78,26 @@ export function GameplayNotificationHost({
   storedTimeFirstDisasterEvents = [],
   locale,
   showPresetApplicationNotices,
+  skillState,
   onViewReality,
+  onEventsAccepted,
 }: GameplayNotificationHostProps) {
   const intl = useIntl()
+  const [portalHost, setPortalHost] = useState<HTMLElement | null>(null)
+  const attachHost = useCallback((node: HTMLDivElement | null) => {
+    if (node) setPortalHost(node.closest('.dyson-shell'))
+  }, [])
   const [queue, setQueue] = useState<readonly QueuedNotice[]>([])
   const seenRef = useRef({ sessionRevision, sequence: 0 })
   const seenStoredTimeSequencesRef = useRef(new Set<number>())
+  const ongoingAutomaticConflictsRef = useRef(new Map<string, PresetConflict>())
 
   useEffect(() => {
     let reset = false
     if (seenRef.current.sessionRevision !== sessionRevision) {
       seenRef.current = { sessionRevision, sequence: 0 }
       seenStoredTimeSequencesRef.current.clear()
+      ongoingAutomaticConflictsRef.current.clear()
       reset = true
     }
     const unseen = events.filter(
@@ -77,23 +112,45 @@ export function GameplayNotificationHost({
     for (const event of unseenStoredTime) {
       seenStoredTimeSequencesRef.current.add(event.sequence)
     }
-    const additions = [
-      ...buildQueuedNotices(
-        unseen,
-        showPresetApplicationNotices,
-      ),
-      ...unseenStoredTime,
-    ]
-    if (reset || additions.length > 0) {
-      setQueue((current) => mergePendingNotices(
-        reset ? [] : current,
-        additions,
-      ))
+    if (!showPresetApplicationNotices) ongoingAutomaticConflictsRef.current.clear()
+    for (const [identity, conflict] of ongoingAutomaticConflictsRef.current) {
+      if (!isCurrentConflict(conflict, skillState)) ongoingAutomaticConflictsRef.current.delete(identity)
     }
+    const resolvedSlots = new Set<PresetConflict['application']['slot']>()
+    let visibleEvents: VisiblePresentationEvent[] = []
+    for (const event of unseen) {
+      if (event.kind === 'skill-preset-conflict-resolved') {
+        for (const [identity, conflict] of ongoingAutomaticConflictsRef.current) {
+          if (conflict.application.slot === event.slot) ongoingAutomaticConflictsRef.current.delete(identity)
+        }
+        resolvedSlots.add(event.slot)
+        // Remove earlier conflicts in this batch, but allow a subsequent
+        // reintroduction. Silent resolutions do not split disaster batches.
+        visibleEvents = visibleEvents.filter(notice => notice.kind !== 'skill-preset-conflict' ||
+          notice.application.trigger !== 'automatic' || notice.application.slot !== event.slot)
+      } else {
+        if (event.kind === 'skill-preset-conflict' && event.application.trigger === 'automatic') {
+          if (!showPresetApplicationNotices || !isCurrentConflict(event, skillState)) continue
+          const identity = automaticConflictIdentity(event)
+          if (ongoingAutomaticConflictsRef.current.has(identity)) continue
+          ongoingAutomaticConflictsRef.current.set(identity, event)
+        }
+        visibleEvents.push(event)
+      }
+    }
+    const additions = [...buildQueuedNotices(visibleEvents, showPresetApplicationNotices), ...unseenStoredTime]
+    setQueue((current) => {
+      const next = removePresetNotices(reset ? [] : current,
+        showPresetApplicationNotices ? resolvedSlots : undefined, skillState)
+      return additions.length > 0 ? mergePendingNotices(next, additions) : next
+    })
+    if (unseen.length > 0) onEventsAccepted?.(sessionRevision, unseen.at(-1)!.sequence)
   }, [
+    onEventsAccepted,
     events,
     sessionRevision,
     showPresetApplicationNotices,
+    skillState,
     storedTimeFirstDisasterEvents,
   ])
 
@@ -107,11 +164,12 @@ export function GameplayNotificationHost({
   const active = queue[0]
 
   return (
-    <div className="gameplay-notification-host" data-active={active !== undefined || undefined}>
+    <div ref={attachHost} className="gameplay-notification-host" data-active={active !== undefined || undefined}>
       {active?.kind === 'automatic-dream-disaster' &&
       active.firstLifetimeOccurrence ? (
         <FirstDisasterDialog
           key={active.sequence}
+          portalHost={portalHost}
           event={active}
           locale={locale}
           onDismiss={dismiss}
@@ -166,8 +224,19 @@ function mergePendingNotices(
   return merged
 }
 
+function removePresetNotices(
+  queue: readonly QueuedNotice[],
+  resolvedSlots?: ReadonlySet<PresetConflict['application']['slot']>,
+  skills?: PresetConflictSkillState,
+): readonly QueuedNotice[] {
+  const remaining = queue.filter((notice) => notice.kind !== 'skill-preset-conflict' ||
+    (resolvedSlots !== undefined && isCurrentConflict(notice, skills) &&
+      (notice.application.trigger !== 'automatic' || !resolvedSlots.has(notice.application.slot))))
+  return remaining.length === queue.length ? queue : remaining
+}
+
 function buildQueuedNotices(
-  events: readonly Readonly<CanonicalRuntimePresentationEvent>[],
+  events: readonly Readonly<VisiblePresentationEvent>[],
   showPresetApplicationNotices: boolean,
 ): QueuedNotice[] {
   const queue: QueuedNotice[] = []
@@ -242,14 +311,17 @@ function TimedNotification({
 }
 
 function FirstDisasterDialog({
+  portalHost,
   event,
   locale,
   onDismiss,
   onViewReality,
 }: {
+  readonly portalHost: HTMLElement | null
   readonly event: DisasterEvent
   readonly locale: EnabledLocale
   readonly onDismiss: () => void
+  readonly onEventsAccepted?: (sessionRevision: number, throughSequence: number) => void
   readonly onViewReality: () => void
 }) {
   const intl = useIntl()
@@ -273,7 +345,10 @@ function FirstDisasterDialog({
     const shellSiblings = shell === null || shell === undefined || main === null || main === undefined
       ? []
       : Array.from(shell.children).filter((element) => element !== main)
-    const siblings = [...contentSiblings, ...shellSiblings]
+    const backdrop = dialogRef.current?.parentElement
+    const siblings = portalHost
+      ? Array.from(portalHost.children).filter((element) => element !== backdrop)
+      : [...contentSiblings, ...shellSiblings]
     const previousInert = siblings.map((element) => ({
       element: element as HTMLElement,
       inert: (element as HTMLElement).inert,
@@ -281,11 +356,12 @@ function FirstDisasterDialog({
     for (const { element } of previousInert) element.inert = true
     return () => {
       for (const item of previousInert) item.element.inert = item.inert
-      if (previousFocus?.isConnected) previousFocus.focus()
+      if (previousFocus?.isConnected && !previousFocus.closest('[inert]')) previousFocus.focus()
     }
-  }, [])
+  }, [portalHost])
 
   const onKeyDown = (keyboardEvent: KeyboardEvent<HTMLDivElement>) => {
+    keyboardEvent.stopPropagation()
     if (keyboardEvent.key === 'Escape') {
       keyboardEvent.preventDefault()
       onDismiss()
@@ -307,7 +383,7 @@ function FirstDisasterDialog({
     }
   }
 
-  return (
+  const dialog = (
     <div className="gameplay-disaster-dialog__backdrop">
       <div
         ref={dialogRef}
@@ -337,6 +413,7 @@ function FirstDisasterDialog({
       </div>
     </div>
   )
+  return portalHost ? createPortal(dialog, portalHost) : dialog
 }
 
 function noticeText(

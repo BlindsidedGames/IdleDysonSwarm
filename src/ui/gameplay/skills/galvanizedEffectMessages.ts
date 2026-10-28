@@ -1,3 +1,4 @@
+import { stellarFracturedMessages } from './stellarMessages'
 import { skillMessages as messages } from './messages'
 
 export const galvanizedEffectMessages: Readonly<Record<string, typeof messages.galvEconomic>> = {
@@ -13,10 +14,7 @@ export const galvanizedEffectMessages: Readonly<Record<string, typeof messages.g
   fusionReactors: messages.galvFusion,
   scientificDominance: messages.galvScientific,
   shouldersOfPrecursors: messages.galvPrecursors,
-  stellarDominance: messages.galvStellarDominance,
-  stellarObliteration: messages.galvStellarObliteration,
-  supernova: messages.galvSupernova,
   worthySacrifice: messages.galvWorthy,
-  stellarSacrifices: messages.galvSacrifices,
   shouldersOfTheEnlightened: messages.galvEnlightened,
+  ...stellarFracturedMessages,
 }

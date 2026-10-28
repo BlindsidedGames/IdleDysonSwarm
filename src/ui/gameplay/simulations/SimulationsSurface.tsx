@@ -1,3 +1,4 @@
+import { realTimeRate, realTimeDuration } from '../effectiveSpeed'
 import {
   Fragment,
   useEffect,
@@ -120,12 +121,12 @@ export interface SimulationsCommandAvailability {
 }
 
 export interface SimulationsSurfaceProps {
+  readonly gameSpeed?: number
   readonly locale: EnabledLocale
   readonly facts: FrontendSimulationsDerivedFacts
   readonly progression: FrontendCanonicalProgression['dream']
   readonly previews: FrontendGameplayPreviews['dream']
   readonly influence: number
-  readonly activeDoubleTimeRate: number
   readonly spaceAgePurchaseQuantity: SpaceAgePurchaseQuantity
   readonly commandAvailability: SimulationsCommandAvailability
   readonly dispatchPlayer: (
@@ -139,12 +140,12 @@ export interface SimulationsSurfaceProps {
  * this component only formats them and dispatches player intent.
  */
 export function SimulationsSurface({
+  gameSpeed = 1,
   locale,
   facts,
   progression,
   previews,
   influence,
-  activeDoubleTimeRate,
   spaceAgePurchaseQuantity,
   commandAvailability,
   dispatchPlayer,
@@ -179,6 +180,7 @@ export function SimulationsSurface({
   }
 
   const panels = createPanelModels({
+    gameSpeed,
     intl,
     locale,
     facts,
@@ -186,7 +188,7 @@ export function SimulationsSurface({
     previews,
     commandAvailability,
     influence,
-    cyclePresentation: cyclePresentationForRate(activeDoubleTimeRate),
+    cyclePresentation: cyclePresentationForSpeed(gameSpeed),
     spaceAgePurchaseQuantity,
   })
   const categories = createCategories(intl, facts, panels)
@@ -854,9 +856,9 @@ function SimulationProgress({
 
 type CyclePresentationMode = 'slow' | 'medium' | 'fast'
 
-function cyclePresentationForRate(rate: number): CyclePresentationMode {
-  if (rate >= 8) return 'fast'
-  if (rate >= 1) return 'medium'
+function cyclePresentationForSpeed(gameSpeed: number): CyclePresentationMode {
+  if (gameSpeed >= 9) return 'fast'
+  if (gameSpeed >= 2) return 'medium'
   return 'slow'
 }
 
@@ -1031,6 +1033,7 @@ function category(
 }
 
 function createPanelModels(input: {
+  readonly gameSpeed: number
   readonly intl: IntlShape
   readonly locale: EnabledLocale
   readonly facts: FrontendSimulationsDerivedFacts
@@ -1041,7 +1044,7 @@ function createPanelModels(input: {
   readonly cyclePresentation: CyclePresentationMode
   readonly spaceAgePurchaseQuantity: SpaceAgePurchaseQuantity
 }): ReadonlyMap<PanelId, SimulationPanelModel> {
-  const { intl, locale, facts, progression, cyclePresentation } = input
+  const { intl, locale, facts, progression, cyclePresentation, gameSpeed } = input
   const output = new Map<PanelId, SimulationPanelModel>()
   const resources = facts.live.resources
   const production = facts.live.production.ok
@@ -1053,11 +1056,12 @@ function createPanelModels(input: {
     value,
     { wholeBelowHundred: true },
   )
+  const displayRate = (value: number) => display(realTimeRate(value, gameSpeed))
   const displayRich = (value: number | bigint) => highlightedNumber(locale, value)
   const displayEnergyRich = (
     value: number,
     unit: 'joules' | 'watts',
-  ) => highlightedEnergy(locale, value, unit)
+  ) => highlightedEnergy(locale, unit === 'watts' ? realTimeRate(value, gameSpeed) : value, unit)
   const percentRich = (fraction: number) => highlightedFormattedNumber(
     formatNumber(locale, clampProgress(fraction) * 100, {
       maximumFractionDigits: 0,
@@ -1085,9 +1089,10 @@ function createPanelModels(input: {
         intl,
         displayRich,
         percentRich,
+        gameSpeed,
       ))
     }
-    const activeBoost = boostProgress(id, progression, intl, locale)
+    const activeBoost = boostProgress(id, progression, intl, locale, gameSpeed)
     if (activeBoost) progress.push(activeBoost)
     const conversion = production?.foundationalInformation.conversions
     if (id === 'housing' && conversion) {
@@ -1115,7 +1120,7 @@ function createPanelModels(input: {
         : undefined,
       status: combinePanelStatus(
         timer
-          ? timerProductionStatus(timer, intl, display)
+          ? timerProductionStatus(timer, intl, displayRate)
           : intl.formatMessage(messages.owned, {
               value: display(count as number | bigint),
             }),
@@ -1124,7 +1129,7 @@ function createPanelModels(input: {
       description: intl.formatMessage(panelDescriptionMessage(id)),
       progress,
       details: timer
-        ? timerDetailRows(timer, intl, display)
+        ? timerDetailRows(timer, intl, display, gameSpeed)
         : [],
       action,
     })
@@ -1159,10 +1164,10 @@ function createPanelModels(input: {
                 label: intl.formatMessage(messages.timeRemaining),
                 valueText: formatGameDuration(
                   locale,
-                  Math.max(
+                  realTimeDuration(Math.max(
                     0,
                     education.researchTime - education.progress,
-                  ),
+                  ), gameSpeed),
                 ),
                 fraction,
                 showBar: false,
@@ -1194,9 +1199,10 @@ function createPanelModels(input: {
           intl,
           displayRich,
           percentRich,
+          gameSpeed,
         )]
       : []
-    const activeBoost = boostProgress(id, progression, intl, locale)
+    const activeBoost = boostProgress(id, progression, intl, locale, gameSpeed)
     if (activeBoost) progress.push(activeBoost)
     output.set(id, {
       id,
@@ -1205,7 +1211,7 @@ function createPanelModels(input: {
       count: typeof count === 'number' || typeof count === 'bigint' ? displayRich(count) : undefined,
       status: combinePanelStatus(
         timer
-          ? timerProductionStatus(timer, intl, display)
+          ? timerProductionStatus(timer, intl, displayRate)
           : intl.formatMessage(messages.owned, {
               value: display(count as number | bigint),
             }),
@@ -1214,7 +1220,7 @@ function createPanelModels(input: {
       description: intl.formatMessage(panelDescriptionMessage(id)),
       progress,
       details: timer
-        ? timerDetailRows(timer, intl, display)
+        ? timerDetailRows(timer, intl, display, gameSpeed)
         : id === 'rockets' && production
           ? rocketConversionDetailRows(
               production.foundationalInformation.conversions
@@ -1266,7 +1272,7 @@ function createPanelModels(input: {
           ? activeThroughput.panelsPerVolley
           : BigInt(activeThroughput.shotsPerVolley ?? 10)
       const factoryCycleSeconds = factory.progressPerSecond > 0
-        ? factory.durationSeconds / factory.progressPerSecond
+        ? realTimeDuration(factory.durationSeconds / factory.progressPerSecond, gameSpeed)
         : 0
       progress.push(productionProgress(
         factory,
@@ -1274,6 +1280,7 @@ function createPanelModels(input: {
         intl,
         displayRich,
         percentRich,
+        gameSpeed,
       ), {
         label: intl.formatMessage(messages.storedPanels),
         valueText: formatSimulationMessage(intl, messages.storedPanelsValue, {
@@ -1383,7 +1390,7 @@ function createPanelModels(input: {
       progress,
       details: id === 'space-factories' && production
         ? spaceFactoryDetailRows(
-            production.spaceAge.production.spaceFactory, intl, display,
+            production.spaceAge.production.spaceFactory, intl, display, gameSpeed,
           )
         : [],
       action: spaceAgeAction(id, input, displayCurrency),
@@ -1405,6 +1412,7 @@ function productionProgress(
   intl: IntlShape,
   display: (value: number | bigint) => SimulationText,
   percent: (fraction: number) => SimulationText,
+  gameSpeed: number,
 ): SimulationProgressModel {
   const fraction = timer.durationSeconds > 0
     ? timer.currentProgress / timer.durationSeconds
@@ -1416,7 +1424,7 @@ function productionProgress(
     animation: {
       normalizedRatePerSecond:
         timer.durationSeconds > 0
-          ? timer.progressPerSecond / timer.durationSeconds
+          ? realTimeRate(timer.progressPerSecond / timer.durationSeconds, gameSpeed)
           : 0,
       active: presentation === 'slow' && timer.progressPerSecond > 0,
       wraps: true,
@@ -1424,7 +1432,7 @@ function productionProgress(
     cycle: {
       presentation,
       throughputText: formatSimulationMessage(intl, messages.productionRate, {
-        value: display(timer.cyclesPerSecond),
+        value: display(realTimeRate(timer.cyclesPerSecond, gameSpeed)),
       }),
     },
   }
@@ -1434,6 +1442,7 @@ function timerDetailRows(
   timer: DreamTimerProductionFact,
   intl: IntlShape,
   display: (value: number | bigint) => string,
+  gameSpeed: number,
 ): readonly SimulationDetailRowModel[] {
   const speedMultiplier = timer.advanceEnabled
     ? intl.formatMessage(
@@ -1443,8 +1452,8 @@ function timerDetailRows(
         {
           count: display(timer.sourceCount),
           base: display(timer.baseMultiplier),
-          global: display(timer.globalMultiplier),
-          effective: display(timer.progressPerSecond),
+          global: display(realTimeRate(timer.globalMultiplier, gameSpeed)),
+          effective: display(realTimeRate(timer.progressPerSecond, gameSpeed)),
         },
       )
     : intl.formatMessage(messages.detailInactiveMultiplier)
@@ -1461,14 +1470,15 @@ function spaceFactoryDetailRows(
   factory: DreamSpaceFactoryProductionFacts,
   intl: IntlShape,
   display: (value: number | bigint) => string,
+  gameSpeed: number,
 ): readonly SimulationDetailRowModel[] {
   return [{
     label: intl.formatMessage(messages.detailSpeedMultiplier),
     value: factory.active
       ? intl.formatMessage(messages.detailLogarithmicMultiplier, {
           count: display(factory.sourceCount),
-          global: `${display(factory.globalMultiplier)} × ${display(factory.overdriveMultiplier)}`,
-          effective: display(factory.progressPerSecond),
+          global: `${display(realTimeRate(factory.globalMultiplier, gameSpeed))} × ${display(factory.overdriveMultiplier)}`,
+          effective: display(realTimeRate(factory.progressPerSecond, gameSpeed)),
         })
       : intl.formatMessage(factory.sourceCount >= 1
           ? messages.cappedLabel
@@ -1773,6 +1783,7 @@ function boostProgress(
   progression: FrontendCanonicalProgression['dream'],
   intl: IntlShape,
   locale: EnabledLocale,
+  gameSpeed: number,
 ): SimulationProgressModel | null {
   const parameters = progression.parameters
   const clock = id === 'community'
@@ -1788,7 +1799,7 @@ function boostProgress(
   if (clock <= 0 || duration <= 0) return null
   return {
     label: intl.formatMessage(messages.boostRemaining),
-    valueText: formatGameDuration(locale, clock),
+    valueText: formatGameDuration(locale, realTimeDuration(clock, gameSpeed)),
     fraction: clock / duration,
     animation: {
       inferRate: 'decreasing',
@@ -1808,7 +1819,7 @@ function combinePanelStatus(
 function timerProductionStatus(
   timer: DreamTimerProductionFact,
   intl: IntlShape,
-  display: (value: number | bigint) => string,
+  display: (value: number) => string,
 ): string {
   const outputs = Object.entries(timer.outputPerSecond)
     .filter(([, amount]) => amount > 0)

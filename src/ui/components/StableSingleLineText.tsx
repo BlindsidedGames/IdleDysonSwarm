@@ -19,6 +19,8 @@ export interface StableSingleLineTextProps {
   readonly className?: string
   /** Preferred floor; actual text may shrink further rather than being cut off. */
   readonly minimumScale?: number
+  /** Hard readability floor in CSS pixels; the caller controls overflow at it. */
+  readonly minimumFontSize?: number
 }
 
 /**
@@ -30,6 +32,7 @@ export function StableSingleLineText({
   measurement,
   className,
   minimumScale = DEFAULT_MINIMUM_SCALE,
+  minimumFontSize,
 }: StableSingleLineTextProps) {
   const containerRef = useRef<HTMLSpanElement>(null)
   const visibleRef = useRef<HTMLSpanElement>(null)
@@ -52,7 +55,8 @@ export function StableSingleLineText({
         container.clientWidth - WIDTH_SAFETY_MARGIN_PX,
       )
       // Read the scale applied to the DOM, which may precede the next React
-      // commit. The visible span remains intrinsically sized (no max-width).
+      // commit. Callers with a pixel floor may clip the visible span and use
+      // a separate measurement; other callers remain intrinsically sized.
       const renderedScale = Number.parseFloat(container.style.getPropertyValue(
         '--ui-stable-single-line-font-size',
       )) || 1
@@ -60,19 +64,35 @@ export function StableSingleLineText({
       const requiredWidth = sizingText?.getBoundingClientRect().width ?? liveWidth
       if (availableWidth === 0 || requiredWidth === 0 || liveWidth === 0) return null
 
-      const nextScale = Math.min(
-        Math.max(minimumScale, Math.min(1, availableWidth / requiredWidth)),
-        availableWidth / liveWidth,
-        1,
-      )
-      return Math.floor(
+      const nextScale = minimumFontSize !== undefined
+        ? Math.min(1, availableWidth / requiredWidth)
+        : Math.min(
+          Math.max(minimumScale, Math.min(1, availableWidth / requiredWidth)),
+          availableWidth / liveWidth,
+          1,
+        )
+      const roundedScale = Math.floor(
         nextScale * SCALE_PRECISION,
       ) / SCALE_PRECISION
+      if (minimumFontSize === undefined) return roundedScale
+      const preferredSize = Number.parseFloat(getComputedStyle(container).fontSize)
+      if (!(preferredSize > 0)) return roundedScale
+      const readableScale = Math.min(1, Math.ceil(
+        minimumFontSize / preferredSize * SCALE_PRECISION,
+      ) / SCALE_PRECISION)
+      return Math.max(readableScale, roundedScale)
     }
 
     const update = (allowGrowth: boolean) => {
       const roundedDown = fittedScale()
       if (roundedDown === null) return
+      if (minimumFontSize !== undefined) {
+        const preferredSize = Number.parseFloat(getComputedStyle(container).fontSize)
+        if (preferredSize * retainedScaleRef.current < Math.min(minimumFontSize, preferredSize)) {
+          retainedScaleRef.current = roundedDown
+          setScale(roundedDown)
+        }
+      }
 
       // Live number changes may shrink the sentence, but only a change to
       // its available space/reference may grow it. This avoids pulsing.
@@ -112,7 +132,7 @@ export function StableSingleLineText({
       if (growthTimer !== undefined) clearTimeout(growthTimer)
       observer.disconnect()
     }
-  }, [minimumScale, hasMeasurement])
+  }, [minimumScale, minimumFontSize, hasMeasurement])
 
   return (
     <span
@@ -125,7 +145,10 @@ export function StableSingleLineText({
         '--ui-stable-single-line-font-size': `${scale}em`,
       } as CSSProperties}
     >
-      <span ref={visibleRef} className="ui-stable-single-line-text__visible">
+      <span ref={visibleRef} className="ui-stable-single-line-text__visible"
+        style={minimumFontSize === undefined ? undefined : {
+          fontSize: `max(${minimumFontSize}px, var(--ui-stable-single-line-font-size, 1em))`,
+        }}>
         {children}
       </span>
       {hasMeasurement && (

@@ -27,7 +27,7 @@ import {
 import { advanceCanonicalGoalProgression } from './canonicalGoalProgression'
 import {
   CANONICAL_DYSON_PRESENTATION_TUNING,
-  deriveBasicDysonState,
+  deriveDysonProduction,
   type DysonEntitlements,
   type DysonPresentationTuning,
 } from './canonicalDysonDerivation'
@@ -477,11 +477,14 @@ export class CanonicalEventTimeModel
     )
   }
 
-  advanceContinuous(seconds: number): void {
+  advanceContinuous(seconds: number, storedTimeFundingSeconds = 0): void {
     if (this.currentIssue !== undefined) return
     if (
       !Number.isFinite(seconds) ||
       seconds <= 0 ||
+      !Number.isFinite(storedTimeFundingSeconds) ||
+      storedTimeFundingSeconds < 0 ||
+      storedTimeFundingSeconds > seconds ||
       this.pendingInterval !== null
     ) {
       this.fail(
@@ -511,7 +514,7 @@ export class CanonicalEventTimeModel
     const startingState = withCanonicalBotAllocation(cappedStartingState)
     this.replaceGameState(startingState)
     try {
-      const derived = deriveBasicDysonState(
+      const derived = deriveDysonProduction(
         startingState,
         this.carrier.compatibilityTuning,
         this.carrier.entitlements,
@@ -571,8 +574,13 @@ export class CanonicalEventTimeModel
         : {
             state: candidate,
             runtime: this.carrier.tinker,
+            unusedIdleSeconds: 0,
           }
-      candidate = withCanonicalBotAllocation(tinker.state)
+      candidate = withCanonicalBotAllocation(
+        tinker.unusedIdleSeconds > 0
+          ? advanceManualLabourIdle(tinker.state, tinker.unusedIdleSeconds)
+          : tinker.state,
+      )
       const space = runDreamSpaceAgeProduction(candidate, {
         tickSeconds: seconds,
         doubleTimeMultiplier: 1,
@@ -640,7 +648,14 @@ export class CanonicalEventTimeModel
       }
       if (this.context.mode === 'active') {
         candidate = recordActiveSpeedrunTime(candidate, seconds * (this.context.rateClockMultiplier ?? 1))
-        candidate = withAdvancedManualInfinityObservation(
+        if (storedTimeFundingSeconds > 0) {
+          candidate = recordStoredSpeedrunTime(candidate, storedTimeFundingSeconds)
+          candidate = { ...candidate, infinity: { ...candidate.infinity,
+            activeAutomaticThroughputCycleEligible: false,
+            storedTimeUsedThisCycleSeconds: addContinuous(candidate.infinity.storedTimeUsedThisCycleSeconds, storedTimeFundingSeconds),
+          } }
+        } else if (candidate.infinity.storedTimeUsedThisCycleSeconds === 0) {
+          candidate = withAdvancedManualInfinityObservation(
           candidate,
           seconds * (this.context.rateClockMultiplier ?? 1),
         )
@@ -648,6 +663,7 @@ export class CanonicalEventTimeModel
           candidate,
           this.carrier.entitlements,
         )
+        }
       }
 
       this.carrier = {
@@ -729,7 +745,7 @@ export class CanonicalEventTimeModel
     }
   }
 
-  applyDerivedTimersAndDoubleTime(
+  applyDerivedTimers(
     seconds: number,
     summary: SimulationPresentationSummary,
   ): void {
@@ -1171,7 +1187,7 @@ export class CanonicalEventTimeModel
   private replaceGameState(state: CanonicalGameStateV1): void {
     this.carrier = {
       ...this.carrier,
-      gameState: observeSpeedruns(state),
+      gameState: observeSpeedruns(withCanonicalBotAllocation(state)),
     }
   }
 
@@ -1179,7 +1195,7 @@ export class CanonicalEventTimeModel
     state: CanonicalGameStateV1,
     path: string,
   ) {
-    const derived = deriveBasicDysonState(
+    const derived = deriveDysonProduction(
       state,
       this.carrier.compatibilityTuning,
       this.carrier.entitlements,

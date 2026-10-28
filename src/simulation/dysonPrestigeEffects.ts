@@ -8,11 +8,26 @@ import {
 } from '../game-data/runtimeAssetKinds'
 import type {
   AvocadoState,
+  CanonicalFacilityId,
   QuantumState,
 } from '../game-state/types'
 import { isDiscreteResource } from './numeric'
 
 export const DYSON_INFINITY_MULTIPLIER_CAP = 1e44
+
+export const INFINITY_FACILITY_THRESHOLDS: Readonly<
+  Record<CanonicalFacilityId, bigint>
+> = Object.freeze({
+  assembly_lines: 0n,
+  ai_managers: 2n,
+  servers: 3n,
+  data_centers: 4n,
+  planets: 5n,
+  matrioshka_brains: 5n,
+  birch_planets: 10n,
+  galactic_brains: 20n,
+})
+
 
 export function quantumCashMultiplier(
   quantum: Pick<QuantumState, 'cashBonusLevels'>,

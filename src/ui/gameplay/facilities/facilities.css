@@ -332,7 +332,6 @@
   border: 1px solid #0b080c;
   border-radius: 0.2rem;
   background: #c695d7;
-  background-image: var(--basic-facility-surface-gradient);
   color: #0b080c;
   font: inherit;
   padding-block: 0.2rem;
@@ -954,5 +953,11 @@
   .basic-facility-card__details-button:focus-visible,
   .facility-details-dialog__close:focus-visible {
     outline-color: Highlight;
+  }
+}
+
+@media (forced-colors: none) {
+  .basic-facility-card__details-button:not(:disabled) {
+    background-image: var(--basic-facility-surface-gradient);
   }
 }

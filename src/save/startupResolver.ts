@@ -18,15 +18,27 @@ export type StartupBlockedReason =
   | 'recovery-write-failed'
   | 'storage-failed'
 
+/** Completion effects belong to the staged startup transaction, never to a later import. */
+export interface StartupPendingPublication {
+  readonly sourceText?: string | readonly string[]
+  readonly prepareForCommit?: (save: PreparedSave) => PreparedSave
+  readonly beforeCommit?: () => Promise<void>
+  readonly afterCommit?: () => Promise<void>
+}
+
 export type StartupSaveResolution =
   | {
       readonly kind: 'ready'
       readonly source: StartupReadySource
       readonly save: PreparedSave
+      readonly publicationPending?: boolean
+      readonly pendingPublication?: StartupPendingPublication
     }
   | {
       readonly kind: 'first-run'
       readonly save: PreparedSave
+      readonly publicationPending?: boolean
+      readonly pendingPublication?: StartupPendingPublication
     }
   | {
       readonly kind: 'blocked'
@@ -46,27 +58,32 @@ export type FirstRunSaveFactory = () => PreparedSave
  *
  * The repository owns candidate preparation and verified replacement. This
  * adapter classifies its result and ensures a migrated or numerically repaired
- * primary is durably committed before returning it as publishable.
+ * primary is durably committed before returning it as publishable. A legacy
+ * choice instead returns a pending publication owned by the application; the
+ * format conversion and selected outcome are committed together.
  */
 export class RepositoryStartupSaveResolver implements StartupSaveResolver {
   private readonly repository: SaveRepository
   private readonly createFirstRunSave: FirstRunSaveFactory
   private readonly commitTarget: SaveCommitTarget
+  private readonly deferPublication?: (save: PreparedSave) => boolean
 
   constructor(
     repository: SaveRepository,
     createFirstRunSave: FirstRunSaveFactory,
     commitTarget: SaveCommitTarget = 'development',
+    deferPublication?: (save: PreparedSave) => boolean,
   ) {
     this.repository = repository
     this.createFirstRunSave = createFirstRunSave
     this.commitTarget = commitTarget
+    this.deferPublication = deferPublication
   }
 
   async resolve(): Promise<StartupSaveResolution> {
     let result: FirstLaunchMigrationResult
     try {
-      result = await this.repository.migrateLegacyOnFirstLaunch()
+      result = await this.repository.migrateLegacyOnFirstLaunch(this.deferPublication)
     } catch (error) {
       return blocked('storage-failed', error)
     }
@@ -79,12 +96,14 @@ export class RepositoryStartupSaveResolver implements StartupSaveResolver {
           kind: 'ready',
           source: 'recovered-legacy',
           save: result.save,
+          ...(result.publicationPending ? { publicationPending: true } : {}),
         }
       case 'recovered-backup':
         return {
           kind: 'ready',
           source: 'recovered-canonical',
           save: result.save,
+          ...(result.publicationPending ? { publicationPending: true } : {}),
         }
       case 'no-legacy-save':
         try {
@@ -116,6 +135,9 @@ export class RepositoryStartupSaveResolver implements StartupSaveResolver {
   private async resolvePrimary(
     save: PreparedSave,
   ): Promise<StartupSaveResolution> {
+    if (this.deferPublication?.(save)) {
+      return { kind: 'ready', source: 'primary', save, publicationPending: true }
+    }
     if (!requiresVerifiedCommit(save)) {
       return { kind: 'ready', source: 'primary', save }
     }
@@ -135,6 +157,7 @@ export class RepositoryStartupSaveResolver implements StartupSaveResolver {
 function requiresVerifiedCommit(save: PreparedSave): boolean {
   return (
     save.sourceSchema !== save.targetSchema ||
+    save.appliedSteps.includes('continuous-farming-clock') ||
     save.numericRepair.repairCount > 0
   )
 }

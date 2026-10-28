@@ -1,3 +1,4 @@
+import { realTimeDuration } from '../effectiveSpeed'
 import { swarmAugmentPresentation } from '../skills/swarmMessages'
 import { skillMessages } from '../skills/messages'
 import { useIntl } from 'react-intl'
@@ -40,7 +41,7 @@ export function DiscoverySurface({ state, effects, locale, gameSpeed }: {
           {index === 0 && <span className="discovery-heading"><span className="discovery-title">{intl.formatMessage(m.name)}</span></span>}
           <span className="discovery-track">
             <DiscoveryBar tier={bar.tier} maximum={bar.maximum} incoming={bar.incoming}
-              name={intl.formatMessage(bar.name)} secondsPerProgress={1 / bar.speed / gameSpeed} locale={locale}
+              name={intl.formatMessage(bar.name)} secondsPerProgress={realTimeDuration(1 / bar.speed, gameSpeed)} locale={locale}
               benefit={bar.value} perCompletion={index === 2 ? DISCOVERY_TUNING.strengthPerCompletion : nextBonus}
               formatBenefit={index === 2 ? duration : number} label={intl.formatMessage(bar.label, { value: number(bar.value) })} />
             <span className="discovery-bar-icon"><InlineImageSymbol src={discoveryIcons[bar.id]} tint /></span>
@@ -52,8 +53,8 @@ export function DiscoverySurface({ state, effects, locale, gameSpeed }: {
           <h2 id={`discovery-${bar.id}-heading`}><InlineImageSymbol src={discoveryIcons[bar.id]} tint />{intl.formatMessage(bar.name)}</h2>
           <dl>
             <div><dt>{intl.formatMessage(m.completed)}</dt><dd>{formatWholeGameNumber(locale, bar.tier.completions)}</dd></div>
-            <div><dt>{intl.formatMessage(m.cycleDuration)}</dt><dd>{duration(bar.maximum / bar.speed / gameSpeed)}</dd></div>
-            <div><dt>{intl.formatMessage(m.nextCompletion)}</dt><dd>{duration(completionTimes[index] / gameSpeed)}</dd></div>
+            <div><dt>{intl.formatMessage(m.cycleDuration)}</dt><dd>{duration(realTimeDuration(bar.maximum / bar.speed, gameSpeed))}</dd></div>
+            <div><dt>{intl.formatMessage(m.nextCompletion)}</dt><dd>{duration(realTimeDuration(completionTimes[index], gameSpeed))}</dd></div>
             <div><dt>{intl.formatMessage(bar.fact)}</dt><dd>{index === 2 ? '' : '×'}{bar.benefit}</dd></div>
             <div><dt>{intl.formatMessage(index === 2 ? m.nextPanelLifetime : m.nextMultiplier)}</dt><dd>{index === 2 ? '' : '×'}{bar.next}</dd></div>
             {index === 0 && !state.elevation && <div><dt>{intl.formatMessage(m.cashBots)}</dt><dd>×{number(effects.cashBotsMultiplier)}</dd></div>}

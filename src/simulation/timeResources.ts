@@ -51,12 +51,10 @@ export interface StoredTimeRepairResult extends StoredTimeState {
 
 export interface AwayTimeGrantRequest extends StoredTimeState {
   readonly awaySeconds: number
-  readonly dreamDoubleTimeBankSeconds: number
 }
 
 export interface AwayTimeGrantResult extends StoredTimeRepairResult {
   readonly storedTimeCreditedSeconds: number
-  readonly dreamDoubleTimeBankSeconds: number
 }
 
 export interface StoredTimeCapacityUpgradeResult extends StoredTimeRepairResult {
@@ -185,7 +183,6 @@ export function applyAwayTimeGrant(
     bankSeconds: credit.balance,
     cheater,
     storedTimeCreditedSeconds: credit.settled,
-    dreamDoubleTimeBankSeconds: 0,
   }
 }
 

@@ -4589,6 +4589,46 @@
       "value": "）"
     }
   ],
+  "infinity.production-boost": [
+    {
+      "type": 0,
+      "value": "设施产量提高至"
+    },
+    {
+      "type": 8,
+      "value": "highlight",
+      "children": [
+        {
+          "type": 0,
+          "value": "×"
+        },
+        {
+          "type": 1,
+          "value": "multiplier"
+        }
+      ]
+    }
+  ],
+  "infinity.production-boost.facility-range": [
+    {
+      "type": 1,
+      "value": "first"
+    },
+    {
+      "type": 0,
+      "value": "至"
+    },
+    {
+      "type": 1,
+      "value": "last"
+    }
+  ],
+  "infinity.production-boost.none": [
+    {
+      "type": 0,
+      "value": "设施产量 ×1"
+    }
+  ],
   "infinity.progress.bots-until-next": [
     {
       "type": 0,
@@ -5159,10 +5199,136 @@
       "value": "应用已切换到后台，处理已取消"
     }
   ],
+  "offline-time.auto-resume": [
+    {
+      "type": 0,
+      "value": "返回时"
+    }
+  ],
+  "offline-time.auto-resume-last": [
+    {
+      "type": 0,
+      "value": "上次速度"
+    }
+  ],
+  "offline-time.auto-resume-max": [
+    {
+      "type": 0,
+      "value": "最高速度"
+    }
+  ],
+  "offline-time.auto-resume-off": [
+    {
+      "type": 0,
+      "value": "关闭"
+    }
+  ],
   "offline-time.balanced-preset": [
     {
       "type": 0,
       "value": "均衡"
+    }
+  ],
+  "offline-time.boost-details": [
+    {
+      "type": 0,
+      "value": "详情"
+    }
+  ],
+  "offline-time.boost-drain": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " 秒/秒"
+    }
+  ],
+  "offline-time.boost-drain-label": [
+    {
+      "type": 0,
+      "value": "加速时消耗"
+    }
+  ],
+  "offline-time.boost-duration-label": [
+    {
+      "type": 0,
+      "value": "加速时长"
+    }
+  ],
+  "offline-time.boost-explanation": [
+    {
+      "type": 0,
+      "value": "使用储存的时间来加速正在进行的游戏。"
+    }
+  ],
+  "offline-time.boost-pause": [
+    {
+      "type": 0,
+      "value": "暂停加速"
+    }
+  ],
+  "offline-time.boost-paused": [
+    {
+      "type": 0,
+      "value": "已暂停"
+    }
+  ],
+  "offline-time.boost-regular": [
+    {
+      "type": 0,
+      "value": "正常 1×"
+    }
+  ],
+  "offline-time.boost-running": [
+    {
+      "type": 0,
+      "value": "以 "
+    },
+    {
+      "type": 1,
+      "value": "multiplier"
+    },
+    {
+      "type": 0,
+      "value": "× 运行"
+    }
+  ],
+  "offline-time.boost-selected": [
+    {
+      "type": 0,
+      "value": "所选速度"
+    }
+  ],
+  "offline-time.boost-speed": [
+    {
+      "type": 0,
+      "value": "游戏速度"
+    }
+  ],
+  "offline-time.boost-stack": [
+    {
+      "type": 0,
+      "value": "将滑块移至 1× 以上即可使用存储时间。只有额外时间消耗储备。双倍时间独立叠加。储备耗尽、切换到后台或手动重置时，滑块会回到 1×。"
+    }
+  ],
+  "offline-time.boost-start": [
+    {
+      "type": 0,
+      "value": "开始加速"
+    }
+  ],
+  "offline-time.boost-stored": [
+    {
+      "type": 0,
+      "value": "储存时间"
+    }
+  ],
+  "offline-time.boost-title": [
+    {
+      "type": 0,
+      "value": "离线加速"
     }
   ],
   "offline-time.calculating": [
@@ -5203,6 +5369,24 @@
       "value": "capacity"
     }
   ],
+  "offline-time.capacity-cost": [
+    {
+      "type": 0,
+      "value": "费用"
+    }
+  ],
+  "offline-time.capacity-maxed": [
+    {
+      "type": 0,
+      "value": "已达上限"
+    }
+  ],
+  "offline-time.capacity-result": [
+    {
+      "type": 0,
+      "value": "新容量"
+    }
+  ],
   "offline-time.close-summary": [
     {
       "type": 0,
@@ -5224,21 +5408,13 @@
   "offline-time.double-storage": [
     {
       "type": 0,
-      "value": "储存上限翻倍"
+      "value": "容量翻倍"
     }
   ],
   "offline-time.double-storage-description": [
     {
       "type": 0,
-      "value": "消耗全部已储存时间，将上限提高至 "
-    },
-    {
-      "type": 1,
-      "value": "capacity"
-    },
-    {
-      "type": 0,
-      "value": "。"
+      "value": "填满离线时间存储即可将容量翻倍。"
     }
   ],
   "offline-time.error-code": [
@@ -5347,6 +5523,22 @@
     {
       "type": 0,
       "value": "% 已完成"
+    }
+  ],
+  "offline-time.quick-amounts": [
+    {
+      "type": 0,
+      "value": "快捷操作（分钟）"
+    }
+  ],
+  "offline-time.quick-slot": [
+    {
+      "type": 0,
+      "value": "操作 "
+    },
+    {
+      "type": 1,
+      "value": "slot"
     }
   ],
   "offline-time.quick-spend": [
@@ -8025,6 +8217,18 @@
       "value": "开发菜单"
     }
   ],
+  "settings.interface-size": [
+    {
+      "type": 0,
+      "value": "界面大小"
+    }
+  ],
+  "settings.interface-size.description": [
+    {
+      "type": 0,
+      "value": "调整整个游戏的界面缩放比例"
+    }
+  ],
   "settings.language.chinese-simplified": [
     {
       "type": 0,
@@ -8603,6 +8807,12 @@
     {
       "type": 0,
       "value": "存档数据"
+    }
+  ],
+  "settings.timestamp-exports": [
+    {
+      "type": 0,
+      "value": "在导出的存档文件名中添加时间戳"
     }
   ],
   "settings.visualization.description": [
@@ -9815,6 +10025,12 @@
     {
       "type": 0,
       "value": "复制"
+    }
+  ],
+  "skills.copy-failed": [
+    {
+      "type": 0,
+      "value": "复制失败。请手动复制已选中的文本。"
     }
   ],
   "skills.cost": [
@@ -12869,6 +13085,12 @@
       "value": "显示预设 6–10"
     }
   ],
+  "skills.settings.showTooltips": [
+    {
+      "type": 0,
+      "value": "显示提示"
+    }
+  ],
   "skills.show-preset-application-notifications": [
     {
       "type": 0,
@@ -13023,6 +13245,90 @@
     {
       "type": 0,
       "value": "星辰记忆"
+    }
+  ],
+  "skills.stellar.dominance.technical": [
+    {
+      "type": 0,
+      "value": "星辰产出×1,000。当机器人数满足按覆盖量计算、且不含本寿命加成的要求时，面板寿命×10。生效期间现金÷100；普通的覆盖量相关机器人消耗×100。"
+    }
+  ],
+  "skills.stellar.fracturedDominance": [
+    {
+      "type": 0,
+      "value": "星辰产出×1,000。当满足加成前的普通机器人要求时，面板寿命×10。移除此技能的额外机器人消耗倍数和现金惩罚。"
+    }
+  ],
+  "skills.stellar.fracturedImprovements": [
+    {
+      "type": 0,
+      "value": "星辰产出×2，机器人消耗÷1,000。永久生效，无需分配技能点。"
+    }
+  ],
+  "skills.stellar.fracturedObliteration": [
+    {
+      "type": 0,
+      "value": "星辰产出×1,000，有效星辰星系×1,000。移除此技能的额外机器人消耗及现金和科学惩罚。"
+    }
+  ],
+  "skills.stellar.fracturedObliteration.discoveryTechnical": [
+    {
+      "type": 0,
+      "value": "星辰产出×1,000，有效星辰星系×1,000。移除此技能的额外机器人消耗和现金惩罚。"
+    }
+  ],
+  "skills.stellar.fracturedSacrifices": [
+    {
+      "type": 0,
+      "value": "无需消耗机器人，即可生成你已拥有的最高级设施（包括巨型结构）：每秒max(0, log10(星辰星系))²，再乘以已拥有的星辰增益、发现和恒星蜂群。星辰星系为1或更少时无产出。"
+    }
+  ],
+  "skills.stellar.fracturedSupernova": [
+    {
+      "type": 0,
+      "value": "星辰产出×1,000，有效星辰星系再×1,000。移除此技能的额外机器人消耗，并恢复购买加成，包括恒星蜂群的购买成长。"
+    }
+  ],
+  "skills.stellar.improvements.technical": [
+    {
+      "type": 0,
+      "value": "星辰产出×2。星辰献祭所需机器人数÷1,000。"
+    }
+  ],
+  "skills.stellar.obliteration.discoveryTechnical": [
+    {
+      "type": 0,
+      "value": "星辰产出×1,000，有效星辰星系×1,000，机器人消耗×1,000。现金除以有效星辰星系，除数最低为1。"
+    }
+  ],
+  "skills.stellar.obliteration.technical": [
+    {
+      "type": 0,
+      "value": "星辰产出×1,000，有效星辰星系×1,000，机器人消耗×1,000。现金和科学除以有效星辰星系，除数最低为1。"
+    }
+  ],
+  "skills.stellar.outputBonuses": [
+    {
+      "type": 0,
+      "value": "星辰产出加成"
+    }
+  ],
+  "skills.stellar.outputBonusesDescription": [
+    {
+      "type": 0,
+      "value": "星辰改良、星辰霸权、星辰抹除和超新星的合并产出倍数。"
+    }
+  ],
+  "skills.stellar.sacrifices.technical": [
+    {
+      "type": 0,
+      "value": "消耗机器人以生成你已拥有的最高级设施（包括巨型结构）：每秒max(0, log10(星辰星系))²，再乘以已拥有的星辰增益、发现和恒星蜂群。星辰星系为1或更少时无产出。每秒基础机器人消耗等于包围恒星数，最低为1。"
+    }
+  ],
+  "skills.stellar.supernova.technical": [
+    {
+      "type": 0,
+      "value": "星辰产出×1,000，有效星辰星系再×1,000，机器人消耗再×1,000。禁用所有由购买带来的设施加成，包括恒星蜂群使用的购买成长。退还技能可恢复加成。"
     }
   ],
   "skills.subskill-assign": [
@@ -13381,6 +13687,28 @@
     {
       "type": 0,
       "value": "有些技能目前无法取消分配，并阻止了此预设的一部分。你仍然可以切换并应用所有兼容的部分。"
+    }
+  ],
+  "skills.tooltip.potential-augments": [
+    {
+      "type": 0,
+      "value": "潜在增强数量："
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "skills.tooltip.scientific-planets.body": [
+    {
+      "type": 0,
+      "value": "根据科学机器人数量产出行星。"
+    }
+  ],
+  "skills.tooltip.scientific-planets.formula": [
+    {
+      "type": 0,
+      "value": "Log10(科学机器人)"
     }
   ],
   "skills.tree": [
@@ -14162,7 +14490,7 @@
   "statistics.speedruns.importedRun": [
     {
       "type": 0,
-      "value": "不符合资格 — 导入的存档"
+      "value": "导入的存档"
     }
   ],
   "statistics.speedruns.inProgress": [
@@ -14312,7 +14640,7 @@
   "statistics.speedruns.usageLegendHelp": [
     {
       "type": 0,
-      "value": "导入的存档、使用过调试功能或计时未经验证的挑战不能创下个人最佳纪录。"
+      "value": "个人最佳纪录不包含使用调试功能的纪录和未经验证的时间。"
     }
   ],
   "statistics.speedruns.usageNotUsed": [
@@ -15472,6 +15800,30 @@
     {
       "type": 0,
       "value": "超越"
+    }
+  ],
+  "wiki.credits": [
+    {
+      "type": 0,
+      "value": "制作人员"
+    }
+  ],
+  "wiki.credits.lead-developer": [
+    {
+      "type": 0,
+      "value": "首席开发者"
+    }
+  ],
+  "wiki.credits.sound": [
+    {
+      "type": 0,
+      "value": "音效"
+    }
+  ],
+  "wiki.credits.special-mentions": [
+    {
+      "type": 0,
+      "value": "特别鸣谢"
     }
   ],
   "wiki.discovery.overview": [
@@ -16768,6 +17120,102 @@
     {
       "type": 0,
       "value": "Overflow现更名为超越。在Avocato中花费1点超越点数解锁发现，以替代科学和研究。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11": [
+    {
+      "type": 0,
+      "value": "版本 4.1.11"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.credits": [
+    {
+      "type": 0,
+      "value": "在Wiki中加入制作人员名单。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.desktop-sizing": [
+    {
+      "type": 0,
+      "value": "新增80%至150%的桌面界面缩放，以及最高250%的技能树缩放。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.desktop-tooltips": [
+    {
+      "type": 0,
+      "value": "技能树提示显示效果、公式、技能点费用和潜在增幅。可在技能树设置中开启或关闭。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.imported-speedruns": [
+    {
+      "type": 0,
+      "value": "符合条件的导入存档可继续速通。导入的游戏会显示存档文件标记。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.infinity-hold": [
+    {
+      "type": 0,
+      "value": "按住购买按钮可连续购买Infinity和Quantum升级。松开后停止购买。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.infinity-summary": [
+    {
+      "type": 0,
+      "value": "Infinity会在总数旁显示所有已获得Infinity点带来的设施产出加成。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.navigation": [
+    {
+      "type": 0,
+      "value": "加宽桌面侧边菜单，改进间距、选中按钮和紧凑导航。修复左上角的蓝色像素。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.offline-speed": [
+    {
+      "type": 0,
+      "value": "离线时间会在你离开时积累。游玩时可用它将速度调整为1×至42×。仅额外速度消耗储存时间；双倍时间可额外叠加。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.offline-storage": [
+    {
+      "type": 0,
+      "value": "重新设计了离线时间页面，显示储存进度、剩余加速时长和更清晰的容量费用。可选择关闭、上次速度或最高速度，决定返回时自动使用的加速。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.preset-notices": [
+    {
+      "type": 0,
+      "value": "同一未解决预设冲突不再重复通知，解决后通知会清除。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.progression-fixes": [
+    {
+      "type": 0,
+      "value": "进度变化后会刷新裂变可用状态。隐藏已完成研究现在也包括Durability。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.runtime-fixes": [
+    {
+      "type": 0,
+      "value": "修复Railgun齐射卡住，以及游戏更新间隔内遗漏Patient Hands收益的问题。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.save-safety": [
+    {
+      "type": 0,
+      "value": "改进存档恢复、导入安全性和Cloud冲突处理。返回游戏后离线时间只会结算一次。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.save-tools": [
+    {
+      "type": 0,
+      "value": "导出存档文件名可选择加入时间戳。改进原生文件保存和预设复制粘贴。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.stellar-benefits": [
+    {
+      "type": 0,
+      "value": "Stellar技能裂变后保留产出加成并移除负面效果。更新了技能描述、激活条件和机器人费用。"
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

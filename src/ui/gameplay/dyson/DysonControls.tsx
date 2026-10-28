@@ -391,7 +391,7 @@ export function DysonGoalSummary({
                 : messages.compactGoalGalaxies
   return (
     <span
-      title={intl.formatMessage(goalMessage, {
+      aria-label={intl.formatMessage(goalMessage, {
         target: currentGoal.target,
         targetDisplay,
       })}

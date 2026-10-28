@@ -1,4 +1,5 @@
 import { Gunzip, gzipSync, strToU8 } from 'fflate'
+import { CURRENT_SAVE_SCHEMA, UnsupportedFutureSaveSchemaError } from './migrate'
 import { isNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import {
   deepCloneSave,
@@ -97,6 +98,10 @@ export function stripNonShareableEntitlementClaims(
   // but a portable share must never carry the sender's selection.
   delete shareable.numberFormatting
   delete shareable.hidePurchased
+  // Completion identifies an exact download already resolved on this device.
+  // It cannot authorize acknowledgement on a receiving device.
+  delete shareable.idsResolvedCloudDownloadSha256
+  delete shareable.idsResolvedCloudSourceSha256
   // These local recovery proofs refer to retired files on the exporting
   // device. A receiver must never authorize its sidecar from sender claims.
   delete shareable[TRANSITIONAL_V2_CHECKPOINT_REVISION_FIELD]
@@ -146,6 +151,10 @@ export function decodeWebSaveTextBounded(
     : trimmed
   const parsed = parseBoundedJsonText(json)
   const envelope = requireRecord(parsed, 'web save envelope')
+  // A newer schema claim must block recovery even when its value codec is damaged.
+  const stateSchema = isRecord(envelope.state) ? envelope.state.saveVersion : undefined
+  const newestClaim = Math.max(...[envelope.schema, stateSchema].filter(isNonNegativeInteger))
+  if (newestClaim > CURRENT_SAVE_SCHEMA) throw new UnsupportedFutureSaveSchemaError(newestClaim, CURRENT_SAVE_SCHEMA)
   if (envelope.format !== WEB_SAVE_FORMAT) {
     return Object.freeze({
       kind: 'unsupported-envelope',

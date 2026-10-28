@@ -608,6 +608,9 @@ const developmentExtensions = Object.freeze([
     'timeline',
     '$.timeline.processing.storedTimePreset',
   ),
+  owned('$.offlineBoostMultiplier', 'timeline', '$.timeline.offlineBoost.multiplier'),
+  owned('$.offlineBoostAutoResume', 'timeline', '$.timeline.offlineBoostAutoResume'),
+  owned('$.offlineBoostResumeMultiplier', 'timeline', '$.timeline.offlineBoostResumeMultiplier'),
 ])
 const unresolvedLeafCount = entries.filter(
   (entry) => entry.classification === 'still-unowned',

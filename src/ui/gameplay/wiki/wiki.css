@@ -498,3 +498,25 @@
     scroll-behavior: auto;
   }
 }
+
+.wiki-surface__credits > section + section {
+  border-block-start: var(--ui-panel-border-width) solid var(--theme-divider);
+}
+
+.wiki-surface__credit-names {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ui-related-copy-gap) var(--ui-section-gap);
+  margin-block: var(--ui-related-copy-gap) 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-text-primary);
+  font-size: calc(0.82rem * var(--game-text-scale));
+  line-height: 1.45;
+}
+
+@media (max-width: 35rem) {
+  .wiki-surface__credit-names {
+    grid-template-columns: 1fr;
+  }
+}

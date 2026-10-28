@@ -1,4 +1,5 @@
 import type { CanonicalGameStateV1 } from '../game-state/types'
+import { pauseOfflineBoost, resumeOfflineBoost } from './offlineBoost'
 import {
   applyAwayTimeGrant,
   resolveAwayTime,
@@ -154,9 +155,9 @@ export function evaluateLifecycleEvent(
   const stampQuitTimestamp =
     !allowColdStartGateSave &&
     !state.departureTimestampRecorded
-  const candidate = stampQuitTimestamp
+  const candidate = pauseOfflineBoost(stampQuitTimestamp
     ? withQuitTimestamp(state.canonical, clock.serializedUtcText)
-    : state.canonical
+    : state.canonical)
   const nextState: LifecycleCoordinatorState = {
     ...state,
     canonical: candidate,
@@ -190,7 +191,7 @@ export function applyAwayTimeReplay(
     quitTimestamp: request.parsedQuitTimestamp,
     startedTimestamp: request.parsedStartedTimestamp,
   })
-  let canonical = request.state.canonical
+  let canonical = pauseOfflineBoost(request.state.canonical)
   let timestampConsumed = false
   let storedTimeCreditedSeconds = 0
   let markComparisonIntegrityCompromised = resolution.cheater
@@ -203,7 +204,6 @@ export function applyAwayTimeReplay(
         resolution.grantedSeconds * idleElectricSheepMultiplier,
       bankSeconds: canonical.timeline.storedTimeAvailableSeconds,
       capacitySeconds: canonical.timeline.storedTimeCapacitySeconds,
-      dreamDoubleTimeBankSeconds: canonical.timeline.doubleTime.bankSeconds,
       cheater: resolution.cheater,
     })
     storedTimeCreditedSeconds = grant.storedTimeCreditedSeconds
@@ -233,7 +233,7 @@ export function applyAwayTimeReplay(
   return {
     state: {
       ...request.state,
-      canonical,
+      canonical: resumeOfflineBoost(canonical, !markComparisonIntegrityCompromised),
       saveReady: releasedColdStartGate
         ? true
         : request.state.saveReady,

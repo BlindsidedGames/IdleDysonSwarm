@@ -1,4 +1,5 @@
 import { SKILL_PRESET_COUNT } from './skillPresetSlots'
+import { isOfflineBoostAutoResume, isOfflineBoostMultiplier } from '../simulation/offlineBoost'
 import { validateDiscovery } from '../simulation/discovery'
 import { validateCompletedTinkers } from '../simulation/tinkerGoalProgress'
 import { validateSpeedrunStatistics } from '../simulation/speedrunStatistics'
@@ -141,6 +142,13 @@ export function validateCanonicalGameState(
   ) {
     errors.push('Stored Time accuracy preset is invalid.')
   }
+  if (state.timeline.offlineBoost !== undefined && (
+    state.timeline.offlineBoost === null ||
+    !Number.isInteger(state.timeline.offlineBoost.multiplier) ||
+    state.timeline.offlineBoost.multiplier < 1 || state.timeline.offlineBoost.multiplier > 42
+  )) errors.push('Offline boost must be a multiplier from 1 to 42.')
+  if (state.timeline.offlineBoostAutoResume !== undefined && !isOfflineBoostAutoResume(state.timeline.offlineBoostAutoResume)) errors.push('Invalid offline auto-resume mode.')
+  if (state.timeline.offlineBoostResumeMultiplier !== undefined && !isOfflineBoostMultiplier(state.timeline.offlineBoostResumeMultiplier)) errors.push('Invalid saved offline speed.')
   if (
     state.reality.workerGenerationProgress < 0 ||
     state.reality.workerGenerationProgress >= 1

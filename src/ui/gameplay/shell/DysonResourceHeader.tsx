@@ -91,7 +91,6 @@ function Resource({
         <span
           className="dyson-resource-header__rate"
           aria-label={presentation.fullPrecisionRate}
-          title={presentation.fullPrecisionRate}
         >
           {showScienceIcon && !presentation.iconSrc && <ScienceSymbol />}
           <bdi dir="ltr">{presentation.rate}</bdi>

@@ -137,7 +137,8 @@ import {
   type CanonicalResearchPurchasePreview,
 } from '../simulation/researchAutomation'
 import { deriveSecretBuffs } from '../simulation/secretBuffs'
-import { upgradeStoredTimeCapacity } from '../simulation/timeResources'
+import { STORED_TIME_MAXIMUM_SECONDS, upgradeStoredTimeCapacity } from '../simulation/timeResources'
+import { MAXIMUM_OFFLINE_BOOST_MULTIPLIER } from '../simulation/offlineBoost'
 import {
   CANONICAL_PLAYER_COMMAND_KINDS,
   CANONICAL_PLAYER_COMMAND_SUPPORT,
@@ -429,6 +430,9 @@ export interface FrontendCanonicalResources {
   readonly time: {
     readonly storedTimeAvailableSeconds: number
     readonly storedTimeCapacitySeconds: number
+    readonly offlineBoost?: { readonly multiplier: number }
+    readonly maximumOfflineBoostMultiplier: number
+    readonly offlineBoostAutoResume?: 'off' | 'last' | 'max'
   }
 }
 
@@ -1490,6 +1494,9 @@ function selectResources(
         state.timeline.storedTimeAvailableSeconds,
       storedTimeCapacitySeconds:
         state.timeline.storedTimeCapacitySeconds,
+      offlineBoost: state.timeline.offlineBoost,
+      maximumOfflineBoostMultiplier: MAXIMUM_OFFLINE_BOOST_MULTIPLIER,
+      ...(state.timeline.offlineBoostAutoResume === undefined ? {} : { offlineBoostAutoResume: state.timeline.offlineBoostAutoResume }),
     }),
   }
 }
@@ -2629,7 +2636,7 @@ function selectStoredTimePreviews(
           ? 'maximum-reached'
           : 'stored-time-bank-not-full',
       currentCapacitySeconds: state.timeline.storedTimeCapacitySeconds,
-      nextCapacitySeconds: storedCapacity.capacitySeconds,
+      nextCapacitySeconds: Math.min(STORED_TIME_MAXIMUM_SECONDS, state.timeline.storedTimeCapacitySeconds * 2),
       consumesStoredSeconds: storedCapacity.upgraded
         ? state.timeline.storedTimeAvailableSeconds
         : 0,
@@ -3041,6 +3048,9 @@ function reuseSkillCatalogPreview(
       before.skillId !== after.skillId ||
       before.cost !== after.cost ||
       before.owned !== after.owned ||
+      before.galvanized !== after.galvanized ||
+      before.galvanizationUnlocked !== after.galvanizationUnlocked ||
+      before.canGalvanize !== after.canGalvanize ||
       before.visible !== after.visible ||
       before.unlocked !== after.unlocked ||
       before.queued !== after.queued ||

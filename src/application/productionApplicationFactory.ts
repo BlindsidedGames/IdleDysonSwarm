@@ -71,9 +71,9 @@ export function createProductionCanonicalApplicationFactory(
       options.createFirstRunSave,
       'development',
     )
-    const startupResolver = options.cloud === undefined
-      ? localResolver
+    const cloudResolver = options.cloud === undefined ? undefined
       : new CloudStartupResolver(localResolver, repository, options.cloud)
+    const startupResolver = cloudResolver ?? localResolver
     const application = createCanonicalGameApplication({
       repository,
       startupResolver,
@@ -99,8 +99,8 @@ export function createProductionCanonicalApplicationFactory(
         () => options.readDeveloperOptions?.() === true,
       )
     }
-    if (options.cloud !== undefined) {
-      subscribeCloudPublication(application, options.cloud)
+    if (cloudResolver !== undefined) {
+      subscribeCloudPublication(application, cloudResolver)
     }
     return application
   }
@@ -131,7 +131,7 @@ function subscribeAchievementPublication(
 /** Cloud receives verified, clean checkpoints and suppresses unchanged revisions. */
 function subscribeCloudPublication(
   application: CanonicalGameApplicationFacade,
-  cloud: PortableCloud,
+  cloud: CloudStartupResolver,
 ): void {
   let lastCheckpoint = ''
   application.subscribe((snapshot) => {
@@ -150,7 +150,7 @@ function subscribeCloudPublication(
     // Match the repository's durable normalization so the next launch can
     // prove this device has not changed since its last Cloud publication.
     const normalized = PreparedSave.fromDecoded(captured.prepared.copyValidatedState())
-    void cloud.publish(serializeCloudWebSave(normalized.copyValidatedState()))
+    void cloud.publishCheckpoint(serializeCloudWebSave(normalized.copyValidatedState()))
       .catch(() => {
         // A failed older request cannot invalidate a newer checkpoint's
         // publication. Only the latest request owns its retry marker.

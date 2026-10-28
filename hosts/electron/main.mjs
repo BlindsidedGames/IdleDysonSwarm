@@ -4,6 +4,7 @@ import { selectSteamSaveRoot } from './steam/offlineProfile.mjs'
 import { loadSteamClient, createSteamPublication } from './steam/client.mjs'
 import {
   app,
+  clipboard,
   dialog,
   BrowserWindow,
   ipcMain,
@@ -35,12 +36,13 @@ import {
   resolve,
   sep,
 } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import {
   readPackagedReleaseMetadata,
   runtimeMetadata,
 } from './releaseMetadata.mjs'
 import { selectElectronSmokeMode } from './smokeMode.mjs'
+import { exportSaveFile } from './saveFileExport.mjs'
 import { loadSteamInventoryBinding } from './steamInventoryBinding.mjs'
 import {
   AtomicSteamEntitlementCache,
@@ -88,6 +90,7 @@ const channels = Object.freeze({
   metadata: 'ids:native:metadata',
   diagnostics: 'ids:native:diagnostics:export',
   exportSave: 'ids:native:save:export',
+  writeClipboardText: 'ids:native:clipboard:write-text',
   storeProducts: 'ids:native:store:products',
   storePurchase: 'ids:native:store:purchase',
   storeRestore: 'ids:native:store:restore',
@@ -229,6 +232,18 @@ async function readBoundedText(path) {
 }
 
 function registerNativeHandlers() {
+  ipcMain.handle(channels.writeClipboardText, async (event, text) => {
+    if (mainWindow === null || mainWindow.isDestroyed() || !mainWindow.isFocused() ||
+        event.sender !== mainWindow.webContents ||
+        event.senderFrame !== mainWindow.webContents.mainFrame ||
+        event.senderFrame?.url !== pathToFileURL(rendererEntry).href) {
+      throw new Error('Clipboard copy requires the active game window.')
+    }
+    if (typeof text !== 'string' || Buffer.byteLength(text, 'utf8') > maximumTextBytes) {
+      throw new Error('Clipboard copy requires supported plain text.')
+    }
+    await clipboard.writeText(text)
+  })
   ipcMain.handle(channels.exists, async (_event, relativePath) => {
     const target = rootedPath(relativePath)
     await rejectSymbolicLinks(target)
@@ -308,20 +323,9 @@ function registerNativeHandlers() {
     return packagedRuntimeMetadata ?? loadRuntimeMetadata()
   })
   ipcMain.handle(channels.exportSave, async (event, request) => {
-    if (request?.fileName !== 'idle-dyson-swarm-save.idsw' ||
-        typeof request.text !== 'string' || request.text.length === 0 ||
-        Buffer.byteLength(request.text, 'utf8') > 32 * 1024 * 1024) {
-      throw new Error('Invalid save export request.')
-    }
     const owner = BrowserWindow.fromWebContents(event.sender)
     if (owner === null) throw new Error('Save export window unavailable.')
-    const result = await dialog.showSaveDialog(owner, {
-      defaultPath: request.fileName,
-      filters: [{ name: 'Idle Dyson Swarm Save', extensions: ['idsw'] }],
-    })
-    if (result.canceled || !result.filePath) return 'cancelled'
-    await durableWriteText(result.filePath, request.text)
-    return 'saved'
+    return exportSaveFile(request, options => dialog.showSaveDialog(owner, options), durableWriteText)
   })
   ipcMain.handle(channels.diagnostics, async (_event, request) => {
     if (

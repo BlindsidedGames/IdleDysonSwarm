@@ -1,6 +1,10 @@
 import { defineMessages, type MessageDescriptor } from 'react-intl'
 
 export const wikiMessages = defineMessages({
+  credits: { id: 'wiki.credits', defaultMessage: 'Credits', description: 'Wiki topic for game contributors.' },
+  leadDeveloper: { id: 'wiki.credits.lead-developer', defaultMessage: 'Lead developer', description: 'Credits role heading.' },
+  sound: { id: 'wiki.credits.sound', defaultMessage: 'Sound', description: 'Credits role heading.' },
+  specialMentions: { id: 'wiki.credits.special-mentions', defaultMessage: 'Special mentions', description: 'Credits acknowledgement heading.' },
   region: { id: 'wiki.region', defaultMessage: 'Wiki', description: 'Accessible name for the in-game reference surface.' },
   title: { id: 'wiki.title', defaultMessage: 'Wiki', description: 'Heading for the in-game reference surface.' },
   topics: { id: 'wiki.topics', defaultMessage: 'Topics', description: 'Accessible heading for the Wiki topic navigation.' },
@@ -109,6 +113,22 @@ export const wikiMessages = defineMessages({
   quantumAdvice: { id: 'wiki.quantum.advice', defaultMessage: '<value>Quantum</value> upgrades open new systems and permanent efficiencies. Review each prerequisite and preview before committing to a reset.', description: 'Web-appropriate Quantum Leap planning guidance based on Unity Wiki intent.' },
 
   patchNotesMostRecent: { id: 'wiki.patch-notes.most-recent', defaultMessage: 'Most Recent', description: 'Heading for the latest Wiki patch notes.' },
+  patchNotesVersion4111: { id: 'wiki.patch-notes.version-4-1-11', defaultMessage: 'Version 4.1.11', description: 'Version 4.1.11 release notes.' },
+  patchNotesVersion4111OfflineSpeed: { id: 'wiki.patch-notes.version-4-1-11.offline-speed', defaultMessage: "Offline Time now builds up while you are away. Spend it during play at speeds from 1× to 42×. Only the extra speed uses stored time; Double Time applies on top.", description: 'Version 4.1.11 release notes.' },
+  patchNotesVersion4111OfflineStorage: { id: 'wiki.patch-notes.version-4-1-11.offline-storage', defaultMessage: "Redesigned Offline Time with a storage bar, remaining boost duration and clearer capacity costs. Choose Off, Last speed or Max speed for automatic boosts when you return.", description: 'Version 4.1.11 release notes.' },
+  patchNotesVersion4111Stellar: { id: 'wiki.patch-notes.version-4-1-11.stellar-benefits', defaultMessage: "Stellar skills now keep their output bonuses when fractured, with their drawbacks removed. Updated Stellar descriptions, activation requirements and Bot costs.", description: 'Version 4.1.11 release notes.' },
+  patchNotesVersion4111InfinityHold: { id: 'wiki.patch-notes.version-4-1-11.infinity-hold', defaultMessage: "Hold purchase buttons to keep buying Infinity and Quantum upgrades. Purchases stop when you release.", description: 'Version 4.1.11 release notes.' },
+  patchNotesVersion4111DesktopSizing: { id: 'wiki.patch-notes.version-4-1-11.desktop-sizing', defaultMessage: "Added desktop interface sizes from 80% to 150% and skill-tree zoom up to 250%.", description: 'Version 4.1.11 release notes.' },
+  patchNotesVersion4111DesktopTooltips: { id: 'wiki.patch-notes.version-4-1-11.desktop-tooltips', defaultMessage: "Skill-tree tooltips show effects, formulas, Skill Point costs and potential augments. Turn them on or off in the skill-tree settings.", description: 'Version 4.1.11 release notes.' },
+  patchNotesVersion4111Navigation: { id: 'wiki.patch-notes.version-4-1-11.navigation', defaultMessage: "Widened the desktop side menu and improved its spacing, selected buttons and compact navigation. Fixed a blue pixel at the top-left edge.", description: 'Version 4.1.11 release notes.' },
+  patchNotesVersion4111SaveTools: { id: 'wiki.patch-notes.version-4-1-11.save-tools', defaultMessage: "Added optional timestamps to exported save filenames and improved native file saving and preset copy/paste.", description: 'Version 4.1.11 release notes.' },
+  patchNotesVersion4111ImportedSpeedruns: { id: 'wiki.patch-notes.version-4-1-11.imported-speedruns', defaultMessage: "Eligible imported saves can continue speedruns. Imported runs show a save-file marker.", description: 'Version 4.1.11 release notes.' },
+  patchNotesVersion4111RuntimeFixes: { id: 'wiki.patch-notes.version-4-1-11.runtime-fixes', defaultMessage: "Fixed stalled Railgun volleys and missing Patient Hands credit between game updates.", description: 'Version 4.1.11 release notes.' },
+  patchNotesVersion4111ProgressionFixes: { id: 'wiki.patch-notes.version-4-1-11.progression-fixes', defaultMessage: "Fracture availability now updates after progression changes. Hide completed research now includes Durability.", description: 'Version 4.1.11 release notes.' },
+  patchNotesVersion4111SaveSafety: { id: 'wiki.patch-notes.version-4-1-11.save-safety', defaultMessage: "Improved save recovery, import safety and Cloud conflict handling. Offline time is credited once after returning.", description: 'Version 4.1.11 release notes.' },
+  patchNotesVersion4111PresetNotices: { id: 'wiki.patch-notes.version-4-1-11.preset-notices', defaultMessage: "Preset conflict notifications no longer repeat for the same unresolved conflict and clear when it is resolved.", description: 'Version 4.1.11 release notes.' },
+  patchNotesVersion4111InfinitySummary: { id: 'wiki.patch-notes.version-4-1-11.infinity-summary', defaultMessage: "Infinity now shows the facility production boost from all earned Infinity Points beside the totals.", description: 'Version 4.1.11 release notes.' },
+  patchNotesVersion4111Credits: { id: 'wiki.patch-notes.version-4-1-11.credits', defaultMessage: "Added credits to the Wiki.", description: 'Version 4.1.11 release notes.' },
   patchNotesVersion4110: { id: 'wiki.patch-notes.version-4-1-10', defaultMessage: 'Version 4.1.10', description: 'Version 4.1.10 release notes.' },
   patchNotesVersion4110Transcendence: { id: 'wiki.patch-notes.version-4-1-10.transcendence', defaultMessage: "Overflow is now Transcendence. Unlock Discovery in Avocato for 1 Transcendence Point to replace Science and Research.", description: 'Version 4.1.10 release notes.' },
   patchNotesVersion4110Discovery: { id: 'wiki.patch-notes.version-4-1-10.discovery', defaultMessage: "Added three linked progress bars: Discovery improves facilities, Elevation improves Cash and Bots, and Enlightenment improves panel lifetime. Later bars advance the bar before them.", description: 'Version 4.1.10 release notes.' },

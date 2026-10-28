@@ -1,4 +1,7 @@
+import { copyPlainText } from '../../platform/plainTextClipboard'
 import { previewSkillProduction, type SkillProductionPreview } from '../../simulation/skillProductionPreview'
+import { readBooleanPresentationPreference } from '../presentationPreferences'
+import { saveExportFileName, SAVE_EXPORT_TIMESTAMP_KEY } from '../../platform/saveFileExport'
 import type { SaveFileExportRequest, SaveFileExportResult } from '../../platform/saveFileExport'
 import type {
   ApplicationSnapshot,
@@ -168,7 +171,9 @@ interface BrowserRuntimeApplicationPort
   checkpoint(): Promise<CheckpointResult>
   frontendSnapshot(
     previewDemand?: FrontendGameplayPreviewDemand,
+    includeFacilityDetails?: boolean,
   ): DeepReadonly<FrontendApplicationSnapshot>
+  acknowledgePresentationEvents?(sessionRevision: number, throughSequence: number): void
   storedTimeJobStatus?(): import('../../workers/storedTime/storedTimeProtocol').StoredTimeJobStatus
   subscribeStoredTimeJob?(listener: StoredTimeJobListener): () => void
   cancelStoredTimeJob?(reason?: StoredTimeCancellationReason): void
@@ -310,6 +315,8 @@ export interface BrowserSkillPresetQueryPort {
 }
 
 export interface BrowserFrontendDemandPort {
+  setFacilityDetailsDemand?(expanded: boolean): void
+  acknowledgePresentationEvents?(sessionRevision: number, throughSequence: number): void
   setGameplayPreviewDemand(
     demand: FrontendGameplayPreviewDemand,
   ): void
@@ -346,6 +353,8 @@ export function createBrowserRuntimeFoundation(
         DeepReadonly<FrontendApplicationSnapshot>
       >,
     ) => implementation.subscribeSnapshot(listener),
+    setFacilityDetailsDemand: expanded => implementation.setFacilityDetailsDemand(expanded),
+    acknowledgePresentationEvents: (session, sequence) => implementation.acknowledgePresentationEvents(session, sequence),
     setGameplayPreviewDemand: (demand) =>
       implementation.setGameplayPreviewDemand(demand),
     start: () => implementation.start(),
@@ -461,6 +470,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   // Every admitted import participates, including queued calls and failures.
   // Only the final completion may reopen foreground sampling.
   private pendingImportCount = 0
+  private facilityDetailsDemand = false
   private gameplayPreviewDemand: FrontendGameplayPreviewDemand = 'all'
   private unsubscribeOwnership: (() => void) | undefined
 
@@ -562,6 +572,23 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     return this.frontendSnapshots.subscribe(listener)
   }
 
+  setFacilityDetailsDemand(expanded: boolean): void {
+    if (this.facilityDetailsDemand === expanded) return
+    this.facilityDetailsDemand = expanded
+    const graph = this.graph
+    if (graph !== undefined && this.isCurrentGraph(graph)) this.publishFrontendSnapshot(graph, true)
+  }
+
+  acknowledgePresentationEvents(sessionRevision: number, throughSequence: number): void {
+    const graph = this.graph
+    if (graph === undefined || !this.isCurrentGraph(graph)) return
+    void graph.router.runLocallyFenced(() => {
+      if (!this.isCurrentGraph(graph)) return
+      graph.application.acknowledgePresentationEvents?.(sessionRevision, throughSequence)
+      this.publishFrontendSnapshot(graph)
+    }).catch(() => undefined)
+  }
+
   setGameplayPreviewDemand(
     demand: FrontendGameplayPreviewDemand,
   ): void {
@@ -620,9 +647,10 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     }
     if (
       command.kind === 'tinker.start' ||
-      command.kind === 'tinker.set-repeat'
+      command.kind === 'tinker.set-repeat' ||
+      command.kind === 'time.set-offline-boost-multiplier'
     ) {
-      // Tinker intents already share the canonical lifecycle lane and resolve
+      // Tinker and live speed intents already share the canonical lifecycle lane and resolve
       // against its latest revision. Suspending the clock for every click
       // repeatedly postpones its next tick, freezing play during autoclicks
       // and replaying the accumulated time as a burst when clicking stops.
@@ -1301,14 +1329,15 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   }
 
   async downloadSaveText(text: string): Promise<boolean | null> {
+    const fileName = saveExportFileName(readBooleanPresentationPreference(SAVE_EXPORT_TIMESTAMP_KEY))
     if (this.options.exportSaveFile !== undefined) {
       const result = await this.options.exportSaveFile({
-        fileName: 'idle-dyson-swarm-save.idsw', text,
+        fileName, text,
       })
       return result === 'cancelled' ? null : result === 'saved'
     }
     this.downloads.downloadText(
-      'idle-dyson-swarm-save.idsw',
+      fileName,
       text,
       'text/plain;charset=utf-8',
     )
@@ -1380,7 +1409,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   }
 
   writeClipboardText(value: string): Promise<void> {
-    return this.clipboardAdapter().writeText(value)
+    return this.options.clipboard ? this.clipboardAdapter().writeText(value) : copyPlainText(value)
   }
 
   openExternalUrl(url: string): Promise<void> {
@@ -1991,7 +2020,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       throw new WriterAuthorityLostError()
     }
     this.frontendSnapshots.publish(
-      graph.application.frontendSnapshot(this.gameplayPreviewDemand),
+      graph.application.frontendSnapshot(this.gameplayPreviewDemand, this.facilityDetailsDemand),
       force,
       delivery,
     )

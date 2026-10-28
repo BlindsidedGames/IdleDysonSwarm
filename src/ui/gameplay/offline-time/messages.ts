@@ -1,6 +1,30 @@
 import { defineMessages } from 'react-intl'
 
 export const offlineTimeMessages = defineMessages({
+  autoResume: { id: 'offline-time.auto-resume', defaultMessage: 'Automation' },
+  autoResumeOff: { id: 'offline-time.auto-resume-off', defaultMessage: 'Off' },
+  autoResumeLast: { id: 'offline-time.auto-resume-last', defaultMessage: 'Last speed' },
+  autoResumeMax: { id: 'offline-time.auto-resume-max', defaultMessage: 'Max speed' },
+  capacityCost: { id: 'offline-time.capacity-cost', defaultMessage: 'Cost' },
+  capacityResult: { id: 'offline-time.capacity-result', defaultMessage: 'New cap' },
+  capacityMaxed: { id: 'offline-time.capacity-maxed', defaultMessage: 'Maxed' },
+  boostStored: { id: 'offline-time.boost-stored', defaultMessage: 'Stored time' },
+  boostSpeed: { id: 'offline-time.boost-speed', defaultMessage: 'Game speed' },
+  boostSelected: { id: 'offline-time.boost-selected', defaultMessage: 'Selected speed' },
+  boostPaused: { id: 'offline-time.boost-paused', defaultMessage: 'Paused' },
+  boostExplanation: { id: 'offline-time.boost-explanation', defaultMessage: 'Use stored time to speed up active play.' },
+  boostTitle: { id: 'offline-time.boost-title', defaultMessage: 'Offline Boost' },
+  boostRegular: { id: 'offline-time.boost-regular', defaultMessage: 'Regular 1×' },
+  boostStart: { id: 'offline-time.boost-start', defaultMessage: 'Start Boost' },
+  boostPause: { id: 'offline-time.boost-pause', defaultMessage: 'Pause Boost' },
+  boostRunning: { id: 'offline-time.boost-running', defaultMessage: 'Running at {multiplier}×' },
+  boostDrainLabel: { id: 'offline-time.boost-drain-label', defaultMessage: 'Use while running' },
+  boostDrain: { id: 'offline-time.boost-drain', defaultMessage: '{seconds}s per second' },
+  boostDurationLabel: { id: 'offline-time.boost-duration-label', defaultMessage: 'Boost duration' },
+  boostDetails: { id: 'offline-time.boost-details', defaultMessage: 'Details' },
+  boostStack: { id: 'offline-time.boost-stack', defaultMessage: 'Only extra time uses the bank. Double Time stacks separately.' },
+  quickAmounts: { id: 'offline-time.quick-amounts', defaultMessage: 'Quick actions (minutes)', description: 'Three device-local quick action amounts.' },
+  quickSlot: { id: 'offline-time.quick-slot', defaultMessage: 'Action {slot}', description: 'Label for a numbered quick time action.' },
   maxStorage: {
     id: 'offline-time.max-storage', defaultMessage: 'Max Storage',
     description: 'Label for maximum bank capacity beneath the storage bar.',
@@ -42,12 +66,12 @@ export const offlineTimeMessages = defineMessages({
   },
   doubleStorage: {
     id: 'offline-time.double-storage',
-    defaultMessage: 'Double Storage',
+    defaultMessage: 'Double Capacity',
     description: 'Button that consumes a full Offline Time bank to double its capacity.',
   },
   doubleStorageDescription: {
     id: 'offline-time.double-storage-description',
-    defaultMessage: 'Consume the full bank to increase capacity to {capacity}.',
+    defaultMessage: 'Fill your offline time storage to double its capacity.',
     description: 'Explains the Unity Offline Time capacity upgrade.',
   },
   spendHeading: {

@@ -34,8 +34,8 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
 
-      - name: Run deterministic tests
-        run: npm test -- --maxWorkers=1
+      - name: Run approved save-safety tests
+        run: npm run test:save-safety
 
       - name: Lint sources
         run: npm run lint

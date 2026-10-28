@@ -1,3 +1,7 @@
+import { realTimeRate, realTimeDuration } from '../effectiveSpeed'
+import { stellarFracturedMessages, stellarFracturedDiscoveryObliterationMessage } from './stellarMessages'
+import { copyPlainText } from '../../../platform/plainTextClipboard'
+import { isDesktopPresentation, useDesktopTooltipsPreference } from '../../desktopPresentation'
 import { useExtendedSkillPresets } from '../../useExtendedSkillPresets'
 import { SkillPresetQuickActions } from './SkillPresetQuickActions'
 import { useSkillPresetSelection, type PresetSelectionCommand } from './useSkillPresetSelection'
@@ -159,6 +163,7 @@ export interface SkillPresetActions {
 }
 
 export interface SkillsSurfaceProps {
+  readonly gameSpeed?: number
   readonly discoveryUnlocked?: boolean
   readonly galvanizers?: bigint
   readonly hasEarnedGalvanizer?: boolean
@@ -208,7 +213,7 @@ const PRESET_COLOR_MESSAGES = {
 const NODE_SIZE = 76
 const GRAPH_PADDING = 180
 const MIN_SCALE = 0.4
-const MAX_SCALE = 1.5
+const MAX_SCALE = isDesktopPresentation() ? 2.5 : 1.5
 const DEFAULT_SCALE = 0.8
 const SKILL_DRAG_THRESHOLD_PX = 6
 const SKILL_DOUBLE_ACTIVATION_MILLISECONDS = 360
@@ -310,6 +315,7 @@ export function SkillsSurface(props: SkillsSurfaceProps) {
 }
 
 function SkillsSurfaceContent({
+  gameSpeed = 1,
   discoveryUnlocked = false,
   galvanizers = 0n,
   hasEarnedGalvanizer = false,
@@ -734,7 +740,6 @@ function SkillsSurfaceContent({
             {hasEarnedGalvanizer && <button type="button"
               className="skills-surface__currency" aria-haspopup="dialog"
               aria-label={intl.formatMessage(challengeMessages.galvanizers, { value: formatWholeGameNumber(locale, galvanizers) })}
-              title={intl.formatMessage(challengeMessages.galvanizers, { value: formatWholeGameNumber(locale, galvanizers) })}
               onClick={() => setShowGalvanizerHelp(true)}>
               <InlineResourceAmount leadingSymbol={<InlineImageSymbol src={galvanizerIcon} tint maskMode="luminance" />}
                 value={formatWholeGameNumber(locale, galvanizers)} />
@@ -848,6 +853,7 @@ function SkillsSurfaceContent({
 
       {selectedNode && selectedPreview && (
         <SkillDetails
+          gameSpeed={gameSpeed}
           locale={locale}
           fragments={fragments}
           node={selectedNode}
@@ -1454,6 +1460,11 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
             preview.requiredSkillIds.filter(
               (requiredId) => previews.get(requiredId)?.owned,
             ).length
+          const potentialAugments = skillAugments(node.skillId).length
+          const fracturedDescriptor = preview.galvanized ? fracturedSkillDescriptor(node) : undefined
+          const scientificFormula = node.skillId === 'scientificPlanets' && !preview.galvanized && !node.discoveryTechnical
+          const tooltipBody = scientificFormula ? intl.formatMessage(messages.tooltipScientificPlanetsBody)
+            : fracturedDescriptor ? intl.formatMessage(fracturedDescriptor) : node.technicalDescription
           const selected = node.skillId === selectedSkillId
           const selectionRelated =
             selected || selectedRequiredIds.has(node.skillId)
@@ -1479,6 +1490,14 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
               data-dimmed={searchActive && !matched ? true : undefined}
               data-selected={selected || undefined}
               data-skill-id={node.skillId}
+              data-desktop-tooltip-palette={preview.visualState.startsWith('non-refundable') ? 'non-refundable' : preview.fragment ? 'fragment' : 'normal'}
+              data-skill-tooltip-name={isDesktopPresentation() ? node.displayName : undefined}
+              data-skill-tooltip-body={isDesktopPresentation() ? tooltipBody : undefined}
+              data-skill-tooltip-formula={scientificFormula ? intl.formatMessage(messages.tooltipScientificPlanetsFormula) : undefined}
+              data-skill-tooltip-cost={intl.formatNumber(node.cost, { maximumFractionDigits: 0 })}
+              data-skill-tooltip-cost-label={intl.formatMessage(messages.cost, { value: node.cost })}
+              data-skill-tooltip-augments={potentialAugments}
+              data-skill-tooltip-augment-label={potentialAugments > 0 ? intl.formatMessage(messages.tooltipPotentialAugments, { value: potentialAugments }) : undefined}
               data-selection-related={selectionRelated || undefined}
               data-selection-dimmed={
                 hasSelection && !selectionRelated ? true : undefined
@@ -1555,7 +1574,6 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
                 <i
                   className="skill-tree-node__queue"
                   aria-label={intl.formatMessage(messages.queued)}
-                  title={intl.formatMessage(messages.queued)}
                 >
                   +
                 </i>
@@ -1728,6 +1746,7 @@ function prepareSkillConnectors(
 }
 
 interface SkillDetailsProps {
+  readonly gameSpeed: number
   readonly showProductionComparisons: boolean
   readonly galvanizers: bigint
   readonly locale: EnabledLocale
@@ -1753,6 +1772,7 @@ interface SkillDetailsProps {
 
 
 function SkillDetails({
+  gameSpeed,
   showProductionComparisons,
   galvanizers,
   locale,
@@ -1920,11 +1940,16 @@ function SkillDetails({
     void applySkillAction(kind)
   }
 
-  const fracturedDescriptor = node.discoveryTechnical
-    ? discoveryFracturedEffects[node.skillId as keyof typeof discoveryFracturedEffects]
-    : galvanizedEffectMessages[node.skillId]
+  const fracturedDescriptor = fracturedSkillDescriptor(node)
   const fracturedTechnical = fracturedDescriptor ? intl.formatMessage(fracturedDescriptor) : node.technicalDescription
   const technical = preview.galvanized ? fracturedTechnical : node.skillId === 'shouldersOfTheEnlightened' && !node.discoveryTechnical ? intl.formatMessage(messages.galvEnlightened) : node.technicalDescription
+
+  const productionValue = (value: number, unit: string) =>
+    `${formatGameNumber(locale, unit === '/s' ? realTimeRate(value, gameSpeed) : value)}${unit}`
+  const projectedSeconds = realTimeDuration(liveProduction?.projectedSeconds ?? 0, gameSpeed)
+  const productionWait = liveProduction?.projected
+    ? ` (${formatGameNumber(locale, projectedSeconds < 60 ? projectedSeconds : projectedSeconds / 60)}${projectedSeconds < 60 ? 's' : 'm'})`
+    : ''
 
   return (
     <SkillDetailsDialog
@@ -2123,8 +2148,8 @@ function SkillDetails({
                     {liveProduction && liveProduction.rows.map((row) => (
                       <ProductionImpactRow key={row.id}
                         label={intl.formatMessage(productionMetrics[row.id].label)}
-                        before={`${formatGameNumber(locale, row.before)}${productionMetrics[row.id].unit}`}
-                        after={`${formatGameNumber(locale, row.after)}${productionMetrics[row.id].unit}${liveProduction.projected ? ` (${liveProduction.projectedSeconds < 60 ? `${liveProduction.projectedSeconds}s` : `${liveProduction.projectedSeconds / 60}m`})` : ''}`}
+                        before={productionValue(row.before, productionMetrics[row.id].unit)}
+                        after={`${productionValue(row.after, productionMetrics[row.id].unit)}${productionWait}`}
                         afterTone={row.after >= row.before ? 'gain' : 'loss'}
                         toLabel={intl.formatMessage(messages.impactTo)} />
                     ))}
@@ -2350,9 +2375,14 @@ function SkillSettings({
 }: SkillSettingsProps) {
   const intl = useIntl()
   const extendedPresets = useExtendedSkillPresets()
+  const tooltips = useDesktopTooltipsPreference()
 
   return (
     <div id={id} className="skill-settings">
+      {isDesktopPresentation() && <label className="skill-settings__toggle">
+        <input type="checkbox" checked={tooltips.enabled} onChange={event => tooltips.setEnabled(event.currentTarget.checked)} />
+        <span>{intl.formatMessage(messages.showTooltips)}</span>
+      </label>}
       <label className="skill-settings__toggle">
         <input type="checkbox" checked={extendedPresets.enabled} onChange={(event) => extendedPresets.setEnabled(event.currentTarget.checked)} />
         <span>{intl.formatMessage(messages.showExtendedPresets)}</span>
@@ -2668,7 +2698,7 @@ function SkillPresetsDialog({
                 <button type="button" className="skill-settings__preset-priority"
                   ref={(element) => { if (element) priorityButtonRefs.current.set(slot, element); else priorityButtonRefs.current.delete(slot) }}
                   aria-label={`${intl.formatMessage(messages.editPriority)}: ${preset.name}`}
-                  title={intl.formatMessage(messages.editPriority)} onClick={() => setPrioritySlot(slot)}>
+                  onClick={() => setPrioritySlot(slot)}>
                   <span aria-hidden="true">⇅</span>
                 </button>
               <button
@@ -2888,6 +2918,7 @@ function PresetManagementDialog({
   const [name, setName] = useState(preset.name)
   const [exportText, setExportText] = useState('')
   const [copyComplete, setCopyComplete] = useState(false)
+  const [copyFailed, setCopyFailed] = useState(false)
   const [importText, setImportText] = useState('')
   const [importPreview, setImportPreview] =
     useState<SkillPresetImportPreview | null>(null)
@@ -2905,6 +2936,7 @@ function PresetManagementDialog({
     if (presetActions === undefined || transferPending !== null) return
     setTransferPending('export')
     setTransferFailed(false)
+    setCopyFailed(false)
     setCopyComplete(false)
     try {
       setExportText(await presetActions.exportPreset(slot))
@@ -2918,16 +2950,15 @@ function PresetManagementDialog({
   const copyExport = async () => {
     if (exportText.length === 0) return
     setCopyComplete(false)
+    setCopyFailed(false)
+    setTransferFailed(false)
     try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(exportText)
-      } else {
-        exportAreaRef.current?.select()
-        if (!document.execCommand('copy')) throw new Error('copy failed')
-      }
+      await copyPlainText(exportText, exportAreaRef.current)
       setCopyComplete(true)
     } catch {
-      setTransferFailed(true)
+      exportAreaRef.current?.focus({ preventScroll: true })
+      exportAreaRef.current?.select()
+      setCopyFailed(true)
     }
   }
 
@@ -3124,7 +3155,7 @@ function PresetManagementDialog({
                   onFocus={(event) => event.currentTarget.select()}
                 />
               </label>
-              <Button onClick={() => void copyExport()}>
+              <Button data-clipboard-copy onClick={() => void copyExport()}>
                 {intl.formatMessage(messages.copy)}
               </Button>
               {copyComplete && (
@@ -3262,6 +3293,7 @@ function PresetManagementDialog({
             </div>
           )}
         </section>
+        {copyFailed && <StatusFeedback tone="error">{intl.formatMessage(messages.copyFailed)}</StatusFeedback>}
         {transferFailed && (
           <StatusFeedback tone="error">
             {intl.formatMessage(messages.presetTransferFailed)}
@@ -3312,4 +3344,10 @@ function PresetSummary({
       </span>
     </span>
   )
+}
+
+function fracturedSkillDescriptor(node: SkillPresentationNode): MessageDescriptor | undefined {
+  if (node.skillId === 'stellarObliteration' && node.discoveryTechnical) return stellarFracturedDiscoveryObliterationMessage
+  return stellarFracturedMessages[node.skillId as keyof typeof stellarFracturedMessages]
+    ?? (node.discoveryTechnical ? discoveryFracturedEffects[node.skillId as keyof typeof discoveryFracturedEffects] : galvanizedEffectMessages[node.skillId])
 }

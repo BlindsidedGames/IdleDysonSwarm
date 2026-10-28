@@ -1,5 +1,6 @@
 import {
   UnsupportedFutureSaveSchemaError,
+  CURRENT_SAVE_SCHEMA,
   type SaveMigrationResult,
 } from './migrate'
 import { deserializeWebSave, serializeWebSave } from './serialization'
@@ -71,23 +72,30 @@ export interface SaveRepositoryPaths {
 export interface SaveRepository {
   hasCurrent(): Promise<boolean>
   loadCurrent(): Promise<PreparedSave | null>
-  migrateLegacyOnFirstLaunch(): Promise<FirstLaunchMigrationResult>
+  migrateLegacyOnFirstLaunch(deferPublication?: (save: PreparedSave) => boolean): Promise<FirstLaunchMigrationResult>
   commit(
     save: PreparedSave,
     target?: SaveCommitTarget,
+    migrationSourceText?: string | readonly string[],
+    publicationOwner?: PreparedSave,
   ): Promise<PreparedSave>
+  /** Abandon recovery effects when its staged application cannot be installed. */
+  cancelPendingPublication?(owner?: PreparedSave): void
 }
 
 export type SaveCommitTarget = 'development' | 'canonical-player'
 
 export interface SaveRepositoryPolicy {
   readonly allowCanonicalPlayerWrites: boolean
+  /** Fail before recovery/discovery as well as ordinary checkpoint writes. */
+  readonly publicationBlockReason?: string
 }
 
 export type FirstLaunchMigrationResult =
   | { readonly status: 'already-migrated'; readonly save: PreparedSave }
   | {
       readonly status: 'recovered-backup'
+      readonly publicationPending?: boolean
       readonly sourcePath: string
       readonly save: PreparedSave
     }
@@ -101,6 +109,7 @@ export type FirstLaunchMigrationResult =
     }
   | {
       readonly status: 'migrated'
+      readonly publicationPending?: boolean
       readonly source: LegacySaveCandidate
       readonly migration: SaveMigrationResult
       readonly save: PreparedSave
@@ -178,11 +187,21 @@ interface ExplicitLegacyDevicePreferences {
   readonly hidePurchased?: boolean
 }
 
+interface PendingRecoveryPublication {
+  readonly owner: PreparedSave
+  readonly beforeCommit?: () => Promise<void>
+  readonly afterCommit: () => void
+  readonly noRotation?: boolean
+}
+
 /**
  * Platform shells supply only filesystem discovery and atomic primitives.
  * Decode, migration and validation remain shared TypeScript behavior.
  */
 export class PortableSaveRepository implements SaveRepository {
+  private readonly pendingMigrationSources = new Set<string>()
+  private lastInspectedSourceText: string | undefined
+  private pendingRecoveryPublication: PendingRecoveryPublication | undefined
   private readonly storage: SaveStorageAdapter
   private readonly paths: SaveRepositoryPaths
   private readonly decodeLegacy: LegacySaveDecoder
@@ -233,13 +252,15 @@ export class PortableSaveRepository implements SaveRepository {
 
   async loadCurrent(): Promise<PreparedSave | null> {
     if (!(await this.hasCurrent())) return null
-    const decoded = deserializeWebSave(
-      await this.storage.readText(this.paths.current),
-    )
-    return PreparedSave.fromDecoded(decoded)
+    const text = await this.storage.readText(this.paths.current)
+    const prepared = PreparedSave.fromDecoded(deserializeWebSave(text))
+    this.retainMigrationSource(text)
+    return prepared
   }
 
-  async migrateLegacyOnFirstLaunch(): Promise<FirstLaunchMigrationResult> {
+  async migrateLegacyOnFirstLaunch(deferPublication?: (save: PreparedSave) => boolean): Promise<FirstLaunchMigrationResult> {
+    this.requirePublicationAllowed()
+    this.cancelPendingPublication()
     const transitionalContext =
       await this.readTransitionalRecoveryContext()
     let current: PreparedSave | null = null
@@ -271,7 +292,7 @@ export class PortableSaveRepository implements SaveRepository {
     }
     if (currentError !== undefined) {
       try {
-        await this.storage.copy(this.paths.current, this.paths.legacyRecovery)
+        await this.copyToLegacyRecovery(this.paths.current)
         rejectedCurrentPreserved = true
       } catch (error) {
         return {
@@ -288,6 +309,7 @@ export class PortableSaveRepository implements SaveRepository {
     const backupRecovery = await this.recoverNewestValidBackup(
       rejectedCurrentText,
       transitionalContext,
+      deferPublication,
     )
     if (
       backupRecovery !== null &&
@@ -300,6 +322,7 @@ export class PortableSaveRepository implements SaveRepository {
     const retainedRecovery = await this.recoverRetainedCanonicalSource(
       rejectedCurrentText,
       transitionalContext,
+      deferPublication,
     )
     if (retainedRecovery !== null) return retainedRecovery
 
@@ -367,15 +390,26 @@ export class PortableSaveRepository implements SaveRepository {
 
       try {
         if (!rejectedCurrentPreserved) {
-          await this.storage.copy(source.sourcePath, this.paths.legacyRecovery)
+          await this.copyToLegacyRecovery(source.sourcePath)
         }
-        await this.promoteAutomaticPurchaseEvidence(source, prepared)
+        await this.archiveMigrationSource(source.text)
         if (transitionalOverlayApplied) {
           prepared = await this.withTransitionalStoredTimeJobRetirementProof(
             prepared,
             transitionalContext,
           )
         }
+        if (deferPublication?.(prepared)) {
+          this.pendingRecoveryPublication = {
+            owner: prepared,
+            beforeCommit: () => this.promoteAutomaticPurchaseEvidence(source, prepared),
+            afterCommit: () => transitionalOverlayApplied
+              ? this.restoreTransitionalDevicePreferences(transitionalDevicePreferences)
+              : this.adoptAutomaticDevicePreferences(source, devicePreferences),
+          }
+          return { status: 'migrated', source, migration, save: prepared, publicationPending: true }
+        }
+        await this.promoteAutomaticPurchaseEvidence(source, prepared)
         const committed = await this.commit(prepared)
         if (transitionalOverlayApplied) {
           this.restoreTransitionalDevicePreferences(
@@ -396,6 +430,7 @@ export class PortableSaveRepository implements SaveRepository {
     const freshBaseRecovery = await this.recoverTransitionalWithFreshBase(
       rejectedCurrentText,
       transitionalContext,
+      deferPublication,
     )
     if (freshBaseRecovery !== null) return freshBaseRecovery
     await this.requireRetiredTransitionalStoredTimeJob(transitionalContext)
@@ -404,10 +439,7 @@ export class PortableSaveRepository implements SaveRepository {
         return { status: 'current-invalid', error: currentError }
       }
       try {
-        await this.storage.copy(
-          lastFailure.source.sourcePath,
-          this.paths.legacyRecovery,
-        )
+        await this.copyToLegacyRecovery(lastFailure.source.sourcePath)
       } catch (error) {
         return {
           status: 'recovery-write-failed',
@@ -502,12 +534,33 @@ export class PortableSaveRepository implements SaveRepository {
   async commit(
     save: PreparedSave,
     target: SaveCommitTarget = 'development',
+    migrationSourceText?: string | readonly string[],
+    publicationOwner?: PreparedSave,
   ): Promise<PreparedSave> {
-    return this.publish(
+    this.requirePublicationAllowed()
+    const recovery = this.pendingRecoveryPublication?.owner === publicationOwner
+      ? this.pendingRecoveryPublication : undefined
+    if (recovery === undefined) this.cancelPendingPublication()
+    if (migrationSourceText !== undefined) {
+      for (const text of typeof migrationSourceText === 'string' ? [migrationSourceText] : migrationSourceText) {
+        this.pendingMigrationSources.add(text)
+      }
+    }
+    await recovery?.beforeCommit?.()
+    const committed = await this.publish(
       await this.carryForwardLocalStoredTimeJobRetirementProof(save),
       target,
-      true,
+      !recovery?.noRotation,
     )
+    if (this.pendingRecoveryPublication === recovery) this.pendingRecoveryPublication = undefined
+    recovery?.afterCommit()
+    return committed
+  }
+
+  cancelPendingPublication(owner?: PreparedSave): void {
+    if (owner === undefined || this.pendingRecoveryPublication?.owner === owner) {
+      this.pendingRecoveryPublication = undefined
+    }
   }
 
   private async carryForwardLocalStoredTimeJobRetirementProof(
@@ -580,6 +633,7 @@ export class PortableSaveRepository implements SaveRepository {
     target: SaveCommitTarget,
     rotateBackups: boolean,
   ): Promise<PreparedSave> {
+    this.requirePublicationAllowed()
     if (
       target === 'canonical-player' &&
       !this.policy.allowCanonicalPlayerWrites
@@ -591,6 +645,14 @@ export class PortableSaveRepository implements SaveRepository {
     // PreparedSave already crossed the migration boundary. Checkpoints must
     // preserve its current state, including intentionally empty collections.
     const encoded = serializeWebSave(save.copyValidatedState())
+    // Rotating backups do not preserve the original public save indefinitely.
+    // Archive exact input bytes before any converted temporary slot is written.
+    if (await this.storage.exists(this.paths.current)) {
+      this.retainMigrationSource(await this.storage.readText(this.paths.current))
+    }
+    for (const text of this.pendingMigrationSources) {
+      await this.archiveMigrationSource(text)
+    }
     await this.storage.writeText(this.paths.temporary, encoded)
     const temporaryText = await this.storage.readText(this.paths.temporary)
     // Exact read-back verifies the durable adapter preserved the already
@@ -605,12 +667,79 @@ export class PortableSaveRepository implements SaveRepository {
       this.paths.temporary,
       this.paths.current,
     )
+    this.pendingMigrationSources.clear()
+    this.lastInspectedSourceText = encoded
     return committed
+  }
+
+  private requirePublicationAllowed(): void {
+    if (this.policy.publicationBlockReason !== undefined) {
+      throw new Error(this.policy.publicationBlockReason)
+    }
+  }
+
+  private async copyToLegacyRecovery(sourcePath: string): Promise<void> {
+    if (await this.storage.exists(this.paths.legacyRecovery)) {
+      await this.archiveMigrationSource(
+        await this.storage.readText(this.paths.legacyRecovery),
+      )
+    }
+    await this.storage.copy(sourcePath, this.paths.legacyRecovery)
+  }
+
+  private retainMigrationSource(text: string): void {
+    if (text === this.lastInspectedSourceText) return
+    this.lastInspectedSourceText = text
+    if (!text.trim().toUpperCase().startsWith('IDSWEB1:')) {
+      this.pendingMigrationSources.add(text)
+      return
+    }
+    let source: SaveRecord
+    try { source = deserializeWebSave(text) }
+    catch { this.pendingMigrationSources.add(text); return }
+    if (source.saveVersion !== CURRENT_SAVE_SCHEMA) {
+      this.pendingMigrationSources.add(text)
+    }
+  }
+
+  private async archiveMigrationSource(text: string): Promise<void> {
+    const sha256 = await sha256Utf8(text)
+    const path = `${this.paths.legacyRecovery}.one-way/${sha256}.source.txt`
+    if (!(await this.storage.exists(path))) await this.storage.writeText(path, text)
+    if (await this.storage.readText(path) !== text) {
+      throw new Error('One-way migration archive verification failed before publication.')
+    }
+    const receiptPath = `${path}.json`
+    // Keep diagnostics outside the portable gameplay graph: they describe
+    // this device's archive, not a transferable grant or ownership claim.
+    const prefix = text.trim().match(/^([A-Za-z0-9]+):/u)?.[1]?.toUpperCase() ?? 'JSON-or-damaged'
+    let sourceSchema: number | null = null
+    try {
+      const decoded = prefix === 'IDB1' ? this.decodeLegacy(text) : deserializeWebSave(text)
+      if (decoded !== null && typeof decoded === 'object' && 'saveVersion' in decoded) {
+        const value = decoded.saveVersion
+        if (typeof value === 'number' && Number.isSafeInteger(value)) sourceSchema = value
+      }
+    } catch {
+      // Preserve damaged rejected sources too; do not invent their provenance.
+    }
+    if (!(await this.storage.exists(receiptPath))) {
+      await this.storage.writeText(receiptPath, JSON.stringify({
+        version: 1, sha256, sourceFormat: prefix, sourceSchema,
+        sourceBuild: null, archivedAtUtc: new Date().toISOString(),
+        destinationFormat: 'IDSWEB1', destinationSchema: CURRENT_SAVE_SCHEMA,
+      }))
+    }
+    const receipt = JSON.parse(await this.storage.readText(receiptPath)) as Record<string, unknown>
+    if (receipt.version !== 1 || receipt.sha256 !== sha256 || receipt.sourceFormat !== prefix || receipt.sourceSchema !== sourceSchema || receipt.destinationFormat !== 'IDSWEB1' || receipt.destinationSchema !== CURRENT_SAVE_SCHEMA) {
+      throw new Error('One-way migration archive receipt verification failed before publication.')
+    }
   }
 
   private async recoverNewestValidBackup(
     rejectedCurrentText: string | undefined,
     context: Readonly<TransitionalCheckpointRecoveryContext>,
+    deferPublication?: (save: PreparedSave) => boolean,
   ): Promise<
     | FirstLaunchMigrationResult
     | { readonly status: 'backup-invalid'; readonly error: string }
@@ -630,6 +759,7 @@ export class PortableSaveRepository implements SaveRepository {
         prepared = PreparedSave.fromDecoded(
           deserializeWebSave(sourceText),
         )
+        this.retainMigrationSource(sourceText)
       } catch (error) {
         if (error instanceof UnsupportedFutureSaveSchemaError) {
           return {
@@ -673,6 +803,16 @@ export class PortableSaveRepository implements SaveRepository {
             prepared,
             context,
           )
+        }
+        if (deferPublication?.(prepared)) {
+          this.pendingRecoveryPublication = {
+            owner: prepared,
+            noRotation: true,
+            afterCommit: () => {
+              if (transitional.applied) this.restoreTransitionalDevicePreferences(transitional.devicePreferences)
+            },
+          }
+          return { status: 'recovered-backup', sourcePath: transitional.sourcePath ?? sourcePath, save: prepared, publicationPending: true }
         }
         committed = await this.publish(
           prepared,
@@ -751,6 +891,7 @@ export class PortableSaveRepository implements SaveRepository {
   private async recoverRetainedCanonicalSource(
     rejectedCurrentText: string | undefined,
     context: Readonly<TransitionalCheckpointRecoveryContext>,
+    deferPublication?: (save: PreparedSave) => boolean,
   ): Promise<
     FirstLaunchMigrationResult | null
   > {
@@ -817,6 +958,16 @@ export class PortableSaveRepository implements SaveRepository {
             context,
           )
         }
+        if (deferPublication?.(prepared)) {
+          this.pendingRecoveryPublication = {
+            owner: prepared,
+            noRotation: true,
+            afterCommit: () => {
+              if (transitionalOverlayApplied) this.restoreTransitionalDevicePreferences(transitionalDevicePreferences)
+            },
+          }
+          return { status: 'recovered-backup', sourcePath: recoveredSourcePath ?? sourcePath, save: prepared, publicationPending: true }
+        }
         const committed = await this.publish(
           prepared,
           'development',
@@ -868,6 +1019,7 @@ export class PortableSaveRepository implements SaveRepository {
   private async recoverTransitionalWithFreshBase(
     rejectedCurrentText: string | undefined,
     context: Readonly<TransitionalCheckpointRecoveryContext>,
+    deferPublication?: (save: PreparedSave) => boolean,
   ): Promise<FirstLaunchMigrationResult | null> {
     if (
       this.recoverTransitionalCheckpoint === undefined ||
@@ -884,6 +1036,14 @@ export class PortableSaveRepository implements SaveRepository {
         transitional.save,
         context,
       )
+      if (deferPublication?.(prepared)) {
+        this.pendingRecoveryPublication = {
+          owner: prepared,
+          noRotation: true,
+          afterCommit: () => this.restoreTransitionalDevicePreferences(transitional.devicePreferences),
+        }
+        return { status: 'recovered-backup', sourcePath: transitional.sourcePath ?? this.paths.current, save: prepared, publicationPending: true }
+      }
       const committed = await this.publish(
         prepared,
         'development',
@@ -983,10 +1143,15 @@ export class PortableSaveRepository implements SaveRepository {
       canonicalWeb = false
       decoded = this.decodeLegacy(text)
     }
+    if (!canonicalWeb && decoded !== null && typeof decoded === 'object' && 'saveVersion' in decoded && decoded.saveVersion === 22) {
+      throw new UnsupportedFutureSaveSchemaError(22, CURRENT_SAVE_SCHEMA)
+    }
+    const preparation = PreparedSave.prepareDecoded(decoded)
+    this.retainMigrationSource(text)
     return Object.freeze({
       decoded,
       canonicalWeb,
-      preparation: PreparedSave.prepareDecoded(decoded),
+      preparation,
     })
   }
 

@@ -1,3 +1,4 @@
+import { usePressAndHoldRepeat } from '../usePressAndHoldRepeat'
 import type { InfinityCycleHistoryEntry } from '../../../game-state/types'
 import { infinityRunIpPerMinute } from '../statistics/statisticsProjection'
 import { avocatoMessages, quantumMessages } from '../quantum/messages'
@@ -61,6 +62,7 @@ import {
   formatAutoInfinityTargetInput,
   resolveInfinityTargetDraft,
 } from './parseInfinityTarget'
+import { infinityFacilityMultiplier } from '../../../simulation/dysonPrestigeEffects'
 import './infinity.css'
 
 type InfinityCommand = Extract<
@@ -77,6 +79,7 @@ type InfinityCommand = Extract<
 const INFINITY_VISIBILITY_STORAGE_KEY =
   'idle-dyson-swarm.infinity-visibility.v1'
 const INFINITY_AMOUNT_MARKER_PREFIX = '__INFINITY_AMOUNT_'
+
 const BOTS_AMOUNT_MARKER = '__BOTS_AMOUNT__'
 
 export interface InfinityCommandAvailability {
@@ -165,6 +168,12 @@ export function InfinitySurface({
     ),
   )
 
+  const productionMultiplier = formatGameNumber(locale, infinityFacilityMultiplier(resources.points, 0n), { wholeBelowHundred: true })
+  const productionBoostText = intl.formatMessage(messages.productionBoost, {
+    multiplier: productionMultiplier,
+    highlight: (chunks: string[]) => chunks.join(''),
+  })
+
   const updateHideMaxed = (next: boolean): void => {
     setHideMaxed(next)
     writeBooleanPresentationPreference(INFINITY_VISIBILITY_STORAGE_KEY, next)
@@ -176,6 +185,7 @@ export function InfinitySurface({
       aria-label={intl.formatMessage(messages.region)}
     >
       <header className="infinity-surface__summary">
+        <div className="infinity-surface__points-row">
         <p className="infinity-surface__points">
           <span className="ui-visually-hidden">
             <FormattedMessage {...messages.pointsLabel} />
@@ -186,7 +196,18 @@ export function InfinitySurface({
             value={resources.availablePoints}
           />
           <span className="infinity-surface__spent"><FormattedMessage {...messages.spentParenthetical} values={{ value: formatInfinityPointAmount(locale, resources.spentPoints) }} /></span>
+          <StableSingleLineText className="infinity-surface__boost" minimumFontSize={12}
+            measurement={<span className="infinity-surface__boost-measurement" data-text={` | ${productionBoostText}`} />}>
+            <span className="infinity-surface__boost-separator">{' | '}</span>
+            <FormattedMessage {...messages.productionBoost}
+              values={{ multiplier: productionMultiplier, highlight: (chunks: ReactNode) => <span className="infinity-surface__multiplier">{chunks}</span> }}>
+              {chunks => chunks.map((chunk, index) => typeof chunk === 'string'
+                ? <span key={index} className="infinity-surface__boost-copy">{chunk}</span>
+                : chunk)}
+            </FormattedMessage>
+          </StableSingleLineText>
         </p>
+        </div>
         <p className="infinity-surface__secret">
           <FormattedMessage
             {...messages.secretPhrase}
@@ -536,16 +557,16 @@ function InfinityShopCard({
   const completed =
     preview.code === 'already-purchased' ||
     preview.code === 'maximum-reached'
-  const disabled =
-    pending ||
+  const unavailable =
     completed ||
     !preview.eligible ||
     !routeAvailable
+  const disabled = pending || unavailable
   const prerequisite = prerequisiteName(preview.itemId)
   const ownedCount = purchasedCount(preview.itemId, resources)
 
-  const purchase = async (): Promise<void> => {
-    if (disabled || pendingRef.current) return
+  const purchase = async (): Promise<boolean> => {
+    if (unavailable || pendingRef.current) return false
     pendingRef.current = true
     setPending(true)
     setFailed(false)
@@ -555,13 +576,18 @@ function InfinityShopCard({
         itemId: preview.itemId,
       })
       setFailed(result.status !== 'accepted')
+      return result.status === 'accepted'
     } catch {
       setFailed(true)
+      return false
     } finally {
       pendingRef.current = false
       setPending(false)
     }
   }
+
+  const repeatable = preview.itemId === 'secret' || preview.itemId === 'permanent-skill-point'
+  const holdHandlers = usePressAndHoldRepeat(repeatable && !unavailable, purchase, preview.itemId)
 
   return (
     <article className="infinity-shop-card">
@@ -604,7 +630,7 @@ function InfinityShopCard({
                 cost: formatInfinityPointAmount(locale, preview.cost),
               })
         }
-        onClick={() => void purchase()}
+        {...holdHandlers}
       >
         <span>
           {completed

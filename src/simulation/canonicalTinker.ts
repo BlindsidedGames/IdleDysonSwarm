@@ -45,6 +45,8 @@ export interface CanonicalTinkerAdvanceResult {
   readonly botsGranted: number
   readonly assemblyLinesGranted: number
   readonly completions: number
+  /** Unused active interval after a nonrepeat completion stops Tinker. */
+  readonly unusedIdleSeconds: number
 }
 
 export type CanonicalTinkerStartEligibility =
@@ -434,6 +436,7 @@ export function advanceCanonicalTinker(
     botsGranted,
     assemblyLinesGranted,
     completions,
+    unusedIdleSeconds: active.running ? 0 : remaining,
   }
 }
 
@@ -521,5 +524,6 @@ function unchanged(
     botsGranted: 0,
     assemblyLinesGranted: 0,
     completions: 0,
+    unusedIdleSeconds: 0,
   }
 }

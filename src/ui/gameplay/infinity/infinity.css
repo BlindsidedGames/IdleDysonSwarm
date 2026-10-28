@@ -6,7 +6,7 @@
   --infinity-panel-raised: var(--theme-selected);
   --infinity-accent: var(--theme-accent);
   --infinity-accent-lead: var(--theme-accent);
-  --infinity-control-pressed: var(--theme-selected);
+  --infinity-control-pressed: color-mix(in srgb, var(--theme-accent) 90%, var(--theme-page));
   --infinity-control-disabled: color-mix(in srgb, var(--theme-panel) 72%, var(--theme-page));
   --infinity-available: #ffa45e;
   --infinity-spent: #91dd8f;
@@ -174,20 +174,74 @@
   margin: 0;
 }
 
-.infinity-surface__points {
+.infinity-surface__points-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-start;
+  min-inline-size: 0;
+  gap: 0.35rem;
+}
+
+.infinity-surface__points > .infinity-surface__boost {
+  flex: 1 1 auto;
+  /* Reserve the separator and readable multiplier at extreme text scales. */
+  min-inline-size: 6rem;
+  max-inline-size: 100%;
+  color: #e8dffa;
+  font-size: calc(0.8rem * var(--game-text-scale));
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+.infinity-surface__boost .ui-stable-single-line-text__visible {
   display: inline-flex;
   align-items: baseline;
+  max-inline-size: 100%;
+}
+
+.infinity-surface__boost-copy {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: pre;
+}
+
+.infinity-surface__boost-separator,
+.infinity-surface__multiplier {
+  flex: 0 0 auto;
+  white-space: pre;
+}
+
+.infinity-surface__boost-measurement::after {
+  content: attr(data-text);
+  white-space: pre;
+}
+
+.infinity-surface__points {
+  display: flex;
+  align-items: baseline;
+  inline-size: 100%;
+  min-inline-size: 0;
+  white-space: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  touch-action: pan-x;
   font-family: var(--font-family-numeric);
   font-size: calc(1.05rem * var(--game-text-scale));
   font-weight: var(--font-weight-bold);
   font-variant-numeric: tabular-nums;
 }
 
+.infinity-surface__points::-webkit-scrollbar { display: none; }
+
 .infinity-surface__available {
+  flex: 0 0 auto;
   color: var(--infinity-available);
 }
 
 .infinity-surface__spent {
+  flex: 0 0 auto;
   margin-inline-start: 0.15em;
   color: var(--infinity-spent);
   font-size: 0.78em;
@@ -505,7 +559,7 @@
   border-color: var(--color-negative);
 }
 
-.infinity-break-target__submit {
+.infinity-break-target .infinity-break-target__submit {
   grid-column: 2;
   grid-row: 2;
   min-block-size: var(--target-minimum);
@@ -515,16 +569,15 @@
   font-weight: var(--font-weight-bold);
 }
 
-.infinity-break-target__submit:not(:disabled):hover {
+.infinity-break-target .infinity-break-target__submit:not(:disabled):hover {
   background-color: color-mix(in srgb, var(--infinity-accent) 82%, white);
 }
 
-.infinity-break-target__submit:not(:disabled):active {
+.infinity-break-target .infinity-break-target__submit:not(:disabled):active {
   background-color: var(--infinity-control-pressed);
-  color: white;
 }
 
-.infinity-break-target__submit:disabled {
+.infinity-break-target .infinity-break-target__submit:disabled {
   border-color: #171020;
   background: var(--infinity-control-disabled);
   color: #b5a7c8;
@@ -565,6 +618,10 @@
 }
 
 @media (max-width: 30rem) {
+  .infinity-surface__boost .ui-stable-single-line-text__visible {
+    vertical-align: baseline;
+  }
+
   .infinity-surface__control-panel {
     --infinity-action-edge-safety: 0px;
     --infinity-summary-inline-padding: 0.5rem;
@@ -643,13 +700,12 @@
 /* Action lighting only; selectors and navigation retain their existing surfaces. */
 @media (forced-colors: none) {
   .infinity-shop-card .ui-button:not(:disabled),
-  .infinity-break-target__submit:not(:disabled) {
+  .infinity-break-target .infinity-break-target__submit:not(:disabled) {
     background-image: var(--ui-action-gradient);
   }
   .infinity-challenge-card .ui-button:not(:disabled) {
     background-image: var(--ui-action-gradient);
   }
-  .infinity-break-target__submit:not(:disabled):active {
-    background-image: var(--ui-action-gradient-dark);
-  }
 }
+
+.infinity-surface__multiplier { color: var(--color-accent-value); white-space: nowrap; }

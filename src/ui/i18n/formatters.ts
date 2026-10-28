@@ -381,6 +381,14 @@ export function formatGameDuration(
   return components.join(' ')
 }
 
+/** Live countdowns use the same significant digits and padding as game quantities. */
+export function formatGameCountdown(locale: EnabledLocale, seconds: number): string {
+  if (!Number.isFinite(seconds) || Math.abs(seconds) >= 60) return formatGameDuration(locale, seconds)
+  const roundedSeconds = roundToThreeSignificantDigits(Math.abs(seconds))
+  if (roundedSeconds >= 60) return formatGameDuration(locale, roundedSeconds)
+  return `${formatGameNumber(locale, roundedSeconds)}s`
+}
+
 export function clearFormatterCachesForTests(): void {
   numberFormatters.clear()
   fixedFractionNumberFormatters.clear()

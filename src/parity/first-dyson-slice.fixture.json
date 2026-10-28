@@ -3,7 +3,7 @@
   "preparedSave": {
     "sourcePath": "test/fixtures/schema-08-canonical-idb1-main-save.txt",
     "sourceSha256": "10e2e48cd989618918118e16d0900af7d80f0f5dfb1aad475423ac165ab00c78",
-    "preparedStateSha256": "7adca42e04c9dd0a07ad34d056dc0344708c123d776dad3b84618c260f9e0290",
+    "preparedStateSha256": "fb72543cd709a40e8db6215a86fb68cb868fd5431d987f2d6e46f21194aa513e",
     "catalogSha256": "0f7e96636565c8d2d268eaa417335b9eb049939ddd2463408540b0af64ecf665"
   },
   "initial": {

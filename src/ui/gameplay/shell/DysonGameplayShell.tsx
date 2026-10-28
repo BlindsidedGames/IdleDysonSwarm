@@ -7,6 +7,8 @@ import {
   useState,
   type CSSProperties,
 } from 'react'
+import { DesktopTooltips } from '../../components/DesktopTooltips'
+import { useDesktopInterfaceScale } from '../../desktopPresentation'
 import { useMediaQuery } from '../../accessibility/useMediaQuery'
 import type {
   DysonGameplayShellProps,
@@ -21,7 +23,7 @@ import { DysonResourceHeader } from './DysonResourceHeader'
 import './dysonGameplayShell.css'
 
 const PERMANENT_NAVIGATION_QUERY =
-  '(min-width: 1080px), (min-width: 960px) and (orientation: landscape)'
+  '(min-width: 1120px), (min-width: 1000px) and (orientation: landscape)'
 
 /**
  * Presentation-only responsive composition for the Dyson gameplay route.
@@ -34,7 +36,6 @@ export function DysonGameplayShell({
   skipLinkLabel,
   menuHeading,
   closeMenuLabel,
-  openMenuLabel,
   moreMenuLabel,
   moreMenuNewLabel,
   releaseFooter,
@@ -58,6 +59,7 @@ export function DysonGameplayShell({
   routeContent,
   routeContentEdgeToEdge = false,
 }: DysonGameplayShellProps) {
+  useDesktopInterfaceScale()
   const mainId = `dyson-gameplay-main-${useId().replaceAll(':', '')}`
   const menuId = `dyson-menu-${useId().replaceAll(':', '')}`
   const [menuOpen, setMenuOpen] = useState(false)
@@ -385,7 +387,6 @@ export function DysonGameplayShell({
               : moreMenuLabel
           }
           data-new={hasHiddenNewItem || undefined}
-          title={openMenuLabel}
           aria-controls={menuId}
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen(true)}
@@ -415,6 +416,7 @@ export function DysonGameplayShell({
           </footer>
         )}
       </div>
+      <DesktopTooltips />
     </div>
   )
 }

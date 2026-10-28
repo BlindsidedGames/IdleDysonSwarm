@@ -15,6 +15,7 @@ export type WikiCategoryId =
   | 'reality'
   | 'quantum'
   | 'secrets'
+  | 'credits'
 
 export interface WikiProgression {
   readonly infinityPoints: bigint
@@ -48,7 +49,7 @@ export function visibleWikiCategoryIds(
   if (progression.quantumPoints >= 1n) ids.push('quantum')
   if (progression.secretsOfTheUniverse > 0n) ids.push('secrets')
   ids.push('offline-time', 'other')
-  ids.push('patch-notes')
+  ids.push('patch-notes', 'credits')
   return ids
 }
 

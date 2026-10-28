@@ -17,6 +17,21 @@ export const infinityMessages = defineMessages({
     description:
       'Unity label preceding the available and parenthesized spent Infinity Point values.',
   },
+  productionBoost: {
+    id: 'infinity.production-boost',
+    defaultMessage: 'Boosting Facility Production by <highlight>×{multiplier}</highlight>',
+    description: 'Live facility production multiplier from total earned IP; individual facility thresholds are unchanged.',
+  },
+  productionBoostNone: {
+    id: 'infinity.production-boost.none',
+    defaultMessage: 'Facility production ×1',
+    description: 'Production multiplier before earning any IP.',
+  },
+  facilityRange: {
+    id: 'infinity.production-boost.facility-range',
+    defaultMessage: '{first}–{last}',
+    description: 'Inclusive range of facility tiers boosted by earned IP, in facility order.',
+  },
   spentParenthetical: {
     id: 'infinity.points.spent-parenthetical',
     defaultMessage: '({value})',

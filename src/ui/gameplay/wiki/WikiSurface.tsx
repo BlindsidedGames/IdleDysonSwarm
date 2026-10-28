@@ -122,6 +122,7 @@ const baseCategories: readonly WikiCategory[] = [
     ],
   },
   { id: 'patch-notes', title: messages.patchNotes, sections: [] },
+  { id: 'credits', title: messages.credits, sections: [] },
 ]
 
 const FLAT_CATEGORY_IDS = new Set<WikiCategoryId>([
@@ -430,6 +431,8 @@ export function WikiSurface({
             <SecretsArticle discoveryUnlocked={discoveryUnlocked} locale={locale} revealed={progression.secretsOfTheUniverse} />
           ) : category.id === 'patch-notes' ? (
             <PatchNotesArticle />
+          ) : category.id === 'credits' ? (
+            <CreditsArticle />
           ) : category.id === 'lore' ? (
             <LoreArticle progression={progression} />
           ) : (
@@ -446,6 +449,36 @@ export function WikiSurface({
   )
 }
 
+function CreditsArticle() {
+  const intl = useIntl()
+  // Avotation labels verified against the current overlay and original Unity scene.
+  const specialMentions = [
+    'MatHeadGetz',
+    'Nuclearion', 'Stupidophobia', 'Gudu', 'wiabobber', 'Wolfh',
+    'QUACKERS', 'Holg', 'Latimer Cross', 'Mentojacka', 'VashVash',
+    'Kad',
+    'Clémentine',
+  ] as const
+  return (
+    <div className="wiki-surface__credits">
+      <section className="wiki-surface__section">
+        <h3>{intl.formatMessage(messages.leadDeveloper)}</h3>
+        <p>Matthew Rushworth</p>
+      </section>
+      <section className="wiki-surface__section">
+        <h3>{intl.formatMessage(messages.sound)}</h3>
+        <p>Technishift</p>
+      </section>
+      <section className="wiki-surface__section">
+        <h3>{intl.formatMessage(messages.specialMentions)}</h3>
+        <ul className="wiki-surface__credit-names">
+          {specialMentions.map((name) => <li key={name}>{name}</li>)}
+        </ul>
+      </section>
+    </div>
+  )
+}
+
 function PatchNotesArticle() {
   const intl = useIntl()
   const previousNotes = WIKI_PATCH_NOTES
@@ -458,6 +491,27 @@ function PatchNotesArticle() {
       <div className="wiki-surface__long-form-list">
         <section className="wiki-surface__section">
           <h3>{intl.formatMessage(messages.patchNotesMostRecent)}</h3>
+          <h4>{intl.formatMessage(messages.patchNotesVersion4111)}</h4>
+          <ul className="wiki-surface__patch-note-list">
+            <li>{intl.formatMessage(messages.patchNotesVersion4111OfflineSpeed)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111OfflineStorage)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111Stellar)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111InfinityHold)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111DesktopSizing)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111DesktopTooltips)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111Navigation)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111SaveTools)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111ImportedSpeedruns)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111RuntimeFixes)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111ProgressionFixes)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111SaveSafety)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111PresetNotices)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111InfinitySummary)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111Credits)}</li>
+          </ul>
+        </section>
+        <section className="wiki-surface__section">
+          <h3>{intl.formatMessage(messages.patchNotesPrevious)}</h3>
           <h4>{intl.formatMessage(messages.patchNotesVersion4110)}</h4>
           <ul className="wiki-surface__patch-note-list">
             <li>{intl.formatMessage(messages.patchNotesVersion4110Transcendence)}</li>
@@ -481,9 +535,6 @@ function PatchNotesArticle() {
             <li>{intl.formatMessage(messages.patchNotesVersion4110Achievements)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4110Ios)}</li>
           </ul>
-        </section>
-        <section className="wiki-surface__section">
-          <h3>{intl.formatMessage(messages.patchNotesPrevious)}</h3>
           <h4>{intl.formatMessage(messages.patchNotesVersion419)}</h4>
           <ul className="wiki-surface__patch-note-list">
             <li>{intl.formatMessage(messages.patchNotesVersion419Augments)}</li>

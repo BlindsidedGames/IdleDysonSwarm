@@ -4,7 +4,7 @@ import { purityBodyMultiplier, purityMindMultiplier, purityEssenceMultiplier as 
 import { isSubskill, isSubskillUnlocked } from './skillSubskills'
 import { isGalvanized, galvanizationDefinition } from './galvanization'
 import { infinityChallenges, hasCompletedInfinityChallenge, isBlankSlateActive } from './infinityChallenges'
-import { resolveSkillPurchaseOrder } from './canonicalSkillPresetTransactions'
+import { planSkillAutoAssignment } from './skillAutoAssignment'
 import { isSafeNonNegativeInteger } from '../core/finiteNonNegativeNumber'
 import { SKILL_DEFINITION_ASSETS } from './skillDefinitions'
 import {
@@ -778,26 +778,15 @@ export function runCanonicalSkillAutoAssignment(
   ) {
     return accepted(state, false, [])
   }
-  let points = state.skills.points
-  let fragments = state.skills.fragments
   const byId = { ...state.skills.byId }
-  const affected: string[] = []
-  const owned = new Set(Object.keys(byId).filter((id) => byId[id]?.owned === true))
-  for (const id of resolveSkillPurchaseOrder(state.skills.activeAutoAssignment, owned, definitions)) {
-    const definition = definitions.get(id)
-    if (definition === undefined || !isUnlocked(definition, state) ||
-      hasOwned(definition.exclusiveWith, byId) ||
-      (!state.skills.autoAssignNonRefundable && !definition.refundable)) continue
-    // Dependencies precede their targets. A missing dependency was skipped
-    // as unavailable; only an eligible target should wait on point income.
-    if (!requirementsMet(definition.required, byId) ||
-      !requirementsMet(definition.shadowRequired, byId)) continue
-    if (points < definition.cost) break
-    points -= definition.cost
-    fragments += definition.fragment ? 1n : 0n
-    byId[id] = { ...(byId[id] ?? emptyRuntime()), owned: true }
-    affected.push(id)
-  }
+  const assignment = planSkillAutoAssignment(state.skills.activeAutoAssignment, definitions,
+    new Set(Object.keys(byId).filter(id => byId[id]?.owned === true)),
+    state.skills.points, state.skills.autoAssignNonRefundable,
+    id => isUnlocked(definitions.get(id)!, state))
+  const points = assignment.points
+  const fragments = state.skills.fragments + assignment.fragmentsGranted
+  const affected = assignment.assignedIds
+  for (const id of affected) byId[id] = { ...(byId[id] ?? emptyRuntime()), owned: true }
 
   if (affected.length === 0) return accepted(state, false, [])
   return accepted(
@@ -886,18 +875,20 @@ export function applyCanonicalSkillPresetLayout(
   })
 }
 
+const BASE_DEFINITIONS: ReadonlyMap<string, SkillDefinition> = new Map(
+  SKILL_DEFINITION_ASSETS.map(asset => {
+    const base = parseDefinition(asset)
+    return [base.id, Object.freeze({ ...base, authoredRequired: base.required })]
+  }),
+)
+
 function loadDefinitions(state: CanonicalGameStateV1): ReadonlyMap<string, SkillDefinition> {
-  return new Map(
-    SKILL_DEFINITION_ASSETS.map((asset) => {
-      const base = parseDefinition(asset)
-      const definition = { ...galvanizationDefinition(base, base.id, state),
-        authoredRequired: base.required,
-        refundable: isGalvanized(state, base.id) ? false : base.refundable,
-        unrefundableWith: base.unrefundableWith.filter((id) => !isGalvanized(state, id)),
-      }
-      return [definition.id, definition]
-    }),
-  )
+  if (!state.challenges?.galvanizedSkillIds?.length) return BASE_DEFINITIONS
+  return new Map([...BASE_DEFINITIONS].map(([id, base]) => [id, {
+    ...galvanizationDefinition(base, id, state),
+    refundable: isGalvanized(state, id) ? false : base.refundable,
+    unrefundableWith: base.unrefundableWith.filter(other => !isGalvanized(state, other)),
+  }]))
 }
 
 function parseDefinition(asset: RuntimeGameAsset): SkillDefinition {
@@ -1061,13 +1052,6 @@ function dependentIds(
     }
   }
   return result
-}
-
-function requirementsMet(
-  ids: readonly string[],
-  byId: Readonly<Record<string, SkillRuntimeState>>,
-): boolean {
-  return ids.every((id) => byId[id]?.owned === true)
 }
 
 function hasOwned(
