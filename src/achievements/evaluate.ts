@@ -19,7 +19,7 @@ export function evaluateAchievements(state: DeepReadonly<CanonicalGameStateV1>, 
   reach('first_transcendence', state.statistics.lifetime.botCapOverflowRewards > 0n)
   reach('enlightenment', state.discovery?.unlocked === true && state.discovery.enlightenment !== undefined)
   // Retain the existing provider key when broadening the requirement to any challenge.
-  reach('first_quantum_challenge', state.challenges?.blankSlateCompleted === true ||
+  reach('first_quantum_challenge', state.challenges?.openingCompleted === true || state.challenges?.blankSlateCompleted === true ||
     state.challenges?.trialAndErrorCompleted === true || state.challenges?.noScienceCompleted === true ||
     (state.challenges?.completedQuantumChallenges?.length ?? 0) > 0)
   reach('first_fracture', (state.challenges?.galvanizedSkillIds?.length ?? 0) > 0)

@@ -17470,6 +17470,12 @@
       "value": "Terminez les dix objectifs Bots pour accomplir Les débuts et gagner votre premier Catalyseur. Les sauvegardes ayant déjà dépassé le premier cycle reçoivent cette récompense."
     }
   ],
+  "wiki.patch-notes.version-4-1-11.beginnings-achievement": [
+    {
+      "type": 0,
+      "value": "Terminer Beginnings débloque désormais Challenge Accepted sur toutes les plateformes."
+    }
+  ],
   "wiki.patch-notes.version-4-1-11.credits": [
     {
       "type": 0,
@@ -17516,6 +17522,12 @@
     {
       "type": 0,
       "value": "Menu latéral élargi sur ordinateur, avec des espacements, boutons sélectionnés et une navigation compacte améliorés. Suppression d’un pixel bleu en haut à gauche."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.no-science-precursors": [
+    {
+      "type": 0,
+      "value": "Correction de la production de Cash réduite à zéro par Épaules des Précurseurs fracturé dans Sans Science, avant Découverte."
     }
   ],
   "wiki.patch-notes.version-4-1-11.offline-speed": [

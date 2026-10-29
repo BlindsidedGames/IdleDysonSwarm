@@ -17470,6 +17470,12 @@
       "value": "Schließe alle zehn Bots-Ziele ab, um Anfänge zu meistern und deinen ersten Katalysator zu erhalten. Bestehende Spielstände erhalten die Belohnung, wenn sie den ersten Lauf bereits hinter sich haben."
     }
   ],
+  "wiki.patch-notes.version-4-1-11.beginnings-achievement": [
+    {
+      "type": 0,
+      "value": "Der Abschluss von Beginnings schaltet jetzt Challenge Accepted auf allen Plattformen frei."
+    }
+  ],
   "wiki.patch-notes.version-4-1-11.credits": [
     {
       "type": 0,
@@ -17516,6 +17522,12 @@
     {
       "type": 0,
       "value": "Das Desktop-Seitenmenü ist breiter. Abstände, ausgewählte Buttons und die kompakte Navigation wurden verbessert. Ein blauer Pixel oben links wurde entfernt."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.no-science-precursors": [
+    {
+      "type": 0,
+      "value": "Gebrochene Schultern der Vorläufer setzen die Cash-Produktion in Ohne Wissenschaft vor Entdeckung nicht mehr auf null."
     }
   ],
   "wiki.patch-notes.version-4-1-11.offline-speed": [

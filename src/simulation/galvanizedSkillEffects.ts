@@ -25,12 +25,11 @@ export function adjustGalvanizedEffects(
     if (separatePowerPenalties && id === 'tasteOfPower' &&
         (statId === 'Global.MoneyMultiplier' || statId === 'Global.ScienceMultiplier')) continue
     if (!isGalvanized(state, id)) { result.push(effect); continue }
-    if (id === 'shouldersOfPrecursors') {
-      result.push({ ...effect, operation: 'multiply' })
-    } else if ((effect.operation === 'multiply' && effect.value < 1) ||
-        (effect.operation === 'add' && effect.value < 0)) {
-      continue
-    } else result.push(effect)
+    // Convert Precursors before filtering so suppressed Science cannot become a Cash penalty.
+    if (id === 'shouldersOfPrecursors') effect = { ...effect, operation: 'multiply' }
+    if ((effect.operation === 'multiply' && effect.value < 1) ||
+        (effect.operation === 'add' && effect.value < 0)) continue
+    result.push(effect)
   }
   if (separatePowerPenalties && (statId === 'Global.MoneyMultiplier' || statId === 'Global.ScienceMultiplier')) {
     const penalties = [0.25, 0.15, 0.1]

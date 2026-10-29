@@ -8562,6 +8562,10 @@
     "defaultMessage": "Complete all ten Bots goals to finish Beginnings and earn your first Catalyst. Existing saves receive credit if they have already passed the opening run.",
     "description": "Version 4.1.11 release notes."
   },
+  "wiki.patch-notes.version-4-1-11.beginnings-achievement": {
+    "defaultMessage": "Completing Beginnings now unlocks Challenge Accepted on all platforms.",
+    "description": "Version 4.1.11 release notes."
+  },
   "wiki.patch-notes.version-4-1-11.credits": {
     "defaultMessage": "Added credits to the Wiki.",
     "description": "Version 4.1.11 release notes."
@@ -8592,6 +8596,10 @@
   },
   "wiki.patch-notes.version-4-1-11.navigation": {
     "defaultMessage": "Widened the desktop side menu and improved its spacing, selected buttons and compact navigation. Fixed a blue pixel at the top-left edge.",
+    "description": "Version 4.1.11 release notes."
+  },
+  "wiki.patch-notes.version-4-1-11.no-science-precursors": {
+    "defaultMessage": "Fixed fractured Shoulders of Precursors reducing Cash production to zero in No Science before Discovery.",
     "description": "Version 4.1.11 release notes."
   },
   "wiki.patch-notes.version-4-1-11.offline-speed": {
@@ -8627,7 +8635,7 @@
     "description": "Version 4.1.11 release notes."
   },
   "wiki.patch-notes.version-4-1-11.time-bonus": {
-    "defaultMessage": "Added the repeatable Time bonus Quantum upgrade, starting at 1,000 Quantum Shards. Its IP multiplier grows during each Infinity. Tap the upgrade for a current-versus-next comparison.",
+    "defaultMessage": "Added Time bonus, a repeatable Quantum upgrade starting at 1,000 Quantum Shards. Its IP multiplier grows during each Infinity. Tap it to compare the current and next levels.",
     "description": "Version 4.1.11 release notes."
   },
   "wiki.patch-notes.version-4-1-2": {

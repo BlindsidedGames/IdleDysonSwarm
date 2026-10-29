@@ -17470,6 +17470,12 @@
       "value": "ボットの目標を10個すべて達成すると「はじまり」が完了し、最初の触媒を獲得できます。すでに初回の進行を終えたセーブデータにも付与されます。"
     }
   ],
+  "wiki.patch-notes.version-4-1-11.beginnings-achievement": [
+    {
+      "type": 0,
+      "value": "Beginnings をクリアすると、すべてのプラットフォームで Challenge Accepted が解除されるようになりました。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-11.credits": [
     {
       "type": 0,
@@ -17516,6 +17522,12 @@
     {
       "type": 0,
       "value": "デスクトップのサイドメニューを広げ、間隔、選択中のボタン、コンパクトナビゲーションを改善しました。左上の青いピクセルも修正しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.no-science-precursors": [
+    {
+      "type": 0,
+      "value": "発見の解放前に「科学なし」で破砕した「先駆者の肩」がキャッシュ生産をゼロにする問題を修正しました。"
     }
   ],
   "wiki.patch-notes.version-4-1-11.offline-speed": [

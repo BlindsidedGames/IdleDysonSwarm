@@ -17470,6 +17470,12 @@
       "value": "Conclua os dez objetivos de Bots para terminar Começos e ganhar seu primeiro Catalisador. Jogos salvos que já passaram do primeiro ciclo recebem a recompensa."
     }
   ],
+  "wiki.patch-notes.version-4-1-11.beginnings-achievement": [
+    {
+      "type": 0,
+      "value": "Concluir Beginnings agora desbloqueia Challenge Accepted em todas as plataformas."
+    }
+  ],
   "wiki.patch-notes.version-4-1-11.credits": [
     {
       "type": 0,
@@ -17516,6 +17522,12 @@
     {
       "type": 0,
       "value": "Ampliamos o menu lateral no computador e melhoramos espaçamento, botões selecionados e navegação compacta. Corrigimos um pixel azul no canto superior esquerdo."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.no-science-precursors": [
+    {
+      "type": 0,
+      "value": "Corrigido um problema em que Ombros dos Precursores fraturada zerava a produção de Cash em Sem Ciência antes de Descoberta."
     }
   ],
   "wiki.patch-notes.version-4-1-11.offline-speed": [

@@ -13,10 +13,14 @@ list and an explicit sign-in retry. Authentication failure does not block play.
 `scripts/mobile-achievement-mapping.test.ts`. Never substitute the seven deleted
 Google draft duplicates: the seven published IDs were deliberately repurposed
 with user approval, preserving existing unlock history and their original points.
-Live console verification on 2026-09-27 found the prior 27 records published on
-Google and live on Apple. The five 4.1.10 additions are drafts on Apple, Google and
-Steam, with English names/descriptions and exported artwork. They have not been
-submitted for review or published. See [the 4.1.10 achievement record](../releases/4.1.10/achievements.md).
+Live console verification on 2026-10-30 found all 32 records Published and
+available to everyone on Google, and Live on Apple. Steam's public achievement
+list also contains all 32, including the five 4.1.10 additions, with recorded
+unlocks. The five additions' IDs match the shared maps and shipped internal
+artifacts. The September draft status in
+[the original 4.1.10 record](../releases/4.1.10/achievements.md) is historical.
+Fresh authenticated SDK unlocks on native devices remain a separate validation
+step; console publication and artifact checks do not establish that result.
 
 ## Evidence and retry
 

@@ -493,6 +493,8 @@ function PatchNotesArticle() {
           <h3>{intl.formatMessage(messages.patchNotesMostRecent)}</h3>
           <h4>{intl.formatMessage(messages.patchNotesVersion4111)}</h4>
           <ul className="wiki-surface__patch-note-list">
+            <li>{intl.formatMessage(messages.patchNotesVersion4111NoScience)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion4111BeginningsAchievement)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4111InfinityRewards)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4111TimeBonus)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion4111Beginnings)}</li>

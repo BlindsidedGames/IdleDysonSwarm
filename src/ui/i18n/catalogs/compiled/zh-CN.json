@@ -17470,6 +17470,12 @@
       "value": "完成全部十个机器人目标即可完成“起步”，并获得第一个催化剂。已通过初始流程的存档也会获得奖励。"
     }
   ],
+  "wiki.patch-notes.version-4-1-11.beginnings-achievement": [
+    {
+      "type": 0,
+      "value": "完成 Beginnings 现在可在所有平台解锁 Challenge Accepted 成就。"
+    }
+  ],
   "wiki.patch-notes.version-4-1-11.credits": [
     {
       "type": 0,
@@ -17516,6 +17522,12 @@
     {
       "type": 0,
       "value": "加宽桌面侧边菜单，改进间距、选中按钮和紧凑导航。修复左上角的蓝色像素。"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-11.no-science-precursors": [
+    {
+      "type": 0,
+      "value": "修复了在解锁发现之前，裂解的先驱者之肩会使无科学挑战中的现金产量降至零的问题。"
     }
   ],
   "wiki.patch-notes.version-4-1-11.offline-speed": [
