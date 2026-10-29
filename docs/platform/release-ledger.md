@@ -378,3 +378,111 @@ behavior. Physical Android/iPhone interaction, the native timed-reset plus
 Stored Time exact-balance matrix, every locale/scale, and real cross-device
 Steam Cloud remain unverified. Google debug-symbol/deobfuscation and Web chunk
 warnings were non-blocking. This record changes documentation only.
+
+## 2026103001 — Beginnings achievement and No Science fixes, 4.1.11
+
+30 October 2026 (AEDT, UTC+11). Product source is frozen at
+`c7de4af5595a7485614a30a425ae3a50a12417e7` on `main`. Beginnings now counts
+for Challenge Accepted through the shared evaluator used by iOS, Android and
+Steam. Fractured Shoulders of Precursors no longer suppresses Cash production
+in No Science before Discovery. Provider achievement IDs are unchanged.
+
+### Validation and artifacts
+
+- Windows production build/TypeScript, lint, generated data, localization,
+  Electron boundary syntax and the approved save-safety suite (three files,
+  16 cases) passed. The clean Mac canonical release gate also passed, including
+  signed Android packaging and iOS synchronization. No archived suite was run.
+- Shared CI [40958952788](https://github.com/BlindsidedGames/IdleDysonSwarm/actions/runs/40958952788)
+  and native CI [40958956043](https://github.com/BlindsidedGames/IdleDysonSwarm/actions/runs/40958956043)
+  passed before uploads. An earlier candidate was replaced before packaging
+  to synchronize its three generated native version files.
+- Artifact/evidence root: `/Users/matthewrushworth/Builds/ids-release-2026103001/`.
+  `RELEASE.md` and `release-summary.json` record manifests, signing verification,
+  upload logs, screenshots and package comparisons. Windows evidence is under
+  `output/release-2026103001/`, `output/beginnings-achievement-2026-10-30/`
+  and `output/no-science-precursors-2026-10-30/`.
+- Signed Android artifact: `android/idle-dyson-swarm-2026103001.aab`,
+  20,186,083 bytes; SHA-256
+  `54da78cda9cf4f3509c2988a8957e1e946753afe2c9b8ae98c813f472742929c`.
+  The established upload certificate fingerprint was verified.
+- Apple archive: `ios/IDS-2026103001.xcarchive`, 4.1.11 / `2610.30.01`,
+  normalized by the console to `2610.30.1`. Archived App executable SHA-256
+  `3d4e9dcf3b3a9ada3350b05a264b3a82da02c361f3787d42a0109c7a391260c3`.
+  All 296 renderer assets match Android. Ordinary App Store Connect upload
+  succeeded at 08:39:44 AEDT; the internal-only export flag was omitted so the
+  same build could be tested internally and submitted for App Review.
+  This executable hash is not an uploaded IPA hash.
+- All three Steam packages embed the frozen source and release identity.
+  Their shared ASAR SHA-256 is
+  `f96a63b4c5620eb47856a3700fa28e0a0ae5c661a7b8fc2299769af588dd45bd`.
+  Fresh beta downloads match all Windows/Linux/macOS package files
+  (76/75/265 respectively), with no mismatches.
+
+### Internal availability, verified before public actions
+
+| Target | Identity | Verified state |
+| --- | --- | --- |
+| Google Play Internal | 4.1.11 / 2026103001, release 127 | Available to internal testers, released 08:41 AEDT. Eight localized note blocks accepted. |
+| Internal TestFlight | 4.1.11 / 2610.30.1 | Testing in the existing Internal group with three testers and 90-day expiry. Compliance and focused test notes saved. |
+| Steam `public-beta` | Build 26308657 | Active; fresh downloads verified for Windows, Linux and macOS. |
+
+Apple build UUID: `8c1f1030-2d8f-4406-8900-a20892318ae0`.
+The group's Testing state is captured in
+`output/release-2026103001/testflight-internal-testing.txt` and `.jpg`.
+The existing group assigned the build automatically after compliance completed.
+
+Steam depot manifests for build 26308657:
+
+- Windows 4348571: `2620559273283405656`.
+- Linux 4348572: `1915318104354881052`.
+- macOS 4348573: `1824204619860140402`.
+
+### Public distribution
+
+| Target | Identity | Observed state |
+| --- | --- | --- |
+| Google Play production | 4.1.11 / 2026103001, release 86 | Submitted; In review / Changes in review. Rollout explicitly set to 100%, with Start full rollout saved. Managed publishing off for automatic publication after approval. |
+| Apple App Store | 4.1.11 / 2610.30.1 | Waiting for Review; one version/build submitted. Automatic release after approval, immediate release to all users and no phased release. |
+| Steam `default` | Build 26308657 | Live after Steam Mobile confirmation. App Admin shows default and public-beta on the same verified build. Previous public build was 25569496. |
+
+Apple submission UUID: `f12b5173-f750-46dc-a685-a7fd94c57bd6`.
+All eight App Store localizations were saved and read back against the audited
+notes. Existing ratings were retained. Google quick checks were still running
+when submission was accepted; neither mobile build is described as approved or
+publicly available. Before disabling managed publishing, the Google pending and
+ready lists were verified empty. Only the production build's full rollout was
+submitted; advertising, store and data-safety changes were not submitted.
+
+The Steam public request followed verification of all three internal targets.
+Steam Mobile confirmation completed and the public branch readback was verified
+before reporting it live. Steam history records public activation at 08:50 AEDT.
+An independent SteamCMD query confirms default and beta both report 26308657;
+all three public depot manifests match the already verified beta downloads.
+Website publication and community announcements were not performed.
+Achievement definitions were already live on all providers and not republished.
+
+### Actual game checks and limits
+
+The isolated running game held Beginnings at 9/10 goals without the challenge
+achievement. In a synthetic final-goal save, changing the actual worker slider
+from 50% to 100% increased galaxies from 75 to 150, completed Beginnings,
+awarded one Catalyst and published the existing Challenge Accepted neutral ID.
+Export/import and reload retained completion, one Catalyst and the evidence.
+The temporary native host adapter captured publication without unlocking a real
+provider account; no test-only production API was added.
+
+A disposable iOS simulator updated an existing synthetic save that had completed
+Beginnings without the achievement. The new app persisted the missing evidence,
+retained one Catalyst and Time bonus level 1, and left the separate Modern file
+byte-identical. Packaged macOS startup checks passed on arm64 and Rosetta x64
+with isolated profiles and mock Keychain.
+
+The No Science in-game matrix covered fractured/unfractured Precursors before
+and after Discovery, multiple derivations, a purchase and reload, entry, abandon
+and completion. Cash production recovered while Science stayed disabled.
+
+Fresh authenticated provider SDK unlocks, physical-device checks and real
+cross-device Cloud remain unverified. These limits do not change the verified
+shared game event, saved evidence, native update and mapping results. This
+record changes documentation only; product source stays frozen.
