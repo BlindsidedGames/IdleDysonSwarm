@@ -486,3 +486,86 @@ Fresh authenticated provider SDK unlocks, physical-device checks and real
 cross-device Cloud remain unverified. These limits do not change the verified
 shared game event, saved evidence, native update and mapping results. This
 record changes documentation only; product source stays frozen.
+
+## 2026103101 — internal 4.1.12
+
+Release performed on 1 November 2026 (AEDT, UTC+11); the release identity uses
+31 October UTC. This release targets internal testing only.
+
+### Source and scope
+
+- Frozen product source, merged and pushed to `main`:
+  `353c2748e8643e16e4bbcd91ac124384e624a77e`.
+- Marketing version: `4.1.12`. Android version code: `2026103101`.
+  Apple build: `2610.31.01`, displayed by App Store Connect as `2610.31.1`.
+- Reality Skill Points remain available during Quantum challenges, including
+  points from Reality upgrades purchased during a challenge. Existing active
+  challenge saves recover withheld points once when loaded. Wiki patch notes
+  and translated player-facing copy are included in the frozen source.
+- Active Mac QA source changes were compared with the final source: all ten
+  source files match byte-for-byte. The original QA patch and native evidence
+  remain preserved separately; historical shelved branches were not revived.
+
+### Verified internal availability
+
+| Target | Identity | Verified state |
+| --- | --- | --- |
+| Google Play Internal | 4.1.12 / 2026103101, release 128 | Available to internal testers; console release time 1 Nov 08:24 AEDT. Eight localized release-note entries saved. |
+| Internal TestFlight | 4.1.12 / 2610.31.1 | Testing in the existing Internal group with three testers; 90-day expiry. Export compliance and focused What to Test notes saved. |
+| Steam `public-beta` | Build 26351857 | Active for Windows, Linux and macOS; fresh authenticated downloads match the uploaded packages. |
+
+Apple build UUID: `911bb095-7c43-46db-b7f4-0e9e0d8c8f09`.
+The Internal group's Builds page explicitly shows Testing; the general build
+list's Ready to Submit label was not used as evidence of tester availability.
+No external TestFlight group or App Review submission was made.
+
+Google production remains `2026103001`. Steam `default` remains `26308657`.
+App Store production and the website were not changed. Google retained two
+non-blocking warnings for absent R8 deobfuscation and native debug symbols.
+
+### Validation and artifacts
+
+- The clean frozen-source command
+  `npm run release:local -- --release-id 2026103101` passed: approved save-safety
+  suite (three files, 16 cases), lint, localization, TypeScript/production and
+  native builds, Electron boundary checks, signed Android packaging and iOS
+  synchronization. No archived or additional automated gameplay suite was run.
+- The signed iOS archive and upload succeeded. All 298 archived renderer files
+  match the final Capacitor payload. Archived App executable SHA-256:
+  `2a918ab1b0e7d93c479e9b99af2ed4f3c0b3878e1eeb5432847515530fdd6a2e`.
+  This is an executable hash, not an uploaded IPA hash.
+- Android AAB: `android/idle-dyson-swarm-2026103101.aab`, 20,186,704 bytes;
+  SHA-256 `745fd309e6a77f8b3d65629127ef27f4d3d5673e09b237690843c40e4662b0bc`.
+  Windows independently checked the transferred bytes before its Google upload.
+- Steam packages embed the full frozen commit, version 4.1.12 and Steam
+  distribution identity. Six native runtime files were reused only after
+  verifying unchanged source/SDK/build inputs and prior binary provenance.
+  Fresh beta downloads match all 76 Windows, 75 Linux and 265 macOS files,
+  with no missing files or hash mismatches.
+- Artifact and evidence root:
+  `/Users/matthewrushworth/Builds/ids-release-2026103101/`.
+  `release-summary.json`, `steam-download-verification.json`,
+  `steam-native-provenance.json`, `ios-archive-verification.json`, upload logs,
+  package hashes and `ios-internal-testing.txt` / `.png` retain the evidence.
+  Google's availability screenshot is under the Windows checkout at
+  `output/local-release/2026103101/google-internal-available.png`.
+- Two generated Capacitor dependency paths changed during synchronization;
+  their resolved paths were proven equivalent, their diff was archived, and
+  only those generated edits were restored after packaging. Product source
+  stayed frozen.
+
+### Actual game checks and limits
+
+Focused running iOS Simulator checks covered challenge entry, purchases,
+reload, abandonment, Infinity resets, one-time legacy point restoration and
+Avotation retention using synthetic saves. The final native build's Wiki
+shows version 4.1.12 and both new bullets above the unchanged 4.1.11 section,
+readably at portrait phone width. A valid synthetic Avotation/Reality save
+retained six points after the update and reload. Screenshots and exported
+checkpoints are preserved; the isolated simulator was shut down afterward.
+
+Physical devices, Android and Steam gameplay, fresh provider achievement
+unlocks, real cross-device Cloud, other UI scales and long locales were not
+rechecked for this release. Download integrity and native compilation do not
+stand in for those checks. This release record is documentation only; it does
+not change the frozen product source.
