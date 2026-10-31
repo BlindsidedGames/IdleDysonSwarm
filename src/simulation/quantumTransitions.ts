@@ -109,8 +109,11 @@ export function applyCanonicalQuantumReset(
     permanentSkills.superRadiantScattering = { ...permanentSkills.superRadiantScattering,
       secondaryTimerSeconds: options.restartOnly ? permanentSkills.superRadiantScattering.secondaryTimerSeconds : bankedSrsSecondsAfterReset(state) }
   }
-  const nextChallenges = !options.restartOnly && isQuantumChallengeActive(state)
-    ? completeQuantumChallenge(state) : state.challenges
+  const nextChallenges = {
+    ...(!options.restartOnly && isQuantumChallengeActive(state)
+      ? completeQuantumChallenge(state) : infinityChallenges(state)),
+    realitySkillPointsEnabled: true,
+  }
   const assignmentSeed: CanonicalGameStateV1 = {
     ...state,
     challenges: nextChallenges,

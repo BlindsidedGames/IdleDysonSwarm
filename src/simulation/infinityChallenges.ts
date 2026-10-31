@@ -33,6 +33,7 @@ export function validateInfinityChallenges(value: unknown): string | null {
   if (value === undefined) return null
   if (value === null || typeof value !== 'object' || Array.isArray(value)) return 'Invalid Infinity challenge progress.'
   const c = value as Record<string, unknown>
+  if (c.realitySkillPointsEnabled !== undefined && typeof c.realitySkillPointsEnabled !== 'boolean') return 'Invalid challenge Skill Point credit.'
   if ((c.openingCompleted !== undefined && typeof c.openingCompleted !== 'boolean') ||
       (c.openingCatalystAwarded !== undefined && (typeof c.openingCatalystAwarded !== 'boolean' || (c.openingCatalystAwarded && c.openingCompleted !== true)))) return 'Invalid Beginnings challenge progress.'
   if ((c.noScienceCompleted !== undefined && typeof c.noScienceCompleted !== 'boolean') || (c.trialAndErrorCompleted !== undefined && typeof c.trialAndErrorCompleted !== 'boolean') || typeof c.unlocked !== 'boolean' || typeof c.blankSlateCompleted !== 'boolean' ||

@@ -1,6 +1,5 @@
-import { AVOCADO_MEDITATION_SKILL_POINT_REWARD } from './avocadoMeditation'
 import { initializeSwarmGrants, swarmGrantsAfterInfinity } from './swarmAugments'
-import { challengeFacilities, effectiveDivisions, infinityChallenges, isInfinityChallengeActive, isBlankSlateActive, isQuantumChallengeActive } from './infinityChallenges'
+import { challengeFacilities, effectiveDivisions, infinityChallenges, isInfinityChallengeActive, isBlankSlateActive } from './infinityChallenges'
 import { hasCompletedQuantum } from './quantumMilestone'
 import { resetSrsAugments } from './srsAugments'
 import { MANUAL_LABOUR_AUGMENTS, SUBSKILL_ASSETS, isSubskill, isSubskillUnlocked } from './skillSubskills'
@@ -165,7 +164,7 @@ export function applyCanonicalInfinityReset(
   if (challengeWon && !challenge[completionKey] && challenge.galvanizers >= DISCRETE_MAXIMUM) {
     return failed(state, [{ code: 'INFINITY_RESET_STATE_INVALID', path: 'challenges.galvanizers', detail: 'Galvanizer balance is full.' }])
   }
-  const nextChallenges = request.restartOnly ? challenge : {
+  const nextChallenges = { ...(request.restartOnly ? challenge : {
     ...challenge, unlocked: true,
     ...(challengeWon ? {
       active: null,
@@ -177,7 +176,7 @@ export function applyCanonicalInfinityReset(
       hasEarnedGalvanizer: true,
       galvanizers: challenge[completionKey] ? challenge.galvanizers : addDiscrete(challenge.galvanizers, 1n),
     } : {}),
-  }
+  }), realitySkillPointsEnabled: true }
   const previousPoints = state.infinity.points
   const nextPoints = addDiscrete(
     previousPoints,
@@ -187,21 +186,12 @@ export function applyCanonicalInfinityReset(
   const bankedSkillPoints = request.restartOnly ? 0n :
     owned(state.skills.byId, 'banking') +
     owned(state.skills.byId, 'investmentPortfolio')
-  // Reality ownership survives challenges, but only the separate Avotation
-  // reward contributes to their starting points. Keep the supplied total raw
-  // so abandoning/completing a challenge can restore the full contribution.
-  const artifactSkillPoints = isQuantumChallengeActive(state)
-    ? (state.secretProgress.completed
-      ? (request.artifactSkillPoints < AVOCADO_MEDITATION_SKILL_POINT_REWARD
-        ? request.artifactSkillPoints : AVOCADO_MEDITATION_SKILL_POINT_REWARD)
-      : 0n)
-    : request.artifactSkillPoints
   const initialSkillPoints = addDiscrete(
     addDiscrete(
       state.infinity.permanentSkillPoints,
       bankedSkillPoints,
     ),
-    artifactSkillPoints,
+    request.artifactSkillPoints,
   )
   const assignment = applyAutoAssignment(
     initialSkillPoints,

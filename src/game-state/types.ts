@@ -564,6 +564,8 @@ export type QuantumChallengeId = 'no-science' | 'short-circuit' | 'grounded' | '
 export type ChallengeId = 'blank-slate' | 'trial-and-error' | QuantumChallengeId
 
 export interface InfinityChallengeState {
+  /** Marks runs that already include Reality's points, preventing repeat upgrade credit. */
+  readonly realitySkillPointsEnabled?: boolean
   readonly openingCompleted?: boolean
   readonly openingCatalystAwarded?: boolean
   readonly galvanizedSkillIds?: readonly string[]

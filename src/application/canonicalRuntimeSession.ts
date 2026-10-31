@@ -1,4 +1,5 @@
 import { withCanonicalBotAllocation } from '../simulation/canonicalBotAllocation'
+import { restoreChallengeRealitySkillPoints } from '../simulation/realityUpgrades'
 import { SKILL_PRESET_COUNT } from '../game-state/skillPresetSlots'
 import { completeRetiredResearchSecret } from '../simulation/avocadoMeditation'
 import { initializeSpeedrunTracking } from '../simulation/speedrunStatistics'
@@ -120,7 +121,7 @@ export class CanonicalRuntimeSession
     const source = prepared.copyValidatedState()
     this.initialState = cloneCanonicalRuntimeState({
       ...(options.captureAchievements ? {achievementEvidence:{unlocked: this.persistAchievements ? readSavedAchievements(source.idsAchievementEvidence) : [],statistics:{},presence:''}} : {}),
-      gameState: withCanonicalBotAllocation(completeRetiredResearchSecret(initializeSpeedrunTracking(this.hydrated.state))),
+      gameState: withCanonicalBotAllocation(restoreChallengeRealitySkillPoints(completeRetiredResearchSecret(initializeSpeedrunTracking(this.hydrated.state)))),
       compatibilityTuning: this.hydrated.compatibilityTuning,
       evaluationSnapshot:
         this.hydrated.skillEffectEvaluationSnapshot,

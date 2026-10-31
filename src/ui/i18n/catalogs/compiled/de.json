@@ -528,19 +528,19 @@
   "challenges.quantumAbandonRestart": [
     {
       "type": 0,
-      "value": "Dies startet einen neuen normalen Quanten-Durchlauf, ohne Quantensplitter zu vergeben. Die Einschränkungen der Herausforderung enden. Realität-Skillpunkte, Division, Quanten-Doppel-IP und Quantenverschränkung werden wieder aktiv. Der Realitätsfortschritt und spätere Ebenen bleiben erhalten."
+      "value": "Dies startet einen neuen normalen Quanten-Durchlauf, ohne Quantensplitter zu vergeben. Division, Quanten-Doppel-IP und Quantenverschränkung werden wieder aktiv. Realitätsfortschritt und spätere Ebenen bleiben erhalten."
     }
   ],
   "challenges.quantumRestart": [
     {
       "type": 0,
-      "value": "Startet einen neuen Quantenlauf ohne Quantensplitter zu vergeben. Division, Quanten-Doppel-IP und Quantenverschränkung sind inaktiv. Gekaufte Doppel-IP und spätere Ebenen bleiben aktiv. Abbrechen startet ebenfalls einen neuen normalen Lauf. Realitäts-Fertigkeitspunkte sind inaktiv; der Realitätsfortschritt bleibt erhalten."
+      "value": "Dies startet einen neuen Quanten-Durchlauf, ohne Quantensplitter zu vergeben. Realitäts-Fertigkeitspunkte bleiben verfügbar. Division, Quanten-Doppel-IP und Quantenverschränkung sind inaktiv. Realitätsfortschritt, gekaufte Boosts und spätere Ebenen bleiben erhalten. Auch ein Abbruch startet einen neuen normalen Durchlauf."
     }
   ],
   "challenges.quantumRules": [
     {
       "type": 0,
-      "value": "Division, Quanten-Doppel-IP und Quantenverschränkung sind in Quanten-Herausforderungen inaktiv. Gekaufte Boosts bleiben aktiv. Realitäts-Fertigkeitspunkte sind inaktiv; der Realitätsfortschritt bleibt erhalten."
+      "value": "Division, Quanten-Doppel-IP und Quantenverschränkung sind in Quanten-Herausforderungen inaktiv. Realitäts-Fertigkeitspunkte und gekaufte Boosts bleiben aktiv."
     }
   ],
   "challenges.quantumTitle": [
@@ -7249,12 +7249,6 @@
     {
       "type": 0,
       "value": "Welthandel III"
-    }
-  ],
-  "reality.skill-points-inactive": [
-    {
-      "type": 0,
-      "value": "Fertigkeitspunkte werden nach Verlassen der Quantenherausforderung wirksam."
     }
   ],
   "reality.strange-matter": [
@@ -17582,6 +17576,24 @@
     {
       "type": 0,
       "value": "Das wiederholbare Quanten-Upgrade Zeitbonus kostet anfangs 1.000 Quantensplitter. Sein IP-Multiplikator wächst während jeder Unendlichkeit. Tippe darauf, um die aktuelle und nächste Stufe zu vergleichen."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-12": [
+    {
+      "type": 0,
+      "value": "Version 4.1.12"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-12.reality-point-recovery": [
+    {
+      "type": 0,
+      "value": "Spielstände in einer laufenden Quanten-Herausforderung erhalten ihre zurückgehaltenen Realitäts-Fertigkeitspunkte beim Laden einmalig zurück."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-12.reality-points": [
+    {
+      "type": 0,
+      "value": "Realitäts-Fertigkeitspunkte bleiben jetzt in Quanten-Herausforderungen verfügbar, einschließlich Punkten aus während einer Herausforderung gekauften Verbesserungen."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

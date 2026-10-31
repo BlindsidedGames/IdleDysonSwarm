@@ -528,19 +528,19 @@
   "challenges.quantumAbandonRestart": [
     {
       "type": 0,
-      "value": "Cela démarre une nouvelle partie Quantique normale sans attribuer de Fragments quantiques. Les restrictions du défi prennent fin. Les points de compétence de Réalité, Division, Double IP quantique et Intrication quantique redeviennent actifs. La progression de Réalité et les étapes suivantes sont conservées."
+      "value": "Cela lance une nouvelle partie quantique normale sans attribuer de fragments quantiques. Division, Double IP quantique et Intrication quantique redeviennent actifs. La progression de Réalité et les niveaux suivants sont conservés."
     }
   ],
   "challenges.quantumRestart": [
     {
       "type": 0,
-      "value": "Commence un nouveau cycle quantique sans attribuer d’Éclats quantiques. Division, Double IP quantique et Intrication quantique sont inactifs. Double IP acheté et les couches ultérieures restent actifs. Abandonner commence aussi un nouveau cycle normal. Les points de compétence de Réalité sont inactifs ; la progression de Réalité est conservée."
+      "value": "Cela lance une nouvelle partie quantique sans attribuer de fragments quantiques. Les points de compétence de Réalité restent disponibles. Division, Double IP quantique et Intrication quantique sont inactifs. La progression de Réalité, les bonus achetés et les niveaux suivants sont conservés. Abandonner lance aussi une nouvelle partie normale."
     }
   ],
   "challenges.quantumRules": [
     {
       "type": 0,
-      "value": "Division, Double IP quantique et Intrication quantique sont inactifs dans les défis quantiques. Les bonus achetés restent actifs. Les points de compétence de Réalité sont inactifs ; la progression de Réalité est conservée."
+      "value": "Division, Double IP quantique et Intrication quantique sont inactifs dans les défis quantiques. Les points de compétence de Réalité et les bonus achetés restent actifs."
     }
   ],
   "challenges.quantumTitle": [
@@ -7249,12 +7249,6 @@
     {
       "type": 0,
       "value": "Commerce mondial III"
-    }
-  ],
-  "reality.skill-points-inactive": [
-    {
-      "type": 0,
-      "value": "Les points de compétence s’appliquent après avoir quitté le défi quantique."
     }
   ],
   "reality.strange-matter": [
@@ -17582,6 +17576,24 @@
     {
       "type": 0,
       "value": "Ajout de l’amélioration quantique répétable Bonus de temps, dès 1 000 éclats quantiques. Son multiplicateur d’IP augmente pendant chaque Infini. Touchez l’amélioration pour comparer le niveau actuel au suivant."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-12": [
+    {
+      "type": 0,
+      "value": "Version 4.1.12"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-12.reality-point-recovery": [
+    {
+      "type": 0,
+      "value": "Les sauvegardes déjà dans un défi quantique récupèrent une seule fois leurs points de compétence de Réalité suspendus au chargement."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-12.reality-points": [
+    {
+      "type": 0,
+      "value": "Les points de compétence de Réalité restent désormais disponibles dans les défis quantiques, y compris ceux des améliorations achetées pendant un défi."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

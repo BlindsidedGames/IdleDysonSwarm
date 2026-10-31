@@ -528,19 +528,19 @@
   "challenges.quantumAbandonRestart": [
     {
       "type": 0,
-      "value": "This starts a fresh normal Quantum run without awarding Quantum Shards. Challenge restrictions end. Reality Skill Points, Division, Quantum Double IP and Quantum Entanglement become active again. Reality progress and later layers are kept."
+      "value": "This starts a fresh normal Quantum run without awarding Quantum Shards. Division, Quantum Double IP and Quantum Entanglement become active again. Reality progress and later layers are kept."
     }
   ],
   "challenges.quantumRestart": [
     {
       "type": 0,
-      "value": "This starts a fresh Quantum run without awarding Quantum Shards. Reality Skill Points, Division, Quantum Double IP and Quantum Entanglement are inactive. Reality progress is kept. Purchased Double IP and later layers remain active. Abandoning also starts a fresh normal run."
+      "value": "This starts a fresh Quantum run without awarding Quantum Shards. Reality Skill Points remain available. Division, Quantum Double IP and Quantum Entanglement are inactive. Reality progress, purchased boosts and later layers are kept. Abandoning also starts a fresh normal run."
     }
   ],
   "challenges.quantumRules": [
     {
       "type": 0,
-      "value": "Reality Skill Points, Division, Quantum Double IP and Quantum Entanglement are inactive in Quantum challenges. Reality progress is kept. Purchased boosts remain active."
+      "value": "Division, Quantum Double IP and Quantum Entanglement are inactive in Quantum challenges. Reality Skill Points and purchased boosts remain active."
     }
   ],
   "challenges.quantumTitle": [
@@ -7249,12 +7249,6 @@
     {
       "type": 0,
       "value": "World Trade III"
-    }
-  ],
-  "reality.skill-points-inactive": [
-    {
-      "type": 0,
-      "value": "Skill points apply after leaving the Quantum challenge."
     }
   ],
   "reality.strange-matter": [
@@ -17582,6 +17576,24 @@
     {
       "type": 0,
       "value": "Added Time bonus, a repeatable Quantum upgrade starting at 1,000 Quantum Shards. Its IP multiplier grows during each Infinity. Tap it to compare the current and next levels."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-12": [
+    {
+      "type": 0,
+      "value": "Version 4.1.12"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-12.reality-point-recovery": [
+    {
+      "type": 0,
+      "value": "Saves already in a Quantum challenge recover their withheld Reality Skill Points once when loaded."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-12.reality-points": [
+    {
+      "type": 0,
+      "value": "Reality Skill Points now remain available in Quantum challenges, including points from upgrades bought during a challenge."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

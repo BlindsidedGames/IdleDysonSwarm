@@ -113,6 +113,9 @@ export const wikiMessages = defineMessages({
   quantumAdvice: { id: 'wiki.quantum.advice', defaultMessage: '<value>Quantum</value> upgrades open new systems and permanent efficiencies. Review each prerequisite and preview before committing to a reset.', description: 'Web-appropriate Quantum Leap planning guidance based on Unity Wiki intent.' },
 
   patchNotesMostRecent: { id: 'wiki.patch-notes.most-recent', defaultMessage: 'Most Recent', description: 'Heading for the latest Wiki patch notes.' },
+  patchNotesVersion4112: { id: 'wiki.patch-notes.version-4-1-12', defaultMessage: 'Version 4.1.12', description: 'Version 4.1.12 release notes.' },
+  patchNotesVersion4112RealityPoints: { id: 'wiki.patch-notes.version-4-1-12.reality-points', defaultMessage: 'Reality Skill Points now remain available in Quantum challenges, including points from upgrades bought during a challenge.', description: 'Version 4.1.12 release notes.' },
+  patchNotesVersion4112Recovery: { id: 'wiki.patch-notes.version-4-1-12.reality-point-recovery', defaultMessage: 'Saves already in a Quantum challenge recover their withheld Reality Skill Points once when loaded.', description: 'Version 4.1.12 release notes.' },
   patchNotesVersion4111: { id: 'wiki.patch-notes.version-4-1-11', defaultMessage: 'Version 4.1.11', description: 'Version 4.1.11 release notes.' },
   patchNotesVersion4111NoScience: { id: 'wiki.patch-notes.version-4-1-11.no-science-precursors', defaultMessage: 'Fixed fractured Shoulders of Precursors reducing Cash production to zero in No Science before Discovery.', description: 'Version 4.1.11 release notes.' },
   patchNotesVersion4111BeginningsAchievement: { id: 'wiki.patch-notes.version-4-1-11.beginnings-achievement', defaultMessage: 'Completing Beginnings now unlocks Challenge Accepted on all platforms.', description: 'Version 4.1.11 release notes.' },

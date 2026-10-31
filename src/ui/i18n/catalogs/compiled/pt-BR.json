@@ -528,19 +528,19 @@
   "challenges.quantumAbandonRestart": [
     {
       "type": 0,
-      "value": "Isso inicia uma nova partida Quântica normal sem conceder Fragmentos quânticos. As restrições do desafio terminam. Os pontos de habilidade da Realidade, Divisão, IP duplo quântico e Entrelaçamento quântico voltam a ficar ativos. O progresso da Realidade e as etapas posteriores são mantidos."
+      "value": "Isso inicia uma nova rodada quântica normal sem conceder Fragmentos Quânticos. Divisão, IP Quântico em Dobro e Entrelaçamento Quântico voltam a ficar ativos. O progresso de Realidade e as camadas posteriores são mantidos."
     }
   ],
   "challenges.quantumRestart": [
     {
       "type": 0,
-      "value": "Inicia uma nova rodada quântica sem conceder Fragmentos quânticos. Divisão, IP em dobro quântico e Entrelaçamento quântico ficam inativos. IP em dobro comprado e camadas posteriores permanecem ativos. Abandonar também inicia uma nova rodada normal. Os pontos de habilidade da Realidade ficam inativos; o progresso da Realidade é mantido."
+      "value": "Isso inicia uma nova rodada quântica sem conceder Fragmentos Quânticos. Os Pontos de Habilidade de Realidade continuam disponíveis. Divisão, IP Quântico em Dobro e Entrelaçamento Quântico ficam inativos. O progresso de Realidade, os bônus comprados e as camadas posteriores são mantidos. Abandonar também inicia uma nova rodada normal."
     }
   ],
   "challenges.quantumRules": [
     {
       "type": 0,
-      "value": "Divisão, IP em dobro quântico e Entrelaçamento quântico ficam inativos nos desafios quânticos. Bônus comprados permanecem ativos. Os pontos de habilidade da Realidade ficam inativos; o progresso da Realidade é mantido."
+      "value": "Divisão, IP Quântico em Dobro e Entrelaçamento Quântico ficam inativos nos desafios quânticos. Os Pontos de Habilidade de Realidade e os bônus comprados continuam ativos."
     }
   ],
   "challenges.quantumTitle": [
@@ -7249,12 +7249,6 @@
     {
       "type": 0,
       "value": "Comércio Mundial III"
-    }
-  ],
-  "reality.skill-points-inactive": [
-    {
-      "type": 0,
-      "value": "Os pontos de habilidade são aplicados após sair do desafio quântico."
     }
   ],
   "reality.strange-matter": [
@@ -17582,6 +17576,24 @@
     {
       "type": 0,
       "value": "Adicionada a melhoria quântica repetível Bônus de tempo, a partir de 1.000 fragmentos quânticos. Seu multiplicador de IP cresce durante cada Infinito. Toque na melhoria para comparar o nível atual com o próximo."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-12": [
+    {
+      "type": 0,
+      "value": "Versão 4.1.12"
+    }
+  ],
+  "wiki.patch-notes.version-4-1-12.reality-point-recovery": [
+    {
+      "type": 0,
+      "value": "Saves que já estão em um desafio quântico recuperam os Pontos de Habilidade de Realidade retidos uma única vez ao carregar."
+    }
+  ],
+  "wiki.patch-notes.version-4-1-12.reality-points": [
+    {
+      "type": 0,
+      "value": "Os Pontos de Habilidade de Realidade agora continuam disponíveis nos desafios quânticos, incluindo os de melhorias compradas durante um desafio."
     }
   ],
   "wiki.patch-notes.version-4-1-2": [

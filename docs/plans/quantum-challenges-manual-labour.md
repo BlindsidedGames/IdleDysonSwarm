@@ -3,10 +3,12 @@
 ## Scope and decisions
 
 Six new Quantum challenges join No Science; each grants two Catalysts once.
-All Quantum challenges suppress Reality-earned skill points, Division, Quantum
+All Quantum challenges suppress Division, Quantum
 Double IP and Quantum Entanglement without removing ownership or resetting Reality. Purchased boosts, Discovery, Avocato,
 Fractured skills and Fracturing remain available. Infinity challenges retain
-their previous rules.
+their previous rules. Reality-earned skill points remain available, including
+points from upgrades purchased during a challenge. Older active saves recover
+previously withheld Reality points once on load.
 
 | Challenge | Rule |
 | --- | --- |
@@ -192,6 +194,9 @@ localization, first-Dyson parity and web build pass.
 
 
 ### Reality skill-point restriction (2026-09-27)
+
+Historical implementation, superseded on 2026-11-01: Reality skill points now
+remain active in all Quantum challenges. The other shared restrictions remain.
 
 - All seven Quantum challenges exclude Reality upgrade SP from challenge entry
   and subsequent Infinity starting points, before automatic skill assignment.

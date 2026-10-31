@@ -1,4 +1,4 @@
-import { isQuantumChallengeActive } from './infinityChallenges'
+import { infinityChallenges, isQuantumChallengeActive } from './infinityChallenges'
 import {
   isFiniteNonNegativeNumber,
   isNonNegativeInteger,
@@ -95,6 +95,28 @@ export const REALITY_UPGRADE_DEFINITIONS: ReadonlyMap<
   RealityUpgradeId,
   RealityUpgradeDefinition
 > = loadedRealityUpgradeDefinitions.definitions
+
+/** Credit the Reality points withheld by older saves already in a Quantum challenge once. */
+export function restoreChallengeRealitySkillPoints(state: CanonicalGameStateV1): CanonicalGameStateV1 {
+  if (!isQuantumChallengeActive(state) || state.challenges?.realitySkillPointsEnabled === true) return state
+  let restored = 0n
+  for (const id of REALITY_UPGRADE_IDS) {
+    if (getUpgradeOwnership(state, id) !== true) continue
+    const definition = REALITY_UPGRADE_DEFINITIONS.get(id)
+    if (definition === undefined) return state
+    for (const effect of definition.purchaseEffects) {
+      if (effect.effectType !== 2) continue
+      const points = exactRoundedNonNegativeBigInt(effect.numericValue)
+      if (points === null) return state
+      restored = addDiscrete(restored, points)
+    }
+  }
+  return {
+    ...state,
+    challenges: { ...infinityChallenges(state), realitySkillPointsEnabled: true },
+    skills: { ...state.skills, points: addDiscrete(state.skills.points, restored) },
+  }
+}
 
 /**
  * Purchases one Reality-layer upgrade using only its exported authored
@@ -440,7 +462,6 @@ function applyRealityUpgradeEffect(
     )
   }
   if (effect.effectType === 2) {
-    if (isQuantumChallengeActive(state)) return state
     return {
       ...state,
       skills: {

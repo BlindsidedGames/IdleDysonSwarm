@@ -57,7 +57,7 @@ IDs are stored in the existing challenge object; legacy completion flags remain
 readable. Transcendence preserves completion progress as before.
 
 Built by Hand requires Fractured Manual Labour. All facilities are disabled;
-the ten-Bot goal provides the first SP for Hand Assembly. Hands Off instead
+the ten-Bot goal provides an SP for Hand Assembly if no Reality points are available. Hands Off instead
 starts each run with one Assembly Line, permits generated facilities, and blocks
 manual/automatic facility purchases, including Infinity retention upgrades that
 grant facilities immediately. Grounded and Built by Hand apply the same rule to
@@ -69,12 +69,14 @@ Full rules, Manual Labour tuning and verification are recorded in
 [the implementation notes](../plans/quantum-challenges-manual-labour.md).
 
 
-Reality-earned skill points are suspended throughout Quantum challenges, including
-points from Reality upgrades bought during the challenge. Reality ownership and
-progress remain intact. Completion or abandonment restores the full contribution.
-The separate Avotation reward and points from ordinary challenge progression are
-not suppressed. Existing active saves recalculate starting SP at their next
-Infinity/restart. Supply Shortage's fixed 2× price growth overrides Reductive
+Reality-earned skill points remain available throughout Quantum challenges,
+including points from upgrades bought during a challenge. Challenge entry and
+subsequent Infinity resets include the full Reality contribution in the usual
+starting budget; ordinary assignments still follow the normal reset rules.
+Older saves already in a Quantum challenge receive their withheld Reality points
+once on load. The persisted `realitySkillPointsEnabled` marker prevents duplicate
+credit; the separate Avotation reward is not credited again. Division, Quantum
+Double IP and Quantum Entanglement remain inactive. Supply Shortage's fixed 2× price growth overrides Reductive
 Scaling; other challenges use ordinary price reductions.
 
 Built by Hand's 50/250 Tinker goals use the bounded per-run `completedTinkers`
