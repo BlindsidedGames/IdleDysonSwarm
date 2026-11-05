@@ -3,7 +3,7 @@ import { StoredTimeSimulation } from '../workers/storedTime/storedTimeSimulation
 import { SKILL_PRESET_COUNT } from '../game-state/skillPresetSlots'
 import { isQuantumChallengeActive } from '../simulation/infinityChallenges'
 import { markSpeedrunUsage, observeSpeedruns } from '../simulation/speedrunStatistics'
-import { pauseOfflineBoost } from '../simulation/offlineBoost'
+import { pauseOfflineBoost, resumeOfflineBoost } from '../simulation/offlineBoost'
 import {
   applyDevelopmentAction,
   applyDevelopmentDysonBots,
@@ -1379,10 +1379,21 @@ function applyPlayerCommand(
               ? 1
               : previousApplicationSequence + 1,
         })
+  let gameState = result.state
+  if (command.kind === 'infinity.request-reset') {
+    gameState = pauseOfflineBoost(gameState)
+  } else if (
+    command.kind === 'quantum.request-leap' ||
+    command.kind === 'dream.request-reset' ||
+    command.kind === 'dream.request-black-hole-reset'
+  ) {
+    gameState = resumeOfflineBoost(
+      gameState,
+      result.runtimeCarriers.storedTimeCheater === false,
+    )
+  }
   Object.assign(candidate, {
-    gameState: command.kind === 'infinity.request-reset' || command.kind === 'quantum.request-leap' ||
-      command.kind === 'dream.request-reset' || command.kind === 'dream.request-black-hole-reset'
-      ? pauseOfflineBoost(result.state) : result.state,
+    gameState,
     compatibilityTuning:
       result.runtimeCarriers.compatibilityTuning!,
     evaluationSnapshot:

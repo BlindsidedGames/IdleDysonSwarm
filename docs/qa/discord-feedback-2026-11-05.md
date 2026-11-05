@@ -111,9 +111,33 @@ Actual import/reset/export flows distinguish banked time from selected speed:
 | Manual Black Hole/Reality | 5x to 1x | Retained, less ordinary foreground consumption |
 | Automatic AI Reality reset | 5x to 5x | 83.292s consumed over 20.841 wall seconds, matching 4s/s |
 
-The manual pause is an intentional older policy in canonicalGameApplication;
+The manual pause was an intentional older policy in canonicalGameApplication;
 no direct reset-bank clearing was found. Genuine intermittent bank loss is not
-proven absent. Changing the manual pause requires the requested product choice.
+proven absent. Matthew subsequently chose the existing Off/Last/Max return
+setting for manual Quantum/Entanglement and both Reality resets. These commands
+now resume through that existing helper using the post-command integrity flag.
+Manual Infinity, challenge, Overflow and automatic reset paths retain their
+existing behavior. No save schema, mapping or bank fields changed.
+
+Independent source review found no blocker. Running-game checks with disposable
+imports covered all four manual commands under Off/Last/Max: speed returned to
+1/5/42x respectively while remembered Last remained 5x. Banked time was retained,
+less ordinary foreground consumption. A manual Infinity still paused at 1x;
+subsequent Quantum with Last restored remembered 5x. Deliberately selecting 1x
+remembered 1x and Last Quantum stayed at 1x. Empty-bank Max stayed at 1x, and a
+rejected Quantum did not resume acceleration. A normal Quantum
+Engage/Confirm UI flow also retained Last 5x and consumed only ordinary banked
+time. Most matrix cases used the mounted game's production import/export and
+dispatch callbacks; they are not claimed as twelve separate pointer flows.
+One Dream case raced an automatic Meteor reset and passed on an isolated retry.
+The cheat guard was reviewed statically; an imported true flag deliberately
+inherits the receiving game's integrity and was not bypassed for this check.
+
+Both 390x844 and 844x390 Offline Time screenshots were inspected after closing
+onboarding: speed, bank and selected Last setting are visible without clipping.
+TypeScript, lint, generated data and the approved 3-file/16-case save-safety
+suite passed after this change. This follow-up is source verification; native
+release artifacts remain pending a final identity and pricing decision.
 
 Other unresolved design scope: the new Time Bonus price curve; Transcendent
 offline-time generation/permanent effects; whether hiding Challenges means more
@@ -122,8 +146,21 @@ values should be exposed. Existing augment descriptions/comparisons are present.
 
 ## Release state
 
-No upload, deployment or public release has occurred. Destinations are awaiting
-Matthew's choice. Website publication is not assumed. Read-only preflight found
+No upload, deployment or public release has occurred. Matthew confirmed the
+current standalone Classic game should use the next 4.2.x after his latest
+4.2 TestFlight version. Classic/Modern hosting is not being restored. Historical
+4.2.3 source 47bae597 used the shelved rework, a different Modern save schema
+and no Time Bonus; it is not this release's gameplay baseline. Current Classic
+retains IDSWEB1/schema 20 and existing save storage.
+
+The latest actual TestFlight 4.2 patch must be read before assigning the next
+marketing version. Both existing App Store Connect tabs are signed out, and
+saved-password AutoFill access was denied by automatic approval review. No
+retry, password access or alternative credential access was attempted. Manual
+user sign-in is needed before that verification. Metadata remains unchanged;
+historical 4.2.3 alone is not proof that 4.2.4 is the next unused patch.
+
+Website publication is not assumed. Read-only preflight found
 Android Internal 2026103101 / 4.1.12 available to testers and production
 2026103001 / 4.1.11 at full rollout, with no unpublished changes. Existing Apple
 and Steamworks web sessions were signed out; their current identities need
@@ -135,3 +172,38 @@ Local Java/Android SDK/upload-key setup, Xcode and signing identities exist.
 Final source, notes and unique metadata must be frozen before the canonical
 clean-tree release gate. Steam needs candidate-specific Electron packages/VDFs;
 the generic legacy Unity uploader is inappropriate.
+
+## Time Bonus pricing investigation
+
+No shipping prices changed. Actual canonical transactions in disposable source
+copies compared candidate A (42M/42B/42T/42Qa shards, x1000 throughout) with
+Matthew's original B (42B/42T/42Qa/42Qi). A is an explicit interpretation of an
+earlier first purchase, not an approved later-tier curve. A first-only variation
+(42M/42T/42Qa/42Qi) was also calculated separately.
+
+All A purchases accepted with exact debits and valid resulting states. B's
+42Qi final purchase rejected even at the maximum valid wallet: its
+42,000,000,000,000,000,000-shard price exceeds the 9,223,372,036,854,775,807
+wallet limit. No numeric/save-contract expansion was made.
+
+The first purchase requires 1.764B IP for A versus 1.764T for B. In a synthetic
+1T-IP conversion followed by an unchanged underlying payout with fully matured
+bonus, A reaches level 2 and B level 1. At maximum Bots, 19 Divisions and both
+Double IP bonuses, A's optimistic per-tier payout bounds are 1/1/1/112 at full
+maturity, or 1/1/1/183 at 300 seconds. B's are 1/2/443/impossible at full maturity.
+These are affordability bounds, not production progression or playtime proof.
+Existing ownership/savings, varying run ages and production feedback can alter
+pacing. Time Bonus levels replace the previous level's multiplier; their
+21/81/321/1281 maxima do not multiply together.
+
+All other bounded Quantum upgrades cost only 1,048,694 shards together; the
+three unlimited boosters retain their one-shard prices. Current canonical
+conversion spends 42 IP per shard and removes that IP's facility multiplier.
+Both the enormous flat booster ownership and this immediate IP multiplier loss
+were included in the analysis. Repricing Time Bonus alone does not balance the
+rest of the store. Existing purchased levels remain owned.
+
+Raw ordered transactions, candidate command logs, reward bounds and the two
+new screenshots are under the external qa-evidence directory alongside the
+original review images. Disposable experimental source copies and helpers were
+removed; no real saves were used.
