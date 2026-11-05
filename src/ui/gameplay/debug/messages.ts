@@ -35,7 +35,7 @@ export const debugSurfaceMessages = defineMessages({
   lockTabs: { id: 'debug.lock-tabs', defaultMessage: 'Lock tabs', description: 'Removes the developer tab override; progression unlocks remain available.' },
   timing: { id: 'debug.timing', defaultMessage: 'Tinker timing', description: 'Heading for developer Tinker timing controls.' },
   tinkerOneSecond: { id: 'debug.tinker-one-second', defaultMessage: 'Set Tinker to 1 second', description: 'Developer action that sets Tinker duration to one second.' },
-  tinkerInstant: { id: 'debug.tinker-instant', defaultMessage: 'Set Tinker to instant', description: 'Developer action that makes Tinker complete instantly.' },
+  tinkerMinimum: { id: 'debug.tinker-minimum', defaultMessage: 'Set Tinker to {seconds} seconds', description: 'Developer action that sets the ordinary Tinker minimum duration; seconds is locale-formatted.' },
   maintenance: { id: 'debug.maintenance', defaultMessage: 'Maintenance', description: 'Heading for developer maintenance controls.' },
   recalculateSkillPoints: { id: 'debug.recalculate-skill-points', defaultMessage: 'Recalculate Skill Points', description: 'Developer action that recalculates earned Skill Points.' },
   resetSecretProgress: { id: 'debug.reset-secret-progress', defaultMessage: 'Reset Secret Progress', description: 'Developer action that resets Avotation secret progress.' },

@@ -10,6 +10,7 @@ import type { CanonicalPlayerCommand } from '../../../application/canonicalPlaye
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import { Button, CollapsibleSection, StatusFeedback, InlineImageSymbol, InlineResourceAmount } from '../../components'
 import { challengeMessages as messages } from './challengeMessages'
+import { challengePresentation } from './challengePresentation'
 
 type ChallengeCommand = Extract<CanonicalPlayerCommand, { kind: `challenge.${string}` }>
 type ChallengeProps = {
@@ -86,15 +87,3 @@ function ChallengeCard({ progress, overflowReached, developmentVisible = false, 
       {failed && <StatusFeedback tone="error">{intl.formatMessage(messages.failure)}</StatusFeedback>}
     </article>
 }
-
-const challengePresentation = {
-  'blank-slate': { name: messages.blankSlate, description: messages.description },
-  'trial-and-error': { name: messages.trialAndError, description: messages.trialDescription },
-  'no-science': { name: messages.noScience, description: messages.noScienceDescription },
-  'short-circuit': { name: messages.shortCircuit, description: messages.shortCircuitDescription },
-  'grounded': { name: messages.grounded, description: messages.groundedDescription },
-  'built-by-hand': { name: messages.builtByHand, description: messages.builtByHandDescription },
-  'hands-off': { name: messages.handsOff, description: messages.handsOffDescription },
-  'commitment-issues': { name: messages.commitmentIssues, description: messages.commitmentIssuesDescription },
-  'supply-shortage': { name: messages.supplyShortage, description: messages.supplyShortageDescription },
-} as const

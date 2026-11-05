@@ -921,10 +921,18 @@
       "value": "Régler la durée du Tinker"
     }
   ],
-  "debug.tinker-instant": [
+  "debug.tinker-minimum": [
     {
       "type": 0,
-      "value": "Rendre le Tinker instantané"
+      "value": "Régler le Tinker sur "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " seconde"
     }
   ],
   "debug.tinker-one-second": [
@@ -9125,6 +9133,12 @@
     {
       "type": 0,
       "value": "Données de sauvegarde"
+    }
+  ],
+  "settings.show-dabocados": [
+    {
+      "type": 0,
+      "value": "Afficher les dabocados"
     }
   ],
   "settings.timestamp-exports": [
@@ -18224,6 +18238,54 @@
     {
       "type": 0,
       "value": "Amélioration du Temps stocké afin que les dépenses en double ou simultanées soient refusées en toute sécurité, que les tâches actives conservent leur progression et leurs contrôles d’annulation, et que les réglages non terminés restent intacts lors d’un changement de page."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4": [
+    {
+      "type": 0,
+      "value": "Version 4.2.4"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.challenge": [
+    {
+      "type": 0,
+      "value": "Un défi actif reste visible en haut. Sélectionnez son nom pour ouvrir les Défis."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.navigation": [
+    {
+      "type": 0,
+      "value": "Les onglets du bas activés défilent désormais si la place manque. Tous restent accessibles."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.offline-speed": [
+    {
+      "type": 0,
+      "value": "Les réinitialisations manuelles de Quantum et de Réalité respectent désormais le réglage du Temps hors ligne : Désactivé, Dernière vitesse ou Vitesse max. Le temps stocké est conservé."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.polish": [
+    {
+      "type": 0,
+      "value": "Correction du zoom lors de la saisie du temps cible d’Infinity, amélioration du retour à la ligne des valeurs du menu latéral et agrandissement du texte des boutons Quantum."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.progression": [
+    {
+      "type": 0,
+      "value": "Les compétences ne nécessitent plus de première Infinity. Les statistiques de l’essaim restent visibles lorsque l’Âge spatial est replié."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.settings": [
+    {
+      "type": 0,
+      "value": "Les paramètres affichent désormais les icônes des onglets. Après avoir terminé l’Easter egg, vous pouvez afficher ou masquer les dabocados."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.time-bonus": [
+    {
+      "type": 0,
+      "value": "Les prochains achats de Bonus de temps coûtent 42 millions, 42 milliards, 42 billions et 42 billiards de fragments quantiques. Les niveaux déjà achetés sont conservés."
     }
   ],
   "wiki.patch-notes.version-4.accessibility": [

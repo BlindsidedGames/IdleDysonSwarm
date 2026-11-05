@@ -262,7 +262,7 @@ export function DebugSurface({
               <h2>{intl.formatMessage(messages.timing)}</h2>
               <div className="debug-surface__button-grid">
                 <ActionButton label={intl.formatMessage(messages.tinkerOneSecond)} disabled={pending} onClick={() => apply({ kind: 'set-tinker-interval', seconds: 1 }, intl.formatMessage(messages.actionSuccess))} />
-                <ActionButton label={intl.formatMessage(messages.tinkerInstant)} disabled={pending} onClick={() => apply({ kind: 'set-tinker-interval', seconds: 0 }, intl.formatMessage(messages.actionSuccess))} />
+                <ActionButton label={intl.formatMessage(messages.tinkerMinimum, { seconds: formatGameNumber(locale, 0.5) })} disabled={pending} onClick={() => apply({ kind: 'set-tinker-interval', seconds: 0.5 }, intl.formatMessage(messages.actionSuccess))} />
               </div>
             </section>
 

@@ -769,6 +769,8 @@
   background: #21172f;
   color: inherit;
   font: inherit;
+  /* iOS zooms focused text fields below 16 CSS pixels. Keep page zoom available. */
+  font-size: max(16px, var(--ui-text-body));
   font-variant-numeric: tabular-nums;
 }
 

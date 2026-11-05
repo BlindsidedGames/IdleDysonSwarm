@@ -1,5 +1,6 @@
 import { FACILITY_BALANCE } from './facilityBalance'
 import catalogJson from './generated/runtime-catalog.json'
+import { readUnityBoolean } from './runtimeValueGuards'
 import type {
   RuntimeGameAsset,
   RuntimeGameDataCatalog,
@@ -10,12 +11,25 @@ const legacyCatalog = catalogJson as unknown as RuntimeGameDataCatalog
 // Current gameplay overrides belong outside the frozen Unity compatibility capsule.
 export const gameDataCatalog: RuntimeGameDataCatalog = {
   ...legacyCatalog,
-  assets: legacyCatalog.assets.map((asset) => asset.kind === 'GameData.SkillDefinition' &&
-    (asset.id === 'banking' || asset.id === 'investmentPortfolio')
-    ? { ...asset, data: { ...asset.data, refundable: true } }
-    : asset.kind === 'GameData.FacilityDefinition' && FACILITY_BALANCE[asset.id]
-      ? { ...asset, data: { ...asset.data, ...FACILITY_BALANCE[asset.id] } }
-      : asset),
+  assets: legacyCatalog.assets.map((asset) => {
+    if (asset.kind === 'GameData.SkillDefinition') {
+      const removeFirstInfinityGate = readUnityBoolean(asset.data.firstRunBlocked) === true
+      const makeRefundable = asset.id === 'banking' || asset.id === 'investmentPortfolio'
+      if (!removeFirstInfinityGate && !makeRefundable) return asset
+      return {
+        ...asset,
+        data: {
+          ...asset.data,
+          ...(removeFirstInfinityGate ? { firstRunBlocked: false } : {}),
+          ...(makeRefundable ? { refundable: true } : {}),
+        },
+      }
+    }
+    if (asset.kind === 'GameData.FacilityDefinition' && FACILITY_BALANCE[asset.id]) {
+      return { ...asset, data: { ...asset.data, ...FACILITY_BALANCE[asset.id] } }
+    }
+    return asset
+  }),
 }
 
 // Keep kind and ID as separate keys: this lookup runs throughout each game

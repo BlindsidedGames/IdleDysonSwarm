@@ -32,7 +32,7 @@ export type CanonicalDevelopmentAction =
   | { readonly kind: 'add-influence'; readonly amount: number }
   | { readonly kind: 'add-strange-matter'; readonly amount: number }
   | { readonly kind: 'add-offline-time'; readonly seconds: number }
-  | { readonly kind: 'set-tinker-interval'; readonly seconds: 0 | 1 }
+  | { readonly kind: 'set-tinker-interval'; readonly seconds: 0 | 0.5 | 1 }
   | { readonly kind: 'recalculate-skill-points' }
   | { readonly kind: 'reset-secret-progress' }
   | { readonly kind: 'unlock-all-tabs' }

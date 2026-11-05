@@ -1,5 +1,7 @@
 import { orientationAvailable, readOrientationPreference, applyOrientationPreference, type OrientationPreference } from '../../../platform/screenOrientation'
 import { challengeMessages } from '../infinity/challengeMessages'
+import { navigationAssets } from '../shell/navigationAssets'
+import { InlineImageSymbol } from '../../components/InlineImageSymbol'
 import {
   useEffect,
   useId,
@@ -80,6 +82,9 @@ export interface SettingsSurfaceProps {
   readonly developmentOnly?: boolean
   readonly visualizationVisible?: boolean
   readonly onVisualizationVisibleChange?: (visible: boolean) => void
+  readonly dabocadosAvailable?: boolean
+  readonly showDabocados?: boolean
+  readonly onShowDabocadosChange?: (visible: boolean) => void
   readonly navigationVisibility?: Readonly<
     Record<string, boolean>
   >
@@ -164,6 +169,9 @@ export function SettingsSurface({
   developmentOnly = false,
   visualizationVisible = true,
   onVisualizationVisibleChange = () => undefined,
+  dabocadosAvailable = false,
+  showDabocados = true,
+  onShowDabocadosChange = () => undefined,
   navigationVisibility = DEFAULT_BOTTOM_NAVIGATION_VISIBILITY,
   onNavigationVisibilityChange = () => undefined,
   availableNavigationItems = BOTTOM_NAVIGATION_DESTINATION_IDS,
@@ -800,6 +808,16 @@ export function SettingsSurface({
         ) : null}
         {!developmentOnly ? (
           <section className="settings-surface__panel settings-surface__panel--navigation">
+            {dabocadosAvailable ? (
+              <label className="settings-surface__toggle">
+                <input
+                  type="checkbox"
+                  checked={showDabocados}
+                  onChange={event => onShowDabocadosChange(event.currentTarget.checked)}
+                />
+                <span>{intl.formatMessage(messages.showDabocados)}</span>
+              </label>
+            ) : null}
             <div className="settings-surface__copy">
               <h2>{intl.formatMessage(messages.navigationTitle)}</h2>
               <p>{intl.formatMessage(messages.navigationDescription)}</p>
@@ -833,6 +851,11 @@ export function SettingsSurface({
                         event.currentTarget.checked,
                       )
                     }
+                  />
+                  <InlineImageSymbol
+                    src={navigationAssets[item === 'offline-time' ? 'offlineTime' : item]}
+                    maskMode={item === 'challenges' || item === 'avocato' ? 'luminance' : undefined}
+                    tint
                   />
                   <span>{intl.formatMessage(message)}</span>
                 </label>

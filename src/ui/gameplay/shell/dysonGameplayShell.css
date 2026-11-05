@@ -637,6 +637,8 @@
 .dyson-shell[data-resource-header="false"][data-route-theme="quantum"]
   .dyson-shell__content,
 .dyson-shell[data-resource-header="false"][data-route-theme="statistics"]
+  .dyson-shell__content,
+.dyson-shell[data-resource-header="false"][data-persistent-notice="true"]
   .dyson-shell__content {
   padding-block-start: 0;
 }
@@ -660,8 +662,8 @@
   min-inline-size: 0;
 }
 
-/* Skills draws edge to edge, so a notice above its canvas owns the top inset. */
-.dyson-shell[data-resource-header="false"][data-route-theme="skills"]
+/* Notices above edge-to-edge routes own the inset when resource headers are absent. */
+.dyson-shell[data-resource-header="false"]
   .dyson-shell__header {
   padding-block-start: var(--safe-area-top);
 }
@@ -1104,7 +1106,11 @@
 }
 
 .dyson-navigation--bottom {
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scroll-padding-inline: 0.1rem;
 }
 
 .dyson-navigation__list {
@@ -1121,8 +1127,8 @@
 }
 
 .dyson-navigation--bottom .dyson-navigation__item {
-  flex: 1 1 0;
-  min-inline-size: 0;
+  flex: 1 0 var(--bottom-navigation-menu-width);
+  min-inline-size: 44px;
 }
 
 .dyson-navigation__item {
@@ -1972,11 +1978,15 @@
 /* Preserve the approved drawer widths, full targets and trailing metadata. */
 .dyson-navigation--drawer .dyson-navigation__link { min-block-size:max(44px, var(--target-minimum)); }
 .dyson-navigation--drawer .dyson-navigation__label { min-inline-size:0; overflow-wrap:anywhere; hyphens:auto; }
-.dyson-navigation__drawer-metadata { display:contents; }
-@media (max-width:720px) {
-  .dyson-navigation--drawer .dyson-navigation__link { flex-wrap:wrap; }
-  .dyson-navigation--drawer .dyson-navigation__label { flex:1 1 0; }
-  .dyson-navigation__drawer-metadata { display:flex; flex:0 0 100%; min-inline-size:0; justify-content:flex-end; gap:var(--ui-control-gap); }
+.dyson-navigation--drawer .dyson-navigation__label { flex:1 1 0; }
+.dyson-navigation__drawer-metadata {
+  display:flex;
+  flex:0 0 auto;
+  margin-inline-start:auto;
+  align-items:center;
+  justify-content:flex-end;
+  gap:var(--ui-control-gap);
+  white-space:nowrap;
 }
 .dyson-shell:is([data-route-theme="bots"], [data-route-theme="store"], [data-route-theme="story"], [data-route-theme="wiki"]) .dyson-navigation--drawer .dyson-navigation__link[aria-current="page"] { background-color:#d1b6d7; }
 .dyson-shell[data-route-theme="research"] .dyson-navigation--drawer .dyson-navigation__link[aria-current="page"] .dyson-navigation__icon { color:var(--theme-page); }

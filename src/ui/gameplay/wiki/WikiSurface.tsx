@@ -491,6 +491,16 @@ function PatchNotesArticle() {
       <div className="wiki-surface__long-form-list">
         <section className="wiki-surface__section">
           <h3>{intl.formatMessage(messages.patchNotesMostRecent)}</h3>
+          <h4>{intl.formatMessage(messages.patchNotesVersion424)}</h4>
+          <ul className="wiki-surface__patch-note-list">
+            <li>{intl.formatMessage(messages.patchNotesVersion424TimeBonus)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion424OfflineSpeed)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion424Navigation)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion424Polish)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion424Progression)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion424Settings)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion424Challenge)}</li>
+          </ul>
           <h4>{intl.formatMessage(messages.patchNotesVersion4112)}</h4>
           <ul className="wiki-surface__patch-note-list">
             <li>{intl.formatMessage(messages.patchNotesVersion4112RealityPoints)}</li>

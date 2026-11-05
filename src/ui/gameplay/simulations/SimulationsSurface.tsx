@@ -523,6 +523,10 @@ function SimulationCategoryGroup({
   readonly showFormulas: boolean
   readonly dispatchPlayer: SimulationsSurfaceProps['dispatchPlayer']
 }) {
+  const swarmStats = group.id === 'space-age'
+    ? group.categories.flatMap(category => category.panels)
+        .find(panel => panel.id === 'swarm-stats')
+    : undefined
   return (
     <CollapsibleSection
       className={`simulation-category simulation-category--${group.id}`}
@@ -530,6 +534,15 @@ function SimulationCategoryGroup({
       defaultExpanded={false}
       storageKey={`simulations.live.${group.id}`}
       ariaLabel={group.title}
+      collapsedContent={swarmStats ? (
+        <SimulationPanelCard
+          panel={swarmStats}
+          reducedMotion={reducedMotion}
+          showFormulas={showFormulas}
+          headingLevel="h3"
+          dispatchPlayer={dispatchPlayer}
+        />
+      ) : undefined}
       title={
         <span className="simulation-category__title">
           <span>{group.title}</span>
