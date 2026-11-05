@@ -2017,14 +2017,22 @@
       "value": "]"
     }
   ],
-  "debug.tinker-instant": [
+  "debug.tinker-minimum": [
     {
       "type": 0,
       "value": "["
     },
     {
       "type": 0,
-      "value": "Şḗḗŧ Ŧīƞķḗḗř ŧǿǿ īƞşŧȧȧƞŧ"
+      "value": "Şḗḗŧ Ŧīƞķḗḗř ŧǿǿ "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " şḗḗƈǿǿƞḓş"
     },
     {
       "type": 0,
@@ -18089,6 +18097,20 @@
     {
       "type": 0,
       "value": "Şȧȧṽḗḗ Ḓȧȧŧȧȧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.show-dabocados": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şħǿǿẇ ḓȧȧƀǿǿƈȧȧḓǿǿş"
     },
     {
       "type": 0,

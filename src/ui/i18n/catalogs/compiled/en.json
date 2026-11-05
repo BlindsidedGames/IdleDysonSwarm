@@ -921,10 +921,18 @@
       "value": "Tinker timing"
     }
   ],
-  "debug.tinker-instant": [
+  "debug.tinker-minimum": [
     {
       "type": 0,
-      "value": "Set Tinker to instant"
+      "value": "Set Tinker to "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " seconds"
     }
   ],
   "debug.tinker-one-second": [
@@ -9125,6 +9133,12 @@
     {
       "type": 0,
       "value": "Save Data"
+    }
+  ],
+  "settings.show-dabocados": [
+    {
+      "type": 0,
+      "value": "Show dabocados"
     }
   ],
   "settings.timestamp-exports": [

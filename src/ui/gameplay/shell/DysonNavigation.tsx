@@ -1,14 +1,13 @@
 import type {
   DysonNavigationPresentation,
 } from './contracts'
-import { fitBottomItems } from './bottomNavigationLayout'
+import { useEffect, useRef } from 'react'
 
 export interface DysonNavigationProps
   extends DysonNavigationPresentation {
   readonly placement: 'drawer' | 'bottom'
   readonly onNavigate?: () => void
   readonly interactive?: boolean
-  readonly maxItems?: number
 }
 
 /**
@@ -22,18 +21,29 @@ export function DysonNavigation({
   placement,
   onNavigate,
   interactive = true,
-  maxItems,
 }: DysonNavigationProps) {
+  const navigationRef = useRef<HTMLElement>(null)
   const eligibleItems =
     placement === 'bottom'
       ? items.filter((item) => item.bottom !== false)
       : items
-  const visibleItems = placement === 'bottom' && maxItems !== undefined
-    ? fitBottomItems(eligibleItems, maxItems)
-    : eligibleItems
+  const currentItemId = eligibleItems.find(item => item.current)?.id
+  const itemIds = eligibleItems.map(item => item.id).join(',')
+  useEffect(() => {
+    if (placement !== 'bottom') return
+    const element = navigationRef.current
+    const revealCurrent = () => element?.querySelector('[aria-current="page"]')
+      ?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+    revealCurrent()
+    if (!element || typeof ResizeObserver === 'undefined') return
+    const observer = new ResizeObserver(revealCurrent)
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [placement, currentItemId, itemIds])
 
   return (
     <nav
+      ref={navigationRef}
       className={`dyson-navigation dyson-navigation--${placement}`}
       aria-label={
         placement === 'drawer'
@@ -43,7 +53,7 @@ export function DysonNavigation({
       data-placement={placement}
     >
       <ul className="dyson-navigation__list">
-        {visibleItems.map((item) => (
+        {eligibleItems.map((item) => (
           <li
             key={item.id}
             className="dyson-navigation__item"

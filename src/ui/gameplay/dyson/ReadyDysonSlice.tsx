@@ -7,6 +7,7 @@ import { useConfirmedTabPresetDispatch } from '../skills/useConfirmedTabPresetDi
 import { StoredTimeNavigationProgress } from '../offline-time/QuickStoredTime'
 import { isAvocatoRouteUnlocked } from './avocatoNavigation'
 import { InfinityChallenges } from '../infinity/InfinityChallenges'
+import { ActiveChallengeMarker } from '../infinity/ActiveChallengeMarker'
 import { challengeMessages } from '../infinity/challengeMessages'
 import { avocatoMessages } from '../quantum/messages'
 import { useBotBoost } from '../store/useBotBoost'
@@ -186,6 +187,7 @@ export const QUANTUM_HIDE_MAXED_STORAGE_KEY =
   'idle-dyson-swarm.quantum-hide-maxed.v1'
 const SKILL_PRESET_APPLICATION_NOTICES_STORAGE_KEY =
   'idle-dyson-swarm.skill-preset-application-notices.v1'
+const HIDE_DABOCADOS_STORAGE_KEY = 'idle-dyson-swarm.hide-dabocados.v1'
 const SettingsSurface = lazy(async () => {
   const module = await import('../settings')
   return { default: module.SettingsSurface }
@@ -620,6 +622,8 @@ function ReadyDysonSliceContent({
     useState(false)
   const [avotationCompletionVisible, setAvotationCompletionVisible] =
     useState(false)
+  const [hideDabocados, setHideDabocados] = useState(() =>
+    readBooleanPresentationPreference(HIDE_DABOCADOS_STORAGE_KEY))
   const [quantumHideMaxed, setQuantumHideMaxed] =
     useState(() =>
       readBooleanPresentationPreference(QUANTUM_HIDE_MAXED_STORAGE_KEY),
@@ -908,6 +912,9 @@ function ReadyDysonSliceContent({
   const simulationsActive = route === 'simulations'
   const quantumRouteActive = route === 'quantum'
   const avocatoActive = route === 'avocato'
+  const activeChallenge = gameplay.progression.challenges?.active
+  const showOverflowNotice = gameplay.progression.infinity.botCapTransitionPending &&
+    !avocatoActive && !infinityActive
   const quantumNavigationActive = quantumRouteActive || (avocatoActive && !avocatoRouteUnlocked)
   const storyActive = route === 'story'
   const wikiActive = route === 'wiki'
@@ -1427,6 +1434,12 @@ function ReadyDysonSliceContent({
                     import.meta.env.DEV ? development : undefined
                   }
                   visualizationVisible={visualizationVisible}
+                  dabocadosAvailable={gameplay.progression.secretProgress.completed}
+                  showDabocados={!hideDabocados}
+                  onShowDabocadosChange={(visible) => {
+                    setHideDabocados(!visible)
+                    writeBooleanPresentationPreference(HIDE_DABOCADOS_STORAGE_KEY, !visible)
+                  }}
                   onVisualizationVisibleChange={(visible) => {
                     setVisualizationVisible(visible)
                     writeVisualizationPreference(visible)
@@ -2136,20 +2149,23 @@ function ReadyDysonSliceContent({
             : undefined
       }
       persistentNotice={
-        gameplay.progression.infinity.botCapTransitionPending && !avocatoActive && !infinityActive ? (
-          <div className="dyson-overflow-notice" role="status">
-            <strong>{intl.formatMessage(avocatoMessages.overflowReached)}</strong>
-            <button type="button" onClick={() => onRouteChange('avocato')}>
-              {intl.formatMessage(avocatoMessages.overflowOpen)}
-            </button>
-          </div>
-        ) : gameplay.progression.challenges?.active === 'blank-slate' && skillsActive ? (
-          <div className="dyson-overflow-notice" role="status">
-            <strong>{intl.formatMessage(challengeMessages.active)}</strong>
-            <button type="button" onClick={() => navigateTo('challenges')}>
-              {intl.formatMessage(challengeMessages.view)}
-            </button>
-          </div>
+        showOverflowNotice || activeChallenge != null ? (
+          <>
+            {showOverflowNotice ? (
+              <div className="dyson-overflow-notice" role="status">
+                <strong>{intl.formatMessage(avocatoMessages.overflowReached)}</strong>
+                <button type="button" onClick={() => onRouteChange('avocato')}>
+                  {intl.formatMessage(avocatoMessages.overflowOpen)}
+                </button>
+              </div>
+            ) : null}
+            {activeChallenge != null ? (
+              <ActiveChallengeMarker
+                challengeId={activeChallenge}
+                onOpen={() => navigateTo('challenges')}
+              />
+            ) : null}
+          </>
         ) : undefined
       }
       notifications={
@@ -2392,6 +2408,7 @@ function ReadyDysonSliceContent({
       {meditationPlacement !== null ? (
         <AvocatoMeditationSecretTrigger
           placement={meditationPlacement}
+          showFoundMarkers={!hideDabocados}
           requiredStepIndex={gameplay.progression.secretProgress.step}
           completed={gameplay.progression.secretProgress.completed}
           routeAvailable={
@@ -2407,6 +2424,7 @@ function ReadyDysonSliceContent({
       ) : null}
       <AvocatoMeditationSecretTrigger
         placement="side"
+        showFoundMarkers={!hideDabocados}
         requiredStepIndex={gameplay.progression.secretProgress.step}
         completed={gameplay.progression.secretProgress.completed}
         routeAvailable={

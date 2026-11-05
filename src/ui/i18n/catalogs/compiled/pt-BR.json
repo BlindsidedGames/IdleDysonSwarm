@@ -921,10 +921,18 @@
       "value": "Duração da Gambiarra"
     }
   ],
-  "debug.tinker-instant": [
+  "debug.tinker-minimum": [
     {
       "type": 0,
-      "value": "Tornar a Gambiarra instantânea"
+      "value": "Definir a Gambiarra para "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " segundos"
     }
   ],
   "debug.tinker-one-second": [
@@ -9125,6 +9133,12 @@
     {
       "type": 0,
       "value": "Dados salvos"
+    }
+  ],
+  "settings.show-dabocados": [
+    {
+      "type": 0,
+      "value": "Mostrar dabocados"
     }
   ],
   "settings.timestamp-exports": [

@@ -496,9 +496,9 @@
     "defaultMessage": "Tinker timing",
     "description": "Heading for developer Tinker timing controls."
   },
-  "debug.tinker-instant": {
-    "defaultMessage": "Set Tinker to instant",
-    "description": "Developer action that makes Tinker complete instantly."
+  "debug.tinker-minimum": {
+    "defaultMessage": "Set Tinker to {seconds} seconds",
+    "description": "Developer action that sets the ordinary Tinker minimum duration; seconds is locale-formatted."
   },
   "debug.tinker-one-second": {
     "defaultMessage": "Set Tinker to 1 second",
@@ -4276,6 +4276,10 @@
   "settings.save-data.title": {
     "defaultMessage": "Save Data",
     "description": "Heading for save management settings."
+  },
+  "settings.show-dabocados": {
+    "defaultMessage": "Show dabocados",
+    "description": "Show the found avocado markers after completing the Easter egg."
   },
   "settings.timestamp-exports": {
     "defaultMessage": "Timestamp export filenames",

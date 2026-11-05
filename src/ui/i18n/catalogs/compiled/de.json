@@ -921,10 +921,18 @@
       "value": "Basteldauer"
     }
   ],
-  "debug.tinker-instant": [
+  "debug.tinker-minimum": [
     {
       "type": 0,
-      "value": "Basteln auf sofort einstellen"
+      "value": "Basteln auf "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " Sekunden einstellen"
     }
   ],
   "debug.tinker-one-second": [
@@ -9125,6 +9133,12 @@
     {
       "type": 0,
       "value": "Speicherdaten"
+    }
+  ],
+  "settings.show-dabocados": [
+    {
+      "type": 0,
+      "value": "Dabocados anzeigen"
     }
   ],
   "settings.timestamp-exports": [

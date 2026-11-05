@@ -1,0 +1,25 @@
+.dyson-shell .ui-button.active-challenge-marker {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--ui-control-gap);
+  inline-size: 100%;
+  min-inline-size: 44px;
+  min-block-size: max(44px, var(--target-minimum));
+  padding: var(--ui-control-gap) var(--ui-panel-inset);
+  border-color: var(--theme-divider);
+  background: var(--theme-panel);
+  color: var(--theme-accent);
+  font-size: var(--ui-text-control);
+  font-weight: var(--font-weight-semibold);
+  text-align: start;
+}
+
+.active-challenge-marker > span {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.active-challenge-marker > .ui-inline-image-symbol {
+  flex: 0 0 auto;
+}

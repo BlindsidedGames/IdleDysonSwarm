@@ -921,10 +921,18 @@
       "value": "Régler la durée du Tinker"
     }
   ],
-  "debug.tinker-instant": [
+  "debug.tinker-minimum": [
     {
       "type": 0,
-      "value": "Rendre le Tinker instantané"
+      "value": "Régler le Tinker sur "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " seconde"
     }
   ],
   "debug.tinker-one-second": [
@@ -9125,6 +9133,12 @@
     {
       "type": 0,
       "value": "Données de sauvegarde"
+    }
+  ],
+  "settings.show-dabocados": [
+    {
+      "type": 0,
+      "value": "Afficher les dabocados"
     }
   ],
   "settings.timestamp-exports": [

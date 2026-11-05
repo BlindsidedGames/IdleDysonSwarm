@@ -16,7 +16,6 @@ import type {
 } from './contracts'
 import {
   deriveBottomNavigationLayout,
-  fitBottomItems,
 } from './bottomNavigationLayout'
 import { DysonNavigation } from './DysonNavigation'
 import { DysonResourceHeader } from './DysonResourceHeader'
@@ -83,14 +82,11 @@ export function DysonGameplayShell({
   const wideLayout = useMediaQuery(PERMANENT_NAVIGATION_QUERY)
   const compactMenuOpen = menuOpen && !wideLayout
   const drawerUnavailable = !wideLayout && !menuOpen
-  const visibleBottomItemIds = new Set(
-    fitBottomItems(
-      navigation.items.filter((item) => item.bottom !== false),
-      bottomLayout.maxItems,
-    ).map((item) => item.id),
+  const selectedBottomItemIds = new Set(
+    navigation.items.filter((item) => item.bottom !== false).map((item) => item.id),
   )
   const hasHiddenNewItem = navigation.items.some(
-    (item) => item.newlyUnlocked && !visibleBottomItemIds.has(item.id),
+    (item) => item.newlyUnlocked && !selectedBottomItemIds.has(item.id),
   )
 
   useEffect(() => {
@@ -189,6 +185,7 @@ export function DysonGameplayShell({
       dir={direction}
       data-menu-open={menuOpen}
       data-resource-header={showResourceHeader}
+      data-persistent-notice={persistentNotice != null || undefined}
       data-route-content={routeContent !== undefined}
       data-route-content-edge-to-edge={
         routeContentEdgeToEdge || undefined
@@ -403,7 +400,6 @@ export function DysonGameplayShell({
         <DysonNavigation
           {...navigation}
           placement="bottom"
-          maxItems={bottomLayout.maxItems}
           interactive={!compactMenuOpen && !wideLayout}
         />
         {releaseFooter !== undefined && (

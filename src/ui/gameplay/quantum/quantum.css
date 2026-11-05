@@ -136,7 +136,7 @@
   color: var(--quantum-action-text);
   font-family: var(--font-family-numeric);
   padding: 0.28rem;
-  font-size: calc(0.72rem * var(--game-text-scale));
+  font-size: var(--ui-text-control);
   font-weight: var(--font-weight-bold);
 }
 .quantum-leap-card > .ui-button:hover:not(:disabled),
@@ -176,7 +176,7 @@
 .quantum-upgrade-card h4 { color: white; font-size: calc(0.8rem * var(--game-text-scale)); line-height: 1.1; }
 .quantum-upgrade-card__level { color: #aaecac !important; font-family: var(--font-family-numeric); font-weight: var(--font-weight-semibold); }
 .quantum-upgrade-card__requirement { color: var(--quantum-accent) !important; font-size: calc(0.62rem * var(--game-text-scale)) !important; font-weight: var(--font-weight-semibold); }
-.quantum-upgrade-card > .ui-button { display: flex; min-block-size: var(--target-minimum); flex-direction: column; justify-content: center; gap: 0.12rem; padding: 0.28rem; font-size: calc(0.72rem * var(--game-text-scale)); }
+.quantum-upgrade-card > .ui-button { display: flex; min-block-size: var(--target-minimum); flex-direction: column; justify-content: center; gap: 0.12rem; padding: 0.28rem; font-size: var(--ui-text-control); }
 .quantum-upgrade-card--complete { background: var(--quantum-panel); }
 .quantum-upgrade-card[data-quantum-upgrade-id="TimeBonus"] > .ui-button { min-block-size: max(44px, var(--target-minimum)); }
 .quantum-upgrade-card--mystery { min-block-size: var(--target-minimum); grid-template-columns: minmax(0, 1fr); background: #28223a; color: #c9bddb; }

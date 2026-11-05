@@ -921,10 +921,18 @@
       "value": "工作時間"
     }
   ],
-  "debug.tinker-instant": [
+  "debug.tinker-minimum": [
     {
       "type": 0,
-      "value": "工作を即時完了に設定"
+      "value": "工作を"
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "秒に設定"
     }
   ],
   "debug.tinker-one-second": [
@@ -9125,6 +9133,12 @@
     {
       "type": 0,
       "value": "セーブデータ"
+    }
+  ],
+  "settings.show-dabocados": [
+    {
+      "type": 0,
+      "value": "ダボカドを表示"
     }
   ],
   "settings.timestamp-exports": [

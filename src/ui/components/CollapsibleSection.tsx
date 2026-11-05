@@ -18,6 +18,8 @@ export interface CollapsibleSectionProps {
   readonly title: ReactNode
   readonly ariaLabel?: string
   readonly children: ReactNode
+  /** A small, still-useful summary shown in place of the expanded content. */
+  readonly collapsedContent?: ReactNode
   readonly defaultExpanded?: boolean
   readonly headingLevel?: CollapsibleHeadingLevel
   readonly className?: string
@@ -26,13 +28,14 @@ export interface CollapsibleSectionProps {
 
 /**
  * Accessible disclosure with a versioned, UI-only browser preference.
- * Collapsed content is unmounted so it cannot remain in the tab order.
+ * Expanded content is unmounted on collapse so it cannot remain in the tab order.
  */
 export function CollapsibleSection({
   storageKey,
   title,
   ariaLabel,
   children,
+  collapsedContent,
   defaultExpanded = true,
   headingLevel: Heading = 'h2',
   className,
@@ -83,7 +86,7 @@ export function CollapsibleSection({
         <div id={contentId} className={contentClasses}>
           {children}
         </div>
-      ) : null}
+      ) : collapsedContent ? <div className={contentClasses}>{collapsedContent}</div> : null}
     </section>
   )
 }

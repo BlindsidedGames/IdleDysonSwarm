@@ -921,10 +921,18 @@
       "value": "Время Tinker"
     }
   ],
-  "debug.tinker-instant": [
+  "debug.tinker-minimum": [
     {
       "type": 0,
-      "value": "Сделать Tinker мгновенным"
+      "value": "Установить время Tinker: "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " секунды"
     }
   ],
   "debug.tinker-one-second": [
@@ -9125,6 +9133,12 @@
     {
       "type": 0,
       "value": "Данные сохранения"
+    }
+  ],
+  "settings.show-dabocados": [
+    {
+      "type": 0,
+      "value": "Показывать дабокадо"
     }
   ],
   "settings.timestamp-exports": [

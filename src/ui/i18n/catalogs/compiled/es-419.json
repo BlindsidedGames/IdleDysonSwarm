@@ -921,10 +921,18 @@
       "value": "Duración de Experimentar"
     }
   ],
-  "debug.tinker-instant": [
+  "debug.tinker-minimum": [
     {
       "type": 0,
-      "value": "Hacer que Experimentar sea instantáneo"
+      "value": "Ajustar Experimentar a "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " segundos"
     }
   ],
   "debug.tinker-one-second": [
@@ -9125,6 +9133,12 @@
     {
       "type": 0,
       "value": "Datos de partida"
+    }
+  ],
+  "settings.show-dabocados": [
+    {
+      "type": 0,
+      "value": "Mostrar dabocados"
     }
   ],
   "settings.timestamp-exports": [

@@ -1,6 +1,7 @@
 import { defineMessages } from 'react-intl'
 
 export const settingsSurfaceMessages = defineMessages({
+  showDabocados: { id: 'settings.show-dabocados', defaultMessage: 'Show dabocados', description: 'Show the found avocado markers after completing the Easter egg.' },
   interfaceSizeDescription: { id: 'settings.interface-size.description', defaultMessage: 'Change how the interface scales across the game', description: 'Desktop interface scaling description beneath its title.' },
   interfaceSize: { id: 'settings.interface-size', defaultMessage: 'Interface size', description: 'Desktop interface zoom for readability.' },
   timestampExports: { id: 'settings.timestamp-exports', defaultMessage: 'Timestamp export filenames', description: 'Optional UTC timestamp in exported save filenames.' },

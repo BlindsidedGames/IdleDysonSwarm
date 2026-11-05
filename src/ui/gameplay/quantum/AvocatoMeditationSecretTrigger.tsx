@@ -17,6 +17,7 @@ export interface AvocatoMeditationSecretTriggerProps {
   readonly placement: AvocatoMeditationPlacement
   readonly requiredStepIndex: number | null
   readonly completed: boolean
+  readonly showFoundMarkers?: boolean
   readonly routeAvailable: boolean
   readonly dispatchPlayer: (
     command: MeditationCommand,
@@ -48,6 +49,7 @@ export function AvocatoMeditationSecretTrigger({
   placement,
   requiredStepIndex,
   completed,
+  showFoundMarkers = true,
   routeAvailable,
   dispatchPlayer,
   onSequenceCompleted,
@@ -86,7 +88,7 @@ export function AvocatoMeditationSecretTrigger({
         )
         markedTarget?.setAttribute('data-avotation-target', placement)
       }
-      if (discovered && markedTarget !== null) {
+      if (discovered && (!completed || showFoundMarkers) && markedTarget !== null) {
         foundMarker = document.createElement('img')
         foundMarker.src = dabbingAvocadoUrl
         foundMarker.alt = ''
@@ -187,6 +189,7 @@ export function AvocatoMeditationSecretTrigger({
   }, [
     active,
     completed,
+    showFoundMarkers,
     discovered,
     dispatchPlayer,
     onSequenceCompleted,
