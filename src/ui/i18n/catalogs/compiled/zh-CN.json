@@ -365,6 +365,28 @@
       "value": "挑战进行中"
     }
   ],
+  "challenges.allHidden": [
+    {
+      "type": 0,
+      "value": "所有挑战均已完成。取消勾选“隐藏已完成挑战”即可重玩。"
+    }
+  ],
+  "challenges.anotherActive": [
+    {
+      "type": 0,
+      "value": "请先完成或放弃当前挑战。"
+    }
+  ],
+  "challenges.bestTime": [
+    {
+      "type": 0,
+      "value": "最佳用时："
+    },
+    {
+      "type": 1,
+      "value": "time"
+    }
+  ],
   "challenges.blankSlate": [
     {
       "type": 0,
@@ -445,6 +467,18 @@
       "value": "在已显示技能的详情中消耗1个催化剂，使基础效果永久生效并移除负面效果和互斥限制。断裂无法撤销，且在超越后保留。"
     }
   ],
+  "challenges.goal.infinity": [
+    {
+      "type": 0,
+      "value": "完成一次普通无限"
+    }
+  ],
+  "challenges.goal.quantum": [
+    {
+      "type": 0,
+      "value": "累计获得42 IP，然后进行量子跃迁"
+    }
+  ],
   "challenges.grounded": [
     {
       "type": 0,
@@ -467,6 +501,36 @@
     {
       "type": 0,
       "value": "在不购买设施且不手工组装的情况下完成一次量子轮回。开局获得一条装配线；设施的被动生成正常运作。"
+    }
+  ],
+  "challenges.help.permanent": [
+    {
+      "type": 0,
+      "value": "断裂的基础技能保持生效。强化仍需技能点，并会正常重置。"
+    }
+  ],
+  "challenges.help.rewards": [
+    {
+      "type": 0,
+      "value": "首次完成挑战可获得催化剂。重玩可刷新最佳用时。"
+    }
+  ],
+  "challenges.help.runs": [
+    {
+      "type": 0,
+      "value": "每次只能进行一项挑战。开始或放弃挑战会重新开始对应的无限或量子轮回，但不奖励重置货币。"
+    }
+  ],
+  "challenges.hideCompleted": [
+    {
+      "type": 0,
+      "value": "隐藏已完成挑战"
+    }
+  ],
+  "challenges.howItWorks": [
+    {
+      "type": 0,
+      "value": "挑战规则"
     }
   ],
   "challenges.manualLabourRequired": [
@@ -555,6 +619,18 @@
       "value": "重玩"
     }
   ],
+  "challenges.requiresInfinity": [
+    {
+      "type": 0,
+      "value": "先完成首次无限。"
+    }
+  ],
+  "challenges.requiresTranscend": [
+    {
+      "type": 0,
+      "value": "开始或放弃挑战前需先进行超越。"
+    }
+  ],
   "challenges.restart": [
     {
       "type": 0,
@@ -587,6 +663,60 @@
       "value": "挑战"
     }
   ],
+  "challenges.rule.blankSlate": [
+    {
+      "type": 0,
+      "value": "不能分配技能点。"
+    }
+  ],
+  "challenges.rule.builtByHand": [
+    {
+      "type": 0,
+      "value": "禁用所有设施。使用手工劳动的强化制造机器人。"
+    }
+  ],
+  "challenges.rule.commitment": [
+    {
+      "type": 0,
+      "value": "不能取消或替换技能分配。无限重置仍会正常清除分配。"
+    }
+  ],
+  "challenges.rule.grounded": [
+    {
+      "type": 0,
+      "value": "不能购买或生成行星及巨型结构。"
+    }
+  ],
+  "challenges.rule.handsOff": [
+    {
+      "type": 0,
+      "value": "不能购买设施或进行手工组装。开始时拥有1条装配线；被动生成仍然生效。"
+    }
+  ],
+  "challenges.rule.noScience": [
+    {
+      "type": 0,
+      "value": "禁用科学和研究。"
+    }
+  ],
+  "challenges.rule.shortCircuit": [
+    {
+      "type": 0,
+      "value": "面板寿命固定为2秒。"
+    }
+  ],
+  "challenges.rule.supply": [
+    {
+      "type": 0,
+      "value": "每次购买都会使设施价格翻倍。生成设施不会提高价格。"
+    }
+  ],
+  "challenges.rule.trial": [
+    {
+      "type": 0,
+      "value": "禁用研究购买。"
+    }
+  ],
   "challenges.shortCircuit": [
     {
       "type": 0,
@@ -609,6 +739,24 @@
     {
       "type": 0,
       "value": "开始"
+    }
+  ],
+  "challenges.status.active": [
+    {
+      "type": 0,
+      "value": "进行中"
+    }
+  ],
+  "challenges.status.completed": [
+    {
+      "type": 0,
+      "value": "已完成"
+    }
+  ],
+  "challenges.status.locked": [
+    {
+      "type": 0,
+      "value": "未解锁"
     }
   ],
   "challenges.supplyShortage": [
@@ -669,6 +817,12 @@
     {
       "type": 0,
       "value": "查看挑战"
+    }
+  ],
+  "challenges.wallet": [
+    {
+      "type": 0,
+      "value": "催化剂"
     }
   ],
   "debug.access-description": [

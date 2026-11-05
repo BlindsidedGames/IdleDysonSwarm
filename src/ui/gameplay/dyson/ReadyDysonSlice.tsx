@@ -624,6 +624,7 @@ function ReadyDysonSliceContent({
     useState(false)
   const [hideDabocados, setHideDabocados] = useState(() =>
     readBooleanPresentationPreference(HIDE_DABOCADOS_STORAGE_KEY))
+  const [challengeFocusRequest, setChallengeFocusRequest] = useState(0)
   const [quantumHideMaxed, setQuantumHideMaxed] =
     useState(() =>
       readBooleanPresentationPreference(QUANTUM_HIDE_MAXED_STORAGE_KEY),
@@ -1661,6 +1662,8 @@ function ReadyDysonSliceContent({
                         goalStage={gameplay.progression.dyson.goalStage}
                         developmentVisible={allTabsUnlocked}
                         overflowReached={gameplay.progression.infinity.botCapTransitionPending}
+                        focusActiveRequest={challengeFocusRequest}
+                        onFocusActiveHandled={() => setChallengeFocusRequest(0)}
                         dispatchPlayer={dispatchPlayer}
                       />}
                     </div>,
@@ -2162,7 +2165,10 @@ function ReadyDysonSliceContent({
             {activeChallenge != null ? (
               <ActiveChallengeMarker
                 challengeId={activeChallenge}
-                onOpen={() => navigateTo('challenges')}
+                onOpen={() => {
+                  setChallengeFocusRequest(request => request + 1)
+                  navigateTo('challenges')
+                }}
               />
             ) : null}
           </>

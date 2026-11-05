@@ -365,6 +365,28 @@
       "value": "Challenge active"
     }
   ],
+  "challenges.allHidden": [
+    {
+      "type": 0,
+      "value": "All challenges completed. Clear Hide completed to replay."
+    }
+  ],
+  "challenges.anotherActive": [
+    {
+      "type": 0,
+      "value": "Finish or abandon the active challenge first."
+    }
+  ],
+  "challenges.bestTime": [
+    {
+      "type": 0,
+      "value": "Best: "
+    },
+    {
+      "type": 1,
+      "value": "time"
+    }
+  ],
   "challenges.blankSlate": [
     {
       "type": 0,
@@ -445,6 +467,18 @@
       "value": "Spend 1 Catalyst in a revealed skill’s details to make its base effect permanent and remove its penalties and exclusions. Fracturing a skill cannot be undone and survives Transcendence."
     }
   ],
+  "challenges.goal.infinity": [
+    {
+      "type": 0,
+      "value": "Complete a normal Infinity"
+    }
+  ],
+  "challenges.goal.quantum": [
+    {
+      "type": 0,
+      "value": "Earn 42 total IP, then Quantum"
+    }
+  ],
   "challenges.grounded": [
     {
       "type": 0,
@@ -467,6 +501,36 @@
     {
       "type": 0,
       "value": "Complete a Quantum run without facility purchases or Tinkering. Start with one Assembly Line; passive facility generation works normally."
+    }
+  ],
+  "challenges.help.permanent": [
+    {
+      "type": 0,
+      "value": "Fractured base skills stay active. Augments use Skill Points and reset normally."
+    }
+  ],
+  "challenges.help.rewards": [
+    {
+      "type": 0,
+      "value": "Catalysts are awarded on the first completion. Replay to improve your best time."
+    }
+  ],
+  "challenges.help.runs": [
+    {
+      "type": 0,
+      "value": "One challenge at a time. Starting or abandoning restarts its Infinity or Quantum run without awarding prestige currency."
+    }
+  ],
+  "challenges.hideCompleted": [
+    {
+      "type": 0,
+      "value": "Hide completed"
+    }
+  ],
+  "challenges.howItWorks": [
+    {
+      "type": 0,
+      "value": "How challenges work"
     }
   ],
   "challenges.manualLabourRequired": [
@@ -555,6 +619,18 @@
       "value": "Replay"
     }
   ],
+  "challenges.requiresInfinity": [
+    {
+      "type": 0,
+      "value": "Complete your first Infinity."
+    }
+  ],
+  "challenges.requiresTranscend": [
+    {
+      "type": 0,
+      "value": "Transcend before starting or abandoning a challenge."
+    }
+  ],
   "challenges.restart": [
     {
       "type": 0,
@@ -587,6 +663,60 @@
       "value": "Challenges"
     }
   ],
+  "challenges.rule.blankSlate": [
+    {
+      "type": 0,
+      "value": "No Skill Point assignments."
+    }
+  ],
+  "challenges.rule.builtByHand": [
+    {
+      "type": 0,
+      "value": "All facilities disabled. Build Bots with Manual Labour augments."
+    }
+  ],
+  "challenges.rule.commitment": [
+    {
+      "type": 0,
+      "value": "No skill refunds or replacement. Infinity resets clear assignments normally."
+    }
+  ],
+  "challenges.rule.grounded": [
+    {
+      "type": 0,
+      "value": "No Planets or megastructures, purchased or generated."
+    }
+  ],
+  "challenges.rule.handsOff": [
+    {
+      "type": 0,
+      "value": "No facility purchases or Tinkering. Start with 1 Assembly Line; passive generation remains active."
+    }
+  ],
+  "challenges.rule.noScience": [
+    {
+      "type": 0,
+      "value": "Science and Research disabled."
+    }
+  ],
+  "challenges.rule.shortCircuit": [
+    {
+      "type": 0,
+      "value": "Panel lifetime fixed at 2 seconds."
+    }
+  ],
+  "challenges.rule.supply": [
+    {
+      "type": 0,
+      "value": "Facility prices double per purchase. Generated facilities do not raise prices."
+    }
+  ],
+  "challenges.rule.trial": [
+    {
+      "type": 0,
+      "value": "Research purchases disabled."
+    }
+  ],
   "challenges.shortCircuit": [
     {
       "type": 0,
@@ -609,6 +739,24 @@
     {
       "type": 0,
       "value": "Start"
+    }
+  ],
+  "challenges.status.active": [
+    {
+      "type": 0,
+      "value": "Active"
+    }
+  ],
+  "challenges.status.completed": [
+    {
+      "type": 0,
+      "value": "Completed"
+    }
+  ],
+  "challenges.status.locked": [
+    {
+      "type": 0,
+      "value": "Locked"
     }
   ],
   "challenges.supplyShortage": [
@@ -669,6 +817,12 @@
     {
       "type": 0,
       "value": "View challenge"
+    }
+  ],
+  "challenges.wallet": [
+    {
+      "type": 0,
+      "value": "Catalysts"
     }
   ],
   "debug.access-description": [
