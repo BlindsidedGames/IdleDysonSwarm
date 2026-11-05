@@ -153,12 +153,19 @@ current standalone Classic game should use the next 4.2.x after his latest
 and no Time Bonus; it is not this release's gameplay baseline. Current Classic
 retains IDSWEB1/schema 20 and existing save storage.
 
-The latest actual TestFlight 4.2 patch must be read before assigning the next
-marketing version. Both existing App Store Connect tabs are signed out, and
-saved-password AutoFill access was denied by automatic approval review. No
-retry, password access or alternative credential access was attempted. Manual
-user sign-in is needed before that verification. Metadata remains unchanged;
-historical 4.2.3 alone is not proof that 4.2.4 is the next unused patch.
+Fresh account verification used the existing authorized Xcode Organizer:
+Crashes > Idle Dyson Swarm (iOS) > Version > More Versions queried and loaded
+the full list with 4.2.3 highest; More Builds returned only 2610.17.1. Reload
+Organizer and another version-list read agreed. This is fresh account-query
+evidence rather than an inference from local archives. The candidate is now
+4.2.4 / 2026110501 (Apple 2611.05.01), with all generated host metadata synced.
+Fresh Google All app bundles search returned zero matches for 2026110501.
+
+Organizer's version/build records do not establish current TestFlight testing,
+compliance or group availability. Safari App Store Connect remains signed out.
+Saved-password AutoFill access was denied by automatic approval review; it was
+not retried, and no password, passkey, cookie, token or Keychain was accessed for
+the Organizer query. Tester availability still requires separate verification.
 
 Website publication is not assumed. Read-only preflight found
 Android Internal 2026103101 / 4.1.12 available to testers and production
@@ -173,15 +180,17 @@ Final source, notes and unique metadata must be frozen before the canonical
 clean-tree release gate. Steam needs candidate-specific Electron packages/VDFs;
 the generic legacy Unity uploader is inappropriate.
 
-## Time Bonus pricing investigation
+## Time Bonus pricing investigation and approved change
 
-No shipping prices changed. Actual canonical transactions in disposable source
-copies compared candidate A (42M/42B/42T/42Qa shards, x1000 throughout) with
-Matthew's original B (42B/42T/42Qa/42Qi). A is an explicit interpretation of an
-earlier first purchase, not an approved later-tier curve. A first-only variation
-(42M/42T/42Qa/42Qi) was also calculated separately.
+Actual canonical transactions in disposable source copies compared candidate A
+(42M/42B/42T/42Qa shards, x1000 throughout) with Matthew's original B
+(42B/42T/42Qa/42Qi). A first-only variation (42M/42T/42Qa/42Qi) was also calculated
+separately. Matthew subsequently approved A. The shared price helper now uses
+42,000,000 x 1000^owned-level exactly as bigint; fallback and upgrade-definition
+metadata use that same helper. The four-purchase cap and all bonus effects are
+unchanged. Existing owned levels and spending records are not repriced.
 
-All A purchases accepted with exact debits and valid resulting states. B's
+All experimental A purchases accepted with exact debits and valid resulting states. B's
 42Qi final purchase rejected even at the maximum valid wallet: its
 42,000,000,000,000,000,000-shard price exceeds the 9,223,372,036,854,775,807
 wallet limit. No numeric/save-contract expansion was made.
@@ -202,6 +211,15 @@ conversion spends 42 IP per shard and removes that IP's facility multiplier.
 Both the enormous flat booster ownership and this immediate IP multiplier loss
 were included in the analysis. Repricing Time Bonus alone does not balance the
 rest of the store. Existing purchased levels remain owned.
+
+Running-game verification of the approved implementation used normal purchase
+buttons for all four levels: each exact price was debited, level advanced to
+four, and stored time stayed at 43,200 seconds. With 41,999,999 shards, the first
+button was disabled and the production command rejected purchase without a
+debit. Synthetic legacy-owned levels 1-4 retained their old spent ledger and
+123 available shards through import/export/reimport/browser reload. Reload's
+ordinary away-time credit was distinguished from the price transactions.
+No schema migration, wallet-limit change or real-save access was needed.
 
 Raw ordered transactions, candidate command logs, reward bounds and the two
 new screenshots are under the external qa-evidence directory alongside the

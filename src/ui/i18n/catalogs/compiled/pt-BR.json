@@ -18240,6 +18240,54 @@
       "value": "Aprimoramos o Tempo Armazenado para rejeitar com segurança gastos duplicados ou sobrepostos, preservar o progresso e os controles de cancelamento de tarefas ativas e manter Configurações inacabadas ao trocar de página."
     }
   ],
+  "wiki.patch-notes.version-4-2-4": [
+    {
+      "type": 0,
+      "value": "Versão 4.2.4"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.challenge": [
+    {
+      "type": 0,
+      "value": "Um desafio ativo continua visível no topo. Selecione o nome dele para abrir Desafios."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.navigation": [
+    {
+      "type": 0,
+      "value": "As abas inferiores ativadas agora podem ser roladas quando não cabem. Todas continuam acessíveis."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.offline-speed": [
+    {
+      "type": 0,
+      "value": "Os resets manuais de Quantum e Realidade agora seguem o ajuste de Tempo Offline: Desativado, Última velocidade ou Velocidade máxima. O tempo armazenado é mantido."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.polish": [
+    {
+      "type": 0,
+      "value": "Corrigido o zoom ao digitar o tempo-alvo de Infinity, melhorada a quebra de linha dos valores no menu lateral e aumentado o texto dos botões de Quantum."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.progression": [
+    {
+      "type": 0,
+      "value": "As habilidades não exigem mais uma primeira Infinity. As estatísticas do enxame continuam visíveis com a Era Espacial recolhida."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.settings": [
+    {
+      "type": 0,
+      "value": "As configurações agora mostram os ícones das abas. Após concluir o Easter egg, você pode mostrar ou ocultar os dabocados."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.time-bonus": [
+    {
+      "type": 0,
+      "value": "As próximas compras de Bônus de tempo custam 42 milhões, 42 bilhões, 42 trilhões e 42 quadrilhões de Fragmentos Quânticos. Os níveis já comprados são mantidos."
+    }
+  ],
   "wiki.patch-notes.version-4.accessibility": [
     {
       "type": 0,

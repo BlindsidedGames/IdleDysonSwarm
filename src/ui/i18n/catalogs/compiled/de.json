@@ -18240,6 +18240,54 @@
       "value": "Gespeicherte Zeit wurde verbessert: Doppelte oder überlappende Ausgaben werden sicher abgelehnt, aktive Vorgänge behalten ihren Fortschritt und ihre Abbruchsteuerung, und unfertige Einstellungen bleiben beim Seitenwechsel erhalten."
     }
   ],
+  "wiki.patch-notes.version-4-2-4": [
+    {
+      "type": 0,
+      "value": "Version 4.2.4"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.challenge": [
+    {
+      "type": 0,
+      "value": "Eine aktive Herausforderung bleibt oben sichtbar. Wähle ihren Namen, um die Herausforderungen zu öffnen."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.navigation": [
+    {
+      "type": 0,
+      "value": "Aktivierte untere Tabs lassen sich jetzt scrollen, wenn der Platz nicht reicht. Jeder Tab bleibt erreichbar."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.offline-speed": [
+    {
+      "type": 0,
+      "value": "Manuelle Quantum- und Realitäts-Resets beachten jetzt die Offline-Zeit-Einstellung: Aus, Letzte Geschwindigkeit oder Maximale Geschwindigkeit. Gespeicherte Zeit bleibt erhalten."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.polish": [
+    {
+      "type": 0,
+      "value": "Das Zoomen bei der Eingabe einer Infinity-Zielzeit wurde behoben. Werte im Seitenmenü umbrechen besser, und die Schrift auf Quantum-Buttons ist größer."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.progression": [
+    {
+      "type": 0,
+      "value": "Fähigkeiten setzen keine erste Infinity mehr voraus. Schwarmstatistiken bleiben sichtbar, wenn das Weltraumzeitalter eingeklappt ist."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.settings": [
+    {
+      "type": 0,
+      "value": "Die Einstellungen zeigen jetzt Tab-Symbole. Nach Abschluss des Easter Eggs kannst du Dabocados ein- oder ausblenden."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.time-bonus": [
+    {
+      "type": 0,
+      "value": "Künftige Käufe von Zeitbonus kosten 42 Millionen, 42 Milliarden, 42 Billionen und 42 Billiarden Quantensplitter. Bereits gekaufte Stufen bleiben erhalten."
+    }
+  ],
   "wiki.patch-notes.version-4.accessibility": [
     {
       "type": 0,

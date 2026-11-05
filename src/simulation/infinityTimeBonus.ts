@@ -1,7 +1,7 @@
 export const INFINITY_TIME_BONUS_MAX_LEVEL = 4
 
 export function quantumTimeBonusCost(level: number): bigint {
-  return 1_000n * 10n ** BigInt(level)
+  return 42_000_000n * 1_000n ** BigInt(level)
 }
 
 export function infinityTimeBonusHalfSeconds(level: number): number {

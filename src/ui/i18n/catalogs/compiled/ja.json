@@ -18240,6 +18240,54 @@
       "value": "重複する蓄積時間の使用を安全に拒否し、進行中ジョブの進捗・取消操作と、画面移動時の未完了設定を保持するよう改善しました。"
     }
   ],
+  "wiki.patch-notes.version-4-2-4": [
+    {
+      "type": 0,
+      "value": "バージョン4.2.4"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.challenge": [
+    {
+      "type": 0,
+      "value": "進行中のチャレンジが画面上部に表示されます。名前を選ぶとチャレンジを開けます。"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.navigation": [
+    {
+      "type": 0,
+      "value": "有効な下部タブが収まらない場合、スクロールできるようになりました。すべてのタブにアクセスできます。"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.offline-speed": [
+    {
+      "type": 0,
+      "value": "量子と現実を手動でリセットすると、オフライン時間の設定「オフ」「前回の速度」「最大速度」が適用されるようになりました。蓄積した時間は維持されます。"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.polish": [
+    {
+      "type": 0,
+      "value": "Infinityの目標時間の入力中にズームする問題を修正し、サイドメニューの数値の折り返しを改善しました。量子ボタンの文字も大きくしました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.progression": [
+    {
+      "type": 0,
+      "value": "スキルに初回のInfinityが不要になりました。宇宙時代を折りたたんでもスウォームの統計が表示されます。"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.settings": [
+    {
+      "type": 0,
+      "value": "設定にタブのアイコンが表示されるようになりました。イースターエッグ完了後は、ダボカドの表示を切り替えられます。"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.time-bonus": [
+    {
+      "type": 0,
+      "value": "時間ボーナスの今後の購入費用は、順に4200万、420億、42兆、4京2000兆の量子の欠片になります。購入済みのレベルは維持されます。"
+    }
+  ],
   "wiki.patch-notes.version-4.accessibility": [
     {
       "type": 0,

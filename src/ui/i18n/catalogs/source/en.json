@@ -9070,6 +9070,38 @@
     "defaultMessage": "Improved Stored Time so duplicate or overlapping spends are safely rejected, active jobs retain their progress and cancellation controls, and unfinished settings remain intact when changing pages.",
     "description": "Version 4.1 release note for Stored Time reliability and controls."
   },
+  "wiki.patch-notes.version-4-2-4": {
+    "defaultMessage": "Version 4.2.4",
+    "description": "Version 4.2.4 release notes."
+  },
+  "wiki.patch-notes.version-4-2-4.challenge": {
+    "defaultMessage": "An active challenge stays visible at the top. Select its name to open Challenges.",
+    "description": "Version 4.2.4 release notes."
+  },
+  "wiki.patch-notes.version-4-2-4.navigation": {
+    "defaultMessage": "Enabled bottom tabs now scroll when they no longer fit, keeping every tab accessible.",
+    "description": "Version 4.2.4 release notes."
+  },
+  "wiki.patch-notes.version-4-2-4.offline-speed": {
+    "defaultMessage": "Manual Quantum and Reality resets now follow the Offline Time setting: Off, Last speed or Max speed. Banked time is retained.",
+    "description": "Version 4.2.4 release notes."
+  },
+  "wiki.patch-notes.version-4-2-4.polish": {
+    "defaultMessage": "Fixed zooming while typing an Infinity time target, improved sidebar value wrapping and enlarged Quantum button text.",
+    "description": "Version 4.2.4 release notes."
+  },
+  "wiki.patch-notes.version-4-2-4.progression": {
+    "defaultMessage": "Skills no longer require a first Infinity. Swarm statistics stay visible when Space Age is collapsed.",
+    "description": "Version 4.2.4 release notes."
+  },
+  "wiki.patch-notes.version-4-2-4.settings": {
+    "defaultMessage": "Settings now show tab icons. After completing the Easter egg, you can show or hide dabocados.",
+    "description": "Version 4.2.4 release notes."
+  },
+  "wiki.patch-notes.version-4-2-4.time-bonus": {
+    "defaultMessage": "Future Time bonus purchases cost 42 million, 42 billion, 42 trillion and 42 quadrillion Quantum Shards. Owned levels are kept.",
+    "description": "Version 4.2.4 release notes."
+  },
   "wiki.patch-notes.version-4.accessibility": {
     "defaultMessage": "Improved keyboard and screen-reader support, reduced-motion behavior, mobile text selection, text-field editing, focus handling, and rapid-touch protection.",
     "description": "Version 4 release note for accessibility and input support."

@@ -18240,6 +18240,54 @@
       "value": "Se mejoró el Tiempo almacenado para rechazar de forma segura los gastos duplicados o superpuestos, conservar el progreso y los controles de cancelación de los trabajos activos y mantener intactos los ajustes pendientes al cambiar de página."
     }
   ],
+  "wiki.patch-notes.version-4-2-4": [
+    {
+      "type": 0,
+      "value": "Versión 4.2.4"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.challenge": [
+    {
+      "type": 0,
+      "value": "El desafío activo permanece visible arriba. Selecciona su nombre para abrir Desafíos."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.navigation": [
+    {
+      "type": 0,
+      "value": "Las pestañas inferiores activadas ahora se desplazan cuando no caben. Todas siguen accesibles."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.offline-speed": [
+    {
+      "type": 0,
+      "value": "Los reinicios manuales de Quantum y Realidad ahora siguen el ajuste de Tiempo sin conexión: Desactivado, Última velocidad o Velocidad máxima. El tiempo almacenado se conserva."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.polish": [
+    {
+      "type": 0,
+      "value": "Se corrigió el zoom al escribir el tiempo objetivo de Infinity, se mejoró el ajuste de valores del menú lateral y se amplió el texto de los botones de Quantum."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.progression": [
+    {
+      "type": 0,
+      "value": "Las habilidades ya no requieren una primera Infinity. Las estadísticas del enjambre siguen visibles al contraer la Era espacial."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.settings": [
+    {
+      "type": 0,
+      "value": "Los ajustes ahora muestran los íconos de las pestañas. Tras completar el Easter egg, puedes mostrar u ocultar los dabocados."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-4.time-bonus": [
+    {
+      "type": 0,
+      "value": "Las próximas compras de Bonificación de tiempo cuestan 42 millones, 42 mil millones, 42 billones y 42 mil billones de fragmentos cuánticos. Conservas los niveles ya comprados."
+    }
+  ],
   "wiki.patch-notes.version-4.accessibility": [
     {
       "type": 0,

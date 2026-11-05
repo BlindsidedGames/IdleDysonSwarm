@@ -165,7 +165,7 @@ const FALLBACK_COSTS: Readonly<
   BreakTheLoop: 6n,
   QuantumEntanglement: 12n,
   Automation: 1n,
-  TimeBonus: 1_000n,
+  TimeBonus: quantumTimeBonusCost(0),
   Secrets: 1n,
   Division: 2n,
   Avocado: 42n,
@@ -686,7 +686,7 @@ function loadQuantumUpgradeDefinitions(): ReadonlyMap<
     })
   }
   definitions.set('TimeBonus', {
-    id: 'TimeBonus', baseCost: 1_000n, costScaling: 'exponential', repeatable: true,
+    id: 'TimeBonus', baseCost: quantumTimeBonusCost(0), costScaling: 'exponential', repeatable: true,
     maximumPurchases: BigInt(INFINITY_TIME_BONUS_MAX_LEVEL), source: 'game',
   })
   for (const id of QUANTUM_UPGRADE_IDS) {
