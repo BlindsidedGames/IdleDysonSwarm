@@ -675,6 +675,7 @@
 
 .infinity-surface__shop > .ui-collapsible-section { margin-block-end: var(--ui-card-gap, 0.5rem); }
 .challenges-surface {
+  container-type: inline-size;
   block-size: 100%;
   min-block-size: 0;
   padding-block: calc(var(--ui-page-gutter) + var(--safe-area-top)) var(--ui-page-gutter);
@@ -952,6 +953,38 @@
 
 .challenge-card__feedback { grid-column: 1 / -1; }
 .challenge-list__empty { margin: var(--ui-panel-inset) 0; font-size: var(--ui-text-body); }
+
+/* Follow Research's usable-width columns on the permanent-drawer layout only.
+   Phone landscape keeps its approved single list, even when wider than 50rem. */
+@media (min-width: 1120px),
+  (min-width: 1000px) and (orientation: landscape) {
+  .challenge-card__goal,
+  .challenge-card__status,
+  .challenge-card__detail,
+  .challenge-card__requirement,
+  .challenge-card__best,
+  .challenge-card__history .challenge-card__reward,
+  .challenge-card__reward[data-earned="true"] {
+    font-size: var(--ui-text-body);
+  }
+
+  .challenge-list__help .ui-collapsible-section__content {
+    max-inline-size: 65ch;
+  }
+
+  @container (min-width: 50rem) {
+    .challenge-list__cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+    }
+  }
+
+  @container (min-width: 80rem) {
+    .challenge-list__cards {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+}
 
 @media (max-width: 359px) {
   .challenge-card { grid-template-columns: minmax(0, 1fr); }
