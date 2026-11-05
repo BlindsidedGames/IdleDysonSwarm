@@ -365,6 +365,28 @@
       "value": "Herausforderung aktiv"
     }
   ],
+  "challenges.allHidden": [
+    {
+      "type": 0,
+      "value": "Alle Herausforderungen abgeschlossen. Deaktiviere „Abgeschlossene ausblenden“, um sie zu wiederholen."
+    }
+  ],
+  "challenges.anotherActive": [
+    {
+      "type": 0,
+      "value": "Beende zuerst die aktive Herausforderung oder brich sie ab."
+    }
+  ],
+  "challenges.bestTime": [
+    {
+      "type": 0,
+      "value": "Bestzeit: "
+    },
+    {
+      "type": 1,
+      "value": "time"
+    }
+  ],
   "challenges.blankSlate": [
     {
       "type": 0,
@@ -445,6 +467,18 @@
       "value": "Gib in den Details eines aufgedeckten Skills 1 Katalysator aus, um seinen Basiseffekt dauerhaft zu aktivieren und Nachteile sowie Ausschlüsse zu entfernen. Frakturierung ist unumkehrbar und bleibt nach einem Transzendenz erhalten."
     }
   ],
+  "challenges.goal.infinity": [
+    {
+      "type": 0,
+      "value": "Eine normale Unendlichkeit abschließen"
+    }
+  ],
+  "challenges.goal.quantum": [
+    {
+      "type": 0,
+      "value": "Insgesamt 42 IP verdienen, dann einen Quantensprung ausführen"
+    }
+  ],
   "challenges.grounded": [
     {
       "type": 0,
@@ -467,6 +501,36 @@
     {
       "type": 0,
       "value": "Schließe einen Quantum-Durchlauf ohne Anlagenkäufe oder Basteln ab. Du beginnst mit einer Montagelinie; passive Anlagenerzeugung funktioniert normal."
+    }
+  ],
+  "challenges.help.permanent": [
+    {
+      "type": 0,
+      "value": "Frakturierte Basis-Skills bleiben aktiv. Erweiterungen nutzen Skill-Punkte und werden wie gewohnt zurückgesetzt."
+    }
+  ],
+  "challenges.help.rewards": [
+    {
+      "type": 0,
+      "value": "Katalysatoren gibt es beim ersten Abschluss. Wiederhole die Herausforderung, um deine Bestzeit zu verbessern."
+    }
+  ],
+  "challenges.help.runs": [
+    {
+      "type": 0,
+      "value": "Nur eine Herausforderung gleichzeitig. Starten oder Abbrechen startet den jeweiligen Unendlichkeits- oder Quanten-Durchlauf neu, ohne Prestige-Währung zu vergeben."
+    }
+  ],
+  "challenges.hideCompleted": [
+    {
+      "type": 0,
+      "value": "Abgeschlossene ausblenden"
+    }
+  ],
+  "challenges.howItWorks": [
+    {
+      "type": 0,
+      "value": "So funktionieren Herausforderungen"
     }
   ],
   "challenges.manualLabourRequired": [
@@ -555,6 +619,18 @@
       "value": "Wiederholen"
     }
   ],
+  "challenges.requiresInfinity": [
+    {
+      "type": 0,
+      "value": "Schließe deine erste Unendlichkeit ab."
+    }
+  ],
+  "challenges.requiresTranscend": [
+    {
+      "type": 0,
+      "value": "Führe eine Transzendenz aus, bevor du eine Herausforderung startest oder abbrichst."
+    }
+  ],
   "challenges.restart": [
     {
       "type": 0,
@@ -587,6 +663,60 @@
       "value": "Herausforderungen"
     }
   ],
+  "challenges.rule.blankSlate": [
+    {
+      "type": 0,
+      "value": "Keine Zuweisung von Skill-Punkten."
+    }
+  ],
+  "challenges.rule.builtByHand": [
+    {
+      "type": 0,
+      "value": "Alle Anlagen deaktiviert. Baue Bots mit den Erweiterungen von Handarbeit."
+    }
+  ],
+  "challenges.rule.commitment": [
+    {
+      "type": 0,
+      "value": "Keine Aufhebung oder Ersetzung von Skill-Zuweisungen. Unendlichkeits-Resets entfernen Zuweisungen wie gewohnt."
+    }
+  ],
+  "challenges.rule.grounded": [
+    {
+      "type": 0,
+      "value": "Keine Planeten oder Megastrukturen, weder gekauft noch erzeugt."
+    }
+  ],
+  "challenges.rule.handsOff": [
+    {
+      "type": 0,
+      "value": "Keine Anlagenkäufe und kein Basteln. Du startest mit 1 Fließband; passive Erzeugung bleibt aktiv."
+    }
+  ],
+  "challenges.rule.noScience": [
+    {
+      "type": 0,
+      "value": "Wissenschaft und Forschung deaktiviert."
+    }
+  ],
+  "challenges.rule.shortCircuit": [
+    {
+      "type": 0,
+      "value": "Panel-Lebensdauer auf 2 Sekunden festgelegt."
+    }
+  ],
+  "challenges.rule.supply": [
+    {
+      "type": 0,
+      "value": "Anlagenpreise verdoppeln sich mit jedem Kauf. Erzeugte Anlagen erhöhen die Preise nicht."
+    }
+  ],
+  "challenges.rule.trial": [
+    {
+      "type": 0,
+      "value": "Forschungskäufe deaktiviert."
+    }
+  ],
   "challenges.shortCircuit": [
     {
       "type": 0,
@@ -609,6 +739,24 @@
     {
       "type": 0,
       "value": "Starten"
+    }
+  ],
+  "challenges.status.active": [
+    {
+      "type": 0,
+      "value": "Aktiv"
+    }
+  ],
+  "challenges.status.completed": [
+    {
+      "type": 0,
+      "value": "Abgeschlossen"
+    }
+  ],
+  "challenges.status.locked": [
+    {
+      "type": 0,
+      "value": "Gesperrt"
     }
   ],
   "challenges.supplyShortage": [
@@ -669,6 +817,12 @@
     {
       "type": 0,
       "value": "Herausforderung ansehen"
+    }
+  ],
+  "challenges.wallet": [
+    {
+      "type": 0,
+      "value": "Katalysatoren"
     }
   ],
   "debug.access-description": [

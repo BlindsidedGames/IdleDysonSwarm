@@ -365,6 +365,28 @@
       "value": "Défi actif"
     }
   ],
+  "challenges.allHidden": [
+    {
+      "type": 0,
+      "value": "Tous les défis sont terminés. Décochez « Masquer les défis terminés » pour rejouer."
+    }
+  ],
+  "challenges.anotherActive": [
+    {
+      "type": 0,
+      "value": "Terminez ou abandonnez d’abord le défi actif."
+    }
+  ],
+  "challenges.bestTime": [
+    {
+      "type": 0,
+      "value": "Record : "
+    },
+    {
+      "type": 1,
+      "value": "time"
+    }
+  ],
   "challenges.blankSlate": [
     {
       "type": 0,
@@ -445,6 +467,18 @@
       "value": "Dépensez 1 Catalyseur dans les détails d’une compétence révélée pour rendre son effet de base permanent et supprimer ses pénalités et exclusions. La fracture est irréversible et survit au Transcendance."
     }
   ],
+  "challenges.goal.infinity": [
+    {
+      "type": 0,
+      "value": "Terminer une Infinité normale"
+    }
+  ],
+  "challenges.goal.quantum": [
+    {
+      "type": 0,
+      "value": "Gagner 42 PI au total, puis effectuer un Saut quantique"
+    }
+  ],
   "challenges.grounded": [
     {
       "type": 0,
@@ -467,6 +501,36 @@
     {
       "type": 0,
       "value": "Terminez un cycle quantique sans acheter d’installations ni bricoler. Vous commencez avec une chaîne d’assemblage ; la génération passive fonctionne normalement."
+    }
+  ],
+  "challenges.help.permanent": [
+    {
+      "type": 0,
+      "value": "Les compétences de base fracturées restent actives. Les augmentations utilisent des Points de compétence et se réinitialisent normalement."
+    }
+  ],
+  "challenges.help.rewards": [
+    {
+      "type": 0,
+      "value": "Les Catalyseurs sont accordés à la première réussite. Rejouez pour améliorer votre meilleur temps."
+    }
+  ],
+  "challenges.help.runs": [
+    {
+      "type": 0,
+      "value": "Un seul défi à la fois. Commencer ou abandonner relance le cycle d’Infinité ou le cycle quantique concerné sans accorder de monnaie de prestige."
+    }
+  ],
+  "challenges.hideCompleted": [
+    {
+      "type": 0,
+      "value": "Masquer les défis terminés"
+    }
+  ],
+  "challenges.howItWorks": [
+    {
+      "type": 0,
+      "value": "Fonctionnement des défis"
     }
   ],
   "challenges.manualLabourRequired": [
@@ -555,6 +619,18 @@
       "value": "Rejouer"
     }
   ],
+  "challenges.requiresInfinity": [
+    {
+      "type": 0,
+      "value": "Terminez votre première Infinité."
+    }
+  ],
+  "challenges.requiresTranscend": [
+    {
+      "type": 0,
+      "value": "Effectuez une Transcendance avant de commencer ou d’abandonner un défi."
+    }
+  ],
   "challenges.restart": [
     {
       "type": 0,
@@ -587,6 +663,60 @@
       "value": "Défis"
     }
   ],
+  "challenges.rule.blankSlate": [
+    {
+      "type": 0,
+      "value": "Aucune attribution de Points de compétence."
+    }
+  ],
+  "challenges.rule.builtByHand": [
+    {
+      "type": 0,
+      "value": "Toutes les installations sont désactivées. Fabriquez des Bots avec les augmentations de Travail manuel."
+    }
+  ],
+  "challenges.rule.commitment": [
+    {
+      "type": 0,
+      "value": "Impossible de retirer ou remplacer une compétence. Les réinitialisations d’Infinité effacent les attributions normalement."
+    }
+  ],
+  "challenges.rule.grounded": [
+    {
+      "type": 0,
+      "value": "Aucune Planète ni mégastructure, achetée ou générée."
+    }
+  ],
+  "challenges.rule.handsOff": [
+    {
+      "type": 0,
+      "value": "Aucun achat d’installation ni Bricolage. Vous commencez avec 1 Chaîne d’assemblage ; la génération passive reste active."
+    }
+  ],
+  "challenges.rule.noScience": [
+    {
+      "type": 0,
+      "value": "Science et Recherche désactivées."
+    }
+  ],
+  "challenges.rule.shortCircuit": [
+    {
+      "type": 0,
+      "value": "Durée de vie des Panneaux fixée à 2 secondes."
+    }
+  ],
+  "challenges.rule.supply": [
+    {
+      "type": 0,
+      "value": "Le prix des installations double à chaque achat. Les installations générées ne font pas augmenter les prix."
+    }
+  ],
+  "challenges.rule.trial": [
+    {
+      "type": 0,
+      "value": "Achats de Recherche désactivés."
+    }
+  ],
   "challenges.shortCircuit": [
     {
       "type": 0,
@@ -609,6 +739,24 @@
     {
       "type": 0,
       "value": "Commencer"
+    }
+  ],
+  "challenges.status.active": [
+    {
+      "type": 0,
+      "value": "Actif"
+    }
+  ],
+  "challenges.status.completed": [
+    {
+      "type": 0,
+      "value": "Terminé"
+    }
+  ],
+  "challenges.status.locked": [
+    {
+      "type": 0,
+      "value": "Verrouillé"
     }
   ],
   "challenges.supplyShortage": [
@@ -669,6 +817,12 @@
     {
       "type": 0,
       "value": "Voir le défi"
+    }
+  ],
+  "challenges.wallet": [
+    {
+      "type": 0,
+      "value": "Catalyseurs"
     }
   ],
   "debug.access-description": [

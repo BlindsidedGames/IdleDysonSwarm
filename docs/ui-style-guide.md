@@ -41,12 +41,19 @@ natural aspect ratio and −.08em baseline. Inspect actual optical bounds. Disti
 stock, input cost and output/reward; explain direction and state without colour
 alone. Runtime tokens/assets govern; older palette/variable-font prose is stale.
 
-Challenge Start/Replay actions use the shared `Button variant="purchase"` purple
-palette, matching Simulations: pale lavender when enabled, dark purple when
+Challenge Start/Replay actions use the shared `Button` with the purple purchase
+appearance, matching Simulations: pale lavender when enabled, dark purple when
 disabled, with the shared hover/pressed lighting. Pink action fills are not the
 approved purple theme. Keep destructive restart/abandon confirmation semantics.
 Challenges is a flat list; no redundant Infinity Challenges category header or
 large introductory/attempt-rules explainer (Matthew, 14 October 2026).
+Challenge cards follow Research's name, goal/value, supporting restriction and
+aligned action hierarchy while retaining purple. Keep the Catalyst wallet
+compact, put shared rules behind an optional disclosure, label Active/Completed/
+Locked states, and offer compact completed rows with a hide-completed control.
+Use one mobile column and aligned landscape actions. Restart confirmations must
+visibly distinguish the destructive action from Cancel, and the active challenge
+indicator reveals its card (Matthew, 5 November 2026).
 
 ## Mobile, scale and acceptance
 

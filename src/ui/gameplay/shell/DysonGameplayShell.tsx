@@ -189,6 +189,7 @@ export function DysonGameplayShell({
       dir={direction}
       data-menu-open={menuOpen}
       data-resource-header={showResourceHeader}
+        data-persistent-notice={persistentNotice != null || undefined}
       data-route-content={routeContent !== undefined}
       data-route-content-edge-to-edge={
         routeContentEdgeToEdge || undefined

@@ -199,6 +199,15 @@
   "challenges.activeLabel": {
     "defaultMessage": "Challenge active"
   },
+  "challenges.allHidden": {
+    "defaultMessage": "All challenges completed. Clear Hide completed to replay."
+  },
+  "challenges.anotherActive": {
+    "defaultMessage": "Finish or abandon the active challenge first."
+  },
+  "challenges.bestTime": {
+    "defaultMessage": "Best: {time}"
+  },
   "challenges.blankSlate": {
     "defaultMessage": "Blank Slate"
   },
@@ -235,6 +244,12 @@
   "challenges.galvanizers.future": {
     "defaultMessage": "Spend 1 Catalyst in a revealed skill’s details to make its base effect permanent and remove its penalties and exclusions. Fracturing a skill cannot be undone and survives Transcendence."
   },
+  "challenges.goal.infinity": {
+    "defaultMessage": "Complete a normal Infinity"
+  },
+  "challenges.goal.quantum": {
+    "defaultMessage": "Earn 42 total IP, then Quantum"
+  },
   "challenges.grounded": {
     "defaultMessage": "Grounded"
   },
@@ -246,6 +261,21 @@
   },
   "challenges.handsOff.description": {
     "defaultMessage": "Complete a Quantum run without facility purchases or Tinkering. Start with one Assembly Line; passive facility generation works normally."
+  },
+  "challenges.help.permanent": {
+    "defaultMessage": "Fractured base skills stay active. Augments use Skill Points and reset normally."
+  },
+  "challenges.help.rewards": {
+    "defaultMessage": "Catalysts are awarded on the first completion. Replay to improve your best time."
+  },
+  "challenges.help.runs": {
+    "defaultMessage": "One challenge at a time. Starting or abandoning restarts its Infinity or Quantum run without awarding prestige currency."
+  },
+  "challenges.hideCompleted": {
+    "defaultMessage": "Hide completed"
+  },
+  "challenges.howItWorks": {
+    "defaultMessage": "How challenges work"
   },
   "challenges.manualLabourRequired": {
     "defaultMessage": "Requires Fractured Manual Labour."
@@ -286,6 +316,12 @@
   "challenges.replay": {
     "defaultMessage": "Replay"
   },
+  "challenges.requiresInfinity": {
+    "defaultMessage": "Complete your first Infinity."
+  },
+  "challenges.requiresTranscend": {
+    "defaultMessage": "Transcend before starting or abandoning a challenge."
+  },
   "challenges.restart": {
     "defaultMessage": "This starts a fresh Infinity run without awarding IP. Infinity upgrades and later layers are kept. Abandoning also starts a fresh normal run."
   },
@@ -298,6 +334,33 @@
   "challenges.route": {
     "defaultMessage": "Challenges"
   },
+  "challenges.rule.blankSlate": {
+    "defaultMessage": "No Skill Point assignments."
+  },
+  "challenges.rule.builtByHand": {
+    "defaultMessage": "All facilities disabled. Build Bots with Manual Labour augments."
+  },
+  "challenges.rule.commitment": {
+    "defaultMessage": "No skill refunds or replacement. Infinity resets clear assignments normally."
+  },
+  "challenges.rule.grounded": {
+    "defaultMessage": "No Planets or megastructures, purchased or generated."
+  },
+  "challenges.rule.handsOff": {
+    "defaultMessage": "No facility purchases or Tinkering. Start with 1 Assembly Line; passive generation remains active."
+  },
+  "challenges.rule.noScience": {
+    "defaultMessage": "Science and Research disabled."
+  },
+  "challenges.rule.shortCircuit": {
+    "defaultMessage": "Panel lifetime fixed at 2 seconds."
+  },
+  "challenges.rule.supply": {
+    "defaultMessage": "Facility prices double per purchase. Generated facilities do not raise prices."
+  },
+  "challenges.rule.trial": {
+    "defaultMessage": "Research purchases disabled."
+  },
   "challenges.shortCircuit": {
     "defaultMessage": "Short Circuit"
   },
@@ -309,6 +372,15 @@
   },
   "challenges.start": {
     "defaultMessage": "Start"
+  },
+  "challenges.status.active": {
+    "defaultMessage": "Active"
+  },
+  "challenges.status.completed": {
+    "defaultMessage": "Completed"
+  },
+  "challenges.status.locked": {
+    "defaultMessage": "Locked"
   },
   "challenges.supplyShortage": {
     "defaultMessage": "Supply Shortage"
@@ -339,6 +411,9 @@
   },
   "challenges.view": {
     "defaultMessage": "View challenge"
+  },
+  "challenges.wallet": {
+    "defaultMessage": "Catalysts"
   },
   "debug.access-description": {
     "defaultMessage": "Spend 10 Transcendence Points to unlock the developer tools. Once purchased, they can be re-enabled for free.",

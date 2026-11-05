@@ -7,6 +7,7 @@ import { useConfirmedTabPresetDispatch } from '../skills/useConfirmedTabPresetDi
 import { StoredTimeNavigationProgress } from '../offline-time/QuickStoredTime'
 import { isAvocatoRouteUnlocked } from './avocatoNavigation'
 import { InfinityChallenges } from '../infinity/InfinityChallenges'
+import { ActiveChallengeMarker } from '../infinity/ActiveChallengeMarker'
 import { challengeMessages } from '../infinity/challengeMessages'
 import { avocatoMessages } from '../quantum/messages'
 import { useBotBoost } from '../store/useBotBoost'
@@ -620,6 +621,7 @@ function ReadyDysonSliceContent({
     useState(false)
   const [avotationCompletionVisible, setAvotationCompletionVisible] =
     useState(false)
+  const [challengeFocusRequest, setChallengeFocusRequest] = useState(0)
   const [quantumHideMaxed, setQuantumHideMaxed] =
     useState(() =>
       readBooleanPresentationPreference(QUANTUM_HIDE_MAXED_STORAGE_KEY),
@@ -903,11 +905,13 @@ function ReadyDysonSliceContent({
     gameplay.progression.quantum.unlocks.botMultitasking
   const skillsActive = route === 'skills'
   const infinityActive = route === 'infinity'
+  const activeChallenge = gameplay.progression.challenges?.active
   const challengesActive = route === 'challenges'
   const realityActive = route === 'reality'
   const simulationsActive = route === 'simulations'
   const quantumRouteActive = route === 'quantum'
   const avocatoActive = route === 'avocato'
+  const showOverflowNotice = gameplay.progression.infinity.botCapTransitionPending && !avocatoActive && !infinityActive
   const quantumNavigationActive = quantumRouteActive || (avocatoActive && !avocatoRouteUnlocked)
   const storyActive = route === 'story'
   const wikiActive = route === 'wiki'
@@ -1648,6 +1652,8 @@ function ReadyDysonSliceContent({
                         goalStage={gameplay.progression.dyson.goalStage}
                         developmentVisible={allTabsUnlocked}
                         overflowReached={gameplay.progression.infinity.botCapTransitionPending}
+                        focusActiveRequest={challengeFocusRequest}
+                        onFocusActiveHandled={() => setChallengeFocusRequest(0)}
                         dispatchPlayer={dispatchPlayer}
                       />}
                     </div>,
@@ -2136,20 +2142,26 @@ function ReadyDysonSliceContent({
             : undefined
       }
       persistentNotice={
-        gameplay.progression.infinity.botCapTransitionPending && !avocatoActive && !infinityActive ? (
-          <div className="dyson-overflow-notice" role="status">
-            <strong>{intl.formatMessage(avocatoMessages.overflowReached)}</strong>
-            <button type="button" onClick={() => onRouteChange('avocato')}>
-              {intl.formatMessage(avocatoMessages.overflowOpen)}
-            </button>
-          </div>
-        ) : gameplay.progression.challenges?.active === 'blank-slate' && skillsActive ? (
-          <div className="dyson-overflow-notice" role="status">
-            <strong>{intl.formatMessage(challengeMessages.active)}</strong>
-            <button type="button" onClick={() => navigateTo('challenges')}>
-              {intl.formatMessage(challengeMessages.view)}
-            </button>
-          </div>
+        showOverflowNotice || activeChallenge != null ? (
+          <>
+            {showOverflowNotice ? (
+              <div className="dyson-overflow-notice" role="status">
+                <strong>{intl.formatMessage(avocatoMessages.overflowReached)}</strong>
+                <button type="button" onClick={() => onRouteChange('avocato')}>
+                  {intl.formatMessage(avocatoMessages.overflowOpen)}
+                </button>
+              </div>
+            ) : null}
+            {activeChallenge != null ? (
+              <ActiveChallengeMarker
+                challengeId={activeChallenge}
+                onOpen={() => {
+                  setChallengeFocusRequest(request => request + 1)
+                  navigateTo('challenges')
+                }}
+              />
+            ) : null}
+          </>
         ) : undefined
       }
       notifications={

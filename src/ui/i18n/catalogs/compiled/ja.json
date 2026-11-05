@@ -365,6 +365,28 @@
       "value": "チャレンジ中"
     }
   ],
+  "challenges.allHidden": [
+    {
+      "type": 0,
+      "value": "すべてのチャレンジをクリア済みです。「クリア済みを非表示」をオフにすると再挑戦できます。"
+    }
+  ],
+  "challenges.anotherActive": [
+    {
+      "type": 0,
+      "value": "先に挑戦中のチャレンジをクリアまたは中断してください。"
+    }
+  ],
+  "challenges.bestTime": [
+    {
+      "type": 0,
+      "value": "ベスト："
+    },
+    {
+      "type": 1,
+      "value": "time"
+    }
+  ],
   "challenges.blankSlate": [
     {
       "type": 0,
@@ -445,6 +467,18 @@
       "value": "表示済みスキルの詳細で触媒を1個消費すると、基本効果が永続化され、ペナルティと排他制限が解除されます。断裂は取り消せず、超越後も維持されます。"
     }
   ],
+  "challenges.goal.infinity": [
+    {
+      "type": 0,
+      "value": "通常のインフィニティを完了"
+    }
+  ],
+  "challenges.goal.quantum": [
+    {
+      "type": 0,
+      "value": "累計42 IPを獲得してから量子跳躍"
+    }
+  ],
   "challenges.grounded": [
     {
       "type": 0,
@@ -467,6 +501,36 @@
     {
       "type": 0,
       "value": "施設の購入と手作業なしでクアンタム周回を完了します。組立ライン1つで開始し、施設の自動生成は通常どおり機能します。"
+    }
+  ],
+  "challenges.help.permanent": [
+    {
+      "type": 0,
+      "value": "断裂済みの基本スキルは有効なままです。強化はスキルポイントを使い、通常どおりリセットされます。"
+    }
+  ],
+  "challenges.help.rewards": [
+    {
+      "type": 0,
+      "value": "触媒は初回クリア時に獲得できます。再挑戦してベストタイムを更新しましょう。"
+    }
+  ],
+  "challenges.help.runs": [
+    {
+      "type": 0,
+      "value": "同時に挑戦できるのは1つだけです。開始・中断すると、対象のインフィニティまたは量子ランが再スタートし、プレステージ通貨は獲得できません。"
+    }
+  ],
+  "challenges.hideCompleted": [
+    {
+      "type": 0,
+      "value": "クリア済みを非表示"
+    }
+  ],
+  "challenges.howItWorks": [
+    {
+      "type": 0,
+      "value": "チャレンジのルール"
     }
   ],
   "challenges.manualLabourRequired": [
@@ -555,6 +619,18 @@
       "value": "再挑戦"
     }
   ],
+  "challenges.requiresInfinity": [
+    {
+      "type": 0,
+      "value": "最初のインフィニティを完了してください。"
+    }
+  ],
+  "challenges.requiresTranscend": [
+    {
+      "type": 0,
+      "value": "チャレンジの開始・中断前に超越してください。"
+    }
+  ],
   "challenges.restart": [
     {
       "type": 0,
@@ -587,6 +663,60 @@
       "value": "チャレンジ"
     }
   ],
+  "challenges.rule.blankSlate": [
+    {
+      "type": 0,
+      "value": "スキルポイントの割り当て不可。"
+    }
+  ],
+  "challenges.rule.builtByHand": [
+    {
+      "type": 0,
+      "value": "すべての施設が無効。手動労働の強化でボットを製作。"
+    }
+  ],
+  "challenges.rule.commitment": [
+    {
+      "type": 0,
+      "value": "スキルの割り当て解除・入れ替え不可。インフィニティのリセットでは通常どおり割り当てが解除される。"
+    }
+  ],
+  "challenges.rule.grounded": [
+    {
+      "type": 0,
+      "value": "惑星・メガストラクチャーの購入も生成も不可。"
+    }
+  ],
+  "challenges.rule.handsOff": [
+    {
+      "type": 0,
+      "value": "施設の購入・工作は不可。組立ライン1本で開始し、施設の自動生成は有効。"
+    }
+  ],
+  "challenges.rule.noScience": [
+    {
+      "type": 0,
+      "value": "サイエンスと研究が無効。"
+    }
+  ],
+  "challenges.rule.shortCircuit": [
+    {
+      "type": 0,
+      "value": "パネル寿命が2秒に固定。"
+    }
+  ],
+  "challenges.rule.supply": [
+    {
+      "type": 0,
+      "value": "購入ごとに施設価格が2倍。生成された施設では価格は上がらない。"
+    }
+  ],
+  "challenges.rule.trial": [
+    {
+      "type": 0,
+      "value": "研究の購入不可。"
+    }
+  ],
   "challenges.shortCircuit": [
     {
       "type": 0,
@@ -609,6 +739,24 @@
     {
       "type": 0,
       "value": "開始"
+    }
+  ],
+  "challenges.status.active": [
+    {
+      "type": 0,
+      "value": "挑戦中"
+    }
+  ],
+  "challenges.status.completed": [
+    {
+      "type": 0,
+      "value": "クリア済み"
+    }
+  ],
+  "challenges.status.locked": [
+    {
+      "type": 0,
+      "value": "ロック中"
     }
   ],
   "challenges.supplyShortage": [
@@ -669,6 +817,12 @@
     {
       "type": 0,
       "value": "チャレンジを見る"
+    }
+  ],
+  "challenges.wallet": [
+    {
+      "type": 0,
+      "value": "触媒"
     }
   ],
   "debug.access-description": [

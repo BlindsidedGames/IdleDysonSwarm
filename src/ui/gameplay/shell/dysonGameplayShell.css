@@ -637,6 +637,8 @@
 .dyson-shell[data-resource-header="false"][data-route-theme="quantum"]
   .dyson-shell__content,
 .dyson-shell[data-resource-header="false"][data-route-theme="statistics"]
+  .dyson-shell__content,
+.dyson-shell[data-resource-header="false"][data-persistent-notice="true"]
   .dyson-shell__content {
   padding-block-start: 0;
 }
@@ -660,8 +662,8 @@
   min-inline-size: 0;
 }
 
-/* Skills draws edge to edge, so a notice above its canvas owns the top inset. */
-.dyson-shell[data-resource-header="false"][data-route-theme="skills"]
+/* Notices own the top inset when the resource header is absent. */
+.dyson-shell[data-resource-header="false"]
   .dyson-shell__header {
   padding-block-start: var(--safe-area-top);
 }
