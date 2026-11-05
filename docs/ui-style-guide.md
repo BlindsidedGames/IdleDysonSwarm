@@ -54,6 +54,10 @@ Locked states, and offer compact completed rows with a hide-completed control.
 Use one mobile column and aligned landscape actions. Restart confirmations must
 visibly distinguish the destructive action from Cancel, and the active challenge
 indicator reveals its card (Matthew, 5 November 2026).
+On the permanent-drawer layout, Challenges uses Research's usable-width grid:
+two columns at 50rem and three at 80rem, with body-role restriction/status text
+and a bounded help reading measure. Phone portrait and landscape retain the
+single-column layout; the semantic challenge order stays unchanged.
 
 ## Mobile, scale and acceptance
 
