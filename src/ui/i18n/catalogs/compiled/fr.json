@@ -17578,24 +17578,6 @@
       "value": "Ajout de l’amélioration quantique répétable Bonus de temps, dès 1 000 éclats quantiques. Son multiplicateur d’IP augmente pendant chaque Infini. Touchez l’amélioration pour comparer le niveau actuel au suivant."
     }
   ],
-  "wiki.patch-notes.version-4-1-12": [
-    {
-      "type": 0,
-      "value": "Version 4.1.12"
-    }
-  ],
-  "wiki.patch-notes.version-4-1-12.reality-point-recovery": [
-    {
-      "type": 0,
-      "value": "Les sauvegardes déjà dans un défi quantique récupèrent une seule fois leurs points de compétence de Réalité suspendus au chargement."
-    }
-  ],
-  "wiki.patch-notes.version-4-1-12.reality-points": [
-    {
-      "type": 0,
-      "value": "Les points de compétence de Réalité restent désormais disponibles dans les défis quantiques, y compris ceux des améliorations achetées pendant un défi."
-    }
-  ],
   "wiki.patch-notes.version-4-1-2": [
     {
       "type": 0,
@@ -18224,6 +18206,24 @@
     {
       "type": 0,
       "value": "Amélioration du Temps stocké afin que les dépenses en double ou simultanées soient refusées en toute sécurité, que les tâches actives conservent leur progression et leurs contrôles d’annulation, et que les réglages non terminés restent intacts lors d’un changement de page."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5": [
+    {
+      "type": 0,
+      "value": "Version 4.2.5"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5.reality-point-recovery": [
+    {
+      "type": 0,
+      "value": "Les sauvegardes déjà dans un défi quantique récupèrent une seule fois leurs points de compétence de Réalité suspendus au chargement."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5.reality-points": [
+    {
+      "type": 0,
+      "value": "Les points de compétence de Réalité restent désormais disponibles dans les défis quantiques, y compris ceux des améliorations achetées pendant un défi."
     }
   ],
   "wiki.patch-notes.version-4.accessibility": [

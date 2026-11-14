@@ -17578,24 +17578,6 @@
       "value": "Se agregó la mejora cuántica repetible Bono de tiempo, desde 1,000 fragmentos cuánticos. Su multiplicador de IP crece durante cada Infinito. Toca la mejora para comparar el nivel actual con el siguiente."
     }
   ],
-  "wiki.patch-notes.version-4-1-12": [
-    {
-      "type": 0,
-      "value": "Versión 4.1.12"
-    }
-  ],
-  "wiki.patch-notes.version-4-1-12.reality-point-recovery": [
-    {
-      "type": 0,
-      "value": "Las partidas guardadas que ya están en un desafío cuántico recuperan una sola vez sus puntos de habilidad de Realidad retenidos al cargarse."
-    }
-  ],
-  "wiki.patch-notes.version-4-1-12.reality-points": [
-    {
-      "type": 0,
-      "value": "Los puntos de habilidad de Realidad ahora siguen disponibles en los desafíos cuánticos, incluidos los de mejoras compradas durante un desafío."
-    }
-  ],
   "wiki.patch-notes.version-4-1-2": [
     {
       "type": 0,
@@ -18224,6 +18206,24 @@
     {
       "type": 0,
       "value": "Se mejoró el Tiempo almacenado para rechazar de forma segura los gastos duplicados o superpuestos, conservar el progreso y los controles de cancelación de los trabajos activos y mantener intactos los ajustes pendientes al cambiar de página."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5": [
+    {
+      "type": 0,
+      "value": "Versión 4.2.5"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5.reality-point-recovery": [
+    {
+      "type": 0,
+      "value": "Las partidas guardadas que ya están en un desafío cuántico recuperan una sola vez sus puntos de habilidad de Realidad retenidos al cargarse."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5.reality-points": [
+    {
+      "type": 0,
+      "value": "Los puntos de habilidad de Realidad ahora siguen disponibles en los desafíos cuánticos, incluidos los de mejoras compradas durante un desafío."
     }
   ],
   "wiki.patch-notes.version-4.accessibility": [

@@ -17578,24 +17578,6 @@
       "value": "繰り返し購入できる量子アップグレード「時間ボーナス」を追加しました。初期価格は1,000量子シャードです。IP倍率は各無限の経過に応じて上昇します。タップすると現在と次のレベルを比較できます。"
     }
   ],
-  "wiki.patch-notes.version-4-1-12": [
-    {
-      "type": 0,
-      "value": "バージョン4.1.12"
-    }
-  ],
-  "wiki.patch-notes.version-4-1-12.reality-point-recovery": [
-    {
-      "type": 0,
-      "value": "すでに量子チャレンジ中のセーブでは、読み込み時に無効化されていた現実のスキルポイントが一度だけ返還されます。"
-    }
-  ],
-  "wiki.patch-notes.version-4-1-12.reality-points": [
-    {
-      "type": 0,
-      "value": "量子チャレンジ中も現実のスキルポイントを使用できるようになりました。チャレンジ中に購入したアップグレードのポイントも使用できます。"
-    }
-  ],
   "wiki.patch-notes.version-4-1-2": [
     {
       "type": 0,
@@ -18224,6 +18206,24 @@
     {
       "type": 0,
       "value": "重複する蓄積時間の使用を安全に拒否し、進行中ジョブの進捗・取消操作と、画面移動時の未完了設定を保持するよう改善しました。"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5": [
+    {
+      "type": 0,
+      "value": "バージョン4.2.5"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5.reality-point-recovery": [
+    {
+      "type": 0,
+      "value": "すでに量子チャレンジ中のセーブでは、読み込み時に無効化されていた現実のスキルポイントが一度だけ返還されます。"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5.reality-points": [
+    {
+      "type": 0,
+      "value": "量子チャレンジ中も現実のスキルポイントを使用できるようになりました。チャレンジ中に購入したアップグレードのポイントも使用できます。"
     }
   ],
   "wiki.patch-notes.version-4.accessibility": [

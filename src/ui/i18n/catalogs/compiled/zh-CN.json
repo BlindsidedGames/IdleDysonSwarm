@@ -17578,24 +17578,6 @@
       "value": "新增可重复购买的量子升级“时间加成”，初始价格为 1,000 量子碎片。其 IP 倍率会在每次无限中逐渐增长。点击升级可比较当前和下一级效果。"
     }
   ],
-  "wiki.patch-notes.version-4-1-12": [
-    {
-      "type": 0,
-      "value": "版本 4.1.12"
-    }
-  ],
-  "wiki.patch-notes.version-4-1-12.reality-point-recovery": [
-    {
-      "type": 0,
-      "value": "已处于量子挑战中的存档会在加载时一次性补回之前被停用的现实技能点。"
-    }
-  ],
-  "wiki.patch-notes.version-4-1-12.reality-points": [
-    {
-      "type": 0,
-      "value": "现实技能点现在仍可在量子挑战中使用，包括挑战期间购买升级获得的技能点。"
-    }
-  ],
   "wiki.patch-notes.version-4-1-2": [
     {
       "type": 0,
@@ -18224,6 +18206,24 @@
     {
       "type": 0,
       "value": "改进储存时间：安全拒绝重复或重叠消耗；活动任务保留进度与取消控件；切换页面时保留未完成设置。"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5": [
+    {
+      "type": 0,
+      "value": "版本 4.2.5"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5.reality-point-recovery": [
+    {
+      "type": 0,
+      "value": "已处于量子挑战中的存档会在加载时一次性补回之前被停用的现实技能点。"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5.reality-points": [
+    {
+      "type": 0,
+      "value": "现实技能点现在仍可在量子挑战中使用，包括挑战期间购买升级获得的技能点。"
     }
   ],
   "wiki.patch-notes.version-4.accessibility": [

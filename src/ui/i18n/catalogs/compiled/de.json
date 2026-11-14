@@ -17578,24 +17578,6 @@
       "value": "Das wiederholbare Quanten-Upgrade Zeitbonus kostet anfangs 1.000 Quantensplitter. Sein IP-Multiplikator wächst während jeder Unendlichkeit. Tippe darauf, um die aktuelle und nächste Stufe zu vergleichen."
     }
   ],
-  "wiki.patch-notes.version-4-1-12": [
-    {
-      "type": 0,
-      "value": "Version 4.1.12"
-    }
-  ],
-  "wiki.patch-notes.version-4-1-12.reality-point-recovery": [
-    {
-      "type": 0,
-      "value": "Spielstände in einer laufenden Quanten-Herausforderung erhalten ihre zurückgehaltenen Realitäts-Fertigkeitspunkte beim Laden einmalig zurück."
-    }
-  ],
-  "wiki.patch-notes.version-4-1-12.reality-points": [
-    {
-      "type": 0,
-      "value": "Realitäts-Fertigkeitspunkte bleiben jetzt in Quanten-Herausforderungen verfügbar, einschließlich Punkten aus während einer Herausforderung gekauften Verbesserungen."
-    }
-  ],
   "wiki.patch-notes.version-4-1-2": [
     {
       "type": 0,
@@ -18224,6 +18206,24 @@
     {
       "type": 0,
       "value": "Gespeicherte Zeit wurde verbessert: Doppelte oder überlappende Ausgaben werden sicher abgelehnt, aktive Vorgänge behalten ihren Fortschritt und ihre Abbruchsteuerung, und unfertige Einstellungen bleiben beim Seitenwechsel erhalten."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5": [
+    {
+      "type": 0,
+      "value": "Version 4.2.5"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5.reality-point-recovery": [
+    {
+      "type": 0,
+      "value": "Spielstände in einer laufenden Quanten-Herausforderung erhalten ihre zurückgehaltenen Realitäts-Fertigkeitspunkte beim Laden einmalig zurück."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5.reality-points": [
+    {
+      "type": 0,
+      "value": "Realitäts-Fertigkeitspunkte bleiben jetzt in Quanten-Herausforderungen verfügbar, einschließlich Punkten aus während einer Herausforderung gekauften Verbesserungen."
     }
   ],
   "wiki.patch-notes.version-4.accessibility": [

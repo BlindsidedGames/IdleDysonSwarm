@@ -17578,24 +17578,6 @@
       "value": "Adicionada a melhoria quântica repetível Bônus de tempo, a partir de 1.000 fragmentos quânticos. Seu multiplicador de IP cresce durante cada Infinito. Toque na melhoria para comparar o nível atual com o próximo."
     }
   ],
-  "wiki.patch-notes.version-4-1-12": [
-    {
-      "type": 0,
-      "value": "Versão 4.1.12"
-    }
-  ],
-  "wiki.patch-notes.version-4-1-12.reality-point-recovery": [
-    {
-      "type": 0,
-      "value": "Saves que já estão em um desafio quântico recuperam os Pontos de Habilidade de Realidade retidos uma única vez ao carregar."
-    }
-  ],
-  "wiki.patch-notes.version-4-1-12.reality-points": [
-    {
-      "type": 0,
-      "value": "Os Pontos de Habilidade de Realidade agora continuam disponíveis nos desafios quânticos, incluindo os de melhorias compradas durante um desafio."
-    }
-  ],
   "wiki.patch-notes.version-4-1-2": [
     {
       "type": 0,
@@ -18224,6 +18206,24 @@
     {
       "type": 0,
       "value": "Aprimoramos o Tempo Armazenado para rejeitar com segurança gastos duplicados ou sobrepostos, preservar o progresso e os controles de cancelamento de tarefas ativas e manter Configurações inacabadas ao trocar de página."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5": [
+    {
+      "type": 0,
+      "value": "Versão 4.2.5"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5.reality-point-recovery": [
+    {
+      "type": 0,
+      "value": "Saves que já estão em um desafio quântico recuperam os Pontos de Habilidade de Realidade retidos uma única vez ao carregar."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5.reality-points": [
+    {
+      "type": 0,
+      "value": "Os Pontos de Habilidade de Realidade agora continuam disponíveis nos desafios quânticos, incluindo os de melhorias compradas durante um desafio."
     }
   ],
   "wiki.patch-notes.version-4.accessibility": [

@@ -8634,18 +8634,6 @@
     "defaultMessage": "Added Time bonus, a repeatable Quantum upgrade starting at 1,000 Quantum Shards. Its IP multiplier grows during each Infinity. Tap it to compare the current and next levels.",
     "description": "Version 4.1.11 release notes."
   },
-  "wiki.patch-notes.version-4-1-12": {
-    "defaultMessage": "Version 4.1.12",
-    "description": "Version 4.1.12 release notes."
-  },
-  "wiki.patch-notes.version-4-1-12.reality-point-recovery": {
-    "defaultMessage": "Saves already in a Quantum challenge recover their withheld Reality Skill Points once when loaded.",
-    "description": "Version 4.1.12 release notes."
-  },
-  "wiki.patch-notes.version-4-1-12.reality-points": {
-    "defaultMessage": "Reality Skill Points now remain available in Quantum challenges, including points from upgrades bought during a challenge.",
-    "description": "Version 4.1.12 release notes."
-  },
   "wiki.patch-notes.version-4-1-2": {
     "defaultMessage": "Version 4.1.2",
     "description": "Version label for the previous Wiki patch notes."
@@ -9065,6 +9053,18 @@
   "wiki.patch-notes.version-4-1.stored-time": {
     "defaultMessage": "Improved Stored Time so duplicate or overlapping spends are safely rejected, active jobs retain their progress and cancellation controls, and unfinished settings remain intact when changing pages.",
     "description": "Version 4.1 release note for Stored Time reliability and controls."
+  },
+  "wiki.patch-notes.version-4-2-5": {
+    "defaultMessage": "Version 4.2.5",
+    "description": "Version 4.2.5 release notes."
+  },
+  "wiki.patch-notes.version-4-2-5.reality-point-recovery": {
+    "defaultMessage": "Saves already in a Quantum challenge recover their withheld Reality Skill Points once when loaded.",
+    "description": "Version 4.2.5 release notes."
+  },
+  "wiki.patch-notes.version-4-2-5.reality-points": {
+    "defaultMessage": "Reality Skill Points now remain available in Quantum challenges, including points from upgrades bought during a challenge.",
+    "description": "Version 4.2.5 release notes."
   },
   "wiki.patch-notes.version-4.accessibility": {
     "defaultMessage": "Improved keyboard and screen-reader support, reduced-motion behavior, mobile text selection, text-field editing, focus handling, and rapid-touch protection.",

@@ -17578,24 +17578,6 @@
       "value": "Added Time bonus, a repeatable Quantum upgrade starting at 1,000 Quantum Shards. Its IP multiplier grows during each Infinity. Tap it to compare the current and next levels."
     }
   ],
-  "wiki.patch-notes.version-4-1-12": [
-    {
-      "type": 0,
-      "value": "Version 4.1.12"
-    }
-  ],
-  "wiki.patch-notes.version-4-1-12.reality-point-recovery": [
-    {
-      "type": 0,
-      "value": "Saves already in a Quantum challenge recover their withheld Reality Skill Points once when loaded."
-    }
-  ],
-  "wiki.patch-notes.version-4-1-12.reality-points": [
-    {
-      "type": 0,
-      "value": "Reality Skill Points now remain available in Quantum challenges, including points from upgrades bought during a challenge."
-    }
-  ],
   "wiki.patch-notes.version-4-1-2": [
     {
       "type": 0,
@@ -18224,6 +18206,24 @@
     {
       "type": 0,
       "value": "Improved Stored Time so duplicate or overlapping spends are safely rejected, active jobs retain their progress and cancellation controls, and unfinished settings remain intact when changing pages."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5": [
+    {
+      "type": 0,
+      "value": "Version 4.2.5"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5.reality-point-recovery": [
+    {
+      "type": 0,
+      "value": "Saves already in a Quantum challenge recover their withheld Reality Skill Points once when loaded."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5.reality-points": [
+    {
+      "type": 0,
+      "value": "Reality Skill Points now remain available in Quantum challenges, including points from upgrades bought during a challenge."
     }
   ],
   "wiki.patch-notes.version-4.accessibility": [
