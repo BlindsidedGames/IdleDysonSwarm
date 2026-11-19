@@ -81,9 +81,9 @@
     "verify:promotions:browser": "tsx scripts/verify-promotion-cache.ts"
   },
   "dependencies": {
-    "@capacitor/android": "8.5.0",
-    "@capacitor/core": "8.5.0",
-    "@capacitor/ios": "8.5.0",
+    "@capacitor/android": "8.5.1",
+    "@capacitor/core": "8.5.1",
+    "@capacitor/ios": "8.5.1",
     "@capacitor/splash-screen": "8.0.2",
     "@noble/hashes": "2.2.0",
     "fflate": "^0.8.3",
@@ -92,7 +92,7 @@
     "react-intl": "^10.1.18"
   },
   "devDependencies": {
-    "@capacitor/cli": "8.5.0",
+    "@capacitor/cli": "8.5.1",
     "@formatjs/cli": "^6.16.14",
     "@testing-library/react": "^16.3.3",
     "@types/node": "^24.13.2",
