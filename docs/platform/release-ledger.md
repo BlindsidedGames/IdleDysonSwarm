@@ -569,3 +569,134 @@ unlocks, real cross-device Cloud, other UI scales and long locales were not
 rechecked for this release. Download integrity and native compilation do not
 stand in for those checks. This release record is documentation only; it does
 not change the frozen product source.
+
+## 2026111401 — standalone 4.2.5 public release
+
+Release performed on 19 November 2026 (AEDT, UTC+11). The configured candidate
+identity was retained after both stores confirmed it was unused.
+
+### Frozen source and security correction
+
+- Product source: `0e2f76462b21920ac7b8127718ebe9eafcf668fe`, pushed to
+  `Matt/standalone-4.2.5`; reviewed parent
+  `040d19c92f69efc672d23b51ed47b7d1a07645db`.
+- This standalone lineage retains the public Classic balance and the Reality
+  Skill Point fix, revised Challenges and Avocato layouts, and localized Wiki
+  notes. The parked 4.2.4 lineage was not merged into the candidate.
+- Marketing version `4.2.5`; Android code `2026111401`; Apple build
+  `2611.14.01`, displayed as `2611.14.1`.
+- Pre-release production dependency audit found GHSA-rvm3-566m-v7fv in the
+  direct Capacitor Android/iOS 8.5.0 dependencies. Matthew explicitly approved
+  the smallest aligned upgrade to 8.5.1. The four-file fix aligns Android,
+  iOS, core and CLI, regenerates the npm lock, and resolves the actual Swift
+  package to `6afa7424fd2fcd8ca1e577478e8a00af284b7e82` (8.5.1). Production
+  audit then reported zero vulnerabilities. Windows independently reviewed
+  that diff and matched the upstream Swift tag.
+
+### Final platform states
+
+| Target | Identity | Verified state |
+| --- | --- | --- |
+| Google Play Internal | 4.2.5 (2026111401) | Available to internal testers. |
+| Google Play production | 4.2.5 (2026111401) | Changes in review; one change sent for review, Start full rollout at 100%, managed publishing off. Automated quick checks were running at submission. |
+| Apple App Store | 4.2.5 (2611.14.1) | Waiting for Review; exactly one item submitted, automatic release after approval, immediate release to all users, existing rating retained. |
+| Steam `default` and `public-beta` | Build 26776053 | Both active after Matthew's Steam Mobile approval; authenticated server manifest readback verified on Windows. |
+
+Apple submission UUID: `9e7b8af9-4d7b-4e83-88fe-5248c7807439`. Ordinary
+App Store Connect upload succeeded at 15:07:23 AEDT with App Review eligibility.
+Export compliance completed; the correct processed build was attached. All
+eight localized What's New blocks were saved and read back after a full page
+reload. Existing contact, sign-in, privacy, and rating settings were retained.
+Neither mobile review state means public approval or availability. The website
+was not published.
+
+Steam depot manifests:
+
+- Windows 4348571: `9174632882165079562`.
+- Linux 4348572: `3050985418784657220`.
+- macOS 4348573: `7800509254231520593`.
+
+### Artifacts and verification
+
+- Root: `/Users/matthewrushworth/Builds/ids-release-2026111401/`.
+  `release-summary.json`, source-bound manifests, build/upload logs, Apple
+  readback text/screenshots, Steam manifests, archive checks, and synthetic
+  native checkpoints retain the evidence.
+- The clean canonical `release:local` gate passed the approved save-safety
+  suite (three files, 16 cases), lint, localization, TypeScript/production and
+  native builds, Electron boundary checks, signed Android packaging and iOS
+  sync. Signed iOS archive and Simulator compilation also passed.
+- Android AAB: `android/idle-dyson-swarm-2026111401.aab`, 20,195,207 bytes;
+  SHA-256 `7d6da48dbf9e5f3a5d38f28b2127f48f1f795d7c7713ff2a18a180d6bb46bf19`.
+  Windows independently verified the transferred bytes and upload certificate.
+- Apple archive: `ios/IDS-2026111401.xcarchive`; all 298 renderer files match
+  the final Capacitor payload and the archive's actual Swift checkout is 8.5.1.
+  Archived executable SHA-256:
+  `da6446b2269743082e95cfdee01e176802a49810243a025947e487a49e4ed79d`.
+  This is not an uploaded IPA hash.
+- Steam packages embed the full frozen SHA, version and Steam distribution
+  identity. Six native runtime binaries were reused after input/source/SDK
+  equivalence and prior binary hash verification.
+- Complete depot-root ZIPs were transferred through the established shared
+  iCloud folder with byte sizes, SHA-256, per-file manifests, Unix modes and
+  symlink targets. Windows uploaded Standard replacements through its retained
+  authenticated Steamworks session. Every server-listed regular file matched
+  the exact ZIP (76 Windows, 75 Linux, 261 macOS), without extra files.
+- Actual Mac beta delivery was then repaired into an absent install directory,
+  downloading 214,293,168 bytes. All 261 regular hashes and 14 symlink targets
+  matched; all 17 required executables had execute permission. Steam normalized
+  244 data files to mode 755, so exact archive mode equality was not claimed.
+  The previous install was preserved separately. The normal desktop Steam
+  client was restored after QA; no new SteamCMD login was needed to ship.
+- Windows evidence: `output/local-release/2026111401/` contains
+  `google-production-review.jpg`, `steam-web-manifests.json` and
+  `steam-public-26776053.jpg`.
+
+### Running-game checks and limits
+
+The final isolated iPhone Simulator build rendered 4.2.5. A valid synthetic
+legacy active-challenge/Avotation save recovered four to six points once,
+retained its marker and Avotation flag, and remained at six after actual
+process termination/relaunch. Simulator pointer controls were unavailable;
+this is startup/persistence evidence, not a full native touch-flow claim.
+
+The actual freshly downloaded Mac package launched in an isolated profile with
+mock Keychain and Steam closed. Fresh and mature Challenges rendered in two
+columns with readable Active, Completed and Locked states. Hide completed
+removed Beginnings. A real Speed Reduction III purchase in Built by Hand
+credited the third point immediately; real abandonment/confirmation retained
+three points and the purchased upgrade. Screenshots and durable checkpoints
+record those outcomes. A separate synthetic Avocato fixture verified the
+Transcendence/Discovery/feeding order and an actual 1,000-IP feed increasing its
+multiplier from 1x to 3x. That fixture's synthetic resource grants and ordinary
+progression are not used to claim unchanged Skill Point totals.
+
+Windows also verified an isolated packaged launch. Both desktop controls had
+Steam SDK services unavailable deliberately. Mac live player-save directory
+metadata remained unchanged. Physical devices, Android gameplay, Linux launch,
+authenticated SDK/Cloud game flows, full challenge completion and the full
+Interface-scale/long-locale matrix were not certified for this release.
+
+### SteamCMD authentication follow-up
+
+The Mac's shared Steam config was readable/writable but its ConnectCache token
+section was empty before the release commands. No usable prior cache was found
+in the checked release locations or indexed files. Its removal's cause is
+unknown; an updater or desktop logout was not established as the cause.
+
+The separate `Matt/steam-auth-cache-persistence` branch contains the installed
+saved-login launcher and workflow documentation (initial commit `34fe7e18`,
+follow-up `85bb20e3`). It preserves credential-bearing configs privately,
+serializes runs, restores a missing cache block from a protected snapshot and
+prevents unattended password fallback. Existing local login/IDS upload
+entrypoints use it. A real missing-cache invocation left the live config
+byte-identical. One disposable fake-token config-copy rehearsal checked restore,
+unrelated settings, malformed input, concurrent changes and private permissions;
+it was removed and no tests or credentials were committed. No archived suite
+was run.
+
+The original SteamCMD token was not recovered, and a successful repeated cached
+CLI login remains unverified. The authenticated Web Uploads fallback completed
+this release without another login request. That success is kept separate from
+SteamCMD session recovery. This release record changes documentation only; the
+published product source remains frozen above.
