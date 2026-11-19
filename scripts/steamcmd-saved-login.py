@@ -155,7 +155,9 @@ def main():
         elif not options.interactive_login:
             print('Saved SteamCMD login token is absent; stopped before starting SteamCMD. '
                   'Existing Steam config and private snapshots were left unchanged. '
-                  'No password login was attempted.', file=sys.stderr)
+                  'No password login was attempted. Check the existing authenticated '
+                  'Steamworks Web Uploads session before requesting another login.',
+                  file=sys.stderr)
             return 78
         invocation = [str(root / 'steamcmd.sh')]
         if not options.interactive_login:

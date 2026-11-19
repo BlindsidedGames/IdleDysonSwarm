@@ -97,6 +97,22 @@ to the intended Play track. Never reuse an Android version code. Report upload,
 review/processing, and tester availability separately; a successful local
 build does not mean the release is live.
 
+## Steam saved authentication and upload fallback
+
+Use the [saved-login launcher](steamcmd-saved-login.md) with the existing Mac
+SteamCMD installation. Preserve its private credential-bearing config between
+runs and use `quit`, never `logout`. The unattended launcher prevents password
+fallback and keeps private recovery snapshots; credentials never enter this
+repository, build manifests, transfer folders, or logs.
+
+If the launcher reports a missing token, investigate the existing cache before
+asking Matthew to authenticate again. Prefer an already authenticated
+Steamworks Web Uploads session when available. Upload complete depot-root ZIPs
+as Standard replacements, preserving Linux/macOS execute modes and symlinks.
+Verify uploaded server manifests and actual beta delivery/launchability before
+an expressly authorized public activation. Report a missing SteamCMD session
+separately from a successful web upload; neither establishes the other.
+
 ## Website promotion
 
 Skip this section for Android-only or iOS-only work. A Website promotion

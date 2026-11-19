@@ -28,6 +28,17 @@ nor a protected snapshot has a token, the launcher exits before starting
 SteamCMD. It does not silently fall through to an empty-password login or ask
 the user to authenticate on every release.
 
+Before asking Matthew to sign in again, check the existing authenticated
+Steamworks browser session. Its SteamPipe Web Uploads supports Standard
+replacement of complete depot-root ZIPs, with a 2048 MB compressed limit per
+depot. Preserve Unix execute modes and macOS symlinks in the archives, verify
+their hashes after transfer, and compare all server manifest entries. Activate
+beta first; verify a fresh Mac download's required execute permissions and
+symlinks and an isolated launch before any authorized public promotion. The
+19 November 4.2.5 release completed through that existing session without a
+new SteamCMD login. This is a usable release route, not proof that the missing
+SteamCMD token has been recovered.
+
 An explicit first login or a Valve-revoked token can still require account
 authentication. Only when that is deliberately requested, run:
 
