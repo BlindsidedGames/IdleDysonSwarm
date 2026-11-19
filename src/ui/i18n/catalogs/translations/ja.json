@@ -2264,6 +2264,8 @@
   "wiki.patch-notes.version-4-2-5": "バージョン4.2.5",
   "wiki.patch-notes.version-4-2-5.reality-point-recovery": "すでに量子チャレンジ中のセーブでは、読み込み時に無効化されていた現実のスキルポイントが一度だけ返還されます。",
   "wiki.patch-notes.version-4-2-5.reality-points": "量子チャレンジ中も現実のスキルポイントを使用できるようになりました。チャレンジ中に購入したアップグレードのポイントも使用できます。",
+  "wiki.patch-notes.version-4-2-5.challenges": "チャレンジタブを刷新し、状態と報酬の表示、クリア済みの非表示、広い画面での複数列表示に対応しました。",
+  "wiki.patch-notes.version-4-2-5.avocato": "アボキャットのエサやり操作を、超越と発見のアップグレードの下に移動しました。",
   "wiki.patch-notes.version-4-1-2": "バージョン4.1.2",
   "wiki.patch-notes.version-4-1-2.double-time": "Double Time は、すべてのゲームシステムを常に通常の2倍の速度で進行させるようになりました。",
   "wiki.patch-notes.version-4-1-2.languages": "フランス語、ドイツ語、ラテンアメリカ向けスペイン語、ブラジルポルトガル語、簡体字中国語、ロシア語、日本語への完全翻訳を追加しました。端末の言語に応じた自動選択と、設定での手動切り替えにも対応しています。",

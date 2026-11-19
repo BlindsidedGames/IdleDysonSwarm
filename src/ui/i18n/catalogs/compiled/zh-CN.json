@@ -18368,6 +18368,18 @@
       "value": "版本 4.2.5"
     }
   ],
+  "wiki.patch-notes.version-4-2-5.avocato": [
+    {
+      "type": 0,
+      "value": "将牛油果猫的喂食控件移到了超越和发现升级下方。"
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5.challenges": [
+    {
+      "type": 0,
+      "value": "重新设计了挑战标签页，显示挑战状态和奖励，支持隐藏已完成的挑战，并在宽屏上使用多列布局。"
+    }
+  ],
   "wiki.patch-notes.version-4-2-5.reality-point-recovery": [
     {
       "type": 0,

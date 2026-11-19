@@ -18368,6 +18368,18 @@
       "value": "Version 4.2.5"
     }
   ],
+  "wiki.patch-notes.version-4-2-5.avocato": [
+    {
+      "type": 0,
+      "value": "Moved Avocato’s feeding controls below Transcendence and Discovery upgrades."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5.challenges": [
+    {
+      "type": 0,
+      "value": "Redesigned the Challenges tab with challenge status, rewards, a Hide completed option, and multiple columns on wide screens."
+    }
+  ],
   "wiki.patch-notes.version-4-2-5.reality-point-recovery": [
     {
       "type": 0,

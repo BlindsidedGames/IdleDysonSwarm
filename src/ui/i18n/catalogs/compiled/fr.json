@@ -18368,6 +18368,18 @@
       "value": "Version 4.2.5"
     }
   ],
+  "wiki.patch-notes.version-4-2-5.avocato": [
+    {
+      "type": 0,
+      "value": "Les commandes pour nourrir Avocato se trouvent désormais sous la Transcendance et les améliorations de Découverte."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5.challenges": [
+    {
+      "type": 0,
+      "value": "L’onglet Défis affiche désormais leur état et leurs récompenses, permet de masquer les défis terminés et utilise plusieurs colonnes sur les écrans larges."
+    }
+  ],
   "wiki.patch-notes.version-4-2-5.reality-point-recovery": [
     {
       "type": 0,

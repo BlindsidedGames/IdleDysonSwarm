@@ -495,6 +495,8 @@ function PatchNotesArticle() {
           <ul className="wiki-surface__patch-note-list">
             <li>{intl.formatMessage(messages.patchNotesVersion425RealityPoints)}</li>
             <li>{intl.formatMessage(messages.patchNotesVersion425Recovery)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion425Challenges)}</li>
+            <li>{intl.formatMessage(messages.patchNotesVersion425Avocato)}</li>
           </ul>
           <h4>{intl.formatMessage(messages.patchNotesVersion4111)}</h4>
           <ul className="wiki-surface__patch-note-list">

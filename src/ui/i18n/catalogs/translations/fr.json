@@ -2264,6 +2264,8 @@
   "wiki.patch-notes.version-4-2-5": "Version 4.2.5",
   "wiki.patch-notes.version-4-2-5.reality-point-recovery": "Les sauvegardes déjà dans un défi quantique récupèrent une seule fois leurs points de compétence de Réalité suspendus au chargement.",
   "wiki.patch-notes.version-4-2-5.reality-points": "Les points de compétence de Réalité restent désormais disponibles dans les défis quantiques, y compris ceux des améliorations achetées pendant un défi.",
+  "wiki.patch-notes.version-4-2-5.challenges": "L’onglet Défis affiche désormais leur état et leurs récompenses, permet de masquer les défis terminés et utilise plusieurs colonnes sur les écrans larges.",
+  "wiki.patch-notes.version-4-2-5.avocato": "Les commandes pour nourrir Avocato se trouvent désormais sous la Transcendance et les améliorations de Découverte.",
   "wiki.patch-notes.version-4-1-2": "Version 4.1.2",
   "wiki.patch-notes.version-4-1-2.double-time": "Double Time fait désormais fonctionner en permanence tous les systèmes du jeu à deux fois leur vitesse normale.",
   "wiki.patch-notes.version-4-1-2.languages": "Ajout de traductions complètes en français, allemand, espagnol d’Amérique latine, portugais du Brésil, chinois simplifié, russe et japonais, avec sélection automatique selon la langue de l’appareil et possibilité de choisir une langue dans les Paramètres.",

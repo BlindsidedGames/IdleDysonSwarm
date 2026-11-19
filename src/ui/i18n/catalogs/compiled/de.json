@@ -18368,6 +18368,18 @@
       "value": "Version 4.2.5"
     }
   ],
+  "wiki.patch-notes.version-4-2-5.avocato": [
+    {
+      "type": 0,
+      "value": "Avocatos Fütterungsoptionen stehen jetzt unter Transzendenz und den Entdeckungsverbesserungen."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5.challenges": [
+    {
+      "type": 0,
+      "value": "Der Reiter „Herausforderungen“ zeigt jetzt Status und Belohnungen, bietet eine Option zum Ausblenden abgeschlossener Herausforderungen und nutzt auf breiten Bildschirmen mehrere Spalten."
+    }
+  ],
   "wiki.patch-notes.version-4-2-5.reality-point-recovery": [
     {
       "type": 0,

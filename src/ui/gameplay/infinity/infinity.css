@@ -975,7 +975,15 @@
   @container (min-width: 50rem) {
     .challenge-list__cards {
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      align-items: start;
+      align-items: stretch;
+    }
+
+    .challenge-list__cards > li {
+      display: grid;
+    }
+
+    .challenge-card {
+      align-content: start;
     }
   }
 

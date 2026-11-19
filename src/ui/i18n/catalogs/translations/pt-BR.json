@@ -2264,6 +2264,8 @@
   "wiki.patch-notes.version-4-2-5": "Versão 4.2.5",
   "wiki.patch-notes.version-4-2-5.reality-point-recovery": "Saves que já estão em um desafio quântico recuperam os Pontos de Habilidade de Realidade retidos uma única vez ao carregar.",
   "wiki.patch-notes.version-4-2-5.reality-points": "Os Pontos de Habilidade de Realidade agora continuam disponíveis nos desafios quânticos, incluindo os de melhorias compradas durante um desafio.",
+  "wiki.patch-notes.version-4-2-5.challenges": "A aba Desafios agora mostra status e recompensas, permite ocultar desafios concluídos e usa várias colunas em telas largas.",
+  "wiki.patch-notes.version-4-2-5.avocato": "Os controles para alimentar Avocato agora ficam abaixo da Transcendência e das melhorias de Descoberta.",
   "wiki.patch-notes.version-4-1-2": "Versão 4.1.2",
   "wiki.patch-notes.version-4-1-2.double-time": "Double Time agora faz todos os sistemas do jogo funcionarem permanentemente com o dobro da velocidade normal.",
   "wiki.patch-notes.version-4-1-2.languages": "Adicionamos traduções completas para francês, alemão, espanhol latino-americano, português do Brasil, chinês simplificado, russo e japonês, com seleção automática pelo idioma do dispositivo e opção manual nas Configurações.",

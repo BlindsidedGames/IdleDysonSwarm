@@ -18368,6 +18368,18 @@
       "value": "Versão 4.2.5"
     }
   ],
+  "wiki.patch-notes.version-4-2-5.avocato": [
+    {
+      "type": 0,
+      "value": "Os controles para alimentar Avocato agora ficam abaixo da Transcendência e das melhorias de Descoberta."
+    }
+  ],
+  "wiki.patch-notes.version-4-2-5.challenges": [
+    {
+      "type": 0,
+      "value": "A aba Desafios agora mostra status e recompensas, permite ocultar desafios concluídos e usa várias colunas em telas largas."
+    }
+  ],
   "wiki.patch-notes.version-4-2-5.reality-point-recovery": [
     {
       "type": 0,

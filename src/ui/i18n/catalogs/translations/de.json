@@ -2264,6 +2264,8 @@
   "wiki.patch-notes.version-4-2-5": "Version 4.2.5",
   "wiki.patch-notes.version-4-2-5.reality-point-recovery": "Spielstände in einer laufenden Quanten-Herausforderung erhalten ihre zurückgehaltenen Realitäts-Fertigkeitspunkte beim Laden einmalig zurück.",
   "wiki.patch-notes.version-4-2-5.reality-points": "Realitäts-Fertigkeitspunkte bleiben jetzt in Quanten-Herausforderungen verfügbar, einschließlich Punkten aus während einer Herausforderung gekauften Verbesserungen.",
+  "wiki.patch-notes.version-4-2-5.challenges": "Der Reiter „Herausforderungen“ zeigt jetzt Status und Belohnungen, bietet eine Option zum Ausblenden abgeschlossener Herausforderungen und nutzt auf breiten Bildschirmen mehrere Spalten.",
+  "wiki.patch-notes.version-4-2-5.avocato": "Avocatos Fütterungsoptionen stehen jetzt unter Transzendenz und den Entdeckungsverbesserungen.",
   "wiki.patch-notes.version-4-1-2": "Version 4.1.2",
   "wiki.patch-notes.version-4-1-2.double-time": "Double Time lässt nun dauerhaft alle Spielsysteme mit doppelter Normalgeschwindigkeit laufen.",
   "wiki.patch-notes.version-4-1-2.languages": "Vollständige Übersetzungen für Französisch, Deutsch, lateinamerikanisches Spanisch, brasilianisches Portugiesisch, vereinfachtes Chinesisch, Russisch und Japanisch hinzugefügt, mit automatischer Auswahl anhand der Gerätesprache und manueller Sprachauswahl in den Einstellungen.",

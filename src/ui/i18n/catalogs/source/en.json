@@ -9133,6 +9133,14 @@
     "defaultMessage": "Version 4.2.5",
     "description": "Version 4.2.5 release notes."
   },
+  "wiki.patch-notes.version-4-2-5.avocato": {
+    "defaultMessage": "Moved Avocato’s feeding controls below Transcendence and Discovery upgrades.",
+    "description": "Version 4.2.5 release notes."
+  },
+  "wiki.patch-notes.version-4-2-5.challenges": {
+    "defaultMessage": "Redesigned the Challenges tab with challenge status, rewards, a Hide completed option, and multiple columns on wide screens.",
+    "description": "Version 4.2.5 release notes."
+  },
   "wiki.patch-notes.version-4-2-5.reality-point-recovery": {
     "defaultMessage": "Saves already in a Quantum challenge recover their withheld Reality Skill Points once when loaded.",
     "description": "Version 4.2.5 release notes."

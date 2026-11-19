@@ -73,8 +73,17 @@ export function AvocatoSurface({ locale, unlocked, resources, spendable, derived
       </header>
 
       <div className="avocato-surface__content">
+        <OverflowCard locale={locale} resources={resources} preview={previews.overflow}
+          routeAvailable={commandAvailability.overflowReset} dispatchPlayer={dispatchPlayer} />
+        <DiscoveryPurchases state={discovery} balance={resources.overflowPoints} available={discoveryAvailable} locale={locale}
+          purchase={async (purchase: DiscoveryPurchase) => {
+            const result = await dispatchPlayer({ kind: 'discovery.purchase', purchase })
+            if (result.status === 'accepted' && purchase === 'unlock') onDiscoveryUnlocked?.()
+            return result.status === 'accepted'
+          }} />
+
         {unlocked ? (
-          <>
+          <div className="avocato-surface__feeding">
             <dl className="avocato-total">
               <div>
                 <dt>{intl.formatMessage(discovery.unlocked ? discoveryMessages.avocatoProduction : messages.totalBoost)}</dt>
@@ -101,18 +110,8 @@ export function AvocatoSurface({ locale, unlocked, resources, spendable, derived
               ))}
 
             </div>
-          </>
+          </div>
         ) : null}
-
-        <OverflowCard locale={locale} resources={resources} preview={previews.overflow}
-          routeAvailable={commandAvailability.overflowReset} dispatchPlayer={dispatchPlayer} />
-        <DiscoveryPurchases state={discovery} balance={resources.overflowPoints} available={discoveryAvailable} locale={locale}
-          purchase={async (purchase: DiscoveryPurchase) => {
-            const result = await dispatchPlayer({ kind: 'discovery.purchase', purchase })
-            if (result.status === 'accepted' && purchase === 'unlock') onDiscoveryUnlocked?.()
-            return result.status === 'accepted'
-          }} />
-
       </div>
     </div>
   )

@@ -2264,6 +2264,8 @@
   "wiki.patch-notes.version-4-2-5": "版本 4.2.5",
   "wiki.patch-notes.version-4-2-5.reality-point-recovery": "已处于量子挑战中的存档会在加载时一次性补回之前被停用的现实技能点。",
   "wiki.patch-notes.version-4-2-5.reality-points": "现实技能点现在仍可在量子挑战中使用，包括挑战期间购买升级获得的技能点。",
+  "wiki.patch-notes.version-4-2-5.challenges": "重新设计了挑战标签页，显示挑战状态和奖励，支持隐藏已完成的挑战，并在宽屏上使用多列布局。",
+  "wiki.patch-notes.version-4-2-5.avocato": "将牛油果猫的喂食控件移到了超越和发现升级下方。",
   "wiki.patch-notes.version-4-1-2": "版本 4.1.2",
   "wiki.patch-notes.version-4-1-2.double-time": "双倍时间现在会永久让所有游戏系统以正常速度的两倍运行。",
   "wiki.patch-notes.version-4-1-2.languages": "新增完整的法语、德语、拉丁美洲西班牙语、巴西葡萄牙语、简体中文、俄语和日语翻译，并可根据设备语言自动选择，也可在“设置”中手动切换。",
